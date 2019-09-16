@@ -400,6 +400,8 @@
       <webjars.html5shiv.version>3.7.3-1</webjars.html5shiv.version>
       <webjars.jquery.version>3.3.1-1</webjars.jquery.version>
       <webjars.locator.version>0.34</webjars.locator.version>
+      <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
+      <plugin.jacoco.version>0.8.4</plugin.jacoco.version>
       <!-- ============================================== -->
       <!-- ============== PLUGINS VERSIONS ============== -->
       <!-- ============================================== -->
@@ -745,6 +747,17 @@
          <artifactId>spring-test</artifactId>
          <scope>test</scope>
       </dependency>
+      
+         <dependency>
+           <groupId>javax.xml.bind</groupId>
+           <artifactId>jaxb-api</artifactId>
+           <version>2.3.0</version>
+         </dependency>
+         <dependency>
+           <groupId>javassist</groupId>
+           <artifactId>javassist</artifactId>
+           <version>3.12.1.GA</version>
+         </dependency>
    </dependencies>
 
    <!-- ********************************************** -->
