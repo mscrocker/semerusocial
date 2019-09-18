@@ -498,7 +498,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-			<version>2.1.8.RELEASE</version>
+			<version>1.4.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.6.0</version>
 		</dependency>
 		<!-- ============================================== -->
 		<!-- ============== JPA DEPENDENCIES ============== -->

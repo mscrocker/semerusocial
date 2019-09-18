@@ -6,44 +6,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.fi.dc.fd.model.User;
+import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
+import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
-/*
+
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private PermissionChecker permissionChecker;
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
 
-	//---------- DAOS ----------
+		//---------- DAOS ----------
 		@Autowired
-		private UserRepository userDao;
+		private UserRepository userRepository;
 		
 		//---------- CASOS DE USO ----------
 		
 		//1. Registro de usuarios
 		@Override
-		public void signUp(User user) {
+		public void signUp(UserImpl user) throws DuplicateInstanceException {
 			
-			if (userDao.existsByUserName(user.getUserName())) {
+			if (getUserRepository().existsByUserName(user.getUserName())) {
 				throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 			}
 				
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
-			user.setRole(User.RoleType.USER);
 			
-			userDao.save(user);
+			getUserRepository().save(user);
 			
 		}
 		
 		//2. Autenticación y salida
 		@Override
 		@Transactional(readOnly=true)
-		public User login(String userName, String password) {
+		public UserImpl login(String userName, String password) throws IncorrectLoginException {
 			
-			Optional<User> user = userDao.findByUserName(userName);
+			Optional<UserImpl> user = getUserRepository().findByUserName(userName);
 			
 			if (!user.isPresent()) {
 				throw new IncorrectLoginException(userName, password);
@@ -56,6 +55,10 @@ public class UserServiceImpl implements UserService {
 			return user.get();
 			
 		}
+		
+		public UserRepository getUserRepository() {
+			return userRepository;
+		}
 
 }
-*/
+

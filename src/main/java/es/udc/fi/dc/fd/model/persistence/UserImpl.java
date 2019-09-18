@@ -30,7 +30,7 @@ public class UserImpl implements User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId", nullable = false, unique = true)
-    private Integer userId = -1;
+    private Long userId = -1L;
 
     /**
      * userName of the entity.
@@ -58,7 +58,7 @@ public class UserImpl implements User{
     }
     
 	@Override
-	public Integer getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
@@ -73,7 +73,7 @@ public class UserImpl implements User{
 	}
 
 	@Override
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = checkNotNull(userId, "Received a null pointer as userId");
 	}
 

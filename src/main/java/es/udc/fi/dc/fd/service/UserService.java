@@ -24,7 +24,8 @@
 
 package es.udc.fi.dc.fd.service;
 
-import es.udc.fi.dc.fd.model.User;
+import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
+import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 /**
  * Service for the example entity domain.
@@ -34,20 +35,18 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
  *
  * @author Bernardo Mart&iacute;nez Garrido
  */
-/*public interface UserService {
+public interface UserService {
 
     /**
      * Persists an entity.
      * 
-     * @param userName
+     * @param user
      *            entity to persist
-     * @return the persisted user
-     *
+     */
 	//1. Registro de usuarios
-	public void signUp(User user);
+	public void signUp(UserImpl user)  throws DuplicateInstanceException;
 	
 	//2. Autenticación y salida
-	public User login(String userName, String password);
+	public UserImpl login(String userName, String password)  throws IncorrectLoginException;
     
 }
-*/
