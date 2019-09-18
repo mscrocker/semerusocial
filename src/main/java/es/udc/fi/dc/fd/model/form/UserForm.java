@@ -48,7 +48,7 @@ public final class UserForm implements Serializable {
     /**
      * Serialization ID.
      */
-    private static final long serialVersionUID = 1328776989450853491L;
+    private static final long serialVersionUID = 1328776989450853492L;
 
     /**
      * userName field.userName

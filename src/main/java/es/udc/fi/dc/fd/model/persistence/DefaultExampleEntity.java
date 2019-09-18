@@ -51,11 +51,11 @@ import es.udc.fi.dc.fd.model.ExampleEntity;
 @Table(name = "example_entities")
 public class DefaultExampleEntity implements ExampleEntity {
 
-    /**
+	/**
      * Serialization ID.
      */
     @Transient
-    private static final long serialVersionUID = 1328776989450853491L;
+	private static final long serialVersionUID = 1L;
 
     /**
      * Entity's ID.
