@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.udc.fi.dc.fd.service.ExampleEntityService;
+import es.udc.fi.dc.fd.dtos.ExampleEntityForm;
 import es.udc.fi.dc.fd.model.persistence.DefaultExampleEntity;
-import es.udc.fi.dc.fd.model.form.ExampleEntityForm;
 
 /**
  * Controller for the example entities form view.

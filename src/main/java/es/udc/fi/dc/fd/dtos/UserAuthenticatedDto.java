@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package es.udc.fi.dc.fd.model.form;
+package es.udc.fi.dc.fd.dtos;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,8 +30,6 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.hibernate.validator.constraints.NotEmpty;
-
-import com.google.common.base.MoreObjects;
 
 /**
  * Represents the form used for the creating and editing example entities.
@@ -45,26 +43,45 @@ import com.google.common.base.MoreObjects;
  *
  * @author Bernardo Mart&iacute;nez Garrido
  */
-public final class ExampleEntityForm implements Serializable {
+public final class UserAuthenticatedDto implements Serializable {
 
     /**
      * Serialization ID.
      */
-    private static final long serialVersionUID = 1328776989450853491L;
+    private static final long serialVersionUID = 1328776989450853492L;
 
     /**
-     * Name field.
+     * userName field.userName
      * <p>
      * This is a required field and can't be empty.
      */
     @NotEmpty
-    private String            name;
-
+    private String userName;
+    
     /**
+     * userName field.password
+     * <p>
+     * This is a required field and can't be empty.
+     */
+    @NotEmpty
+    private String password;
+
+    @NotEmpty
+    private String jwt;
+
+
+	/**
      * Constructs a DTO for the example entity form.
      */
-    public ExampleEntityForm() {
+    public UserAuthenticatedDto() {
         super();
+    }
+    
+    public UserAuthenticatedDto(String userName , String password , String jwt) {
+        super();
+        this.userName = userName;
+        this.password = password;
+        this.jwt = jwt;
     }
 
     @Override
@@ -81,37 +98,64 @@ public final class ExampleEntityForm implements Serializable {
             return false;
         }
 
-        final ExampleEntityForm other = (ExampleEntityForm) obj;
-        return Objects.equals(name, other.name);
+        final UserAuthenticatedDto other = (UserAuthenticatedDto) obj;
+        return Objects.equals(userName, other.getUserName());
     }
 
     /**
-     * Returns the value of the name field.
+     * Returns the value of the userName field.
      * 
-     * @return the value of the name field
+     * @return the value of the userName field
      */
-    public final String getName() {
-        return name;
+    public final String getUserName() {
+        return userName;
     }
+    
+    /**
+     * Returns the value of the password field.
+     * 
+     * @return the value of the password field
+     */
+    public String getPassword() {
+		return password;
+	}
+    
+    public String getJwt() {
+		return jwt;
+	}
 
     @Override
     public final int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(userName);
     }
 
     /**
-     * Sets the value of the name field.
+     * Sets the value of the userName field.
      * 
-     * @param value
-     *            the new value for the name field
+     * @param userName
+     *            the new value for the userName field
      */
-    public final void setName(final String value) {
-        name = checkNotNull(value, "Received a null pointer as name");
+    public final void setUserName(final String userName) {
+    	this.userName = checkNotNull(userName, "Received a null pointer as userName");
     }
+    
+    /**
+     * Sets the value of the password field.
+     * 
+     * @param password
+     *            the new value for the password field
+     */
+	public void setPassword(String password) {
+		this.password = checkNotNull(password, "Received a null pointer as password");
+	}
 
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("name", name).toString();
-    }
+	public void setJwt(String jwt) {
+		this.jwt = checkNotNull(jwt, "Received a null pointer as jwt");
+	}
+
+	@Override
+	public String toString() {
+		return "UserForm [userName=" + userName + ", password=" + password + "]";
+	}
 
 }

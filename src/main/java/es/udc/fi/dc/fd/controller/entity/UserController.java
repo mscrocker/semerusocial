@@ -9,12 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
+import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
@@ -23,7 +28,7 @@ import es.udc.fi.dc.fd.service.UserService;
 import es.udc.fi.dc.fd.service.UserServiceImpl;
 
 
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UserController {
 	
@@ -44,18 +49,27 @@ public class UserController {
 		
 	}
 	@PostMapping("/signUp")
-	public ResponseEntity<String> signUp(
+	public ResponseEntity<UserAuthenticatedDto> signUp(
 		@RequestBody UserImpl user) throws DuplicateInstanceException {
-		System.out.println(user.getUserName());
 		
 		userService.signUp(user);
-		System.out.println(user.getUserName());
+
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest().path("/{id}")
 			.buildAndExpand(user.getUserId()).toUri();
-		System.out.println(user.getUserName());
-		return ResponseEntity.created(location).body(generateServiceToken(user));
 
+		return ResponseEntity.created(location).body(new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user)));
+
+	}
+	
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params)
+		throws IncorrectLoginException {
+		
+		UserImpl user = userService.login(params.getUserName(), params.getPassword());
+		System.out.println("entraaaa");
+		return new UserAuthenticatedDto(params.getUserName(), params.getPassword(),generateServiceToken(user));
+		
 	}
 	
 	private String generateServiceToken(UserImpl user) {

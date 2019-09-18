@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package es.udc.fi.dc.fd.model.form;
+package es.udc.fi.dc.fd.dtos;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * Represents the form used for the creating and editing example entities.
@@ -43,33 +45,25 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Bernardo Mart&iacute;nez Garrido
  */
-public final class UserForm implements Serializable {
+public final class ExampleEntityForm implements Serializable {
 
     /**
      * Serialization ID.
      */
-    private static final long serialVersionUID = 1328776989450853492L;
+    private static final long serialVersionUID = 1328776989450853491L;
 
     /**
-     * userName field.userName
+     * Name field.
      * <p>
      * This is a required field and can't be empty.
      */
     @NotEmpty
-    private String userName;
-    
-    /**
-     * userName field.password
-     * <p>
-     * This is a required field and can't be empty.
-     */
-    @NotEmpty
-    private String password;
+    private String            name;
 
     /**
      * Constructs a DTO for the example entity form.
      */
-    public UserForm() {
+    public ExampleEntityForm() {
         super();
     }
 
@@ -87,56 +81,37 @@ public final class UserForm implements Serializable {
             return false;
         }
 
-        final UserForm other = (UserForm) obj;
-        return Objects.equals(userName, other.getUserName());
+        final ExampleEntityForm other = (ExampleEntityForm) obj;
+        return Objects.equals(name, other.name);
     }
 
     /**
-     * Returns the value of the userName field.
+     * Returns the value of the name field.
      * 
-     * @return the value of the userName field
+     * @return the value of the name field
      */
-    public final String getUserName() {
-        return userName;
+    public final String getName() {
+        return name;
     }
-    
-    /**
-     * Returns the value of the password field.
-     * 
-     * @return the value of the password field
-     */
-    public String getPassword() {
-		return password;
-	}
 
     @Override
     public final int hashCode() {
-        return Objects.hash(userName);
+        return Objects.hash(name);
     }
 
     /**
-     * Sets the value of the userName field.
+     * Sets the value of the name field.
      * 
-     * @param userName
-     *            the new value for the userName field
+     * @param value
+     *            the new value for the name field
      */
-    public final void setUserName(final String userName) {
-    	this.userName = checkNotNull(userName, "Received a null pointer as userName");
+    public final void setName(final String value) {
+        name = checkNotNull(value, "Received a null pointer as name");
     }
-    
-    /**
-     * Sets the value of the password field.
-     * 
-     * @param password
-     *            the new value for the password field
-     */
-	public void setPassword(String password) {
-		this.password = checkNotNull(password, "Received a null pointer as password");
-	}
 
-	@Override
-	public String toString() {
-		return "UserForm [userName=" + userName + ", password=" + password + "]";
-	}
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("name", name).toString();
+    }
 
 }

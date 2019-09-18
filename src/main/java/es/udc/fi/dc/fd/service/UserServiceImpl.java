@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -36,7 +37,6 @@ public class UserServiceImpl implements UserService {
 	// 1. Registro de usuarios
 	@Override
 	public void signUp(UserImpl user) throws DuplicateInstanceException {
-		System.out.println("----" + user.getUserName());
 		if (getUserRepository().existsByUserName(user.getUserName())) {
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 		}

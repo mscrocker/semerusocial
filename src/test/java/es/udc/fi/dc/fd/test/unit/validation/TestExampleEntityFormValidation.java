@@ -30,13 +30,14 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import es.udc.fi.dc.fd.dtos.ExampleEntityForm;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-
-import es.udc.fi.dc.fd.model.form.ExampleEntityForm;
 
 /**
  * Unit tests for {@link ExampleEntityForm} bean validation.
