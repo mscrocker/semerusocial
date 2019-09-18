@@ -3,20 +3,22 @@ package es.udc.fi.dc.fd.jwt;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+
 @Component
 public class JwtGeneratorImpl implements JwtGenerator {
 	
-	@Value("${project.jwt.signKey}")
-	private String signKey;
+
+	private String signKey = "Bu:GW8bgPlEw";
 	
-	@Value("${project.jwt.expirationMinutes}")
-	private long expirationMinutes;
+	private long expirationMinutes = 1440;
 
 	@Override
 	public String generate(JwtInfo info) {
