@@ -31,13 +31,14 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public Image addImage(ImageImpl image, Long userId) throws InstanceNotFoundException {
-		
+	public ImageImpl addImage(ImageImpl image, Long userId) throws InstanceNotFoundException {
+
 		UserImpl user = permissionChecker.checkUser(userId);
-		
+
 		image.setUser(user);
 		
-		Image i = imageRepository.save(image);
+		ImageImpl i = imageRepository.save(image);
+
 		return i;
 	}
 

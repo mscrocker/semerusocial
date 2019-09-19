@@ -91,7 +91,22 @@ public class ImageImpl implements Image {
     public ImageImpl() {
         super();
     }
+    
+
 	
+
+	public ImageImpl(User user, byte[] image, int age, String sex, String city, String description) {
+		super();
+		this.user = user;
+		this.image = image;
+		this.age = age;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+	}
+
+
+
 
 	@Override
 	public Long getImageId() {

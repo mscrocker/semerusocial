@@ -6,7 +6,7 @@ import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 
 public interface ImageService {
 	
-	public Image addImage(ImageImpl image, Long userId) throws InstanceNotFoundException;
+	public ImageImpl addImage(ImageImpl image, Long userId) throws InstanceNotFoundException;
 	
 	public void removeImage(ImageImpl image, Long userId) throws InstanceNotFoundException;
     
