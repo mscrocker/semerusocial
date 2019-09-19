@@ -26,7 +26,6 @@ package es.udc.fi.dc.fd.service;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
-import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 /**
  * Service for the example entity domain.

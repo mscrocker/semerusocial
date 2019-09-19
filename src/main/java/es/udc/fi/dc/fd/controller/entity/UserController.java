@@ -8,7 +8,6 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +24,6 @@ import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
-import es.udc.fi.dc.fd.service.UserServiceImpl;
 
 
 @RestController
@@ -48,6 +46,7 @@ public class UserController {
                 "Received a null pointer as service");
 		
 	}
+	
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(
 		@RequestBody UserImpl user) throws DuplicateInstanceException {
@@ -67,7 +66,7 @@ public class UserController {
 		throws IncorrectLoginException {
 		
 		UserImpl user = userService.login(params.getUserName(), params.getPassword());
-		System.out.println("entraaaa");
+		
 		return new UserAuthenticatedDto(params.getUserName(), params.getPassword(),generateServiceToken(user));
 		
 	}

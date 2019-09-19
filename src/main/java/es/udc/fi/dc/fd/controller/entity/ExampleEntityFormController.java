@@ -27,7 +27,6 @@ package es.udc.fi.dc.fd.controller.entity;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
