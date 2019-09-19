@@ -47,7 +47,7 @@ public class UserImpl implements User{
      * This is to have additional data apart from the id, to be used on the
      * tests.
      */
-    @Column(name = "password", nullable = false, unique = true)
+    @Column(name = "password", nullable = false)
     private String password = "";
     
     /**

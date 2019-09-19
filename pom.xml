@@ -160,7 +160,7 @@
 				<!-- Override them for production -->
 				<database.url>jdbc:mysql://localhost:3306/friendmatch</database.url>
 				<database.username>root</database.username>
-				<database.password></database.password>
+				<database.password>root</database.password>
 				<!-- Spring context -->
 				<database.tag>mysql</database.tag>
 			</properties>
