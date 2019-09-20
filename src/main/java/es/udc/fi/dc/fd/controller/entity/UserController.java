@@ -51,13 +51,15 @@ public class UserController {
 	public ResponseEntity<UserAuthenticatedDto> signUp(
 		@RequestBody UserImpl user) throws DuplicateInstanceException {
 		
+		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user));
+		
 		userService.signUp(user);
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest().path("/{id}")
 			.buildAndExpand(user.getUserId()).toUri();
 
-		return ResponseEntity.created(location).body(new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user)));
+		return ResponseEntity.created(location).body(userAuthenticated);
 
 	}
 	

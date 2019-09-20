@@ -27,7 +27,7 @@
 		</createTable>
 
 		<createTable tableName="ImageTable">
-			<column autoIncrement="true" name="iamgeId" type="BIGINT">
+			<column autoIncrement="true" name="imageId" type="BIGINT">
 				<constraints primaryKey="true" />
 			</column>
 			<column name="userId" type="BIGINT">

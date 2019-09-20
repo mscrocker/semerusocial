@@ -56,8 +56,9 @@ public class UserServiceImpl implements UserService {
 		if (!user.isPresent()) {
 			throw new IncorrectLoginException(userName, password);
 		}
-
-		if (!password.equals( user.get().getPassword())) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		
+		if (!passwordEncoder.matches(password, user.get().getPassword())) {
 			throw new IncorrectLoginException(userName, password);
 		}
 
