@@ -33,7 +33,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
 		throws ServletException, IOException {
 		
 		String authHeaderValue = request.getHeader(HttpHeaders.AUTHORIZATION);
-		
+		System.out.println("Si hijo si");
 		if (authHeaderValue == null || !authHeaderValue.startsWith("Bearer ")) {
 			filterChain.doFilter(request, response);
 			return;
