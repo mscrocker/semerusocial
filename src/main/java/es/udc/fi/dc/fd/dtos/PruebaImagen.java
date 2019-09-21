@@ -1,8 +1,9 @@
 package es.udc.fi.dc.fd.dtos;
 
-import java.io.ByteArrayOutputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+
 import javax.imageio.ImageIO;
 
 public class PruebaImagen {

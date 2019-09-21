@@ -3,18 +3,15 @@ package es.udc.fi.dc.fd.controller.entity;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.terracotta.entity.ehcache.ToolkitBackedClusteredCacheManager;
-
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
+import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.ImageService;
 
@@ -33,13 +30,12 @@ public class ImageController {
 		
 	}
 	
-
 	@PostMapping("/add")
-	public ImageCreationDto addImage( @RequestBody ImageCreationDto image, @RequestAttribute Long userId) throws InstanceNotFoundException 
+	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
 		{
-
+		System.out.println(1);
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);
-		
+		System.out.println(2);
 		return ImageConversor.toImageCreationDto(imageResult);
 	}
 }
