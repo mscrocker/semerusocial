@@ -30,8 +30,8 @@
 			<column autoIncrement="true" name="imageId" type="BIGINT">
 				<constraints primaryKey="true" />
 			</column>
-			<column name="userId" type="BIGINT">
-				<constraints nullable="false" unique="true" />
+			<column name="user" type="BIGINT">
+				<constraints nullable="false" unique="false" />
 			</column>
 			<column name="image" type="BLOB">
 				<constraints nullable="false" />
@@ -50,6 +50,20 @@
 			</column>
 		</createTable>
 	</changeSet>
+
+
+
+	<changeSet author="liquibase-docs"
+		id="addForeignKeyConstraint">
+		<addForeignKeyConstraint
+			baseColumnNames="user"
+			 baseTableName="ImageTable"
+			constraintName="fk_userId"
+			referencedColumnNames="userId" 
+			referencedTableName="UserTable" />
+	</changeSet>
+
+
 
 	<changeSet author="Bernardo" id="initial_data">
 		<sqlFile encoding="utf8" path="populate/initial.sql"
