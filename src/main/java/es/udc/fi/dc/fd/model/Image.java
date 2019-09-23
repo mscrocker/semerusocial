@@ -2,6 +2,8 @@ package es.udc.fi.dc.fd.model;
 
 import java.io.Serializable;
 
+import es.udc.fi.dc.fd.model.persistence.UserImpl;
+
 public interface Image extends Serializable {
 	/**
      * Returns the identifier assigned to this user.
@@ -72,7 +74,7 @@ public interface Image extends Serializable {
      * @param user
      *            the identifier for the user
      */
-    public void setUser(final User user);
+    public void setUser(final UserImpl user);
 
     /**
      * Changes the name of the entity.

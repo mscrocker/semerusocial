@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.udc.fi.dc.fd.model.User;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 /**
@@ -36,7 +35,7 @@ public final class ImageCreationDto implements Serializable {
     * This is a required field and can't be empty.
     */
    @NotEmpty
-   private User user;
+   private UserImpl user;
    
    /**
     * userName field.password
@@ -68,7 +67,7 @@ public final class ImageCreationDto implements Serializable {
    }
 
 
-	public User getUser() {
+	public UserImpl getUser() {
 		return user;
 	}
 
@@ -128,7 +127,7 @@ public final class ImageCreationDto implements Serializable {
 	}
 
 
-	public ImageCreationDto(User user, byte[] image, int age, String sex, String city, String description) {
+	public ImageCreationDto(UserImpl user, byte[] image, int age, String sex, String city, String description) {
 		super();
 		this.user = user;
 		this.image = image;

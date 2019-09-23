@@ -6,18 +6,15 @@ import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import es.udc.fi.dc.fd.model.Image;
-import es.udc.fi.dc.fd.model.User;
 
 @Entity(name = "Image")
 @Table(name = "ImageTable")
@@ -41,8 +38,9 @@ public class ImageImpl implements Image {
      * Entity's userId.
      */
 
-	@JoinColumn(name="userId", referencedColumnName="userId")
-    private User user = null;
+    @ManyToOne(optional = false)
+	@JoinColumn(name="user", referencedColumnName="userId")
+    private UserImpl user = null;
 
     /**
      * userName of the entity.
@@ -99,7 +97,7 @@ public class ImageImpl implements Image {
 
 	
 
-	public ImageImpl(User user, byte[] image, int age, String sex, String city, String description) {
+	public ImageImpl(UserImpl user, byte[] image, int age, String sex, String city, String description) {
 		super();
 		this.user = user;
 		this.image = image;
@@ -118,7 +116,7 @@ public class ImageImpl implements Image {
 	}
 	
 	@Override
-	public User getUser() {
+	public UserImpl getUser() {
 		return user;
 	}
 
@@ -153,7 +151,7 @@ public class ImageImpl implements Image {
 	}
 	
 	@Override
-	public void setUser(User user) {
+	public void setUser(UserImpl user) {
 		this.user = checkNotNull(user, "Received a null pointer as user");
 	}
 
