@@ -34,9 +34,7 @@ public class ImageController {
 	@PostMapping("/add/{userId}")
 	public ImageCreationDto addImage(@PathVariable Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
 		{
-		System.out.println(1);
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);
-		System.out.println(2);
 		return ImageConversor.toImageCreationDto(imageResult);
 	}
 }
