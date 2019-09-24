@@ -2,6 +2,7 @@ package es.udc.fi.dc.fd.jwt;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -11,10 +12,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtGeneratorImpl implements JwtGenerator {
 	
-
-	private String signKey = "Bu:GW8bgPlEw";
+	@Value("${project.jwt.signKey}")
+	private String signKey;
 	
-	private long expirationMinutes = 1440;
+	@Value("${project.jwt.expirationMinutes}")
+	private long expirationMinutes;
 
 	@Override
 	public String generate(JwtInfo info) {
@@ -24,6 +26,7 @@ public class JwtGeneratorImpl implements JwtGenerator {
 		claims.setSubject(info.getUserName())
 			.setExpiration(new Date(System.currentTimeMillis() + expirationMinutes*60*1000));
 		claims.put("userId", info.getUserId());
+		claims.put("role", info.getRole());
 		
 		return Jwts.builder().setClaims(claims)
 	        .signWith(SignatureAlgorithm.HS512, signKey.getBytes())
@@ -41,7 +44,8 @@ public class JwtGeneratorImpl implements JwtGenerator {
 		
 		return new JwtInfo(
 			((Integer) claims.get("userId")).longValue(), 
-			claims.getSubject());
+			claims.getSubject(), 
+			(String) claims.get("role"));
 		
 	}
 

@@ -28,6 +28,7 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+
 /**
  * Service for the example entity domain.
  * <p>
@@ -51,5 +52,9 @@ public interface UserService {
 	public UserImpl login(String userName, String password)  throws IncorrectLoginException;
 	
 	UserImpl loginFromUserName(String userName) throws InstanceNotFoundException;
-    
+	
+	public UserImpl findById(long id) throws InstanceNotFoundException;
+
+	public UserImpl findByUserName(String userName) throws InstanceNotFoundException;
+
 }
