@@ -49,7 +49,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "image", nullable = false)
-    private byte[] image = null;//??????????????????????????
+    private byte[] image = null;
 
     /**
      * password of the entity.
@@ -93,8 +93,6 @@ public class ImageImpl implements Image {
     public ImageImpl() {
         super();
     }
-    
-
 	
 
 	public ImageImpl(UserImpl user, byte[] image, int age, String sex, String city, String description) {
@@ -106,8 +104,6 @@ public class ImageImpl implements Image {
 		this.city = city;
 		this.description = description;
 	}
-
-
 
 
 	@Override

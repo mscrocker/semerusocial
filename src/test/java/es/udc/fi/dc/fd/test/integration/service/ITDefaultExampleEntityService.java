@@ -26,6 +26,8 @@ package es.udc.fi.dc.fd.test.integration.service;
 
 import java.util.Collection;
 
+import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -36,9 +38,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.junit.jupiter.api.Test;
-
-import org.junit.Assert;
 
 import es.udc.fi.dc.fd.model.ExampleEntity;
 import es.udc.fi.dc.fd.model.persistence.DefaultExampleEntity;
@@ -71,6 +70,7 @@ public final class ITDefaultExampleEntityService {
     /**
      * Default constructor.
      */
+    @Autowired
     public ITDefaultExampleEntityService() {
         super();
     }

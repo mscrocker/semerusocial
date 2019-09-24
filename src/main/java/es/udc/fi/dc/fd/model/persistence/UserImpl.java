@@ -57,6 +57,12 @@ public class UserImpl implements User{
         super();
     }
     
+    public UserImpl(String userName, String password) {
+        super();
+        setUserName(userName);
+        setPassword(password);
+    }
+    
 	@Override
 	public Long getUserId() {
 		return userId;

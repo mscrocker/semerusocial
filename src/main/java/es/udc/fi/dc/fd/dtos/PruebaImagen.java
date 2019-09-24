@@ -15,6 +15,5 @@ public class PruebaImagen {
 		byte[] data = bos.toByteArray();
 		
 		String s = new String(data);
-		System.out.println(s);
 	}
 }

@@ -7,6 +7,6 @@ public interface PermissionChecker {
 	
 	public void checkUserExists(Long userId) throws InstanceNotFoundException;
 	
-	public UserImpl checkUser(Long userId) throws InstanceNotFoundException;
+	public UserImpl checkUser(String userName) throws InstanceNotFoundException;
 	
 }
