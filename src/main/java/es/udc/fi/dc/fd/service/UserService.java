@@ -26,7 +26,9 @@ package es.udc.fi.dc.fd.service;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+
 /**
  * Service for the example entity domain.
  * <p>
@@ -37,16 +39,19 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
  */
 public interface UserService {
 
-    /**
-     * Persists an entity.
-     * 
-     * @param user
-     *            entity to persist
-     */
-	//1. Registro de usuarios
-	public void signUp(UserImpl user)  throws DuplicateInstanceException;
-	
-	//2. Autenticación y salida
-	public UserImpl login(String userName, String password)  throws IncorrectLoginException;
-    
+	public UserImpl findById(long id) throws InstanceNotFoundException;
+
+	public UserImpl findByUserName(String userName) throws InstanceNotFoundException;
+
+	// 2. Autenticación y salida
+	public UserImpl login(String userName, String password) throws IncorrectLoginException;
+
+	/**
+	 * Persists an entity.
+	 *
+	 * @param user entity to persist
+	 */
+	// 1. Registro de usuarios
+	public void signUp(UserImpl user) throws DuplicateInstanceException;
+
 }

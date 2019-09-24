@@ -11,36 +11,49 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	private final UserRepository userRepository;
-	
+
 	@Autowired
-	public UserServiceImpl( final UserRepository repository){
+	public UserServiceImpl(final UserRepository repository) {
 		super();
 
-		userRepository = checkNotNull(repository,
-                "Received a null pointer as service");
-		
+		userRepository = checkNotNull(repository, "Received a null pointer as service");
+
 	}
 	// ---------- CASOS DE USO ----------
 
-	// 1. Registro de usuarios
 	@Override
-	public void signUp(UserImpl user) throws DuplicateInstanceException {
-		if (getUserRepository().existsByUserName(user.getUserName())) {
-			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
-		}
-		
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		user.setPassword((passwordEncoder.encode(user.getPassword())));
+	@Transactional(readOnly = true)
+	public UserImpl findById(long id) throws InstanceNotFoundException {
 
-		getUserRepository().save(user);
+		Optional<UserImpl> user = getUserRepository().findById(id);
 
+		if (!user.isPresent())
+			throw new InstanceNotFoundException("id", id);
+
+		return user.get();
+
+	}
+
+	@Override
+	public UserImpl findByUserName(String userName) throws InstanceNotFoundException {
+		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
+
+		if (!user.isPresent())
+			throw new InstanceNotFoundException(userName, user);
+
+		return user.get();
+	}
+
+	public UserRepository getUserRepository() {
+		return userRepository;
 	}
 
 	// 2. Autenticación y salida
@@ -50,21 +63,28 @@ public class UserServiceImpl implements UserService {
 
 		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
 
-		if (!user.isPresent()) {
+		if (!user.isPresent())
 			throw new IncorrectLoginException(userName, password);
-		}
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		
-		if (!passwordEncoder.matches(password, user.get().getPassword())) {
+
+		if (!passwordEncoder.matches(password, user.get().getPassword()))
 			throw new IncorrectLoginException(userName, password);
-		}
 
 		return user.get();
 
 	}
 
-	public UserRepository getUserRepository() {
-		return userRepository;
+	// 1. Registro de usuarios
+	@Override
+	public void signUp(UserImpl user) throws DuplicateInstanceException {
+		if (getUserRepository().existsByUserName(user.getUserName()))
+			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
+
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword((passwordEncoder.encode(user.getPassword())));
+
+		getUserRepository().save(user);
+
 	}
 
 }
