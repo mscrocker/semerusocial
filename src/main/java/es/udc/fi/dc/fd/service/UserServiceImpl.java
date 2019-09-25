@@ -41,15 +41,16 @@ public class UserServiceImpl implements UserService {
 
 	// 1. Registro de usuarios
 	@Override
-	public void signUp(UserImpl user) throws DuplicateInstanceException {
+	public long signUp(UserImpl user) throws DuplicateInstanceException {
 		if (getUserRepository().existsByUserName(user.getUserName()))
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword((passwordEncoder.encode(user.getPassword())));
 
-		getUserRepository().save(user);
+		UserImpl userSaved = getUserRepository().save(user);
 
+		return userSaved.getUserId();
 	}
 	
 	

@@ -3,7 +3,6 @@ package es.udc.fi.dc.fd.controller.entity;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,7 @@ public class ImageController {
 		
 	}
 	
-	@PostMapping("/add")
+	@PostMapping("/add")	//TODO: password no debería ser devuelta
 	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
 		{
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);
