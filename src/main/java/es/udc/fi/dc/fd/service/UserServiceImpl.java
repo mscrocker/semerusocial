@@ -40,31 +40,19 @@ public class UserServiceImpl implements UserService {
 	// ---------- CASOS DE USO ----------
 
 	// 1. Registro de usuarios
-		@Override
-		public void signUp(UserImpl user) throws DuplicateInstanceException {
-			if (getUserRepository().existsByUserName(user.getUserName()))
-				throw new DuplicateInstanceException("project.entities.user", user.getUserName());
-
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			user.setPassword((passwordEncoder.encode(user.getPassword())));
-
-			getUserRepository().save(user);
-
-		}
-
 	@Override
-	public UserImpl findByUserName(String userName) throws InstanceNotFoundException {
-		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
+	public void signUp(UserImpl user) throws DuplicateInstanceException {
+		if (getUserRepository().existsByUserName(user.getUserName()))
+			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 
-		if (!user.isPresent())
-			throw new InstanceNotFoundException(userName, user);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword((passwordEncoder.encode(user.getPassword())));
 
-		return user.get();
+		getUserRepository().save(user);
+
 	}
-
-	public UserRepository getUserRepository() {
-		return userRepository;
-	}
+	
+	
 
 	// 2. Autenticación y salida
 	@Override
@@ -86,16 +74,32 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public UserImpl loginFromUserName(String userName) throws InstanceNotFoundException {
-		return permissionChecker.checkUser(userName);
+	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException {
+		return permissionChecker.checkUserByUserId(userId);
 	}
-
-	@Override
-	public UserImpl findById(long id) throws InstanceNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
+	@Override
+	public UserImpl findById(Long userId) throws InstanceNotFoundException {
+		UserImpl user = getUserRepository().getOne(userId);
+
+		if (user==null)
+			throw new InstanceNotFoundException("Usuario con id="+userId, user);
+
+		return user;
+	}
+	
+	@Override
+	public UserImpl findByUserName(String userName) throws InstanceNotFoundException {
+		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
+
+		if (!user.isPresent())
+			throw new InstanceNotFoundException(userName, user);
+
+		return user.get();
+	}
+
+	public UserRepository getUserRepository() {
+		return userRepository;
+	}
 
 }

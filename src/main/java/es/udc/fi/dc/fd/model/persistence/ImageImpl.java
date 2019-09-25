@@ -32,7 +32,7 @@ public class ImageImpl implements Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "imageId", nullable = false, unique = true)
-    private Long imageId = -1L;
+    private Long imageId;
     
     /**
      * Entity's userId.
@@ -40,7 +40,7 @@ public class ImageImpl implements Image {
 
     @ManyToOne(optional = false)
 	@JoinColumn(name="user", referencedColumnName="userId")
-    private UserImpl user = null;
+    private UserImpl user;
 
     /**
      * userName of the entity.
@@ -49,7 +49,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "image", nullable = false)
-    private byte[] image = null;
+    private byte[] image;
 
     /**
      * password of the entity.
@@ -58,7 +58,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "age")
-    private int age = -1;
+    private int age;
     
     /**
      * password of the entity.
@@ -67,7 +67,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "sex")
-    private String sex = "";
+    private String sex;
     
     /**
      * password of the entity.
@@ -76,7 +76,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "city")
-    private String city = "";
+    private String city;
     
     /**
      * password of the entity.
@@ -85,7 +85,7 @@ public class ImageImpl implements Image {
      * tests.
      */
     @Column(name = "description")
-    private String description = "";
+    private String description;
     
     /**
      * Constructs an example entity.

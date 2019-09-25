@@ -30,7 +30,7 @@ public class UserImpl implements User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId", nullable = false, unique = true)
-    private Long userId = -1L;
+    private Long userId;
 
     /**
      * userName of the entity.
@@ -39,7 +39,7 @@ public class UserImpl implements User{
      * tests.
      */
     @Column(name = "userName", nullable = false, unique = true)
-    private String userName = "";
+    private String userName;
 
     /**
      * password of the entity.
@@ -48,7 +48,7 @@ public class UserImpl implements User{
      * tests.
      */
     @Column(name = "password", nullable = false)
-    private String password = "";
+    private String password;
     
     /**
      * Constructs an example entity.

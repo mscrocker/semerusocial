@@ -51,9 +51,9 @@ public interface UserService {
 	//2. Autenticación y salida
 	public UserImpl login(String userName, String password)  throws IncorrectLoginException;
 	
-	UserImpl loginFromUserName(String userName) throws InstanceNotFoundException;
+	UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException;
 	
-	public UserImpl findById(long id) throws InstanceNotFoundException;
+	public UserImpl findById(Long userId) throws InstanceNotFoundException;
 
 	public UserImpl findByUserName(String userName) throws InstanceNotFoundException;
 

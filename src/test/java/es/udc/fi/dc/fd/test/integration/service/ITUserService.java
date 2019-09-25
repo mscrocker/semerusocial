@@ -18,7 +18,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.model.User;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -51,12 +50,11 @@ public class ITUserService {
 	@Test
 	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException {
 		UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId");
-
+		
 		userService.signUp(user);
 		
-		User loggedInUser = userService.loginFromUserName(user.getUserName());
-		
-		assertEquals(user.getUserName(), loggedInUser.getUserName());
+		UserImpl loggedInUser = userService.loginFromUserId(user.getUserId());
+		assertEquals(user.getUserId(), loggedInUser.getUserId());
 	}
 	
 	@Test
@@ -81,7 +79,7 @@ public class ITUserService {
 
 		UserImpl loggedInUser = userService.login(user.getUserName(), clearPassword);
 
-		assertEquals(user.getUserName(), loggedInUser.getUserName());
+		assertEquals(user.getUserId(), loggedInUser.getUserId());
 	}
 	
 	@Test
@@ -96,9 +94,9 @@ public class ITUserService {
 	}
 	
 	@Test
-	public void testLoginWithNonExistentUserName() {
+	public void testLoginWithNonExistentId() {
 		assertThrows(InstanceNotFoundException.class,() -> {
-			userService.loginFromUserName("usuario que no existe");
+			userService.loginFromUserId(-1L);
 		});
 	}
 	
