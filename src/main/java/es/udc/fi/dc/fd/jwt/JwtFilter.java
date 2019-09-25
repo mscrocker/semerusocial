@@ -1,11 +1,16 @@
 package es.udc.fi.dc.fd.jwt;
 
 import java.io.IOException;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.Filter;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,20 +20,28 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-public class JwtFilter extends BasicAuthenticationFilter {
+public class JwtFilter /*extends BasicAuthenticationFilter */ extends OncePerRequestFilter {
 	
 	private JwtGenerator jwtGenerator;
-
-	public JwtFilter(AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
+/*
+	public JwtFilter(AuthenticationManager authenticationManager) {
 		
 		super(authenticationManager);
-		
-		this.jwtGenerator = jwtGenerator;
+		this.jwtGenerator = new JwtGeneratorImpl();
 		
 	}
+	
+	
+	*/
 
-	@Override
+	public JwtFilter() {
+		super();
+		this.jwtGenerator = new JwtGeneratorImpl();
+	}
+
+	//@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 		String authHeaderValue = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -64,5 +77,20 @@ public class JwtFilter extends BasicAuthenticationFilter {
 			new UsernamePasswordAuthenticationToken(userName, null, authorities));
 		
 	}
+	
+/*
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException  {
+		
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+*/
+
 
 }

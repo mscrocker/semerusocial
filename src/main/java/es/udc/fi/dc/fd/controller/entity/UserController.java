@@ -1,96 +1,128 @@
 package es.udc.fi.dc.fd.controller.entity;
 
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.validation.Valid;
+import java.net.URI;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
-import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.model.User;
+import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
+import es.udc.fi.dc.fd.dtos.ErrorsDto;
+import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
+import es.udc.fi.dc.fd.jwt.JwtGenerator;
+import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
+import es.udc.fi.dc.fd.jwt.JwtInfo;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
-@RestController
-public class UserController {
 
+@RestController
+@RequestMapping("/users")
+public class UserController {
+	
 	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
 	private final static String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
 
 	private MessageSource messageSource;
-
-	@Autowired
+	
+	@Bean
+	JwtGenerator JwtGenerator() {
+		return new JwtGeneratorImpl();
+	}
+	
+	private final JwtGenerator jwtGenerator = JwtGenerator();
 	private final UserService userService;
-
-	public UserController(final UserService userService, final MessageSource messageSource) {
+	
+	@Autowired
+	public UserController(final UserService userService, final MessageSource messageSource){
 		super();
+		
+        this.userService = checkNotNull(userService,
+                "Received a null pointer as service userService");
+        
+        this.messageSource = checkNotNull(messageSource,
+                "Received a null pointer as messageSource");
+		
+	}
+	
+	@ExceptionHandler(DuplicateInstanceException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {
+		
+		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+		String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE, 
+				new Object[] {nameMessage, exception.getKey().toString()}, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
 
-		this.userService = checkNotNull(userService, "Received a null pointer as service userService");
+		return new ErrorsDto(errorMessage);
+		
+	}
+	
+	@ExceptionHandler(IncorrectLoginException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorsDto handleIncorrectLoginException(IncorrectLoginException exception, Locale locale) {
+		
+		String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
+				INCORRECT_LOGIN_EXCEPTION_CODE, locale);
 
-		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource");
+		return new ErrorsDto(errorMessage);
+		
+	}
+	
+	@PostMapping("/signUp")
+	public ResponseEntity<UserAuthenticatedDto> signUp(
+		@RequestBody UserImpl user) throws DuplicateInstanceException {
+		
+		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user));
+		
+		userService.signUp(user);
+
+		URI location = ServletUriComponentsBuilder
+			.fromCurrentRequest().path("/{id}")
+			.buildAndExpand(user.getUserId()).toUri();
+
+		return ResponseEntity.created(location).body(userAuthenticated);
 
 	}
-
-	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public ModelAndView createNewUser(@Valid UserImpl user, BindingResult bindingResult) {
-		ModelAndView modelAndView = new ModelAndView();
-		try {
-			userService.signUp(user);
-		} catch (DuplicateInstanceException ex) {
-			bindingResult.rejectValue("username", "error.user",
-					"There is already a user registered with the username provided");
-		}
-		if (bindingResult.hasErrors())
-			modelAndView.setViewName("registration");
-		else {
-			modelAndView.addObject("successMessage", "User has been registered successfully");
-			modelAndView.addObject("user", new UserImpl());
-			modelAndView.setViewName("welcome");
-		}
-
-		return modelAndView;
+	
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params)
+		throws IncorrectLoginException {
+		
+		UserImpl user = userService.login(params.getUserName(), params.getPassword());
+		
+		return new UserAuthenticatedDto(params.getUserName(), params.getPassword(),generateServiceToken(user));
+		
 	}
-
-	@RequestMapping(value = "/admin/home", method = RequestMethod.GET)
-	public ModelAndView home() {
-		ModelAndView modelAndView = new ModelAndView();
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user;
-		try {
-			user = userService.findByUserName(auth.getName());
-		} catch (InstanceNotFoundException e) {
-			// Unreachable statement?
-			e.printStackTrace();
-			return modelAndView;
-		}
-		modelAndView.addObject("userName", "Welcome " + user.getUserName() + " " + user.getPassword() + " (" + ")");
-		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
-		modelAndView.setViewName("admin/home");
-		return modelAndView;
+	
+	private String generateServiceToken(UserImpl user) {
+		
+		JwtInfo jwtInfo = new JwtInfo(user.getUserId(), user.getUserName());
+		
+		return jwtGenerator.generate(jwtInfo);
+		
 	}
-
-	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-	public ModelAndView login() {
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("login");
-		return modelAndView;
-	}
-
-	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public ModelAndView registration() {
-		ModelAndView modelAndView = new ModelAndView();
-		User user = new UserImpl();
-		modelAndView.addObject("user", user);
-		modelAndView.setViewName("signUp");
-		return modelAndView;
-	}
+	
+	
+	
+	
 }

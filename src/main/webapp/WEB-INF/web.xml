@@ -45,5 +45,14 @@
       <error-code>404</error-code>
       <location>/404</location>
    </error-page>
+   
+   <filter>
+   	  <filter-name>JwtFilter</filter-name>
+   	  <filter-class>es.udc.fi.dc.fd.jwt.JwtFilter</filter-class>
+   </filter>
+   <filter-mapping>
+   	  <filter-name>JwtFilter</filter-name>
+   	  <url-pattern>/images/add</url-pattern>
+   </filter-mapping>
 
 </web-app>
