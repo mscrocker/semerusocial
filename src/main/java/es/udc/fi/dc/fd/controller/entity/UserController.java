@@ -111,7 +111,7 @@ public class UserController {
 	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params)
 		throws IncorrectLoginException {
 		
-		UserImpl user = userService.login(params.getUserName(), params.getPassword());
+		UserImpl user = userService.login(params);
 		
 		return new UserAuthenticatedDto(params.getUserName(), params.getPassword(),generateServiceToken(user));
 		

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
@@ -58,7 +59,10 @@ public class UserServiceImpl implements UserService {
 	// 2. Autenticación y salida
 	@Override
 	@Transactional(readOnly = true)
-	public UserImpl login(String userName, String password) throws IncorrectLoginException {
+	public UserImpl login(LoginParamsDto params) throws IncorrectLoginException {
+		String userName = params.getUserName();
+		String password = params.getPassword();
+		
 		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
 
 		if (!user.isPresent()) {
