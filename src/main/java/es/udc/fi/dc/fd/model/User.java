@@ -26,6 +26,27 @@ public interface User extends Serializable {
      * @return the user's password
      */
     public String getPassword();
+    
+    /**
+     * Returns the name of the user.
+     *
+     * @return the user's password
+     */
+    public int getAge();
+    
+    /**
+     * Returns the name of the user.
+     *
+     * @return the user's password
+     */
+    public String getSex();
+    
+    /**
+     * Returns the name of the user.
+     *
+     * @return the user's password
+     */
+    public String getCity();
 
     /**
      * Sets the identifier assigned to this user.
@@ -51,4 +72,28 @@ public interface User extends Serializable {
      *            the name to set on the user
      */
     public void setPassword(final String password);
+    
+    /**
+     * Changes the name of the entity.
+     *
+     * @param age
+     *            the name to set on the user
+     */
+    public void setAge(final int age);
+    
+    /**
+     * Changes the name of the entity.
+     *
+     * @param sex
+     *            the name to set on the user
+     */
+    public void setSex(final String sex);
+    
+    /**
+     * Changes the name of the entity.
+     *
+     * @param city
+     *            the name to set on the user
+     */
+    public void setCity(final String city);
 }

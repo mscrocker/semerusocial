@@ -3,10 +3,12 @@ package es.udc.fi.dc.fd.controller.entity;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -34,20 +36,18 @@ public class ImageController {
 	@PostMapping("/add")	//TODO: password no debería ser devuelta
 	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
 		{
-		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);
+		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 		return ImageConversor.toImageCreationDto(imageResult);
 	}
-	/*
-	@PostMapping("/pageable")
-	public ImageImpl pag (@RequestBody ImageCreationDto image) throws InstanceNotFoundException{
-		long userId = 1L;
+	
+	@GetMapping("/carrusel")
+	public Block<ImageImpl> getImagesById(@RequestParam int page) throws InstanceNotFoundException{
+		Long userId = 1L;
 		
-		Block<ImageImpl> im = imageService.getImagesByUserId(userId, 1, 3);
+		Block<ImageImpl> im = imageService.getImagesByUserId(userId, page);
+				
+		return im;
 		
-		System.out.println(im.getItems());
-		
-		return null;
-		
-	}*/
+	}
 	
 }

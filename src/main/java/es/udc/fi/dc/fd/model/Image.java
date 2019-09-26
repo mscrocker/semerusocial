@@ -30,28 +30,9 @@ public interface Image extends Serializable {
      *
      * @return the user's userName
      */
-    public byte[] getImage();
+    public byte[] getData();
     
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
-    public int getAge();
     
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
-    public String getSex();
-    
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
-    public String getCity();
     
     /**
      * Returns the name of the user.
@@ -79,34 +60,10 @@ public interface Image extends Serializable {
     /**
      * Changes the name of the entity.
      *
-     * @param image
+     * @param data
      *            the name to set on the user
      */
-    public void setImage(final byte[] image);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param age
-     *            the name to set on the user
-     */
-    public void setAge(final int age);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param sex
-     *            the name to set on the user
-     */
-    public void setSex(final String sex);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param city
-     *            the name to set on the user
-     */
-    public void setCity(final String city);
+    public void setImage(final byte[] data);
     
     /**
      * Changes the name of the entity.

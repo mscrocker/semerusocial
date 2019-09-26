@@ -47,7 +47,7 @@ public interface UserService {
      *            entity to persist
      */
 	//1. Registro de usuarios
-	public long signUp(UserImpl user) throws DuplicateInstanceException;
+	public Long signUp(UserImpl user) throws DuplicateInstanceException;
 	
 	//2. Autenticación y salida
 	public UserImpl login(LoginParamsDto params)  throws IncorrectLoginException;

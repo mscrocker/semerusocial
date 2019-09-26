@@ -91,11 +91,9 @@ public class UserController {
 	public ResponseEntity<UserAuthenticatedDto> signUp(
 		@RequestBody UserImpl user) throws DuplicateInstanceException {
 		
-		long id = userService.signUp(user);
-		
-		user.setId(id);
+		userService.signUp(user);
 
-		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user));
+		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), generateServiceToken(user));
 		
 
 		URI location = ServletUriComponentsBuilder
@@ -112,19 +110,13 @@ public class UserController {
 		
 		UserImpl user = userService.login(params);
 		
-		return new UserAuthenticatedDto(params.getUserName(), params.getPassword(),generateServiceToken(user));
+		return new UserAuthenticatedDto(params.getUserName(),generateServiceToken(user));
 		
 	}
 	
 	private String generateServiceToken(UserImpl user) {
-		
 		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
-		
 		return jwtGenerator.generate(jwtInfo);
-		
 	}
-	
-	
-	
 	
 }

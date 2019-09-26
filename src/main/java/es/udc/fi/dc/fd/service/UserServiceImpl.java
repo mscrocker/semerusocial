@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
 	// 1. Registro de usuarios
 	@Override
-	public long signUp(UserImpl user) throws DuplicateInstanceException {
+	public Long signUp(UserImpl user) throws DuplicateInstanceException {
 		if (getUserRepository().existsByUserName(user.getUserName()))
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 

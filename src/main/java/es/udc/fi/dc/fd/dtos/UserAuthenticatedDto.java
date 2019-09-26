@@ -24,10 +24,7 @@
 
 package es.udc.fi.dc.fd.dtos;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
-import java.util.Objects;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -57,14 +54,6 @@ public final class UserAuthenticatedDto implements Serializable {
      */
     @NotEmpty
     private String userName;
-    
-    /**
-     * userName field.password
-     * <p>
-     * This is a required field and can't be empty.
-     */
-    @NotEmpty
-    private String password;
 
     @NotEmpty
     private String jwt;
@@ -77,85 +66,64 @@ public final class UserAuthenticatedDto implements Serializable {
         super();
     }
     
-    public UserAuthenticatedDto(String userName , String password , String jwt) {
+    public UserAuthenticatedDto(String userName, String jwt) {
         super();
         this.userName = userName;
-        this.password = password;
         this.jwt = jwt;
     }
 
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        final UserAuthenticatedDto other = (UserAuthenticatedDto) obj;
-        return Objects.equals(userName, other.getUserName());
-    }
-
-    /**
-     * Returns the value of the userName field.
-     * 
-     * @return the value of the userName field
-     */
-    public final String getUserName() {
-        return userName;
-    }
-    
-    /**
-     * Returns the value of the password field.
-     * 
-     * @return the value of the password field
-     */
-    public String getPassword() {
-		return password;
+	public String getUserName() {
+		return userName;
 	}
-    
-    public String getJwt() {
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getJwt() {
 		return jwt;
 	}
 
-    @Override
-    public final int hashCode() {
-        return Objects.hash(userName);
-    }
-
-    /**
-     * Sets the value of the userName field.
-     * 
-     * @param userName
-     *            the new value for the userName field
-     */
-    public final void setUserName(final String userName) {
-    	this.userName = checkNotNull(userName, "Received a null pointer as userName");
-    }
-    
-    /**
-     * Sets the value of the password field.
-     * 
-     * @param password
-     *            the new value for the password field
-     */
-	public void setPassword(String password) {
-		this.password = checkNotNull(password, "Received a null pointer as password");
+	public void setJwt(String jwt) {
+		this.jwt = jwt;
 	}
 
-	public void setJwt(String jwt) {
-		this.jwt = checkNotNull(jwt, "Received a null pointer as jwt");
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((jwt == null) ? 0 : jwt.hashCode());
+		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserAuthenticatedDto other = (UserAuthenticatedDto) obj;
+		if (jwt == null) {
+			if (other.jwt != null)
+				return false;
+		} else if (!jwt.equals(other.jwt))
+			return false;
+		if (userName == null) {
+			if (other.userName != null)
+				return false;
+		} else if (!userName.equals(other.userName))
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "UserForm [userName=" + userName + ", password=" + password + "]";
+		return "UserAuthenticatedDto [userName=" + userName + ", jwt=" + jwt + "]";
 	}
+
+    
 
 }

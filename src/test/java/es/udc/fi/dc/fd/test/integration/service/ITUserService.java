@@ -41,8 +41,8 @@ public class ITUserService {
         super();
     }
 	
-	private UserImpl createUser(String userName, String password) {
-		return new UserImpl(userName, password);
+	private UserImpl createUser(String userName, String password, int age, String sex, String city) {
+		return new UserImpl(userName, password, age, sex, city);
 	}
 	
 	
@@ -50,17 +50,17 @@ public class ITUserService {
 
 	@Test
 	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException {
-		UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId");
+		UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId", 1, "hombre", "coruna");
 		
 		userService.signUp(user);
 		
 		UserImpl loggedInUser = userService.loginFromUserId(user.getId());
-		assertEquals(user.getId(), loggedInUser.getId());
+		assertEquals(user, loggedInUser);
 	}
 	
 	@Test
 	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException {
-		UserImpl user = createUser("usuarioSignUpDuplicated","contraseñaSignUpDuplicated");
+		UserImpl user = createUser("usuarioSignUpDuplicated","contraseñaSignUpDuplicated", 1, "hombre", "coruna");
 		userService.signUp(user);
 		
 		assertThrows(DuplicateInstanceException.class,() -> {
@@ -73,7 +73,7 @@ public class ITUserService {
 	
 	@Test
 	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException {
-		UserImpl user = createUser("usuarioLogin","contraseñaLogin");
+		UserImpl user = createUser("usuarioLogin","contraseñaLogin", 1, "hombre", "coruna");
 		String clearPassword = user.getPassword();
 
 		userService.signUp(user);
@@ -84,12 +84,12 @@ public class ITUserService {
 		
 		UserImpl loggedInUser = userService.login(loginDto);
 
-		assertEquals(user.getId(), loggedInUser.getId());
+		assertEquals(user, loggedInUser);
 	}
 	
 	@Test
 	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, IncorrectLoginException {
-		UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass");
+		UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass", 1, "hombre", "coruna");
 		String clearPassword = user.getPassword();
 		
 		userService.signUp(user);
