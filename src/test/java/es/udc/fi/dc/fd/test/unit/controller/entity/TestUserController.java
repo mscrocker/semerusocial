@@ -1,43 +1,33 @@
 package es.udc.fi.dc.fd.test.unit.controller.entity;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.udc.fi.dc.fd.controller.entity.UserController;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
@@ -113,7 +103,7 @@ public final class TestUserController {
 		
 		//Comprueba lo devuelto por el Controlador
 		mockMvc.perform(post(UrlConfig.URL_USER_REGISTER_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(convertObjectToJsonBytes(user)))
+				.content(Utils.convertObjectToJsonBytes(user)))
 				.andExpect(status().isCreated())
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
@@ -144,7 +134,7 @@ public final class TestUserController {
 		
 		mockMvc.perform(post(UrlConfig.URL_USER_REGISTER_POST)
 				.contentType(APPLICATION_JSON_UTF8)
-				.content(convertObjectToJsonBytes(user)))
+				.content(Utils.convertObjectToJsonBytes(user)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.globalError").value("project.exceptions.DuplicateInstanceException"))
 				.andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -164,7 +154,7 @@ public final class TestUserController {
 		
 		//Comprueba lo devuelto por el Controlador
 		mockMvc.perform(post(UrlConfig.URL_USER_LOGIN_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(convertObjectToJsonBytes(login)))
+				.content(Utils.convertObjectToJsonBytes(login)))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
@@ -195,20 +185,11 @@ public final class TestUserController {
 
 		mockMvc.perform(post(UrlConfig.URL_USER_LOGIN_POST)
 				.contentType(APPLICATION_JSON_UTF8)
-				.content(convertObjectToJsonBytes(login)))
+				.content(Utils.convertObjectToJsonBytes(login)))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.globalError").value("project.exceptions.IncorrectLoginException"))
 				.andExpect(jsonPath("$.fieldErrors").isEmpty());
 		
 	}
 	
-	/*** UTILS ***********************************************************************************/
-	
-	public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		return mapper.writeValueAsBytes(object);
-	}
-
-
 }
