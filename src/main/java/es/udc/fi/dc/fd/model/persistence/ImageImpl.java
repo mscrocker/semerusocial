@@ -44,7 +44,7 @@ public class ImageImpl implements Image {
      */
 
     @ManyToOne(optional = false , fetch=FetchType.LAZY )	
-	@JoinColumn(name="user", referencedColumnName="userId")
+	@JoinColumn(name="user", referencedColumnName="id")
     private UserImpl user;
 
     /**

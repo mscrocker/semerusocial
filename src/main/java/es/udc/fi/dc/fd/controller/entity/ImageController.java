@@ -37,7 +37,7 @@ public class ImageController {
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);
 		return ImageConversor.toImageCreationDto(imageResult);
 	}
-	
+	/*
 	@PostMapping("/pageable")
 	public ImageImpl pag (@RequestBody ImageCreationDto image) throws InstanceNotFoundException{
 		long userId = 1L;
@@ -48,5 +48,6 @@ public class ImageController {
 		
 		return null;
 		
-	}
+	}*/
+	
 }

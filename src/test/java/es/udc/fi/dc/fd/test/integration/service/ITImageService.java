@@ -77,7 +77,7 @@ public class ITImageService {
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 
-		ImageImpl imageCreated = imageService.addImage(i, user.getUserId());
+		ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
 		assertEquals(i.getImageId(), imageCreated.getImageId());
 	}
@@ -87,12 +87,12 @@ public class ITImageService {
 			throws InstanceNotFoundException, DuplicateInstanceException {
 		UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException");
 
-		user.setUserId(-1L);
+		user.setId(-1L);
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.addImage(i, i.getUser().getUserId());
+			imageService.addImage(i, i.getUser().getId());
 		});
 	}
 
@@ -105,9 +105,9 @@ public class ITImageService {
 		ImageImpl image = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 		ImageImpl image2 = createImage(user, new byte[] { 4, 5, 6 }, 1, "mujer", "ferrol", "esto es otra descripcion");
 
-		ImageImpl imageCreated = imageService.addImage(image, user.getUserId());
+		ImageImpl imageCreated = imageService.addImage(image, user.getId());
 
-		ImageImpl imageUpdated = imageService.editImage(image2, imageCreated.getImageId(), user.getUserId());
+		ImageImpl imageUpdated = imageService.editImage(image2, imageCreated.getImageId(), user.getId());
 
 		assertEquals(image2, imageUpdated);
 
@@ -120,7 +120,7 @@ public class ITImageService {
 		ImageImpl image2 = createImage(user, new byte[] { 4, 5, 6 }, 1, "mujer", "ferrol", "esto es otra descripcion");
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.editImage(image2, -1L, user.getUserId());
+			imageService.editImage(image2, -1L, user.getId());
 		});
 	}
 
@@ -132,10 +132,10 @@ public class ITImageService {
 		ImageImpl image1 = createImage(user, new byte[] { 4, 5, 6 }, 1, "mujer", "ferrol", "esto es otra descripcion");
 		ImageImpl image2 = createImage(user2, new byte[] { 4, 5, 6 }, 1, "mujer", "ferrol", "esto es otra descripcion");
 
-		ImageImpl imageCreated = imageService.addImage(image2, user2.getUserId());
+		ImageImpl imageCreated = imageService.addImage(image2, user2.getId());
 
 		assertThrows(InvalidImageException.class, () -> {
-			imageService.editImage(image1, imageCreated.getImageId(), user.getUserId());
+			imageService.editImage(image1, imageCreated.getImageId(), user.getId());
 		});
 	}
 
@@ -147,9 +147,9 @@ public class ITImageService {
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 
-		ImageImpl imageCreated = imageService.addImage(i, user.getUserId());
+		ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
-		imageService.removeImage(imageCreated, user.getUserId());
+		imageService.removeImage(imageCreated, user.getId());
 
 	}
 
@@ -159,12 +159,12 @@ public class ITImageService {
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 
-		ImageImpl imageCreated = imageService.addImage(i, user.getUserId());
+		ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
-		user.setUserId(-1L);
+		user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.removeImage(imageCreated, user.getUserId());
+			imageService.removeImage(imageCreated, user.getId());
 		});
 	}
 
@@ -175,10 +175,10 @@ public class ITImageService {
 		
 		ImageImpl i = createImage(user,new byte[] {1,2,3}, 1, "hombre", "coruna", "esto es una descripcion");
 		
-		ImageImpl imageCreated = imageService.addImage(i,user.getUserId());
+		ImageImpl imageCreated = imageService.addImage(i,user.getId());
 		
 		assertThrows(InvalidImageException.class,() -> {
-			imageService.removeImage(imageCreated,user2.getUserId());
+			imageService.removeImage(imageCreated,user2.getId());
 		});
 	}
 		
@@ -186,27 +186,24 @@ public class ITImageService {
 		
 	@Test
 	public void testGetImagesById() throws InstanceNotFoundException {
-		System.out.println("hola");
+
 		UserImpl user = signUp("userTestGet", "userTestGet");
-		System.out.println("adios");
+
 		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 		ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 		ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 		ImageImpl i4 = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 		ImageImpl i5 = createImage(user, new byte[] { 1, 2, 3 }, 1, "hombre", "coruna", "esto es una descripcion");
 
-		ImageImpl imageCreated1 = imageService.addImage(i1, user.getUserId());
-		ImageImpl imageCreated2 = imageService.addImage(i2, user.getUserId());
-		ImageImpl imageCreated3 = imageService.addImage(i3, user.getUserId());
-		ImageImpl imageCreated4 = imageService.addImage(i4, user.getUserId());
-		ImageImpl imageCreated5 = imageService.addImage(i5, user.getUserId());
-		System.out.println("holitaaaa");
-		List <ImageImpl> imageListResult = imageService.getImagesByUserId(user.getUserId(), 1, 5).getItems();
-		System.out.println(imageListResult.size());
-		System.out.println("OOOOOOOOOOOOOOOOO ------"+ imageListResult.get(0).getImageId());
-		System.out.println("OOOOOOOOOOOOOOOOO ------"+ imageListResult.get(1).getImageId());
-		System.out.println("OOOOOOOOOOOOOOOOO ------"+ imageListResult.get(2).getImageId());
-		System.out.println("OOOOOOOOOOOOOOOOO ------"+ imageListResult.get(3).getImageId());
+		ImageImpl imageCreated1 = imageService.addImage(i1, user.getId());
+		ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
+		ImageImpl imageCreated3 = imageService.addImage(i3, user.getId());
+		ImageImpl imageCreated4 = imageService.addImage(i4, user.getId());
+		ImageImpl imageCreated5 = imageService.addImage(i5, user.getId());
+
+		
+		List<ImageImpl> imageListResult = imageService.getImagesByUserId(user.getId());
+
 		List <ImageImpl> imageList = new ArrayList<ImageImpl>();
 		imageList.add(imageCreated1);imageList.add(imageCreated2);imageList.add(imageCreated3);
 		imageList.add(imageCreated4);imageList.add(imageCreated5);

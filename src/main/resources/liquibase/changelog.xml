@@ -15,7 +15,7 @@
 			</column>
 		</createTable>
 		<createTable tableName="UserTable">
-			<column autoIncrement="true" name="userId" type="BIGINT">
+			<column autoIncrement="true" name="id" type="BIGINT">
 				<constraints primaryKey="true" />
 			</column>
 			<column name="userName" type="VARCHAR(30)">
@@ -59,7 +59,7 @@
 			baseColumnNames="user"
 			 baseTableName="ImageTable"
 			constraintName="fk_userId"
-			referencedColumnNames="userId" 
+			referencedColumnNames="id" 
 			referencedTableName="UserTable" />
 	</changeSet>
 
