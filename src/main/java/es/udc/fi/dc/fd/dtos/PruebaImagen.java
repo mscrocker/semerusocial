@@ -12,8 +12,8 @@ public class PruebaImagen {
 				));
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, "jpg", bos);
-		byte[] data = bos.toByteArray();
+		//byte[] data = bos.toByteArray();
 		
-		String s = new String(data);
+		//String s = new String(data);
 	}
 }

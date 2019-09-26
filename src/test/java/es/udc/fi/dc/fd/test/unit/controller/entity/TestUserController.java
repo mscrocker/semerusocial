@@ -97,7 +97,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SignUp() throws IOException, DuplicateInstanceException, Exception {
-		UserImpl user = new UserImpl(USER_NAME, PASSWORD);
+		UserImpl user = new UserImpl(USER_NAME, PASSWORD, 1, "mujer", "coruna");
 		
 		when(userServiceMock.signUp(any(UserImpl.class))).thenReturn(1L);
 		
@@ -107,7 +107,7 @@ public final class TestUserController {
 				.andExpect(status().isCreated())
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
-				.andExpect(jsonPath("$.password").value(PASSWORD))
+				//.andExpect(jsonPath("$.password").value(PASSWORD))
 				.andExpect(jsonPath("$.jwt").isString()); //TODO: más comprobaciones?
 				//.andExpect(header().string("Location", "/users/signUp/1"));	//TODO: devuelve todo ->http://localhost:8080/users/signUp/1
 		
@@ -126,7 +126,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SignUp_DuplicateInstanceException() throws IOException, DuplicateInstanceException, Exception{
-		UserImpl user = new UserImpl(USER_NAME, PASSWORD);
+		UserImpl user = new UserImpl(USER_NAME, PASSWORD, 1, "mujer", "coruna");
 		
 		//Lanza un error cada vez que llamas a signUp
 		doThrow(new DuplicateInstanceException(" ",user))
@@ -149,7 +149,7 @@ public final class TestUserController {
 		login.setUserName(USER_NAME);
 		login.setPassword(PASSWORD);
 				
-		UserImpl user = new UserImpl(USER_NAME, PASSWORD);
+		UserImpl user = new UserImpl(USER_NAME, PASSWORD, 1, "mujer", "coruna");
 		when(userServiceMock.login(any(LoginParamsDto.class))).thenReturn(user);
 		
 		//Comprueba lo devuelto por el Controlador
@@ -158,7 +158,7 @@ public final class TestUserController {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
-				.andExpect(jsonPath("$.password").value(PASSWORD))
+				//.andExpect(jsonPath("$.password").value(PASSWORD))
 				.andExpect(jsonPath("$.jwt").isString()); //TODO: más comprobaciones?
 				
 	

@@ -3,11 +3,11 @@ package es.udc.fi.dc.fd.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -88,15 +88,19 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public List<ImageImpl> getImagesByUserId(Long userId) throws InstanceNotFoundException {
+	public Block<ImageImpl> getImagesByUserId(Long userId, int page) throws InstanceNotFoundException {
 
 		if (userId == null) {
 			throw new InstanceNotFoundException("User not found", userId);
 		}
 
 		permissionChecker.checkUserExists(userId);
-
-		return  imageRepository.findByUserId(userId, PageRequest.of(0, 5));
+		
+		Slice<ImageImpl> images = imageRepository.findByUserId(userId, PageRequest.of(page, 5));
+		
+		return new Block<>(images.getContent(), images.hasNext());
+		
+		 
 
 	}
 
