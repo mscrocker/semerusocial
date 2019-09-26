@@ -6,6 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -49,15 +51,17 @@ public class ImageServiceImpl implements ImageService {
 		
 		permissionChecker.checkUserByUserId(userId);
 		
-		Optional<ImageImpl> i = imageRepository.findById(imageId);
+		Optional<ImageImpl> resultImage = imageRepository.findById(imageId);
 		
-		if (!i.isPresent()) {
-			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", i);
+		//Si la imagen no existe
+		if (!resultImage.isPresent()) {
+			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", resultImage);
 		}
 		
 		image.setImageId(imageId);
 		
-		if (i.get().getUser().getUserId()!=userId) {
+		//Comprobamos que el user el mismo que el que viene en la imagen
+		if (resultImage.get().getUser().getUserId()!=userId) {
 			throw new InvalidImageException();
 		}
 		
@@ -83,19 +87,24 @@ public class ImageServiceImpl implements ImageService {
 		
 	}
 
-	@Override
-	public ImageImpl findById(Long imageId) throws InstanceNotFoundException {
-		final ImageImpl entity;
+@Override
+	public Block<ImageImpl> getImagesByUserId(Long userId, int page, int size) throws InstanceNotFoundException {
 
-        checkNotNull(imageId, "Received a null pointer as imageId");
+		if (userId == null) {
+			throw new InstanceNotFoundException("User not found", userId);
+		}
 
-        if (imageRepository.existsById(imageId)) {
-            entity = imageRepository.getOne(imageId);
-        } else {
-            entity = new ImageImpl();
-        }
+		permissionChecker.checkUserExists(userId);
 
-        return entity;
+		Slice<ImageImpl> images = imageRepository.findByUserUserIdOrderByImageIdDesc(userId, PageRequest.of(page, size));
+		System.out.println(images.getNumberOfElements());
+		System.out.println(images.getContent().size());
+		Block<ImageImpl> bloque = new Block<ImageImpl>(images.getContent(), images.hasNext());
+		
+		System.out.println(bloque.getItems().size());
+		return bloque;
 	}
+
+
 
 }

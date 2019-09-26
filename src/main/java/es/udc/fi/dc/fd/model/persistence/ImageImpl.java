@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,10 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
+
 import es.udc.fi.dc.fd.model.Image;
 
 @Entity(name = "Image")
 @Table(name = "ImageTable")
+@BatchSize(size=5)
 public class ImageImpl implements Image {
 
 	/**
@@ -27,7 +31,7 @@ public class ImageImpl implements Image {
 	private static final long serialVersionUID = 2L;
 
     /**
-     * Entity's userId.
+     * Entity's imageId.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +39,10 @@ public class ImageImpl implements Image {
     private Long imageId;
     
     /**
-     * Entity's userId.
+     * Entity's user.
      */
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false , fetch=FetchType.LAZY )	
 	@JoinColumn(name="user", referencedColumnName="userId")
     private UserImpl user;
 
