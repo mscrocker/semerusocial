@@ -54,8 +54,8 @@ public class ITUserService {
 		
 		userService.signUp(user);
 		
-		UserImpl loggedInUser = userService.loginFromUserId(user.getUserId());
-		assertEquals(user.getUserId(), loggedInUser.getUserId());
+		UserImpl loggedInUser = userService.loginFromUserId(user.getId());
+		assertEquals(user.getId(), loggedInUser.getId());
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ public class ITUserService {
 		
 		UserImpl loggedInUser = userService.login(loginDto);
 
-		assertEquals(user.getUserId(), loggedInUser.getUserId());
+		assertEquals(user.getId(), loggedInUser.getId());
 	}
 	
 	@Test

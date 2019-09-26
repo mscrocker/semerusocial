@@ -78,7 +78,7 @@ public class TestImageController {
 		
 		//Usuario que hace la petición
 		UserImpl user = new UserImpl(userName, "pass");
-		user.setUserId(1L);
+		user.setId(1L);
 		
 		//Imagen de entrada al controller
 		ImageCreationDto imageDto = new ImageCreationDto();

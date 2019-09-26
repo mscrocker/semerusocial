@@ -11,7 +11,7 @@ public interface User extends Serializable {
      *
      * @return the user identifier
      */
-    public Long getUserId();
+    public Long getId();
 
     /**
      * Returns the name of the user.
@@ -33,7 +33,7 @@ public interface User extends Serializable {
      * @param userId
      *            the identifier for the user
      */
-    public void setUserId(final Long userId);
+    public void setId(final Long userId);
 
     /**
      * Changes the name of the entity.

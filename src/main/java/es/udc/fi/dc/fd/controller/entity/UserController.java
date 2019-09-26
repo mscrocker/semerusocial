@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,14 +93,14 @@ public class UserController {
 		
 		long id = userService.signUp(user);
 		
-		user.setUserId(id);
+		user.setId(id);
 
 		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), user.getPassword(), generateServiceToken(user));
 		
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest().path("/{id}")
-			.buildAndExpand(user.getUserId()).toUri();
+			.buildAndExpand(user.getId()).toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
 
@@ -119,7 +118,7 @@ public class UserController {
 	
 	private String generateServiceToken(UserImpl user) {
 		
-		JwtInfo jwtInfo = new JwtInfo(user.getUserId(), user.getUserName());
+		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
 		
 		return jwtGenerator.generate(jwtInfo);
 		

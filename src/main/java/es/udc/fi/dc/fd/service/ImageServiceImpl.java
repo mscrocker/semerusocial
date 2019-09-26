@@ -3,9 +3,11 @@ package es.udc.fi.dc.fd.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -49,15 +51,17 @@ public class ImageServiceImpl implements ImageService {
 		
 		permissionChecker.checkUserByUserId(userId);
 		
-		Optional<ImageImpl> i = imageRepository.findById(imageId);
+		Optional<ImageImpl> resultImage = imageRepository.findById(imageId);
 		
-		if (!i.isPresent()) {
-			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", i);
+		//Si la imagen no existe
+		if (!resultImage.isPresent()) {
+			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", resultImage);
 		}
 		
 		image.setImageId(imageId);
 		
-		if (i.get().getUser().getUserId()!=userId) {
+		//Comprobamos que el user el mismo que el que viene en la imagen
+		if (resultImage.get().getUser().getId()!=userId) {
 			throw new InvalidImageException();
 		}
 		
@@ -75,7 +79,7 @@ public class ImageServiceImpl implements ImageService {
 			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", i);
 		}
 		
-		if (i.get().getUser().getUserId()!=userId) {
+		if (i.get().getUser().getId()!=userId) {
 			throw new InvalidImageException();
 		}
 		
@@ -84,18 +88,18 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public ImageImpl findById(Long imageId) throws InstanceNotFoundException {
-		final ImageImpl entity;
+	public List<ImageImpl> getImagesByUserId(Long userId) throws InstanceNotFoundException {
 
-        checkNotNull(imageId, "Received a null pointer as imageId");
+		if (userId == null) {
+			throw new InstanceNotFoundException("User not found", userId);
+		}
 
-        if (imageRepository.existsById(imageId)) {
-            entity = imageRepository.getOne(imageId);
-        } else {
-            entity = new ImageImpl();
-        }
+		permissionChecker.checkUserExists(userId);
 
-        return entity;
+		return  imageRepository.findByUserId(userId, PageRequest.of(0, 5));
+
 	}
+
+
 
 }

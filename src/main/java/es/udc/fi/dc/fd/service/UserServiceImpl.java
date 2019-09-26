@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
 		UserImpl userSaved = getUserRepository().save(user);
 
-		return userSaved.getUserId();
+		return userSaved.getId();
 	}
 	
 	

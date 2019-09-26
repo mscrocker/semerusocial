@@ -29,8 +29,8 @@ public class UserImpl implements User{
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId", nullable = false, unique = true)
-    private Long userId;
+    @Column(name = "id", nullable = false, unique = true)
+    private Long id;
 
     /**
      * userName of the entity.
@@ -64,8 +64,8 @@ public class UserImpl implements User{
     }
     
 	@Override
-	public Long getUserId() {
-		return userId;
+	public Long getId() {
+		return id;
 	}
 
 	@Override
@@ -79,8 +79,8 @@ public class UserImpl implements User{
 	}
 
 	@Override
-	public void setUserId(Long userId) {
-		this.userId = checkNotNull(userId, "Received a null pointer as userId");
+	public void setId(Long userId) {
+		this.id = checkNotNull(userId, "Received a null pointer as userId");
 	}
 
 	@Override
@@ -110,17 +110,17 @@ public class UserImpl implements User{
         }
 
         final UserImpl other = (UserImpl) obj;
-        return Objects.equals(userId, other.userId);
+        return Objects.equals(id, other.id);
     }
 	
 	@Override
     public final int hashCode() {
-        return Objects.hash(userId);
+        return Objects.hash(id);
     }
 
 	@Override
 	public String toString() {
-		return "UserImpl [userId=" + userId + ", userName=" + userName + ", password=" + password + "]";
+		return "UserImpl [userId=" + id + ", userName=" + userName + ", password=" + password + "]";
 	}
 	
 	
