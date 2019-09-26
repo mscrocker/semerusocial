@@ -18,6 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -77,7 +78,11 @@ public class ITUserService {
 
 		userService.signUp(user);
 
-		UserImpl loggedInUser = userService.login(user.getUserName(), clearPassword);
+		LoginParamsDto loginDto = new LoginParamsDto();
+		loginDto.setUserName(user.getUserName());
+		loginDto.setPassword(clearPassword);
+		
+		UserImpl loggedInUser = userService.login(loginDto);
 
 		assertEquals(user.getUserId(), loggedInUser.getUserId());
 	}
@@ -88,8 +93,13 @@ public class ITUserService {
 		String clearPassword = user.getPassword();
 		
 		userService.signUp(user);
+		
+		LoginParamsDto loginDto = new LoginParamsDto();
+		loginDto.setUserName(user.getUserName());
+		loginDto.setPassword("xd" + clearPassword);
+		
 		assertThrows(IncorrectLoginException.class,() -> {
-			userService.login(user.getUserName(), "xd" + clearPassword);
+			userService.login(loginDto);
 		});
 	}
 	

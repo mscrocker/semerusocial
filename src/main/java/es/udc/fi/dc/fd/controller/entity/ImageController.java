@@ -31,7 +31,7 @@ public class ImageController {
 		
 	}
 	
-	@PostMapping("/add")
+	@PostMapping("/add")	//TODO: password no debería ser devuelta
 	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
 		{
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl( image),userId);

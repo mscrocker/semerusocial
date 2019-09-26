@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
@@ -41,15 +42,16 @@ public class UserServiceImpl implements UserService {
 
 	// 1. Registro de usuarios
 	@Override
-	public void signUp(UserImpl user) throws DuplicateInstanceException {
+	public long signUp(UserImpl user) throws DuplicateInstanceException {
 		if (getUserRepository().existsByUserName(user.getUserName()))
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword((passwordEncoder.encode(user.getPassword())));
 
-		getUserRepository().save(user);
+		UserImpl userSaved = getUserRepository().save(user);
 
+		return userSaved.getUserId();
 	}
 	
 	
@@ -57,7 +59,10 @@ public class UserServiceImpl implements UserService {
 	// 2. Autenticación y salida
 	@Override
 	@Transactional(readOnly = true)
-	public UserImpl login(String userName, String password) throws IncorrectLoginException {
+	public UserImpl login(LoginParamsDto params) throws IncorrectLoginException {
+		String userName = params.getUserName();
+		String password = params.getPassword();
+		
 		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
 
 		if (!user.isPresent()) {

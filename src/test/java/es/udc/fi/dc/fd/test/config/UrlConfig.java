@@ -50,7 +50,14 @@ public final class UrlConfig {
      * Entities REST URL.
      */
     public static final String URL_REST      = "/rest/entity";
+    
+    public static final String URL_USER_REGISTER_POST = "/users/signUp";
 
+    public static final String URL_USER_LOGIN_POST = "/users/login";
+    
+    public static final String URL_IMAGE_ADD_POST = "/images/add";
+    
+    
     /**
      * Default constructor to avoid initialization.
      */

@@ -2,6 +2,8 @@ package es.udc.fi.dc.fd.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +39,12 @@ public class PermissionCheckerImpl implements PermissionChecker {
 	@Override
 	public UserImpl checkUserByUserId(Long userId) throws InstanceNotFoundException {
 		checkUserExists(userId);
-		UserImpl user = userDao.getOne(userId);
-		return user;
+		
+		Optional<UserImpl> user = userDao.findById(userId);
+		if(!user.isPresent()) {
+			throw new InstanceNotFoundException("user", userId);
+		}
+		return user.get();
 	}
 
 }
