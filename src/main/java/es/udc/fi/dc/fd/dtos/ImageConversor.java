@@ -1,6 +1,10 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
+import es.udc.fi.dc.fd.service.Block;
 
 public class ImageConversor {
 
@@ -13,7 +17,7 @@ public class ImageConversor {
 	public final static ImageImpl toImageImpl(ImageCreationDto image) {
 		return new ImageImpl(image.getData(), image.getDescription());
 	}
-	/*
+	
 	public final static BlockDto<ImageCreationDto> toImageCreationDto(Block<ImageImpl> images){
 		List<ImageImpl> imagesIn = images.getItems();
 		
@@ -26,5 +30,5 @@ public class ImageConversor {
 			images.getExistMoreItems()
 		);	
 	}
-	*/
+	
 }
