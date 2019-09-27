@@ -17,3 +17,9 @@ body > section {
     border: 1px solid #d7d7d7;
     border-radius: 4px;
 }
+
+.carruselImg {
+	width: 60%;
+	margin-left: 20%;
+	margin-right: 20%;
+}

@@ -8,7 +8,10 @@ const updateLoggedIn = (loginButtonName, userURL) => {
 
 const authFetch = (url, params, onSuccess, onErrors) => {
 	if (sessionStorage.user_jwt !== undefined){
-		params.headers.Authorization = 'Bearer ' + sessionsStorage.user_jwt;
+		if (params.headers === undefined){
+			params.headers = {};
+		}
+		params.headers.Authorization = 'Bearer ' + sessionStorage.user_jwt;
 	}
 	fetch(url, params)
 	.then((response) => onSuccess(response))
