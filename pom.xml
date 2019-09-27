@@ -170,6 +170,7 @@
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
 					<version>${mysql.version}</version>
+					
 				</dependency>
 			</dependencies>
 		</profile>
@@ -370,7 +371,7 @@
 		<!-- ============================================== -->
 		<!-- ================ JAVA VERSION ================ -->
 		<!-- ============================================== -->
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<!-- ============================================== -->
 		<!-- =============== MANIFEST DATA ================ -->
 		<!-- ============================================== -->
@@ -774,9 +775,9 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>javassist</groupId>
+			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.12.1.GA</version>
+			<version>3.24.1-GA</version>
 		</dependency>
 	</dependencies>
 
