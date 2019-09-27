@@ -1,75 +1,45 @@
 package es.udc.fi.dc.fd.dtos;
 
-
 import java.io.Serializable;
 import java.util.Arrays;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-/**
-* Represents the form used for the creating and editing example entities.
-* <p>
-* This is a DTO, meant to allow communication between the view and the
-* controller, and mapping all the values from the form. Each of field in the
-* DTO matches a field in the form.
-* <p>
-* Includes Java validation annotations, for applying binding validation. This
-* way the controller will make sure it receives all the required data.
-*
-* @author Bernardo Mart&iacute;nez Garrido
-*/
 public final class ImageCreationDto implements Serializable {
 
-   /**
-    * Serialization ID.
-    */
-   private static final long serialVersionUID = 1328776989450853492L;
-   
-   /**
-    * userName field.password
-    * <p>
-    * This is a required field and can't be empty.
-    */
-   @NotEmpty
-   private byte[] data;
+	private static final long serialVersionUID = 1328776989450853492L;
 
-   @NotEmpty
-   private String description;
-   
-   
-	/**
-    * Constructs a DTO for the example entity form.
-    */
-   public ImageCreationDto() {
-       super();
-   }
+	@NotEmpty
+	private byte[] data;
 
+	@NotEmpty
+	private String description;
 
+   	public ImageCreationDto() {
+   		super();
+   	}
+   	
+   	public ImageCreationDto(byte[] data, String description) {
+		super();
+		setData(data);
+		setDescription(description);
+	}
+   	
 	public byte[] getData() {
 		return data;
 	}
-
-
-	public void setImage(byte[] data) {
-		this.data = data;
-	}
-
+	
 	public String getDescription() {
 		return description;
 	}
-
-
+	
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
-	public ImageCreationDto(byte[] data, String description) {
-		super();
-		this.data = data;
-		this.description = description;
-	}
-
 
 	@Override
 	public int hashCode() {
@@ -79,8 +49,7 @@ public final class ImageCreationDto implements Serializable {
 		result = prime * result + Arrays.hashCode(data);
 		return result;
 	}
-
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -100,15 +69,11 @@ public final class ImageCreationDto implements Serializable {
 		return true;
 	}
 
-
 	@Override
 	public String toString() {
-		return "ImageCreationDto [image=" + Arrays.toString(data) + ", description=" + description
+		return "ImageCreationDto [data=" + Arrays.toString(data) + ", description=" + description
 				+ "]";
 	}
 	
-	
-
-
 }
 

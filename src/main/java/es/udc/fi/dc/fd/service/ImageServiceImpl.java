@@ -1,6 +1,5 @@
 package es.udc.fi.dc.fd.service;
 
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Optional;
@@ -19,39 +18,35 @@ import es.udc.fi.dc.fd.repository.ImageRepository;
 @Service
 public class ImageServiceImpl implements ImageService {
 	
-	private PermissionChecker permissionChecker;
 	private final ImageRepository imageRepository;
+	
+	private PermissionChecker permissionChecker;
 	
 	@Autowired
 	public ImageServiceImpl(final ImageRepository imageRepository, final PermissionChecker permissionChecker){
 		super();
 		
 		this.imageRepository = checkNotNull(imageRepository,
-                "Received a null pointer as service imageRepository");
+                "Received a null pointer as imageRepository in ImageServiceImpl");
 		
 		this.permissionChecker = checkNotNull(permissionChecker,
-                "Received a null pointer as service permissionChecker");
+                "Received a null pointer as permissionChecker in ImageServiceImpl");
 	}
 
 	@Override
 	public ImageImpl addImage(ImageImpl image, Long userId) throws InstanceNotFoundException {
-		
 		UserImpl user = permissionChecker.checkUserByUserId(userId);
 		
 		image.setUser(user);
-		
-		ImageImpl i = imageRepository.save(image);
-		
-		
-		return i;
+
+		return getImageRepository().save(image);
 	}
 	
 	@Override
 	public ImageImpl editImage(ImageImpl image, Long imageId, Long userId) throws InstanceNotFoundException, InvalidImageException {
-		
 		permissionChecker.checkUserByUserId(userId);
 		
-		Optional<ImageImpl> resultImage = imageRepository.findById(imageId);
+		Optional<ImageImpl> resultImage = getImageRepository().findById(imageId);
 		
 		//Si la imagen no existe
 		if (!resultImage.isPresent()) {
@@ -65,15 +60,14 @@ public class ImageServiceImpl implements ImageService {
 			throw new InvalidImageException();
 		}
 		
-		return imageRepository.save(image);
+		return getImageRepository().save(image);
 	}
 
 	@Override
 	public void removeImage(ImageImpl image, Long userId) throws InstanceNotFoundException, InvalidImageException {
-		
 		permissionChecker.checkUserByUserId(userId);
 		
-		Optional<ImageImpl> i = imageRepository.findById(image.getImageId());
+		Optional<ImageImpl> i = getImageRepository().findById(image.getImageId());
 		
 		if (!i.isPresent()) {
 			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", i);
@@ -83,27 +77,24 @@ public class ImageServiceImpl implements ImageService {
 			throw new InvalidImageException();
 		}
 		
-		imageRepository.delete(image);
-		
+		getImageRepository().delete(image);
 	}
 
 	@Override
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page) throws InstanceNotFoundException {
-
 		if (userId == null) {
 			throw new InstanceNotFoundException("User not found", userId);
 		}
 
 		permissionChecker.checkUserExists(userId);
 		
-		Slice<ImageImpl> images = imageRepository.findByUserId(userId, PageRequest.of(page, 5));
+		Slice<ImageImpl> images = getImageRepository().findByUserId(userId, PageRequest.of(page, 10));
 		
 		return new Block<>(images.getContent(), images.hasNext());
-		
-		 
-
 	}
-
-
-
+	
+	public ImageRepository getImageRepository() {
+		return imageRepository;
+	}
+	
 }

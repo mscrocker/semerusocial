@@ -29,25 +29,21 @@ public class ImageController {
 		super();
 		
         this.imageService = checkNotNull(imageService,
-                "Received a null pointer as service imageService");
-		
+                "Received a null pointer as imageService in ImageController");
 	}
 	
-	@PostMapping("/add")	//TODO: password no debería ser devuelta
-	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException 
-		{
+	@PostMapping("/add")
+	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException {
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
+		
 		return ImageConversor.toImageCreationDto(imageResult);
 	}
 	
 	@GetMapping("/carrusel")
-	public Block<ImageImpl> getImagesById(@RequestParam int page) throws InstanceNotFoundException{
-		Long userId = 1L;
-		
+	public Block<ImageImpl> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
 		Block<ImageImpl> im = imageService.getImagesByUserId(userId, page);
 				
 		return im;
-		
 	}
 	
 }

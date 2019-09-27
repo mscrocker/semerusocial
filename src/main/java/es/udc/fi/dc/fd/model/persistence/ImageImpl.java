@@ -21,70 +21,43 @@ import es.udc.fi.dc.fd.model.Image;
 
 @Entity(name = "Image")
 @Table(name = "ImageTable")
-@BatchSize(size=5)
+@BatchSize(size=10)
 public class ImageImpl implements Image {
 
-	/**
-     * Serialization ID.
-     */
     @Transient
 	private static final long serialVersionUID = 2L;
 
-    /**
-     * Entity's imageId.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "imageId", nullable = false, unique = true)
     private Long imageId;
-    
-    /**
-     * Entity's user.
-     */
 
     @ManyToOne(optional = false , fetch=FetchType.EAGER )	
 	@JoinColumn(name="user", referencedColumnName="id")
     private UserImpl user;
 
-    /**
-     * userName of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
     @Column(name = "data", nullable = false)
     private byte[] data;
-    
-    /**
-     * password of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
+
     @Column(name = "description")
     private String description;
-    
-    /**
-     * Constructs an example entity.
-     */
+
     public ImageImpl() {
         super();
     }
-	
-
+    
 	public ImageImpl(UserImpl user, byte[] data, String description) {
 		super();
-		this.user = user;
-		this.data = data;
-		this.description = description;
+		setUser(user);
+		setData(data);
+		setDescription(description);
 	}
 	
 	public ImageImpl(byte[] data, String description) {
 		super();
-		this.data = data;
-		this.description = description;
+		setData(data);
+		setDescription(description);
 	}
-
 
 	@Override
 	public Long getImageId() {
@@ -108,24 +81,23 @@ public class ImageImpl implements Image {
 
 	@Override
 	public void setImageId(Long imageId) {
-		this.imageId = checkNotNull(imageId, "Received a null pointer as imageId");
+		this.imageId = checkNotNull(imageId, "Received a null pointer as imageId in ImageImpl");
 	}
 	
 	@Override
 	public void setUser(UserImpl user) {
-		this.user = checkNotNull(user, "Received a null pointer as user");
+		this.user = checkNotNull(user, "Received a null pointer as user in ImageImpl");
 	}
 
 	@Override
-	public void setImage(byte[] data) {
-		this.data = checkNotNull(data, "Received a null pointer as image");
+	public void setData(byte[] data) {
+		this.data = checkNotNull(data, "Received a null pointer as data in ImageImpl");
 	}
 
 	@Override
 	public void setDescription(String description) {
-		this.description = checkNotNull(description, "Received a null pointer as description");
+		this.description = checkNotNull(description, "Received a null pointer as description in ImageImpl");
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -137,7 +109,6 @@ public class ImageImpl implements Image {
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -168,13 +139,10 @@ public class ImageImpl implements Image {
 		return true;
 	}
 
-
 	@Override
 	public String toString() {
 		return "ImageImpl [imageId=" + imageId + ", user=" + user + ", image=" + Arrays.toString(data)
 				+ ", description=" + description + "]";
 	}
-	
-	
 	
 }

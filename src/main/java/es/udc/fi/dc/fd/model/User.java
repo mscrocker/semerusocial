@@ -3,97 +3,29 @@ package es.udc.fi.dc.fd.model;
 import java.io.Serializable;
 
 public interface User extends Serializable {
-	/**
-     * Returns the identifier assigned to this user.
-     * <p>
-     * If no identifier has been assigned yet, then the value is expected to be
-     * {@code null} or lower than zero.
-     *
-     * @return the user identifier
-     */
+
     public Long getId();
 
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's userName
-     */
     public String getUserName();
-    
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
+
     public String getPassword();
-    
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
+
     public int getAge();
-    
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
+
     public String getSex();
-    
-    /**
-     * Returns the name of the user.
-     *
-     * @return the user's password
-     */
+
     public String getCity();
 
-    /**
-     * Sets the identifier assigned to this user.
-     *
-     * @param userId
-     *            the identifier for the user
-     */
     public void setId(final Long userId);
 
-    /**
-     * Changes the name of the entity.
-     *
-     * @param userName
-     *            the name to set on the user
-     */
     public void setUserName(final String userName);
-    
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param password
-     *            the name to set on the user
-     */
+
     public void setPassword(final String password);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param age
-     *            the name to set on the user
-     */
+
     public void setAge(final int age);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param sex
-     *            the name to set on the user
-     */
+
     public void setSex(final String sex);
-    
-    /**
-     * Changes the name of the entity.
-     *
-     * @param city
-     *            the name to set on the user
-     */
+
     public void setCity(final String city);
+    
 }
