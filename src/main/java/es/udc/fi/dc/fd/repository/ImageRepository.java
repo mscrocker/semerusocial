@@ -10,4 +10,5 @@ import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 public interface ImageRepository extends PagingAndSortingRepository<ImageImpl, Long> {
 
 	Slice<ImageImpl> findByUserId(Long UserId, Pageable pageable);
+	
 }

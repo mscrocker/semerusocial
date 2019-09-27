@@ -19,12 +19,10 @@ import es.udc.fi.dc.fd.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-	
 	private UserRepository userRepository;
 	
 	private PermissionChecker permissionChecker;
 
-	
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker){
 		super();
@@ -34,13 +32,8 @@ public class UserServiceImpl implements UserService {
 		
 		this.permissionChecker = checkNotNull(permissionChecker,
                 "Received a null pointer as permissionChecker in UserServiceImpl");
-		
-
 	}
-	
-	// ---------- CASOS DE USO ----------
 
-	// 1. Registro de usuarios
 	@Override
 	public Long signUp(UserImpl user) throws DuplicateInstanceException {
 		if (getUserRepository().existsByUserName(user.getUserName()))
@@ -54,9 +47,6 @@ public class UserServiceImpl implements UserService {
 		return userSaved.getId();
 	}
 	
-	
-
-	// 2. Autenticación y salida
 	@Override
 	@Transactional(readOnly = true)
 	public UserImpl login(LoginParamsDto params) throws IncorrectLoginException {
@@ -75,7 +65,6 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return user.get();
-
 	}
 	
 	@Override

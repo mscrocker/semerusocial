@@ -16,78 +16,33 @@ import es.udc.fi.dc.fd.model.User;
 @Table(name = "UserTable")
 public class UserImpl implements User{
 
-	/**
-     * Serialization ID.
-     */
     @Transient
 	private static final long serialVersionUID = 1L;
-
-    /**
-     * Entity's userId.
-     */
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    /**
-     * userName of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
     @Column(name = "userName", nullable = false, unique = true)
     private String userName;
 
-    /**
-     * password of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
     @Column(name = "password", nullable = false)
     private String password;
-    
-    /**
-     * password of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
+
     @Column(name = "age")
     private int age;
-    
-    /**
-     * password of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
+
     @Column(name = "sex")
     private String sex;
-    
-    /**
-     * password of the entity.
-     * <p>
-     * This is to have additional data apart from the id, to be used on the
-     * tests.
-     */
+
     @Column(name = "city")
     private String city;
     
-    /**
-     * Constructs an example entity.
-     */
     public UserImpl() {
         super();
     }
-    /*
-    public UserImpl(String userName, String password) {
-        super();
-        setUserName(userName);
-        setPassword(password);
-    }
-    */
+    
     public UserImpl(String userName, String password, int age, String sex, String city) {
         super();
         setUserName(userName);
@@ -129,34 +84,32 @@ public class UserImpl implements User{
 
 	@Override
 	public void setId(Long userId) {
-		this.id = checkNotNull(userId, "Received a null pointer as userId");
+		this.id = checkNotNull(userId, "Received a null pointer as id in UserImpl");
 	}
 
 	@Override
 	public void setUserName(String userName) {
-		this.userName = checkNotNull(userName, "Received a null pointer as userName");
-		
+		this.userName = checkNotNull(userName, "Received a null pointer as userName in UserImpl");
 	}
 
 	@Override
 	public void setPassword(String password) {
-		this.password = checkNotNull(password, "Received a null pointer as password");
-		
+		this.password = checkNotNull(password, "Received a null pointer as password in UserImpl");
 	}
 	
 	@Override
 	public void setAge(int age) {
-		this.age = checkNotNull(age, "Received a null pointer as age");
+		this.age = checkNotNull(age, "Received a null pointer as age in UserImpl");
 	}
 
 	@Override
 	public void setSex(String sex) {
-		this.sex = checkNotNull(sex, "Received a null pointer as sex");
+		this.sex = checkNotNull(sex, "Received a null pointer as sex in UserImpl");
 	}
 
 	@Override
 	public void setCity(String city) {
-		this.city = checkNotNull(city, "Received a null pointer as city");
+		this.city = checkNotNull(city, "Received a null pointer as city in UserImpl");
 	}
 
 	@Override
@@ -216,7 +169,5 @@ public class UserImpl implements User{
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", age=" + age + ", sex="
 				+ sex + ", city=" + city + "]";
 	}
-	
-	
 
 }
