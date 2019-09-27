@@ -40,12 +40,16 @@
 								th:text="#{label.exception}">Exception</a></li>
 						</ul></li>
 					<li>
-						<form>
-							<button formaction="/login" class="btn btn-primary" style="margin:12px;appearance:button;"  th:text="#{label.login}"></button>
+						<form id="loginForm">
+							<button id="loginButton" th:formaction="@{'/login'}" class="btn btn-primary" style="margin:12px;appearance:button;"  th:text="#{label.login}"></button>
 						</form>
 					</li>
 				</ul>
 			</div>
 		</div>
 	</nav>
+	<div th:include="fragments/scripts :: user" />
+	<script>
+		window.addEventListener('load', updateLoggedIn("loginButton", "[[@{'/users/profile'}]]"), false);
+	</script>
 </header>

@@ -17,7 +17,7 @@
 	
 	<div class="container">
 		<img th:src="@{/images/login.jpg}" class="img-responsive center-block" width="300" height="300" alt="Logo" />
-		<form th:action="@{/login}" method="POST" class="form-signin">
+		<form id="formLogin" th:action="@{/login}" method="POST" class="form-signin">
 			<h3 class="form-signin-heading" th:text="Welcome"></h3>
 			<br/>
 			 
@@ -34,6 +34,16 @@
 	</div>
 	<footer>
       <div th:include="fragments/scripts :: general" />
+      <div th:include="fragments/scripts :: login" />
    </footer>
+   <script type="text/javascript">
+   	window.addEventListener('load', () => {
+   		const params = () => { return {
+   			username: document.getElementById("username").value,
+   			password: document.getElementById("password").value
+   		}};
+   		document.getElementById("formLogin").addEventListener('submit', (e) => handleLogin(e, params(), [[@{'/'}]]));
+   	});
+   </script>
 </body>
 </html>
