@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
@@ -40,10 +41,10 @@ public class ImageController {
 	}
 	
 	@GetMapping("/carrusel")
-	public Block<ImageImpl> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
+	public BlockDto<ImageCreationDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
 		Block<ImageImpl> im = imageService.getImagesByUserId(userId, page);
 				
-		return im;
+		return ImageConversor.toImageCreationDto(im);
 	}
 	
 }

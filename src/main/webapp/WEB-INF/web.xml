@@ -54,5 +54,10 @@
    	  <filter-name>JwtFilter</filter-name>
    	  <url-pattern>/images/*</url-pattern>
    </filter-mapping>
+   <filter-mapping>
+   	  <filter-name>JwtFilter</filter-name>
+   	  <url-pattern>/data/*</url-pattern>
+   </filter-mapping>
+   
 
 </web-app>

@@ -32,7 +32,7 @@ public class ImageImpl implements Image {
     @Column(name = "imageId", nullable = false, unique = true)
     private Long imageId;
 
-    @ManyToOne(optional = false , fetch=FetchType.EAGER )	
+    @ManyToOne(optional = false , fetch=FetchType.LAZY )	
 	@JoinColumn(name="user", referencedColumnName="id")
     private UserImpl user;
 
