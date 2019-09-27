@@ -15,6 +15,7 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
+import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.ImageService;
@@ -34,17 +35,17 @@ public class ImageController {
 	}
 	
 	@PostMapping("/add")
-	public ImageCreationDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException {
+	public ReturnedImageDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException {
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 		
-		return ImageConversor.toImageCreationDto(imageResult);
+		return ImageConversor.toReturnedImageDto(imageResult);
 	}
 	
 	@GetMapping("/carrusel")
-	public BlockDto<ImageCreationDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
-		Block<ImageImpl> im = imageService.getImagesByUserId(userId, page);
+	public BlockDto<ReturnedImageDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
+		Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 				
-		return ImageConversor.toImageCreationDto(im);
+		return ImageConversor.toReturnedImageDto(image);
 	}
 	
 }

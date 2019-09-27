@@ -74,12 +74,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserImpl findById(Long userId) throws InstanceNotFoundException {
-		UserImpl user = getUserRepository().getOne(userId);
+		Optional<UserImpl> user = getUserRepository().findById(userId);
 
 		if (user==null)
 			throw new InstanceNotFoundException("Usuario con id="+userId, user);
 
-		return user;
+		return user.get();
 	}
 	
 	@Override
