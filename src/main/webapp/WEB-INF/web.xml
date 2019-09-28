@@ -56,7 +56,7 @@
    </filter-mapping>
    <filter-mapping>
    	  <filter-name>JwtFilter</filter-name>
-   	  <url-pattern>/data/*</url-pattern>
+   	  <url-pattern>/users/data</url-pattern>
    </filter-mapping>
    
 

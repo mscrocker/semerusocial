@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
+import es.udc.fi.dc.fd.service.BlockImageByUserId;
 
 public class ImageConversor {
 
@@ -13,6 +14,10 @@ public class ImageConversor {
 
 	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
 		return new ImageCreationDto(image.getData(), image.getDescription());
+	}
+	
+	public final static ImageCreatedDto toImageCreatedDto(ImageImpl image) {
+		return new ImageCreatedDto(image.getImageId());
 	}
 	
 	public final static ImageImpl toImageImpl(ImageCreationDto image) {
@@ -29,6 +34,18 @@ public class ImageConversor {
 		return new BlockDto<ReturnedImageDto>(
 			imagesOut,
 			images.getExistMoreItems()
+		);	
+	}
+	
+	public final static BlockImageByUserIdDto<ReturnedImageDto> toReturnedImageDto(BlockImageByUserId<ImageImpl> image){
+		ImageImpl imageIn = image.getImage();
+		
+		ReturnedImageDto imageOut = toReturnedImageDto(imageIn);
+
+		return new BlockImageByUserIdDto<ReturnedImageDto>(
+			imageOut,
+			image.getPrevId(),
+			image.getNextId()
 		);	
 	}
 	

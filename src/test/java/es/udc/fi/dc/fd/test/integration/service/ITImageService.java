@@ -20,7 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.controller.exception.InvalidImageException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
@@ -99,7 +99,7 @@ public class ITImageService {
 	// ----- editImage -----
 
 	@Test
-	public void testEditImage() throws InstanceNotFoundException, InvalidImageException {
+	public void testEditImage() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userEditImage", "passEditImage", 1, "hombre", "coruna");
 
 		ImageImpl image = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
@@ -114,7 +114,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testEditImageWithInstanceNotFoundException() throws InstanceNotFoundException, InvalidImageException {
+	public void testEditImageWithInstanceNotFoundException() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userEditImageNotfound", "passEditImageNotfound", 1, "mujer", "ferrol");
 
 		ImageImpl image2 = createImage(user, new byte[] { 4, 5, 6 }, "esto es otra descripcion");
@@ -125,7 +125,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testEditImageWithInvalidImageException() throws InstanceNotFoundException, InvalidImageException {
+	public void testEditImageWithInvalidImageException() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userEditImageNo", "passEditImage", 1, "mujer", "ferrol");
 		UserImpl user2 = signUp("invalid", "invalid", 1, "mujer", "ferrol");
 
@@ -134,7 +134,7 @@ public class ITImageService {
 
 		ImageImpl imageCreated = imageService.addImage(image2, user2.getId());
 
-		assertThrows(InvalidImageException.class, () -> {
+		assertThrows(ItsNotYourImageException.class, () -> {
 			imageService.editImage(image1, imageCreated.getImageId(), user.getId());
 		});
 	}
@@ -142,7 +142,7 @@ public class ITImageService {
 	// ----- removeImage -----
 
 	@Test
-	public void testRemoveImage() throws InstanceNotFoundException, InvalidImageException {
+	public void testRemoveImage() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userRemoveImage", "passRemoveImage", 1, "hombre", "coruna");
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
@@ -154,7 +154,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testRemoveImageWithInstanceNotFoundException() throws InstanceNotFoundException, InvalidImageException {
+	public void testRemoveImageWithInstanceNotFoundException() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userRemoveImageINFE", "passRemoveImageINFE", 1, "hombre", "coruna");
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
@@ -169,7 +169,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testRemoveImageWithInvalidImageException() throws InstanceNotFoundException, InvalidImageException {
+	public void testRemoveImageWithInvalidImageException() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userRemoveImageIIE", "passRemoveImageIIE", 1, "hombre", "coruna");
 		UserImpl user2 = signUp("userRemoveImageIIE2", "passRemoveImageIIE2", 1, "hombre", "coruna");
 		
@@ -177,7 +177,7 @@ public class ITImageService {
 		
 		ImageImpl imageCreated = imageService.addImage(i,user.getId());
 		
-		assertThrows(InvalidImageException.class,() -> {
+		assertThrows(ItsNotYourImageException.class,() -> {
 			imageService.removeImage(imageCreated,user2.getId());
 		});
 	}
