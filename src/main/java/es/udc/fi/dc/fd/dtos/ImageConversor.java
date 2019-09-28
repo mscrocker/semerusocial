@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,17 +19,23 @@ public class ImageConversor {
 		return new ImageImpl(image.getData(), image.getDescription());
 	}
 	
-	public final static BlockDto<ImageCreationDto> toImageCreationDto(Block<ImageImpl> images){
+	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images){
 		List<ImageImpl> imagesIn = images.getItems();
 		
-		List<ImageCreationDto> imagesOut = imagesIn.stream().map(
-				e -> toImageCreationDto(e)
+		List<ReturnedImageDto> imagesOut = imagesIn.stream().map(
+				e -> toReturnedImageDto(e)
 		).collect(Collectors.toList());
 		
-		return new BlockDto<ImageCreationDto>(
+		return new BlockDto<ReturnedImageDto>(
 			imagesOut,
 			images.getExistMoreItems()
 		);	
+	}
+	
+	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {
+		
+		return new ReturnedImageDto(Arrays.toString(image.getData()).trim(), image.getDescription());
+	
 	}
 	
 }
