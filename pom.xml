@@ -159,8 +159,8 @@
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
 				<database.url>jdbc:mysql://localhost:3306/friendmatch</database.url>
-				<database.username>friendmatch</database.username>
-				<database.password>friendmatch</database.password>
+				<database.username>root</database.username>
+				<database.password>root</database.password>
 				<!-- Spring context -->
 				<database.tag>mysql</database.tag>
 			</properties>

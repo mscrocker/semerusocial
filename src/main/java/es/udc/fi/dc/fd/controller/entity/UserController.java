@@ -3,6 +3,8 @@ package es.udc.fi.dc.fd.controller.entity;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,8 +129,10 @@ public class UserController {
 	@GetMapping("/data")
 	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
 		UserImpl user = userService.findById(userId);
-		
-		return new UserDataDto(user.getAge(),user.getSex(), user.getCity());
+		LocalDateTime today = LocalDateTime.now();
+		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
+
+		return new UserDataDto(period.getYears(),user.getSex(), user.getCity());
 	}
 
 	private String generateServiceToken(UserImpl user) {

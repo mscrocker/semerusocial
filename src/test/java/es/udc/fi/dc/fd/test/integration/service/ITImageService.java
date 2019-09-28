@@ -3,6 +3,7 @@ package es.udc.fi.dc.fd.test.integration.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,11 @@ public class ITImageService {
 		super();
 	}
 
-	private UserImpl createUser(String userName, String password, int age, String sex, String city) {
-		return new UserImpl(userName, password, age, sex, city);
+	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city) {
+		return new UserImpl(userName, password, date, sex, city);
+	}
+	private LocalDateTime getDateTime(int day, int month, int year) {
+		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
 	private ImageImpl createImage(UserImpl user, byte[] image, String description) {
@@ -57,7 +61,7 @@ public class ITImageService {
 
 	private UserImpl signUp(String userName, String password, int age, String sex, String city) {
 
-		UserImpl user = createUser(userName, password, age, sex, city);
+		UserImpl user = createUser(userName, password, getDateTime(1,1,2000), sex, city);
 
 		try {
 			userService.signUp(user);
@@ -85,7 +89,7 @@ public class ITImageService {
 	@Test
 	public void testAddImageWithInstanceNotFoundException()
 			throws InstanceNotFoundException, DuplicateInstanceException {
-		UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException", 1, "hombre", "coruna");
+		UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException", getDateTime(1,1,2000), "hombre", "coruna");
 
 		user.setId(-1L);
 

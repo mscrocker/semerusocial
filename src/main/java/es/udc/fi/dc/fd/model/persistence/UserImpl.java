@@ -2,6 +2,8 @@ package es.udc.fi.dc.fd.model.persistence;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,9 +32,9 @@ public class UserImpl implements User{
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "age")
-    private int age;
-
+    @Column(name = "date")
+    private LocalDateTime date;
+    
     @Column(name = "sex")
     private String sex;
 
@@ -43,14 +45,6 @@ public class UserImpl implements User{
         super();
     }
     
-    public UserImpl(String userName, String password, int age, String sex, String city) {
-        super();
-        setUserName(userName);
-        setPassword(password);
-        setAge(age);
-        setSex(sex);
-        setCity(city);
-    }
     
 	@Override
 	public Long getId() {
@@ -67,10 +61,6 @@ public class UserImpl implements User{
 		return password;
 	}
 	
-	@Override
-	public int getAge() {
-		return age;
-	}
 
 	@Override
 	public String getSex() {
@@ -98,11 +88,6 @@ public class UserImpl implements User{
 	}
 	
 	@Override
-	public void setAge(int age) {
-		this.age = checkNotNull(age, "Received a null pointer as age in UserImpl");
-	}
-
-	@Override
 	public void setSex(String sex) {
 		this.sex = checkNotNull(sex, "Received a null pointer as sex in UserImpl");
 	}
@@ -113,17 +98,29 @@ public class UserImpl implements User{
 	}
 
 	@Override
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	@Override
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
+
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + age;
 		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
 		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -134,12 +131,15 @@ public class UserImpl implements User{
 		if (getClass() != obj.getClass())
 			return false;
 		UserImpl other = (UserImpl) obj;
-		if (age != other.age)
-			return false;
 		if (city == null) {
 			if (other.city != null)
 				return false;
 		} else if (!city.equals(other.city))
+			return false;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -164,10 +164,24 @@ public class UserImpl implements User{
 		return true;
 	}
 
+
 	@Override
 	public String toString() {
-		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", age=" + age + ", sex="
+		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
 				+ sex + ", city=" + city + "]";
 	}
 
+
+	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+	}
+
+
+	
+	
 }

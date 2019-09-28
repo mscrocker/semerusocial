@@ -1,6 +1,7 @@
 package es.udc.fi.dc.fd.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public interface User extends Serializable {
 
@@ -10,7 +11,7 @@ public interface User extends Serializable {
 
     public String getPassword();
 
-    public int getAge();
+    public LocalDateTime getDate();
 
     public String getSex();
 
@@ -22,7 +23,7 @@ public interface User extends Serializable {
 
     public void setPassword(final String password);
 
-    public void setAge(final int age);
+    public void setDate(final LocalDateTime date);
 
     public void setSex(final String sex);
 
