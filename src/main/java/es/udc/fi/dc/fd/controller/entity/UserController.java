@@ -27,7 +27,9 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
+import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
@@ -46,39 +48,35 @@ public class UserController {
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 	
 	private MessageSource messageSource;
-	
+
 	private final UserService userService;
+
+	@Autowired
+	public UserController(final UserService userService, final MessageSource messageSource) {
+		super();
+
+		this.userService = checkNotNull(userService, "Received a null pointer as userService in UserController");
+
+		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in UserController");
+
+	}
 	
 	@Bean
 	JwtGenerator JwtGenerator() {
 		return new JwtGeneratorImpl();
 	}
-	
-	@Autowired
-	public UserController(final UserService userService, final MessageSource messageSource){
-		super();
-		
-        this.userService = checkNotNull(userService,
-                "Received a null pointer as userService in UserController");
-        
-        this.messageSource = checkNotNull(messageSource,
-                "Received a null pointer as messageSource in UserController");
-		
-	}
-	
+
 	@ExceptionHandler(DuplicateInstanceException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {
-		
+	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {		
 		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE, 
 				new Object[] {nameMessage, exception.getKey().toString()}, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
-		
 	}
-	
+
 	@ExceptionHandler(IncorrectLoginException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
@@ -101,29 +99,29 @@ public class UserController {
 		return new ErrorsDto(errorMessage);
 		
 	}
-	
-	@PostMapping("/signUp")
-	public ResponseEntity<UserAuthenticatedDto> signUp(
-		@RequestBody UserImpl user) throws DuplicateInstanceException {
-		
-		userService.signUp(user);
 
-		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(), generateServiceToken(user));
-		
-
-		URI location = ServletUriComponentsBuilder
-			.fromCurrentRequest().path("/{id}")
-			.buildAndExpand(user.getId()).toUri();
-
-		return ResponseEntity.created(location).body(userAuthenticated);
-	}
-	
 	@PostMapping("/login")
 	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
-		
+
 		UserImpl user = userService.login(params);
-		
-		return new UserAuthenticatedDto(params.getUserName(),generateServiceToken(user));
+
+		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
+	}
+
+	@PostMapping("/signUp")
+	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
+			throws DuplicateInstanceException {
+
+		UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
+		userService.signUp(user);
+
+		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(),
+				generateServiceToken(user));
+
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
+				.toUri();
+
+		return ResponseEntity.created(location).body(userAuthenticated);
 	}
 	
 	@GetMapping("/data")
@@ -132,11 +130,11 @@ public class UserController {
 		
 		return new UserDataDto(user.getAge(),user.getSex(), user.getCity());
 	}
-	
+
 	private String generateServiceToken(UserImpl user) {
 		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
-		
+
 		return jwtGenerator.generate(jwtInfo);
 	}
-	
+
 }

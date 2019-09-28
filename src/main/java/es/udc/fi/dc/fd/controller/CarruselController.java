@@ -10,4 +10,9 @@ public class CarruselController {
 	public final String displayLogin() {
 		return UserViewConstants.CARRUSEL_FORM;
 	}
+	
+	@GetMapping(path = "/addImage")
+	public final String displayAddImage() {
+		return UserViewConstants.ADD_IMAGE_FORM;
+	}
 }
