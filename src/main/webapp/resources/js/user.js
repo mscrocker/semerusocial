@@ -11,6 +11,7 @@ const authFetch = (url, params, onSuccess, onErrors) => {
 		if (params.headers === undefined){
 			params.headers = {};
 		}
+		
 		params.headers.Authorization = 'Bearer ' + sessionStorage.user_jwt;
 	}
 	fetch(url, params)
