@@ -12,7 +12,9 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+<head th:include="fragments/header :: header" />
 <body>
+	<header class="header" th:include="fragments/menu :: menu" />
 	<form th:action="@{/login}" method="get">
 		<button class="btn btn-md btn-warning btn-block" type="Submit">Go
 			To Login Page</button>
@@ -21,21 +23,44 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
-				<form autocomplete="off" action="#" th:action="@{/registration}"
-					method="post" class="form-horizontal" role="form">
+				<form id="signUpForm" th:action="@{/signUp}" method="POST"
+					class="form-signin">
 					<h2>Registration Form</h2>
 
 
 					<div class="form-group">
 						<div class="col-sm-9">
-							<input type="text"  placeholder="Username"
-								class="form-control" />
+							<input type="text" id="username" placeholder="Username"
+								class="form-control" required />
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-sm-9">
-							<input type="password"
-								placeholder="Password" class="form-control" />
+							<input type="password" id="password" placeholder="Password"
+								class="form-control" required/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-9">
+							<input type="date" id="birthday" name="birthday" min="1900-01-01"
+								class="form-control" required/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-9">
+							<select name="Genre" id="genre" size="3" class="form-control" required>
+								<option value="male">Male</option>
+								<option value="female">Female</option>
+								<option value="non_binary">Non Binary</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-9">
+							<input name="city" id="city" type="text" class="form-control" />
 						</div>
 					</div>
 
@@ -53,6 +78,26 @@
 			</div>
 		</div>
 	</div>
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+		<div th:include="fragments/scripts :: register" />
 
+
+	</footer>
+	<script type="text/javascript">
+   	window.addEventListener('load', () => {
+   		const dateInput = document.getElementById("birthday");
+   		dateInput.max = new Date().toISOString().split("T")[0];
+   		const params = () => { return {
+   			username: document.getElementById("username").value,
+   			password: document.getElementById("password").value,
+   			date: dateInput.value,
+   			genre: document.getElementById("genre").value,
+   			city: document.getElementById("city").value
+   		}};
+   		document.getElementById("signUpForm").addEventListener('submit', (e) => handleRegister(e, params(), "[[@{'/'}]]"));
+   	});
+   </script>
 </body>
+
 </html>

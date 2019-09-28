@@ -56,7 +56,7 @@ var Base64Binary = {
 	
 		return uarray;	
 	}
-}
+};
 
 var loadedImage = false;
 
@@ -111,7 +111,7 @@ const uploadImage = (description, image, uploadURL) => {
 		method: "POST",
 		body: JSON.stringify({
 			data: [].slice.call(Uint8Array.from(atob(rawImageData), c => c.charCodeAt(0))),
-			description
+			description: description
 		}),
 		headers: { "Content-Type": "application/json" }
 	}, finishUploadImage, finishUploadWithErrors);
