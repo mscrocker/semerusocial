@@ -2,10 +2,13 @@ const handleRegister = (e, params, baseUrl) => {
 	e.preventDefault();
 	console.log("yes");
 	const url = baseUrl + "users/signUp";
+	const date = new Date(params.date);
 	const userData = {
 		userName: params.username,
 		password: params.password,
-		age: new Date(params.date).getTime(),
+		day: date.getUTCDate(),
+		month: date.getUTCMonth() + 1, //from 0 -> 11 and we want 1 -> 12 
+		year:date.getUTCFullYear(),
 		sex: params.genre,
 		city: params.city
 	};
