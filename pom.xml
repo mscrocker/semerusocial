@@ -333,7 +333,7 @@
 			<id>deployment</id>
 			<properties>
 				<!-- Tests are skipped -->
-				<maven.test.skip>true</maven.test.skip>
+				<!--<maven.test.skip>true</maven.test.skip>-->
 			</properties>
 		</profile>
 	</profiles>
@@ -779,6 +779,8 @@
 			<artifactId>javassist</artifactId>
 			<version>3.24.1-GA</version>
 		</dependency>
+
+        
 	</dependencies>
 
 	<!-- ********************************************** -->
@@ -813,6 +815,8 @@
 					<artifactId>jshint-maven-plugin</artifactId>
 					<version>${plugin.jshint.version}</version>
 				</plugin>
+
+
 				<plugin>
 					<!-- Minify -->
 					<!-- Minifies files. -->
@@ -822,20 +826,48 @@
 				</plugin>
 
 
+				<!--integration-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>test-compile</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                    <executions>
+                      <execution>
+                        <goals>
+                          <goal>integration-test</goal>
+                          <goal>verify</goal>
+                        </goals>
+                      </execution>
+                    </executions>
+                </plugin> 
+
+                <!--
 				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-				</plugin>
-				<!--  <plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<configuration>
+                        <useFile>false</useFile>
 						<includes>
 							<include>**/*IT.java</include>
 						</includes>
 					</configuration>
 					<executions>
 						<execution>
+                            <id>failsafe-integration-tests</id>
 							<phase>integration-test</phase>
 							<goals>
 								<goal>integration-test</goal>
