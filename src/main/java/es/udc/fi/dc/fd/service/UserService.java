@@ -14,13 +14,7 @@ public interface UserService {
 	public UserImpl login(LoginParamsDto params)  
 			throws IncorrectLoginException;
 	
-	UserImpl loginFromUserId(Long userId) 
-			throws InstanceNotFoundException;
-	
-	public UserImpl findById(Long userId) 
-			throws InstanceNotFoundException;
-
-	public UserImpl findByUserName(String userName) 
+	public UserImpl loginFromUserId(Long userId) 
 			throws InstanceNotFoundException;
 
 }

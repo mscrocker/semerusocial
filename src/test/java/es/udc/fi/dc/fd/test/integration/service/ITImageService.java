@@ -25,6 +25,7 @@ import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
+import es.udc.fi.dc.fd.service.BlockImageByUserId;
 import es.udc.fi.dc.fd.service.ImageService;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -87,8 +88,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testAddImageWithInstanceNotFoundException()
-			throws InstanceNotFoundException, DuplicateInstanceException {
+	public void testAddImageWithInstanceNotFoundException() {
 		UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException", getDateTime(1,1,2000), "hombre", "coruna");
 
 		user.setId(-1L);
@@ -118,7 +118,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testEditImageWithInstanceNotFoundException() throws InstanceNotFoundException, ItsNotYourImageException {
+	public void testEditImageWithInstanceNotFoundException() {
 		UserImpl user = signUp("userEditImageNotfound", "passEditImageNotfound", 1, "mujer", "ferrol");
 
 		ImageImpl image2 = createImage(user, new byte[] { 4, 5, 6 }, "esto es otra descripcion");
@@ -129,7 +129,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testEditImageWithInvalidImageException() throws InstanceNotFoundException, ItsNotYourImageException {
+	public void testEditImageWithInvalidImageException() throws InstanceNotFoundException {
 		UserImpl user = signUp("userEditImageNo", "passEditImage", 1, "mujer", "ferrol");
 		UserImpl user2 = signUp("invalid", "invalid", 1, "mujer", "ferrol");
 
@@ -158,7 +158,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testRemoveImageWithInstanceNotFoundException() throws InstanceNotFoundException, ItsNotYourImageException {
+	public void testRemoveImageWithInstanceNotFoundException() throws InstanceNotFoundException {
 		UserImpl user = signUp("userRemoveImageINFE", "passRemoveImageINFE", 1, "hombre", "coruna");
 
 		ImageImpl i = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
@@ -173,7 +173,7 @@ public class ITImageService {
 	}
 
 	@Test
-	public void testRemoveImageWithInvalidImageException() throws InstanceNotFoundException, ItsNotYourImageException {
+	public void testRemoveImageWithInvalidImageException() throws InstanceNotFoundException {
 		UserImpl user = signUp("userRemoveImageIIE", "passRemoveImageIIE", 1, "hombre", "coruna");
 		UserImpl user2 = signUp("userRemoveImageIIE2", "passRemoveImageIIE2", 1, "hombre", "coruna");
 		
@@ -189,22 +189,30 @@ public class ITImageService {
 	//----- getImagesById -----
 		
 	@Test
-	public void testGetImagesById() throws InstanceNotFoundException {
-
+	public void testGetImagesById() throws InstanceNotFoundException, ItsNotYourImageException {
 		UserImpl user = signUp("userTestGet", "userTestGet", 2, "hombre", "coruna");
 
-		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i4 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i5 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
+		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion1");
+		ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion2");
+		ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion3");
+		ImageImpl i4 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion4");
+		ImageImpl i5 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion5");
+		ImageImpl i6 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion6");
+		ImageImpl i7 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion7");
+		ImageImpl i8 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion8");
+		ImageImpl i9 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion9");
+		ImageImpl i10 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion10");
 
 		ImageImpl imageCreated1 = imageService.addImage(i1, user.getId());
 		ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
 		ImageImpl imageCreated3 = imageService.addImage(i3, user.getId());
 		ImageImpl imageCreated4 = imageService.addImage(i4, user.getId());
 		ImageImpl imageCreated5 = imageService.addImage(i5, user.getId());
-
+		ImageImpl imageCreated6 = imageService.addImage(i6, user.getId());
+		ImageImpl imageCreated7 = imageService.addImage(i7, user.getId());
+		ImageImpl imageCreated8 = imageService.addImage(i8, user.getId());
+		ImageImpl imageCreated9 = imageService.addImage(i9, user.getId());
+		ImageImpl imageCreated10 = imageService.addImage(i10, user.getId());
 		
 		Block<ImageImpl> imageListResult = imageService.getImagesByUserId(user.getId(), 0);
 
@@ -214,28 +222,111 @@ public class ITImageService {
 		imageList.add(imageCreated3);
 		imageList.add(imageCreated4);
 		imageList.add(imageCreated5);
+		imageList.add(imageCreated6);
+		imageList.add(imageCreated7);
+		imageList.add(imageCreated8);
+		imageList.add(imageCreated9);
+		imageList.add(imageCreated10);
 		
-		assertEquals(imageListResult.getItems(),imageList);
+		assertEquals(imageListResult.getImages(),imageList);
+		
+		ImageImpl i11 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion11");
+		ImageImpl imageCreated11 = imageService.addImage(i11, user.getId());
+		imageList.add(imageCreated11);
+		imageListResult = imageService.getImagesByUserId(user.getId(), 0);
+		
+		assertEquals(imageListResult.getExistMoreImages(),true);
 		
 		UserImpl user2 = signUp("userTestGet2", "userTestGet2", 12, "hombre", "coruna");
 
-		ImageImpl i6 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i7 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion");
-		ImageImpl i8 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion");
+		ImageImpl i12 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion12");
+		ImageImpl i13 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion13");
+		ImageImpl i14 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion14");
+		ImageImpl i15 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion15");
 
-		ImageImpl imageCreated6 = imageService.addImage(i6, user2.getId());
-		ImageImpl imageCreated7 = imageService.addImage(i7, user2.getId());
-		ImageImpl imageCreated8 = imageService.addImage(i8, user2.getId());
-
+		ImageImpl imageCreated12 = imageService.addImage(i12, user2.getId());
+		ImageImpl imageCreated13 = imageService.addImage(i13, user2.getId());
+		ImageImpl imageCreated14 = imageService.addImage(i14, user2.getId());
+		ImageImpl imageCreated15 = imageService.addImage(i15, user2.getId());
 		
 		Block<ImageImpl> imageListResult2 = imageService.getImagesByUserId(user2.getId(), 0);
 
 		List <ImageImpl> imageList2 = new ArrayList<ImageImpl>();
-		imageList2.add(imageCreated6);
-		imageList2.add(imageCreated7);
-		imageList2.add(imageCreated8);
+		imageList2.add(imageCreated12);
+		imageList2.add(imageCreated13);
+		imageList2.add(imageCreated14);
+		imageList2.add(imageCreated15);
 		
-		assertEquals(imageListResult2.getItems(),imageList2);
+		assertEquals(imageListResult2.getImages(),imageList2);
+	}
+	
+	@Test
+	public void testGetImagesByIdWithInstanceNotFoundException() throws InstanceNotFoundException {
+		UserImpl user = signUp("userTestGetImagesINFE", "userTestGetGetImagesINFE", 2, "hombre", "coruna");
+
+		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
+		
+		imageService.addImage(i1, user.getId());
+		
+		user.setId(-1L);
+		
+		assertThrows(InstanceNotFoundException.class,() -> {
+			imageService.getImagesByUserId(user.getId(), 0);
+		});
+	}
+	
+	//----- getImageById -----
+	
+	@Test
+	public void testGetImageById() throws InstanceNotFoundException, ItsNotYourImageException {
+		UserImpl user = signUp("userTestGetImage", "userTestGetImage", 2, "hombre", "coruna");
+
+		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion1");
+		ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion2");
+		ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion3");
+		
+		ImageImpl imageCreated1 = imageService.addImage(i1, user.getId());
+		ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
+		ImageImpl imageCreated3 = imageService.addImage(i3, user.getId());
+		
+		BlockImageByUserId<ImageImpl> imageResult1 = imageService.getImageByUserId(user.getId(),imageCreated1.getImageId());
+		BlockImageByUserId<ImageImpl> imageResult2 = imageService.getImageByUserId(user.getId(),imageCreated2.getImageId());
+		BlockImageByUserId<ImageImpl> imageResult3 = imageService.getImageByUserId(user.getId(),imageCreated3.getImageId());
+		
+		assertEquals(imageCreated1,imageResult1.getImage());
+		assertEquals(imageCreated2,imageResult2.getImage());
+		assertEquals(imageCreated3,imageResult3.getImage());
+		assertEquals(imageCreated1.getImageId(), imageResult2.getPrevId());
+		assertEquals(imageCreated3.getImageId(), imageResult2.getNextId());
 	}
 
+	@Test
+	public void testGetImageByIdWithInstanceNotFoundException() throws InstanceNotFoundException {
+		UserImpl user = signUp("userTestGetImageINFE", "userTestGetImageINFE", 2, "hombre", "coruna");
+
+		ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 }, "esto es una descripcion");
+		
+		ImageImpl imageResult=imageService.addImage(i1, user.getId());
+		
+		imageResult.setImageId(-1L);
+		
+		assertThrows(InstanceNotFoundException.class,() -> {
+			imageService.getImageByUserId(user.getId(), imageResult.getImageId());
+		});
+	}
+	
+	@Test
+	public void testGetImageByIdItsNotYourImageException() throws InstanceNotFoundException {
+		UserImpl user1 = signUp("userTestGetImageINYI1", "userTestGetImageINYI1", 2, "hombre", "coruna");
+		UserImpl user2 = signUp("userTestGetImageINYI2", "userTestGetImageINYI2", 2, "hombre", "coruna");
+
+		ImageImpl i1 = createImage(user1, new byte[] { 1, 2, 3 }, "esto es una descripcion");
+
+		ImageImpl imageResult=imageService.addImage(i1, user1.getId());
+				
+		assertThrows(ItsNotYourImageException.class,() -> {
+			imageService.getImageByUserId(user2.getId(), imageResult.getImageId());
+		});
+	}
+	
 }

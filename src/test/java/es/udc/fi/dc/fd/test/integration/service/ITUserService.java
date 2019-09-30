@@ -50,7 +50,6 @@ public class ITUserService {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 	
-	
 	//----- signUp -----
 
 	@Test
@@ -73,7 +72,6 @@ public class ITUserService {
 		});
 	}
 	
-	
 	//----- login -----
 	
 	@Test
@@ -93,7 +91,7 @@ public class ITUserService {
 	}
 	
 	@Test
-	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, IncorrectLoginException {
+	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException {
 		UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass", getDateTime(1,1,2000), "hombre", "coruna");
 		String clearPassword = user.getPassword();
 		
@@ -108,10 +106,27 @@ public class ITUserService {
 		});
 	}
 	
+	//----- loginFromUserId -----
+	
 	@Test
-	public void testLoginWithNonExistentId() {
+	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException {
+		UserImpl user = createUser("userLoginFromUserId","passwordLoginFromUserId", getDateTime(1,1,2000), "hombre", "coruna");
+		
+		userService.signUp(user);
+		
+		userService.loginFromUserId(user.getId());
+	}
+	
+	@Test
+	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException {
+		UserImpl user = createUser("userLoginFromUserIdINFE","passwordLoginFromUserIdINFE", getDateTime(1,1,2000), "hombre", "coruna");
+		
+		userService.signUp(user);
+		
+		user.setId(-1L);
+		
 		assertThrows(InstanceNotFoundException.class,() -> {
-			userService.loginFromUserId(-1L);
+			userService.loginFromUserId(user.getId());
 		});
 	}
 	

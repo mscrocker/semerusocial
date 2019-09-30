@@ -48,6 +48,7 @@ public class BlockImageByUserId<T> {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

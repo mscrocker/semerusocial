@@ -4,33 +4,40 @@ import java.util.List;
 
 public class Block<T> {
 	
-	private List<T> items;
-    private boolean existMoreItems;
+	private List<T> images;
+    private boolean existMoreImages;
 
-    public Block(List<T> items, boolean existMoreItems) {
-        
-        this.items = items;
-        this.existMoreItems = existMoreItems;
-
+    public Block(List<T> items, boolean existMoreImages) {
+        setImages(items);
+        setExistMoreImages(existMoreImages);
     }
     
-    public List<T> getItems() {
-        return items;
-    }
+	public List<T> getImages() {
+		return images;
+	}
+	
+	public void setImages(List<T> images) {
+		this.images = images;
+	}
     
-    public boolean getExistMoreItems() {
-        return existMoreItems;
+    public boolean getExistMoreImages() {
+        return existMoreImages;
     }
 
-	@Override
+	public void setExistMoreImages(boolean existMoreImages) {
+		this.existMoreImages = existMoreImages;
+	}
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (existMoreItems ? 1231 : 1237);
-		result = prime * result + ((items == null) ? 0 : items.hashCode());
+		result = prime * result + (existMoreImages ? 1231 : 1237);
+		result = prime * result + ((images == null) ? 0 : images.hashCode());
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -39,16 +46,20 @@ public class Block<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		@SuppressWarnings("rawtypes")
 		Block other = (Block) obj;
-		if (existMoreItems != other.existMoreItems)
+		if (existMoreImages != other.existMoreImages)
 			return false;
-		if (items == null) {
-			if (other.items != null)
+		if (images == null) {
+			if (other.images != null)
 				return false;
-		} else if (!items.equals(other.items))
+		} else if (!images.equals(other.images))
 			return false;
 		return true;
 	}
-    
+
+	@Override
+	public String toString() {
+		return "Block [images=" + images + ", existMoreImages=" + existMoreImages + "]";
+	}
+	
 }

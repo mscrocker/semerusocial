@@ -128,7 +128,7 @@ public class UserController {
 	
 	@GetMapping("/data")
 	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		UserImpl user = userService.findById(userId);
+		UserImpl user = userService.loginFromUserId(userId);
 		LocalDateTime today = LocalDateTime.now();
 		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 

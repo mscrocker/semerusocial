@@ -25,7 +25,7 @@ public class ImageConversor {
 	}
 	
 	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images){
-		List<ImageImpl> imagesIn = images.getItems();
+		List<ImageImpl> imagesIn = images.getImages();
 		
 		List<ReturnedImageDto> imagesOut = imagesIn.stream().map(
 				e -> toReturnedImageDto(e)
@@ -33,7 +33,7 @@ public class ImageConversor {
 		
 		return new BlockDto<ReturnedImageDto>(
 			imagesOut,
-			images.getExistMoreItems()
+			images.getExistMoreImages()
 		);	
 	}
 	
@@ -50,9 +50,24 @@ public class ImageConversor {
 	}
 	
 	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {
-		
 		return new ReturnedImageDto(Arrays.toString(image.getData()).trim(), image.getDescription());
+	}
 	
+	public final static BlockDto<ReturnedImagesDto> toReturnedImagesDto(Block<ImageImpl> images){
+		List<ImageImpl> imagesIn = images.getImages();
+		
+		List<ReturnedImagesDto> imagesOut = imagesIn.stream().map(
+				e -> toReturnedImagesDto(e)
+		).collect(Collectors.toList());
+		
+		return new BlockDto<ReturnedImagesDto>(
+			imagesOut,
+			images.getExistMoreImages()
+		);	
+	}
+	
+	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {
+		return new ReturnedImagesDto(Arrays.toString(image.getData()).trim());
 	}
 	
 }

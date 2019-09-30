@@ -28,6 +28,7 @@ import es.udc.fi.dc.fd.dtos.ImageConversor;
 import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
+import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.BlockImageByUserId;
@@ -85,10 +86,10 @@ public class ImageController {
 	}
 	
 	@GetMapping("/carrusel")
-	public BlockDto<ReturnedImageDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException{
+	public BlockDto<ReturnedImagesDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page) throws InstanceNotFoundException, ItsNotYourImageException{
 		Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 				
-		return ImageConversor.toReturnedImageDto(image);
+		return ImageConversor.toReturnedImagesDto(image);
 	}
 	
 	@GetMapping("/carrusel/{imageId}")

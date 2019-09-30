@@ -71,26 +71,6 @@ public class UserServiceImpl implements UserService {
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException {
 		return permissionChecker.checkUserByUserId(userId);
 	}
-	
-	@Override
-	public UserImpl findById(Long userId) throws InstanceNotFoundException {
-		Optional<UserImpl> user = getUserRepository().findById(userId);
-
-		if (user==null)
-			throw new InstanceNotFoundException("Usuario con id="+userId, user);
-
-		return user.get();
-	}
-	
-	@Override
-	public UserImpl findByUserName(String userName) throws InstanceNotFoundException {
-		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
-
-		if (!user.isPresent())
-			throw new InstanceNotFoundException(userName, user);
-
-		return user.get();
-	}
 
 	public UserRepository getUserRepository() {
 		return userRepository;
