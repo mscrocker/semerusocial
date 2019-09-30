@@ -55,7 +55,10 @@ public final class UrlConfig {
 
     public static final String URL_USER_LOGIN_POST = "/users/login";
     
+    public static final String URL_USER_GET_USER_DATA = "/users/data";
+    
     public static final String URL_IMAGE_ADD_POST = "/images/add";
+  
     
     
     /**
