@@ -5,9 +5,7 @@
 <head th:include="fragments/header :: header" />
 <body>
    <header class="header" th:include="fragments/menu :: menu" />
-	<div id="ErrorAlert" style="display: none;" class="alert alert-danger" role="alert">
-		Error processing input
-	</div>
+	<div th:include="fragments/errorAlert"></div>
    <section id="main-section" class="container-fluid">
       
       <div id="dropArea" style="width: 60%; margin-left: 20%; margin-right: 20%">

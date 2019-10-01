@@ -1,6 +1,6 @@
 const handleLogin = (e, params, baseUrl) => {
 	e.preventDefault();
-	
+	showAlert(null);
 	const url = baseUrl + "users/login";
 	const userData = {
 		userName: params.username,
@@ -13,16 +13,20 @@ const handleLogin = (e, params, baseUrl) => {
 	};
 
 	fetch(url, fetchParams).then((response) => {
-		if (response.status !== 200){
-			console.log("ERROR LOGGING IN!");
-		}
 		
 		response.json().then((body) => {
+			if (response.status !== 200){
+				showAlert("Error: unable to log in with given credentials");
+				return;
+			}
+			
 			sessionStorage.setItem('user_jwt', body.jwt);
 			sessionStorage.setItem('user_name', body.userName);
 			
 			window.history.back();
 			
+		}).catch((e) => {
+			console.log("Error logging in!");
 		});
 		
 		

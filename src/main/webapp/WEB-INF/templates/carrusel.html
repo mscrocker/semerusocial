@@ -5,11 +5,26 @@
 <head th:include="fragments/header :: header" />
 <body>
    <header class="header" th:include="fragments/menu :: menu" />
-
-   <section id="main-section" class="container-fluid">
-      <img class="carruselImg" id="imgField" th:src="@{/static/images/loading.gif}"/>
-      <h1 id="descriptionField">DESCRIPTION</h1>
-   </section>
+	<div class="container">
+		<div class="row justify-content-md-center">
+		
+			<div class="col-md-2 align-self-center">
+				<div class="card card-block">
+					<button onclick="if (previousLink !== null) {window.location.href=previousLink;};" class="btn btn-primary">Previous</button>
+				</div>
+			</div>
+			<div class="col-md-8">	
+		      <img style="width:100%;" class="carruselImg" id="imgField" th:src="@{/static/images/loading.gif}"/>
+		      <h1 id="descriptionField">DESCRIPTION</h1> 
+			</div>
+			<div class="col-md-2 align-self-center">
+				<div class="card card-block">
+					<button onclick="if (nextLink !== null) {window.location.href=nextLink;};" class="btn btn-primary">Next</button>
+				</div>
+			</div>
+		</div>
+	</div>
+   
 
    <footer>
       <div th:include="fragments/scripts :: general" />

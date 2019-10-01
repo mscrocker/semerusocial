@@ -61,16 +61,6 @@ var Base64Binary = {
 var loadedImage = false;
 
 
-const showAlert = (message) => {
-	const errorAlert = document.getElementById("ErrorAlert");
-	if (message === null){
-		errorAlert.style.display = "none";
-	} else {
-		errorAlert.style.display = "block";
-		errorAlert.innerText = message;
-	}
-};
-
 const dropImage = (event, previewImageArea) => {
 	var files = event.target.files || event.dataTransfer.files;
 	for (let i = 0; i < files.length; i++){
