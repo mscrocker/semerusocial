@@ -20,5 +20,8 @@ public interface ImageService {
 	
 	public BlockImageByUserId<ImageImpl> getImageByUserId(Long userId, Long imageId) 
 			throws InstanceNotFoundException, ItsNotYourImageException;
+	
+	public Long getFirstImageByUserId(Long userId) 
+			throws InstanceNotFoundException;
 
 }

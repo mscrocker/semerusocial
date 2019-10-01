@@ -131,6 +131,18 @@ public class ImageServiceImpl implements ImageService {
 		return new BlockImageByUserId<>(image.get(),prevId,nextId);
 	}
 	
+	@Override
+	public Long getFirstImageByUserId(Long userId) throws InstanceNotFoundException {
+		permissionChecker.checkUserExists(userId);
+
+		List<ImageImpl> images = getImageRepository().findByUserId(userId);
+		
+		if (images.size()==0) {
+			return null;
+		}	
+		return images.get(0).getImageId();
+	}
+	
 	public ImageRepository getImageRepository() {
 		return imageRepository;
 	}

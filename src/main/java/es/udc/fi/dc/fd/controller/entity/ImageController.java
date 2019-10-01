@@ -99,4 +99,11 @@ public class ImageController {
 		return ImageConversor.toReturnedImageDto(image);
 	}
 	
+	@GetMapping("/carrusel/first")
+	public ImageCreatedDto getFirstImageByUserId(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		Long imageId = imageService.getFirstImageByUserId(userId);
+
+		return new ImageCreatedDto(imageId);
+	}
+	
 }
