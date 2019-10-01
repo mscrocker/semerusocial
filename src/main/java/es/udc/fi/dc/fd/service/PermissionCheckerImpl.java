@@ -16,21 +16,20 @@ import es.udc.fi.dc.fd.repository.UserRepository;
 @Transactional(readOnly=true)
 public class PermissionCheckerImpl implements PermissionChecker {
 	
-	private UserRepository userDao;
+	private UserRepository userRepository;
 	
 	@Autowired
-	public PermissionCheckerImpl(UserRepository userDao){
+	public PermissionCheckerImpl(UserRepository userRepository){
 		super();
 
-		this.userDao = checkNotNull(userDao,
-                "Received a null pointer as userDao in PermissionCheckerImpl");
-
+		this.userRepository = checkNotNull(userRepository,
+                "Received a null pointer as userRepository in PermissionCheckerImpl");
 	}
 	
 	@Override
 	public void checkUserExists(Long userId) throws InstanceNotFoundException {
 		
-		if (!userDao.existsById(userId)) {
+		if (!userRepository.existsById(userId)) {
 			throw new InstanceNotFoundException("project.entities.user", userId);
 		}
 		
@@ -40,7 +39,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 	public UserImpl checkUserByUserId(Long userId) throws InstanceNotFoundException {
 		checkUserExists(userId);
 		
-		Optional<UserImpl> user = userDao.findById(userId);
+		Optional<UserImpl> user = userRepository.findById(userId);
 		if(!user.isPresent()) {
 			throw new InstanceNotFoundException("user", userId);
 		}

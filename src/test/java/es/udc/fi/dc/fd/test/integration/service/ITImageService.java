@@ -114,8 +114,9 @@ public class ITImageService {
 
 		ImageImpl imageUpdated = imageService.editImage(image2, imageCreated.getImageId(), user.getId());
 
-		assertEquals(image2, imageUpdated);
-
+		assertEquals(image2.getData(), imageUpdated.getData());
+		assertEquals(image2.getDescription(), imageUpdated.getDescription());
+		assertEquals(image2.getUser(), imageUpdated.getUser());
 	}
 
 	@Test
@@ -154,7 +155,11 @@ public class ITImageService {
 
 		ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
-		imageService.removeImage(imageCreated, user.getId());
+		imageService.removeImage(imageCreated.getImageId(), user.getId());
+		
+		assertThrows(InstanceNotFoundException.class, () -> {
+			imageService.removeImage(imageCreated.getImageId(), user.getId());
+		});
 
 	}
 
@@ -169,7 +174,7 @@ public class ITImageService {
 		user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.removeImage(imageCreated, user.getId());
+			imageService.removeImage(imageCreated.getImageId(), user.getId());
 		});
 	}
 
@@ -183,7 +188,7 @@ public class ITImageService {
 		ImageImpl imageCreated = imageService.addImage(i,user.getId());
 		
 		assertThrows(ItsNotYourImageException.class,() -> {
-			imageService.removeImage(imageCreated,user2.getId());
+			imageService.removeImage(imageCreated.getImageId(), user2.getId());
 		});
 	}
 		
@@ -290,9 +295,9 @@ public class ITImageService {
 		ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
 		ImageImpl imageCreated3 = imageService.addImage(i3, user.getId());
 		
-		BlockImageByUserId<ImageImpl> imageResult1 = imageService.getImageByUserId(user.getId(),imageCreated1.getImageId());
-		BlockImageByUserId<ImageImpl> imageResult2 = imageService.getImageByUserId(user.getId(),imageCreated2.getImageId());
-		BlockImageByUserId<ImageImpl> imageResult3 = imageService.getImageByUserId(user.getId(),imageCreated3.getImageId());
+		BlockImageByUserId<ImageImpl> imageResult1 = imageService.getImageByUserId(imageCreated1.getImageId(), user.getId());
+		BlockImageByUserId<ImageImpl> imageResult2 = imageService.getImageByUserId(imageCreated2.getImageId(), user.getId());
+		BlockImageByUserId<ImageImpl> imageResult3 = imageService.getImageByUserId(imageCreated3.getImageId(), user.getId());
 		
 		assertEquals(imageCreated1,imageResult1.getImage());
 		assertEquals(imageCreated2,imageResult2.getImage());
@@ -312,7 +317,7 @@ public class ITImageService {
 		imageResult.setImageId(-1L);
 		
 		assertThrows(InstanceNotFoundException.class,() -> {
-			imageService.getImageByUserId(user.getId(), imageResult.getImageId());
+			imageService.getImageByUserId(imageResult.getImageId(), user.getId());
 		});
 	}
 	
@@ -326,7 +331,7 @@ public class ITImageService {
 		ImageImpl imageResult=imageService.addImage(i1, user1.getId());
 				
 		assertThrows(ItsNotYourImageException.class,() -> {
-			imageService.getImageByUserId(user2.getId(), imageResult.getImageId());
+			imageService.getImageByUserId(imageResult.getImageId(), user2.getId());
 		});
 	}
 	

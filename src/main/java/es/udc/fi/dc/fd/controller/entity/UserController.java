@@ -60,7 +60,6 @@ public class UserController {
 		this.userService = checkNotNull(userService, "Received a null pointer as userService in UserController");
 
 		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in UserController");
-
 	}
 	
 	@Bean
@@ -101,15 +100,7 @@ public class UserController {
 		return new ErrorsDto(errorMessage);
 		
 	}
-
-	@PostMapping("/login")
-	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
-
-		UserImpl user = userService.login(params);
-
-		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
-	}
-
+	
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
 			throws DuplicateInstanceException {
@@ -124,6 +115,14 @@ public class UserController {
 				.toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
+	}
+
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
+
+		UserImpl user = userService.login(params);
+
+		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
 	}
 	
 	@GetMapping("/data")

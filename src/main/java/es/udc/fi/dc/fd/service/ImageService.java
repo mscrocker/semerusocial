@@ -12,13 +12,13 @@ public interface ImageService {
 	public ImageImpl editImage(ImageImpl image, Long imageId, Long userId)
 			throws InstanceNotFoundException, ItsNotYourImageException;
 
-	public void removeImage(ImageImpl image, Long userId) 
+	public void removeImage(Long imageId, Long userId) 
 			throws InstanceNotFoundException, ItsNotYourImageException;
 
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page) 
 			throws InstanceNotFoundException;
 	
-	public BlockImageByUserId<ImageImpl> getImageByUserId(Long userId, Long imageId) 
+	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId) 
 			throws InstanceNotFoundException, ItsNotYourImageException;
 	
 	public Long getFirstImageIdByUserId(Long userId) 

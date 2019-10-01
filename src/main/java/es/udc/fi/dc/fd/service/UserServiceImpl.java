@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException {
 		return permissionChecker.checkUserByUserId(userId);
 	}

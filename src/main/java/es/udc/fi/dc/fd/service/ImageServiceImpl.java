@@ -48,43 +48,42 @@ public class ImageServiceImpl implements ImageService {
 	
 	@Override
 	public ImageImpl editImage(ImageImpl image, Long imageId, Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
-		permissionChecker.checkUserByUserId(userId);
+		permissionChecker.checkUserExists(userId);
 		
 		Optional<ImageImpl> resultImage = getImageRepository().findById(imageId);
 		
-		//Si la imagen no existe
 		if (!resultImage.isPresent()) {
 			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", resultImage);
 		}
-		
-		image.setImageId(imageId);
-		
-		//Comprobamos que el user el mismo que el que viene en la imagen
 		if (resultImage.get().getUser().getId()!=userId) {
 			throw new ItsNotYourImageException("You can't edit a image that doesn't belong to you.");
 		}
 		
-		return getImageRepository().save(image);
+		resultImage.get().setData(image.getData());
+		resultImage.get().setDescription(image.getDescription());
+		
+		return getImageRepository().save(resultImage.get());
 	}
 
 	@Override
-	public void removeImage(ImageImpl image, Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
-		permissionChecker.checkUserByUserId(userId);
+	public void removeImage(Long imageId, Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
+		permissionChecker.checkUserExists(userId);
 		
-		Optional<ImageImpl> i = getImageRepository().findById(image.getImageId());
+		Optional<ImageImpl> i = getImageRepository().findById(imageId);
 		
 		if (!i.isPresent()) {
-			throw new InstanceNotFoundException("Image with imageId="+image.getImageId()+" doesn't exist", i);
+			throw new InstanceNotFoundException("Image with imageId="+imageId+" doesn't exist", i);
 		}
 		
 		if (i.get().getUser().getId()!=userId) {
 			throw new ItsNotYourImageException("You can't remove a image that doesn't belong to you.");
 		}
 		
-		getImageRepository().delete(image);
+		getImageRepository().delete(i.get());
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 		
@@ -94,7 +93,8 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public BlockImageByUserId<ImageImpl> getImageByUserId(Long userId, Long imageId) throws InstanceNotFoundException, ItsNotYourImageException {
+	@Transactional(readOnly=true)
+	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
 		permissionChecker.checkUserExists(userId);
 		
 		Optional<ImageImpl> image = getImageRepository().findById(imageId);
@@ -134,6 +134,7 @@ public class ImageServiceImpl implements ImageService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public Long getFirstImageIdByUserId(Long userId) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 
