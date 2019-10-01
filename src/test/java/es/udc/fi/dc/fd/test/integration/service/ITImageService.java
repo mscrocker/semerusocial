@@ -2,6 +2,7 @@ package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -326,6 +327,45 @@ public class ITImageService {
 				
 		assertThrows(ItsNotYourImageException.class,() -> {
 			imageService.getImageByUserId(user2.getId(), imageResult.getImageId());
+		});
+	}
+	
+	//----- getFirstImageIdByUserId -----
+	
+	@Test
+	public void testGetFirstImageIdByUserId() throws InstanceNotFoundException {
+		UserImpl user1 = signUp("userGetFirstImageId1", "passGetFirstImageId1", 2, "hombre", "coruna");
+		UserImpl user2 = signUp("userGetFirstImageId2", "passGetFirstImageId2", 2, "hombre", "coruna");
+
+		ImageImpl i1 = createImage(user1, new byte[] { 1, 2, 3 }, "esto es una descripcion1");
+		ImageImpl i2 = createImage(user1, new byte[] { 1, 2, 3 }, "esto es una descripcion2");
+		ImageImpl i3 = createImage(user1, new byte[] { 1, 2, 3 }, "esto es una descripcion3");
+		
+		assertTrue(imageService.getFirstImageIdByUserId(user1.getId())==null);
+		
+		ImageImpl imageCreated1 = imageService.addImage(i1, user1.getId());
+		imageService.addImage(i2, user1.getId());
+		imageService.addImage(i3, user1.getId());
+		
+		Long idResult1 = imageService.getFirstImageIdByUserId(user1.getId());
+		
+		assertEquals(idResult1, imageCreated1.getImageId());
+		
+		ImageImpl i4 = createImage(user2, new byte[] { 1, 2, 3 }, "esto es una descripcion4");
+		
+		assertTrue(imageService.getFirstImageIdByUserId(user2.getId())==null);
+		
+		ImageImpl imageCreated4 = imageService.addImage(i4, user2.getId());
+		
+		Long idResult2 = imageService.getFirstImageIdByUserId(user2.getId());
+		
+		assertEquals(idResult2, imageCreated4.getImageId());
+	}
+	
+	@Test
+	public void testGetFirstImageIdByUserIdWithInstanceNotFoundException() {
+		assertThrows(InstanceNotFoundException.class,() -> {
+			imageService.getFirstImageIdByUserId(-1L);
 		});
 	}
 	

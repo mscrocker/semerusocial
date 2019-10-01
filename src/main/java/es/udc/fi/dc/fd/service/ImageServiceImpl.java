@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
@@ -18,6 +19,7 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.ImageRepository;
 
 @Service
+@Transactional
 public class ImageServiceImpl implements ImageService {
 	
 	private final ImageRepository imageRepository;
@@ -132,7 +134,7 @@ public class ImageServiceImpl implements ImageService {
 	}
 	
 	@Override
-	public Long getFirstImageByUserId(Long userId) throws InstanceNotFoundException {
+	public Long getFirstImageIdByUserId(Long userId) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 
 		List<ImageImpl> images = getImageRepository().findByUserId(userId);

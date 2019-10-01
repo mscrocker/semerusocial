@@ -17,6 +17,7 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
