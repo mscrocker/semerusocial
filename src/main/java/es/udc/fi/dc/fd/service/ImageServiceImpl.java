@@ -106,8 +106,8 @@ public class ImageServiceImpl implements ImageService {
 		if (image.get().getUser().getId()!=userId) {
 			throw new ItsNotYourImageException("You can't access to image that doesn't belong to you.");
 		}
-
 		List<ImageImpl> images = getImageRepository().findByUserId(userId);
+		
 		List<Long> ids = new ArrayList<Long>();
 		for (int i = 0; i < images.size(); i++) {
 			ids.add(images.get(i).getImageId());

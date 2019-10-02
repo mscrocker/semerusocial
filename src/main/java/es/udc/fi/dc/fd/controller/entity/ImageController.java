@@ -121,7 +121,7 @@ public class ImageController {
 		return ImageConversor.toReturnedImageDto(image);
 	}
 	
-	@GetMapping("/carrusel/first")
+	@GetMapping("/first")
 	public ImageCreatedDto getFirstImageIdByUserId(@RequestAttribute Long userId) throws InstanceNotFoundException {
 		Long imageId = imageService.getFirstImageIdByUserId(userId);
 
