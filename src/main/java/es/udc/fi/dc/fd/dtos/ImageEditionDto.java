@@ -15,7 +15,7 @@ public final class ImageEditionDto implements Serializable {
    		super();
    	}
    	
-   	public ImageEditionDto(byte[] data, String description) {
+   	public ImageEditionDto(String description) {
 		super();
 		setDescription(description);
 	}

@@ -58,8 +58,16 @@ public final class UrlConfig {
     public static final String URL_USER_GET_USER_DATA = "/users/data";
     
     public static final String URL_IMAGE_ADD_POST = "/images/add";
-  
     
+    public static final String URL_IMAGE_EDIT_PUT = "/images/edit/{imageId}";
+  
+    public static final String URL_IMAGE_REMOVE_DELETE = "/images/remove/{imageId}";
+    
+    public static final String URL_IMAGE_GETIMAGESBYID_GET = "/images/carrusel";
+    
+    public static final String URL_IMAGE_GETIMAGEBYID_GET = "/images/carrusel/{imageId}";
+    
+    public static final String URL_IMAGE_GETFIRST_GET = "/images/first";
     
     /**
      * Default constructor to avoid initialization.
