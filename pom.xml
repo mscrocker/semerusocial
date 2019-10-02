@@ -404,7 +404,7 @@
 		<spring.data.version>2.0.7.RELEASE</spring.data.version>
 		<spring.version>5.0.6.RELEASE</spring.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<webjars.bootstrap.version>3.3.7-1</webjars.bootstrap.version>
+		<webjars.bootstrap.version>4.3.1</webjars.bootstrap.version>
 		<webjars.bootswatch.version>3.3.7</webjars.bootswatch.version>
 		<webjars.fontAwesome.version>4.7.0</webjars.fontAwesome.version>
 		<webjars.datatables.version>1.10.16</webjars.datatables.version>

@@ -1,55 +1,50 @@
 <header th:fragment="menu">
 	<nav id="navbar-main" class="navbar navbar-main navbar-default">
-		<div class="container-fluid">
+		<div class="container-fluid" style="font-size: 16px;">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed"
-					data-toggle="collapse" data-target="#navbar-main-body"
-					aria-expanded="false" aria-controls="navbar-main">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main-body" aria-expanded="false" aria-controls="navbar-main">
+					<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" th:href="@{/}"
-					th:text="#{application.title}">Webapp title</a>
+				
 
 			</div>
 
-			<div id="navbar-main-body"
-				class="navbar-body navbar-collapse collapse">
-				<small class="navbar-text">v@project.version@</small>
-				<ul class="nav navbar-nav navbar-right">
-					<li>
-						<ul class="list-unstyled icons-list">
-							<li><a href="@project.scm.url@" title="GitHub"
-								aria-label="GitHub"><span class="fa fa-github"
-									aria-hidden="true"></span></a></li>
-						</ul>
-					</li>
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown" role="button" aria-haspopup="true"
-						aria-expanded="false"><span th:remove="tag"
-							th:text="#{title.data}">Data</span> <span aria-hidden="true"></span>
-					</a>
-						<ul class="dropdown-menu" role="menu">
-							<!-- <li><a th:href="@{/entity/list}" th:text="#{label.list}">List</a></li> -->
-							<li><a href="/narnia" text="Esto lleva a narnia">Patata</a></li> 
-                     <li><a th:href="@{/entity/list/ajax}" th:text="#{label.list.ajax}">List</a></li>
-							<li><a th:href="@{/entity/edit}" th:text="#{label.add}">Addition</a></li>
-							<li><a th:href="@{/entity/pdf}" th:text="#{label.pdf}">PDF</a></li>
-							<li><a th:href="@{/exception/runtime}"
-								th:text="#{label.exception}">Exception</a></li>
-						</ul></li>
-					<li>
-						<form id="loginForm">
-							<button id="loginButton" th:formaction="@{'/login'}" class="btn btn-primary" style="margin:12px;appearance:button;"  th:text="#{label.login}"></button>
+			<div id="navbar-main-body" class="navbar-body navbar-collapse row collapse" style="">
+				<div class="navbar navbar-left">
+						<p class="navbar-text">v#{project.version}</p>
+					</div><div class="navbar navbar-right" style="
+    /* margin-left: 30%; */
+    min-width: 300px;
+">
+						<a href="@project.scm.url@" title="GitHub" aria-label="GitHub" class="nav-link"> <span class="fa fa-github" aria-hidden="true"></span>
+						</a>
+						<div class="dropdown nav-link text-center">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data
+								Options <span aria-hidden="true"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<!-- <li><a th:href="@{/entity/list}" th:text="#{label.list}">List</a></li> -->
+								<li><a href="/narnia" text="Esto lleva a narnia">Patata</a></li>
+								<li><a href="/friendmatch/entity/list/ajax">Listing
+										(AJAX)</a></li>
+								<li><a href="/friendmatch/entity/edit">Add</a></li>
+								<li><a href="/friendmatch/entity/pdf">PDF Report</a></li>
+								<li><a href="/friendmatch/exception/runtime">Exception</a></li>
+							</ul>
+						</div>
+						<form id="loginForm" class="nav-link">
+							<button id="loginButton" formaction="/friendmatch/users/profile" class="btn btn-primary" style="margin: 12px; appearance: button;">marco</button>
 						</form>
-					</li>
-				</ul>
+					</div>
+
+
+
 			</div>
 		</div>
 	</nav>
 	<div th:include="fragments/scripts :: user" />
 	<script>
-		window.addEventListener('load', updateLoggedIn("loginButton", "[[@{'/users/profile'}]]"), false);
+		window.addEventListener('load', updateLoggedIn("loginButton",
+				"[[@{'/users/profile'}]]"), false);
 	</script>
 </header>
