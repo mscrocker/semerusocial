@@ -67,7 +67,7 @@ public class ImageConversor {
 	}
 	
 	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {
-		return new ReturnedImagesDto(Arrays.toString(image.getData()).trim());
+		return new ReturnedImagesDto(image.getImageId(), Arrays.toString(image.getData()).trim());
 	}
 	
 }

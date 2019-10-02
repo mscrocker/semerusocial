@@ -2,15 +2,19 @@ package es.udc.fi.dc.fd.controller.entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
@@ -79,10 +84,27 @@ public class ImageController {
 	}
 	
 	@PostMapping("/add")
-	public ImageCreatedDto addImage(@RequestAttribute Long userId, @RequestBody ImageCreationDto image) throws InstanceNotFoundException {
+	public ResponseEntity<ImageCreatedDto> addImage(@RequestBody ImageCreationDto image, @RequestAttribute Long userId) throws InstanceNotFoundException {
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 
-		return ImageConversor.toImageCreatedDto(imageResult);
+		ImageCreatedDto imageResultDto = new ImageCreatedDto(imageResult.getImageId());
+		
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{imageId}").buildAndExpand(imageResult.getImageId())
+				.toUri();
+		
+		return ResponseEntity.created(location).body(imageResultDto);
+	}
+	
+	@PutMapping("/edit/{imageId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void editImage(@RequestBody ImageCreationDto image, @PathVariable Long imageId, @RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
+		imageService.editImage(ImageConversor.toImageImpl(image), imageId, userId);
+	}
+	
+	@DeleteMapping("/remove/{imageId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void removeImage(@PathVariable Long imageId, @RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
+		imageService.removeImage(imageId, userId);
 	}
 	
 	@GetMapping("/carrusel")
@@ -93,10 +115,17 @@ public class ImageController {
 	}
 	
 	@GetMapping("/carrusel/{imageId}")
-	public BlockImageByUserIdDto<ReturnedImageDto> getImageById(@RequestAttribute Long userId, @PathVariable Long imageId) throws InstanceNotFoundException, ItsNotYourImageException{
-		BlockImageByUserId<ImageImpl> image = imageService.getImageByUserId(userId, imageId);
+	public BlockImageByUserIdDto<ReturnedImageDto> getImageById(@PathVariable Long imageId, @RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException{
+		BlockImageByUserId<ImageImpl> image = imageService.getImageByUserId(imageId, userId);
 				
 		return ImageConversor.toReturnedImageDto(image);
+	}
+	
+	@GetMapping("/carrusel/first")
+	public ImageCreatedDto getFirstImageIdByUserId(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		Long imageId = imageService.getFirstImageIdByUserId(userId);
+
+		return new ImageCreatedDto(imageId);
 	}
 	
 }

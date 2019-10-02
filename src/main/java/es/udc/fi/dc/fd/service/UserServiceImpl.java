@@ -17,6 +17,7 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
@@ -68,6 +69,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException {
 		return permissionChecker.checkUserByUserId(userId);
 	}

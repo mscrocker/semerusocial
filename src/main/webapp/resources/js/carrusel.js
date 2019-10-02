@@ -23,6 +23,7 @@ const loadImage = (baseURL) => {
 			var imageUrl = URL.createObjectURL( blob );
 			*/
 			
+			/*jshint -W061 */
 			let oriData = eval(body.image.data);
 			let tmpArray = new Uint8Array(oriData);
 			

@@ -8,18 +8,29 @@ public class ReturnedImagesDto implements Serializable {
 	private static final long serialVersionUID = 1328776989450853492L;
 
 	@NotEmpty
+	private Long imageId;
+	
+	@NotEmpty
 	private String data;
 
 
-	public ReturnedImagesDto(String data) {
+	public ReturnedImagesDto(Long imageId, String data) {
 		super();
+		setImageId(imageId);
 		setData(data);
 	}
 	
 	public ReturnedImagesDto() {
 		super();
 	}
+	
+	public Long getImageId() {
+		return imageId;
+	}
 
+	public void setImageId(Long imageId) {
+		this.imageId = imageId;
+	}
 
 	public String getData() {
 		return data;
@@ -28,12 +39,13 @@ public class ReturnedImagesDto implements Serializable {
 	public void setData(String data) {
 		this.data = data;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
 		return result;
 	}
 
@@ -51,14 +63,17 @@ public class ReturnedImagesDto implements Serializable {
 				return false;
 		} else if (!data.equals(other.data))
 			return false;
+		if (imageId == null) {
+			if (other.imageId != null)
+				return false;
+		} else if (!imageId.equals(other.imageId))
+			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "ReturnedImageDto [data=" + data + "]";
+		return "ReturnedImagesDto [imageId=" + imageId + ", data=" + data + "]";
 	}
-
-
 
 }
