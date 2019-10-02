@@ -58,6 +58,11 @@ public class ImageImpl implements Image {
 		setData(data);
 		setDescription(description);
 	}
+	
+	public ImageImpl(String description) {
+		super();
+		setDescription(description);
+	}
 
 	@Override
 	public Long getImageId() {

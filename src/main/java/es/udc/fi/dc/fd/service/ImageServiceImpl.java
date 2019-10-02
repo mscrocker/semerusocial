@@ -59,7 +59,6 @@ public class ImageServiceImpl implements ImageService {
 			throw new ItsNotYourImageException("You can't edit a image that doesn't belong to you.");
 		}
 		
-		resultImage.get().setData(image.getData());
 		resultImage.get().setDescription(image.getDescription());
 		
 		return getImageRepository().save(resultImage.get());

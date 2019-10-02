@@ -24,6 +24,10 @@ public class ImageConversor {
 		return new ImageImpl(image.getData(), image.getDescription());
 	}
 	
+	public final static ImageImpl toImageImpl(ImageEditionDto image) {
+		return new ImageImpl(image.getDescription());
+	}
+	
 	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images){
 		List<ImageImpl> imagesIn = images.getImages();
 		
