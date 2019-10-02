@@ -1,3 +1,4 @@
+
 const showAlert = (message) => {
 	const errorAlert = document.getElementById("ErrorAlert");
 	if (message === null){

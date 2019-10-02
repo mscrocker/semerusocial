@@ -3,95 +3,112 @@
 	xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Registration Form</title>
+
+
+<link
+	th:href="@{/resources/vendor/mdi-font/css/material-design-iconic-font.min.css}"
+	rel="stylesheet" media="all">
+<link
+	th:href="@{/resources/vendor/font-awesome-4.7/css/font-awesome.min.css}"
+	rel="stylesheet" media="all">
+<!-- Font special for pages-->
+<link
+	href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+	rel="stylesheet">
+
+<!-- Vendor CSS-->
+<link th:href="@{/resources/vendor/select2/select2.min.css}"
+	rel="stylesheet" media="all">
+<link th:href="@{/resources/vendor/datepicker/daterangepicker.css}"
+	rel="stylesheet" media="all">
+
+<!-- Main CSS-->
 <link rel="stylesheet" type="text/css"
-	th:href="@{/css/registration.css}" />
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	th:href="@{/resources/css/signup.css}" media="all" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{/resources/css/utils.css}" media="all" />
+
+<!-- <link href="css/main.css" rel="stylesheet" media="all">
+	 -->
 </head>
-<head th:include="fragments/header :: header" />
 <body>
-	<header class="header" th:include="fragments/menu :: menu" />
-	<form th:action="@{/login}" method="get">
-		<button class="btn btn-md btn-warning btn-block" type="Submit">Go
-			To Login Page</button>
-	</form>
-
-	<div class="container">
-		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<form id="signUpForm" th:action="@{/signUp}" method="POST"
-					class="form-signin">
-					<h2>Registration Form</h2>
 
 
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="text" id="username" placeholder="Username"
-								class="form-control" required />
+
+
+	<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+
+		<div class="wrapper wrapper--w780">
+			<div th:include="fragments/errorAlert"></div>
+			<div class="card card-3">
+				<div class="card-heading"></div>
+				<div class="card-body">
+					<h2 class="title">Registration Info</h2>
+					<form id="signUpForm" th:action="@{/signUp}" method="POST">
+						<div class="input-group">
+							<input class="input--style-3" type="text" id="username"
+								placeholder="Username" name="username" required>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="password" id="password" placeholder="Password"
-								class="form-control" required/>
+						<div class="input-group">
+							<input class="input--style-3" type="password"
+								placeholder="Password" name="password" id="password" required>
 						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input type="date" id="birthday" name="birthday" min="1900-01-01"
-								class="form-control" required/>
+						<div class="input-group">
+							<input class="input--style-3 js-datepicker" type="text"
+								placeholder="Birthdate" name="birthday" id="birthday" required>
+							<i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
 						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="col-sm-9">
-							<select name="Genre" id="genre" size="3" class="form-control" required>
-								<option value="male">Male</option>
-								<option value="female">Female</option>
-								<option value="non_binary">Non Binary</option>
-							</select>
+						<div class="input-group">
+							<div class="rs-select2 js-select-simple select--no-search">
+								<select name="gender" id="genre" required>
+									<option disabled="disabled" selected="selected">Gender</option>
+									<option>Male</option>
+									<option>Female</option>
+									<option>Non Binary</option>
+								</select>
+								<div class="select-dropdown"></div>
+							</div>
 						</div>
-					</div>
 
-					<div class="form-group">
-						<div class="col-sm-9">
-							<input name="city" id="city" type="text" class="form-control" />
+						<div class="input-group">
+							<input class="input--style-3" type="text" id="city"
+								placeholder="City" name="city" required>
 						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="col-sm-9">
-							<button type="submit" class="btn btn-primary btn-block">Register
-								User</button>
+						<div class="form-login">
+							<button class="signup" type="submit">Sign up</button>
+							<p>
+								Already have an account? <a th:href="@{/login}">Login</a>
+							</p>
 						</div>
-					</div>
-
-					<span th:utext="${successMessage}"></span>
-
-
-				</form>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
+	<!-- Jquery JS-->
+	<script th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
+	<!-- Vendor JS-->
+	<script th:src="@{/resources/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/resources/vendor/datepicker/moment.min.js}"></script>
+	<script th:src="@{/resources/vendor/datepicker/daterangepicker.js}"></script>
+
+	<!-- Main JS-->
+	<script th:src="@{resources/js/signupBeauty.js}"></script>
+
 	<footer>
-		<div th:include="fragments/scripts :: general" />
+		<!-- 		<div th:include="fragments/scripts :: general" />
+ -->
 		<div th:include="fragments/scripts :: register" />
 
 
 	</footer>
 	<script type="text/javascript">
    	window.addEventListener('load', () => {
-   		const dateInput = document.getElementById("birthday");
-   		dateInput.max = new Date().toISOString().split("T")[0];
+   		
    		const params = () => { return {
    			username: document.getElementById("username").value,
    			password: document.getElementById("password").value,
-   			date: dateInput.value,
+   			date: document.getElementById("birthday"),
    			genre: document.getElementById("genre").value,
    			city: document.getElementById("city").value
    		}};
