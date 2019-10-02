@@ -5,8 +5,8 @@ const getImageId = () => {
 	return window.location.pathname.substring(
 			window.location.pathname.lastIndexOf("/") + 1,
 			window.location.pathname.length
-	)
-}
+	);
+};
 
 const loadImage = (baseURL) => {
 	const imageId = getImageId();
@@ -67,7 +67,7 @@ const getNextLink = (baseURL) => {
 	
 	return baseURL + "addImage";
 	
-}
+};
 
 const deleteImage = (baseURL, imageID) => {
 	let url = baseURL + "images/remove/" + imageID;
@@ -85,5 +85,5 @@ const deleteImage = (baseURL, imageID) => {
 		}
 	}, (errors) => {
 		console.log("ERROR");
-	})
+	});
 };
