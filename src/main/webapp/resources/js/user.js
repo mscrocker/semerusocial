@@ -18,3 +18,7 @@ const authFetch = (url, params, onSuccess, onErrors) => {
 	.then((response) => onSuccess(response))
 	.catch((errors) => onErrors(errors));
 };
+
+const checkLoggedIn = () => {
+	return sessionStorage.user_jwt !== undefined;
+};

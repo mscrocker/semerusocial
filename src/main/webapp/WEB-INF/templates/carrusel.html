@@ -4,37 +4,70 @@
 
 <head th:include="fragments/header :: header" />
 <body>
-   <header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu" />
 	<div class="container">
 		<div class="row justify-content-md-center">
-		
-			<div class="col-md-2 align-self-center">
+
+			<div class="col-2 align-self-center">
 				<div class="card card-block">
-					<button onclick="if (previousLink !== null) {window.location.href=previousLink;};" class="btn btn-primary">Previous</button>
+					<button id="previousButton"
+						onclick="if (previousLink !== null) {window.location.href=previousLink;};"
+						class="btn">Previous</button>
 				</div>
 			</div>
-			<div class="col-md-8">	
-		      <img style="width:100%;" class="carruselImg" id="imgField" th:src="@{/static/images/loading.gif}"/>
-		      <h1 id="descriptionField">DESCRIPTION</h1> 
+			<div class="col-8">
+				<img style="width: 100%;" class="carruselImg" id="imgField"
+					th:src="@{/static/images/loading.gif}" />
+				<h1 id="descriptionField">DESCRIPTION</h1>
+				<div class="row">
+					<button class="btn btn-success ml-1 mr-auto"
+						id="addButton">ADD</button>
+					<button class="btn btn-danger mr-1 ml-auto" data-toggle="modal"
+						data-target="#deleteModal">DELETE</button>
+				</div>
 			</div>
-			<div class="col-md-2 align-self-center">
+			<div class="col-2 align-self-center">
 				<div class="card card-block">
-					<button onclick="if (nextLink !== null) {window.location.href=nextLink;};" class="btn btn-primary">Next</button>
+					<button id="nextButton"
+						onclick="if (nextLink !== null) {window.location.href=nextLink;};"
+						class="btn">Next</button>
 				</div>
 			</div>
 		</div>
 	</div>
-   
+	<div id="deleteModal" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Confirmation dialog</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Do you really want to delete this photo?</p>
+				</div>
+				<div class="modal-footer">
+					<button id="deleteButton" type="button" class="btn btn-danger">Delete</button>
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Back</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-   <footer>
-      <div th:include="fragments/scripts :: general" />
-      <div th:include="fragments/scripts :: carrusel" />
-   </footer>
-   <script>
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+		<div th:include="fragments/scripts :: carrusel" />
+	</footer>
+	<script>
    	  window.addEventListener('load', () => {
    		loadImage([[@{'/'}]]);
    	  });
-   </script>
+   	  document.getElementById("deleteButton").onclick = () => deleteImage([[@{'/'}]], getImageId())
+   	  document.getElementById("addButton").onclick = () => {window.location.href = [[@{'/'}]] + 'addImage'}
+   	 </script>
 </body>
 
 </html>

@@ -4,18 +4,22 @@
 
 <head th:include="fragments/header :: header" />
 <body>
-   <header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu" />
 
-   <section id="main-section" class="container-fluid">
-      <header class="page-header">
-         <h1 th:text="#{application.title}">Webapp Title</h1>
-      </header>
-      <p>This is the welcome page.</p>
-   </section>
+	<section id="main-section" class="container-fluid">
+		<img th:src="@{/static/images/loading.gif}"/>
+	</section>
 
-   <footer>
-      <div th:include="fragments/scripts :: general" />
-   </footer>
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+		<div th:include="fragments/scripts :: user"/>
+		<div th:include="fragments/scripts :: welcome"/>
+	</footer>
+	<script>
+		window.addEventListener("load", () => {
+			init("[[@{'/'}]]");
+		});
+	</script>
 </body>
 
 </html>
