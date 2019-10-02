@@ -114,7 +114,6 @@ public class ITImageService {
 
 		ImageImpl imageUpdated = imageService.editImage(image2, imageCreated.getImageId(), user.getId());
 
-		assertEquals(image2.getData(), imageUpdated.getData());
 		assertEquals(image2.getDescription(), imageUpdated.getDescription());
 		assertEquals(image2.getUser(), imageUpdated.getUser());
 	}

@@ -32,6 +32,7 @@ import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
 import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
+import es.udc.fi.dc.fd.dtos.ImageEditionDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
@@ -97,7 +98,7 @@ public class ImageController {
 	
 	@PutMapping("/edit/{imageId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void editImage(@RequestBody ImageCreationDto image, @PathVariable Long imageId, @RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
+	public void editImage(@RequestBody ImageEditionDto image, @PathVariable Long imageId, @RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
 		imageService.editImage(ImageConversor.toImageImpl(image), imageId, userId);
 	}
 	
@@ -121,7 +122,7 @@ public class ImageController {
 		return ImageConversor.toReturnedImageDto(image);
 	}
 	
-	@GetMapping("/carrusel/first")
+	@GetMapping("/first")
 	public ImageCreatedDto getFirstImageIdByUserId(@RequestAttribute Long userId) throws InstanceNotFoundException {
 		Long imageId = imageService.getFirstImageIdByUserId(userId);
 

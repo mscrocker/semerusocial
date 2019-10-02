@@ -59,7 +59,6 @@ public class ImageServiceImpl implements ImageService {
 			throw new ItsNotYourImageException("You can't edit a image that doesn't belong to you.");
 		}
 		
-		resultImage.get().setData(image.getData());
 		resultImage.get().setDescription(image.getDescription());
 		
 		return getImageRepository().save(resultImage.get());
@@ -106,8 +105,8 @@ public class ImageServiceImpl implements ImageService {
 		if (image.get().getUser().getId()!=userId) {
 			throw new ItsNotYourImageException("You can't access to image that doesn't belong to you.");
 		}
-
 		List<ImageImpl> images = getImageRepository().findByUserId(userId);
+		
 		List<Long> ids = new ArrayList<Long>();
 		for (int i = 0; i < images.size(); i++) {
 			ids.add(images.get(i).getImageId());
