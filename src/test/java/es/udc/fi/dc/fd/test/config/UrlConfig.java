@@ -67,7 +67,7 @@ public final class UrlConfig {
     
     public static final String URL_IMAGE_GETIMAGEBYID_GET = "/images/carrusel/{imageId}";
     
-    public static final String URL_IMAGE_GETFIRST_GET = "/images/carrusel/first";
+    public static final String URL_IMAGE_GETFIRST_GET = "/images/first";
     
     /**
      * Default constructor to avoid initialization.
