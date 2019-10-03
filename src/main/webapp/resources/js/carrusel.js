@@ -114,3 +114,31 @@ const deleteImage = (baseURL, imageID) => {
 		console.log("ERROR");
 	});
 };
+
+const finishEditImage = (result) => {
+	if (result.status !== 204){
+		showAlert("Error uploading image");
+		return;
+	}
+};
+
+const finishEditWithErrors = (errors) => {
+	showAlert("Error uploading image");
+};
+
+const editImage = (baseURL, imageID, description) => {
+	$("#editModal").modal("hide");
+	if ((description === undefined) || (description === null) || (description === "")){
+		showAlert("Error: description is mandatory.");
+		return;
+	}
+	let url = baseURL + "images/edit/" + imageID;
+	authFetch(url, {
+		method: "PUT",
+		body: JSON.stringify({
+			description: description
+		}),
+		headers: { "Content-Type": "application/json" }
+	}, finishEditImage, finishEditWithErrors);
+	document.getElementById('descriptionField').innerText=description;
+};
