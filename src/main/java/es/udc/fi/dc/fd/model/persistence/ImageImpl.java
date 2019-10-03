@@ -3,6 +3,7 @@ package es.udc.fi.dc.fd.model.persistence;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,54 +22,62 @@ import es.udc.fi.dc.fd.model.Image;
 
 @Entity(name = "Image")
 @Table(name = "ImageTable")
-@BatchSize(size=10)
+@BatchSize(size = 10)
 public class ImageImpl implements Image {
 
-    @Transient
+	@Transient
 	private static final long serialVersionUID = 2L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "imageId", nullable = false, unique = true)
-    private Long imageId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "imageId", nullable = false, unique = true)
+	private Long imageId;
 
-    @ManyToOne(optional = false , fetch=FetchType.EAGER )	
-	@JoinColumn(name="user", referencedColumnName="id")
-    private UserImpl user;
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name = "user", referencedColumnName = "id")
+	private UserImpl user;
 
-    @Column(name = "data", nullable = false)
-    private byte[] data;
+	@Column(name = "data", nullable = false)
+	private byte[] data;
 
-    @Column(name = "description")
-    private String description;
+	@Column(name = "description")
+	private String description;
 
-    public ImageImpl() {
-        super();
-    }
-    
-	public ImageImpl(UserImpl user, byte[] data, String description) {
+	@Column(name = "type")
+	private String type;
+
+	public ImageImpl() {
+
+		super();
+	}
+
+	public ImageImpl(UserImpl user, byte[] data, String description, String type) {
 		super();
 		setUser(user);
 		setData(data);
 		setDescription(description);
+		setType(type);
+
 	}
-	
-	public ImageImpl(byte[] data, String description) {
+
+	public ImageImpl(byte[] data, String description, String type) {
 		super();
 		setData(data);
 		setDescription(description);
+		setType(type);
 	}
-	
+
 	public ImageImpl(String description) {
 		super();
 		setDescription(description);
+
 	}
 
 	@Override
 	public Long getImageId() {
 		return imageId;
 	}
-	
+
 	@Override
 	public UserImpl getUser() {
 		return user;
@@ -88,7 +97,7 @@ public class ImageImpl implements Image {
 	public void setImageId(Long imageId) {
 		this.imageId = checkNotNull(imageId, "Received a null pointer as imageId in ImageImpl");
 	}
-	
+
 	@Override
 	public void setUser(UserImpl user) {
 		this.user = checkNotNull(user, "Received a null pointer as user in ImageImpl");
@@ -105,13 +114,21 @@ public class ImageImpl implements Image {
 	}
 
 	@Override
+	public void setType(final String imageType) {
+		type = checkNotNull(imageType, "Received a null pointer as user in imageType");
+	}
+
+	@Override
+	public String getType() {
+		return type;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + Arrays.hashCode(data);
-		result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		result = prime * result + Objects.hash(description, imageId, type, user);
 		return result;
 	}
 
@@ -124,24 +141,9 @@ public class ImageImpl implements Image {
 		if (getClass() != obj.getClass())
 			return false;
 		ImageImpl other = (ImageImpl) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		if (imageId == null) {
-			if (other.imageId != null)
-				return false;
-		} else if (!imageId.equals(other.imageId))
-			return false;
-		if (user == null) {
-			if (other.user != null)
-				return false;
-		} else if (!user.equals(other.user))
-			return false;
-		return true;
+		return Arrays.equals(data, other.data) && Objects.equals(description, other.description)
+				&& Objects.equals(imageId, other.imageId) && Objects.equals(type, other.type)
+				&& Objects.equals(user, other.user);
 	}
 
 	@Override
@@ -149,5 +151,5 @@ public class ImageImpl implements Image {
 		return "ImageImpl [imageId=" + imageId + ", user=" + user + ", image=" + Arrays.toString(data)
 				+ ", description=" + description + "]";
 	}
-	
+
 }

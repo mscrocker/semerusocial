@@ -13,17 +13,18 @@ public class ReturnedImageDto implements Serializable {
 	@NotEmpty
 	private String description;
 
+	private String type;
 
-	public ReturnedImageDto(String data, String description) {
+	public ReturnedImageDto(String data, String description, String type) {
 		super();
 		setData(data);
+		setType(type);
 		setDescription(description);
 	}
-	
+
 	public ReturnedImageDto() {
 		super();
 	}
-
 
 	public String getData() {
 		return data;
@@ -40,13 +41,14 @@ public class ReturnedImageDto implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -69,14 +71,25 @@ public class ReturnedImageDto implements Serializable {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ReturnedImageDto [data=" + data + ", description=" + description + "]";
 	}
 
+	public String getType() {
+		return type;
+	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }

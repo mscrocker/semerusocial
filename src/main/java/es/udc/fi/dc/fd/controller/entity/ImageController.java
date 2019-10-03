@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidImageFormatException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.BlockImageByUserIdDto;
@@ -47,6 +48,7 @@ public class ImageController {
 
 	private final static String ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE = "project.exceptions.ItsNotYourImageException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+	private static final String INVALID_IMAGE_FORMAT_EXCEPTION_CODE = "project.exceptions.InvalidImageFormatException";
 
 	private MessageSource messageSource;
 
@@ -60,7 +62,6 @@ public class ImageController {
 
 		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in ImageController");
 	}
-	
 
 	@ExceptionHandler(InstanceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
@@ -84,10 +85,19 @@ public class ImageController {
 		return new ErrorsDto(errorMessage);
 	}
 
+	@ExceptionHandler(InvalidImageFormatException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleInvalidFormatException(InvalidImageFormatException exception, Locale locale) {
+		String errorMessage = messageSource.getMessage(INVALID_IMAGE_FORMAT_EXCEPTION_CODE, null,
+				INVALID_IMAGE_FORMAT_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
 
 	@PostMapping("/add")
 	public ResponseEntity<ImageCreatedDto> addImage(@Validated @RequestBody ImageCreationDto image,
-			@RequestAttribute Long userId) throws InstanceNotFoundException {
+			@RequestAttribute Long userId) throws InstanceNotFoundException, InvalidImageFormatException {
 		ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 
 		ImageCreatedDto imageResultDto = new ImageCreatedDto(imageResult.getImageId());

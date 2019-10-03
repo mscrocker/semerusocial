@@ -6,20 +6,24 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface Image extends Serializable {
 
-    public Long getImageId();
+	public Long getImageId();
 
-    public User getUser();
+	public User getUser();
 
-    public byte[] getData();
+	public String getType();
 
-    public String getDescription();
+	public byte[] getData();
 
-    public void setImageId(final Long imageId);
+	public String getDescription();
 
-    public void setUser(final UserImpl user);
+	public void setImageId(final Long imageId);
 
-    public void setData(final byte[] data);
+	public void setUser(final UserImpl user);
 
-    public void setDescription(final String description);
-    
+	public void setData(final byte[] data);
+
+	public void setDescription(final String description);
+
+	public void setType(final String imageType);
+
 }

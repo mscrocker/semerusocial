@@ -1,7 +1,7 @@
 package es.udc.fi.dc.fd.dtos;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.Objects;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,46 +10,57 @@ public final class ImageCreationDto implements Serializable {
 	private static final long serialVersionUID = 1328776989450853492L;
 
 	@NotEmpty
-	private byte[] data;
+	private String data;
 
 	@NotEmpty
 	private String description;
 
-   	public ImageCreationDto() {
-   		super();
-   	}
-   	
-   	public ImageCreationDto(byte[] data, String description) {
+	private String type;
+
+	public ImageCreationDto() {
+		super();
+	}
+
+	public ImageCreationDto(String data, String description) {
 		super();
 		setData(data);
 		setDescription(description);
 	}
-   	
-	public byte[] getData() {
+
+	public String getData() {
 		return data;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
-	public void setData(byte[] data) {
+
+	public void setData(String data) {
 		this.data = data;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + Arrays.hashCode(data);
-		return result;
+	public String toString() {
+		return "ImageCreationDto [data=" + data + ", description=" + description + "]";
 	}
-	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(data, description, type);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,21 +70,8 @@ public final class ImageCreationDto implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ImageCreationDto other = (ImageCreationDto) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
+		return Objects.equals(data, other.data) && Objects.equals(description, other.description)
+				&& Objects.equals(type, other.type);
 	}
 
-	@Override
-	public String toString() {
-		return "ImageCreationDto [data=" + Arrays.toString(data) + ", description=" + description
-				+ "]";
-	}
-	
 }
-

@@ -49,17 +49,10 @@ const loadImage = (baseURL) => {
 		response.json().then((body) => {
 
 			
-			/*jshint -W061 */
-			let oriData = eval(body.image.data);
-			let tmpArray = new Uint8Array(oriData);
+			// data + type -> string
 			
-			
-			let stringDecoded = tmpArray.reduce((acu, val) => {
-				return acu + String.fromCharCode(val);
-			}, "");
-			
-			var encoded = btoa(stringDecoded);
-			document.getElementById("imgField").src = "data:image/jpeg;base64, " + encoded;
+			let metadata  = "data:image/" +body.image.type +   ";base64, ";
+			document.getElementById("imgField").src = metadata + body.image.data;
 			document.getElementById("descriptionField").innerText = body.image.description;
 			
 			let baseLink = baseURL + "carrusel/";
