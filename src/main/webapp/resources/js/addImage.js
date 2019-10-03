@@ -131,8 +131,8 @@ const uploadImage = (description, image, uploadURL) => {
 	}, finishUploadImage, finishUploadWithErrors);
 };
 
-const init = (fileDragArea, filePreviewArea, uploadButton, uploadURL) => {
-	fileDragArea.addEventListener("drop", (event) => dropImage(event, filePreviewArea), false);
+const init = (filePreviewArea, uploadButton, uploadURL) => {
+	filePreviewArea.addEventListener("drop", (event) => dropImage(event, filePreviewArea), false);
 	window.addEventListener("dragover",function(e){
 	  e = e || event;
 	  e.preventDefault();
