@@ -21,14 +21,16 @@ const handleRegister = (e, params, baseUrl) => {
 	fetch(url, fetchParams).then((response) => {
 		if (response.status !== 201){
 			console.log("ERROR ON REGISTER PROCEDURE IN!");
-			showAlert(response);
+			response.json().then((body) => {
+				showAlert(body.globalError );
+			});
 		}
 		else {
 		response.json().then((body) => {
 			sessionStorage.setItem('user_jwt', body.jwt);
 			sessionStorage.setItem('user_name', body.userName);
 			
-			window.history.back();
+			window.location.href =window.location.origin +"/carrusel";
 			
 		});
 	}
