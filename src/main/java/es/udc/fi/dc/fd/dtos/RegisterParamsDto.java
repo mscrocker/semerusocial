@@ -2,6 +2,8 @@ package es.udc.fi.dc.fd.dtos;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,13 +16,18 @@ public class RegisterParamsDto {
 	@NotEmpty
 	private String password;
 
-	@NotNull		//TODO: Añadir comprobaciones para la validacion
+	@NotNull
+	@Min(value = 1)
+	@Max(value = 31)
 	private int day;
-	
+
 	@NotNull
+	@Min(value = 1)
+	@Max(value = 12)
 	private int month;
-	
+
 	@NotNull
+
 	private int year;
 
 	@NotEmpty
@@ -33,74 +40,15 @@ public class RegisterParamsDto {
 		super();
 	}
 
-	public String getCity() {
-		return city;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setCity(String city) {
-		this.city = checkNotNull(city, "Received a null pointer as city in UserImpl");
-	}
-
-	public void setPassword(String password) {
-		this.password = checkNotNull(password, "Received a null pointer as password in UserImpl");
-	}
-
-	public void setSex(String sex) {
-		this.sex = checkNotNull(sex, "Received a null pointer as sex in UserImpl");
-	}
-
-	public void setUserName(String userName) {
-		this.userName = checkNotNull(userName, "Received a null pointer as userName in UserImpl");
-	}
-
-	public int getDay() {
-		return day;
-	}
-
-	public void setDay(int day) {
+	public RegisterParamsDto(String userName, String password, int day, int month, int year, String sex, String city) {
+		super();
+		this.userName = userName;
+		this.password = password;
 		this.day = day;
-	}
-
-	public int getMonth() {
-		return month;
-	}
-
-	public void setMonth(int month) {
 		this.month = month;
-	}
-
-	public int getYear() {
-		return year;
-	}
-
-	public void setYear(int year) {
 		this.year = year;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((city == null) ? 0 : city.hashCode());
-		result = prime * result + day;
-		result = prime * result + month;
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-		result = prime * result + year;
-		return result;
+		this.sex = sex;
+		this.city = city;
 	}
 
 	@Override
@@ -141,23 +89,80 @@ public class RegisterParamsDto {
 		return true;
 	}
 
+	public String getCity() {
+		return city;
+	}
+
+	public int getDay() {
+		return day;
+	}
+
+	public int getMonth() {
+		return month;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + day;
+		result = prime * result + month;
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
+		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		result = prime * result + year;
+		return result;
+	}
+
+	public void setCity(String city) {
+		this.city = checkNotNull(city, "Received a null pointer as city in UserImpl");
+	}
+
+	public void setDay(int day) {
+		this.day = day;
+	}
+
+	public void setMonth(int month) {
+		this.month = month;
+	}
+
+	public void setPassword(String password) {
+		this.password = checkNotNull(password, "Received a null pointer as password in UserImpl");
+	}
+
+	public void setSex(String sex) {
+		this.sex = checkNotNull(sex, "Received a null pointer as sex in UserImpl");
+	}
+
+	public void setUserName(String userName) {
+		this.userName = checkNotNull(userName, "Received a null pointer as userName in UserImpl");
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
 	@Override
 	public String toString() {
 		return "RegisterParamsDto [userName=" + userName + ", password=" + password + ", day=" + day + ", month="
 				+ month + ", year=" + year + ", sex=" + sex + ", city=" + city + "]";
 	}
-
-	public RegisterParamsDto(String userName, String password, int day, int month, int year, String sex, String city) {
-		super();
-		this.userName = userName;
-		this.password = password;
-		this.day = day;
-		this.month = month;
-		this.year = year;
-		this.sex = sex;
-		this.city = city;
-	}
-
-	
 
 }

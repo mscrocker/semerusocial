@@ -5,7 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,7 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
+import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
@@ -42,13 +46,13 @@ import es.udc.fi.dc.fd.service.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-	
+
 	private final static String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
 	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
-	
+
 	private final JwtGenerator jwtGenerator = JwtGenerator();
-	
+
 	private MessageSource messageSource;
 
 	private final UserService userService;
@@ -61,19 +65,29 @@ public class UserController {
 
 		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in UserController");
 	}
-	
-	@Bean
-	JwtGenerator JwtGenerator() {
-		return new JwtGeneratorImpl();
+
+	private String generateServiceToken(UserImpl user) {
+		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
+
+		return jwtGenerator.generate(jwtInfo);
+	}
+
+	@GetMapping("/data")
+	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		UserImpl user = userService.loginFromUserId(userId);
+		LocalDateTime today = LocalDateTime.now();
+		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
+
+		return new UserDataDto(period.getYears(), user.getSex(), user.getCity());
 	}
 
 	@ExceptionHandler(DuplicateInstanceException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {		
+	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {
 		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
-		String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE, 
-				new Object[] {nameMessage, exception.getKey().toString()}, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
+		String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE,
+				new Object[] { nameMessage, exception.getKey().toString() }, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -87,20 +101,46 @@ public class UserController {
 
 		return new ErrorsDto(errorMessage);
 	}
-	
+
 	@ExceptionHandler(InstanceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public ErrorsDto handleInstanceNotFoundException(InstanceNotFoundException exception, Locale locale) {
-		
+
 		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
-		String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE, 
-				new Object[] {nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+		String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
+				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
-		
+
 	}
-	
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+
+		List<FieldErrorDto> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
+				.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
+				.collect(Collectors.toList());
+
+		return new ErrorsDto(fieldErrors);
+
+	}
+
+	@Bean
+	JwtGenerator JwtGenerator() {
+		return new JwtGeneratorImpl();
+	}
+
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
+
+		UserImpl user = userService.login(params);
+
+		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
+	}
+
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
 			throws DuplicateInstanceException {
@@ -115,29 +155,6 @@ public class UserController {
 				.toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
-	}
-
-	@PostMapping("/login")
-	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
-
-		UserImpl user = userService.login(params);
-
-		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
-	}
-	
-	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		UserImpl user = userService.loginFromUserId(userId);
-		LocalDateTime today = LocalDateTime.now();
-		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
-
-		return new UserDataDto(period.getYears(),user.getSex(), user.getCity());
-	}
-
-	private String generateServiceToken(UserImpl user) {
-		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
-
-		return jwtGenerator.generate(jwtInfo);
 	}
 
 }
