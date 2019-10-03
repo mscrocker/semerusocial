@@ -2,9 +2,9 @@
 const showAlert = (message) => {
 	const errorAlert = document.getElementById("ErrorAlert");
 	if (message === null){
-		errorAlert.style.display = "none";
+		errorAlert.classList.add("hidden");
 	} else {
-		errorAlert.style.display = "block";
+		 errorAlert.classList.remove("hidden");
 		errorAlert.innerText = message;
 	}
 };

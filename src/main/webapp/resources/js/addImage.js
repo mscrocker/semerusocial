@@ -1,7 +1,7 @@
 var Base64Binary = {
 	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 	
-	/* will return a  Uint8Array type */
+	/* will return a Uint8Array type */
 	decodeArrayBuffer: function(input) {
 		var bytes = (input.length/4) * 3;
 		var ab = new ArrayBuffer(bytes);
@@ -19,7 +19,7 @@ var Base64Binary = {
 	},
 
 	decode: function (input, arrayBuffer) {
-		//get last chars to see if are valid
+		// get last chars to see if are valid
 		input = this.removePaddingChars(input);
 		input = this.removePaddingChars(input);
 
@@ -39,7 +39,7 @@ var Base64Binary = {
 		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 		
 		for (i=0; i<bytes; i+=3) {	
-			//get the 3 octects in 4 ascii chars
+			// get the 3 octects in 4 ascii chars
 			enc1 = this._keyStr.indexOf(input.charAt(j++));
 			enc2 = this._keyStr.indexOf(input.charAt(j++));
 			enc3 = this._keyStr.indexOf(input.charAt(j++));
@@ -60,6 +60,30 @@ var Base64Binary = {
 
 var loadedImage = false;
 
+const previewFile  =  () => {
+	 var encoding = ["png","jpeg","jpg"];
+	  var preview = document.getElementById('filePreviewArea');
+	  var file    = document.getElementById('pic').files[0];
+	  if (!encoding.includes(file.name.split(".")[1]))
+		  {
+		  	showAlert("Not a supported image type!");
+		  	preview.src = "";
+		  	return;
+		  }
+	  showAlert(null);
+	  var reader  = new FileReader();
+
+	  reader.onloadend = function () {
+	    preview.src = reader.result;
+	    loadedImage = true;
+	  }
+
+	  if (file) {
+	    reader.readAsDataURL(file);
+	  } else {
+	    // preview.src = "";
+	  }
+	};
 
 const dropImage = (event, previewImageArea) => {
 	var files = event.target.files || event.dataTransfer.files;
@@ -124,4 +148,6 @@ const init = (fileDragArea, filePreviewArea, uploadButton, uploadURL) => {
 		uploadURL
 	));
 };
+
+	
 
