@@ -1,4 +1,4 @@
-const handleLogin = (e, params, baseUrl) => {
+const handleLogin = (e,params, baseUrl) => {
 	e.preventDefault();
 	showAlert(null);
 	const url = baseUrl + "users/login";
@@ -23,7 +23,8 @@ const handleLogin = (e, params, baseUrl) => {
 			sessionStorage.setItem('user_jwt', body.jwt);
 			sessionStorage.setItem('user_name', body.userName);
 			
-			window.history.back();
+			
+			window.location.href = baseUrl;
 			
 		}).catch((e) => {
 			console.log("Error logging in!");

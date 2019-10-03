@@ -76,7 +76,7 @@ const previewFile  =  () => {
 	  reader.onloadend = function () {
 	    preview.src = reader.result;
 	    loadedImage = true;
-	  }
+	  };
 
 	  if (file) {
 	    reader.readAsDataURL(file);

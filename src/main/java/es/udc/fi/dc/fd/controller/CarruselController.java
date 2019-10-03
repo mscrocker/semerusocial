@@ -15,4 +15,9 @@ public class CarruselController {
 	public final String displayAddImage() {
 		return UserViewConstants.ADD_IMAGE_FORM;
 	}
+	
+	@GetMapping(path = "/users/profile")
+	public final String displayGetUserData() {
+		return UserViewConstants.GET_PROFILE;
+	}
 }

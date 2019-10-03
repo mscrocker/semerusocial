@@ -5,6 +5,7 @@ public final class UserViewConstants {
 	public static final String SIGN_UP_FORM = "signUp";
 	public static final String CARRUSEL_FORM = "carrusel";
 	public static final String ADD_IMAGE_FORM = "addImage";
+	public static final String GET_PROFILE = "profile";
 
 	/**
 	 * Private constructor to avoid initialization.

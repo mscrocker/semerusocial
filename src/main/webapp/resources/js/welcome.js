@@ -1,4 +1,5 @@
 let init = (baseURL) => {
+	console.log("sadasfsaasfasf");
 	let url = baseURL + "images/first";
 	let params = {
 		method: "GET"

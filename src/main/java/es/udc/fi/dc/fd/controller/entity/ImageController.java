@@ -60,6 +60,30 @@ public class ImageController {
 
 		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in ImageController");
 	}
+	
+
+	@ExceptionHandler(InstanceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public ErrorsDto handleInstanceNotFoundException(InstanceNotFoundException exception, Locale locale) {
+
+		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+		String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
+				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
+	@ExceptionHandler(ItsNotYourImageException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public ErrorsDto handleItsNotYourImageException(ItsNotYourImageException exception, Locale locale) {
+		String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, null,
+				ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
 
 	@PostMapping("/add")
 	public ResponseEntity<ImageCreatedDto> addImage(@Validated @RequestBody ImageCreationDto image,
@@ -102,28 +126,6 @@ public class ImageController {
 		Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 
 		return ImageConversor.toReturnedImagesDto(image);
-	}
-
-	@ExceptionHandler(InstanceNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public ErrorsDto handleInstanceNotFoundException(InstanceNotFoundException exception, Locale locale) {
-
-		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
-		String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
-
-		return new ErrorsDto(errorMessage);
-	}
-
-	@ExceptionHandler(ItsNotYourImageException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
-	@ResponseBody
-	public ErrorsDto handleItsNotYourImageException(ItsNotYourImageException exception, Locale locale) {
-		String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, null,
-				ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, locale);
-
-		return new ErrorsDto(errorMessage);
 	}
 
 	@DeleteMapping("/remove/{imageId}")

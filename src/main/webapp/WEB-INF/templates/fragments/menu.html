@@ -2,47 +2,40 @@
 	<nav id="navbar-main" class="navbar navbar-main navbar-default">
 		<div class="container-fluid" style="font-size: 16px;">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main-body" aria-expanded="false" aria-controls="navbar-main">
-					<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar-main-body"
+					aria-expanded="false" aria-controls="navbar-main">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
 				</button>
-				
-
-			</div>
-
-			<div id="navbar-main-body" class="navbar-body navbar-collapse row collapse" style="">
-				<div class="navbar navbar-left">
-						<p class="navbar-text">v#{project.version}</p>
-					</div><div class="navbar navbar-right" style="
-    /* margin-left: 30%; */
-    min-width: 300px;
-">
-						<a href="@project.scm.url@" title="GitHub" aria-label="GitHub" class="nav-link"> <span class="fa fa-github" aria-hidden="true"></span>
-						</a>
-						<div class="dropdown nav-link text-center">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data
-								Options <span aria-hidden="true"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<!-- <li><a th:href="@{/entity/list}" th:text="#{label.list}">List</a></li> -->
-								<li><a href="/narnia" text="Esto lleva a narnia">Patata</a></li>
-								<li><a href="/friendmatch/entity/list/ajax">Listing
-										(AJAX)</a></li>
-								<li><a href="/friendmatch/entity/edit">Add</a></li>
-								<li><a href="/friendmatch/entity/pdf">PDF Report</a></li>
-								<li><a href="/friendmatch/exception/runtime">Exception</a></li>
-							</ul>
-						</div>
-						<form id="loginForm" class="nav-link">
-							<button id="loginButton" th:formaction="@{/login}" class="btn btn-primary" style="margin: 12px; appearance: button;">Login</button>
-						</form>
-					</div>
-
 
 
 			</div>
+			<div class="dropdown nav-link text-center">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown"
+					role="button" aria-haspopup="true" aria-expanded="false">Options
+					<span aria-hidden="true"></span>
+				</a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="/carrusel">My photos</a></li>
+					<li onclick="logOut()"><a href="/login">LogOut</a></li>
+					<li><a href="/addImage">Add new Image</a></li>
+				</ul>
+			</div>
+			<form id="loginForm" class="nav-link">
+				<button id="loginButton" th:formaction="@{/login}"
+					class="btn btn-primary" style="margin: 12px; appearance: button;">Login</button>
+			</form>
+		</div>
+
+
+
+		</div>
 		</div>
 	</nav>
 	<div th:include="fragments/scripts :: user" />
+	<div th:include="fragments/scripts :: welcome" />
 	<script>
 		window.addEventListener('load', updateLoggedIn("loginButton",
 				"[[@{'/users/profile'}]]"), false);

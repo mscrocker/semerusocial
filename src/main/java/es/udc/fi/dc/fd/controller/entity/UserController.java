@@ -57,6 +57,11 @@ public class UserController {
 
 	private final UserService userService;
 
+	@Bean
+	JwtGenerator JwtGenerator() {
+		return new JwtGeneratorImpl();
+	}
+	
 	@Autowired
 	public UserController(final UserService userService, final MessageSource messageSource) {
 		super();
@@ -72,14 +77,6 @@ public class UserController {
 		return jwtGenerator.generate(jwtInfo);
 	}
 
-	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		UserImpl user = userService.loginFromUserId(userId);
-		LocalDateTime today = LocalDateTime.now();
-		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
-
-		return new UserDataDto(period.getYears(), user.getSex(), user.getCity());
-	}
 
 	@ExceptionHandler(DuplicateInstanceException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -128,9 +125,13 @@ public class UserController {
 
 	}
 
-	@Bean
-	JwtGenerator JwtGenerator() {
-		return new JwtGeneratorImpl();
+	@GetMapping("/data")
+	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		UserImpl user = userService.loginFromUserId(userId);
+		LocalDateTime today = LocalDateTime.now();
+		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
+
+		return new UserDataDto(period.getYears(), user.getSex(), user.getCity());
 	}
 
 	@PostMapping("/login")

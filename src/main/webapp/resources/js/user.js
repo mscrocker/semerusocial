@@ -22,3 +22,8 @@ const authFetch = (url, params, onSuccess, onErrors) => {
 const checkLoggedIn = () => {
 	return sessionStorage.user_jwt !== undefined;
 };
+
+const logOut = () => {
+	delete sessionStorage.user_jwt;
+	delete sessionStorage.user_name;
+};
