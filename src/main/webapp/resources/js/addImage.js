@@ -48,7 +48,7 @@ const finishUploadImage = (result, baseURL) => {
 		window.location.href = baseURL + "carrusel/" + body.imageId;
 	}).catch((errors) => {
 		showAlert("Error uploading image");
-	})
+	});
 };
 
 const finishUploadWithErrors = (errors) => {
