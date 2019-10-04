@@ -12,11 +12,9 @@
 				<div class="card-block">
 					<button id="previousButton"
 						onclick="if (previousLink !== null) {window.location.href=previousLink;};"
-						class="btn"
-						style="border-radius: 13px;">
+						class="btn" style="border-radius: 13px;">
 
-						<img 
-							th:src="@{/static/images/back_arrow.png}"
+						<img th:src="@{/static/images/back_arrow.png}"
 							style="max-width: 10px;" />
 					</button>
 				</div>
@@ -44,11 +42,9 @@
 				<div class="card-block">
 					<button id="nextButton"
 						onclick="if (nextLink !== null) {window.location.href=nextLink;};"
-						class="btn"
-						style="border-radius: 13px;">
+						class="btn" style="border-radius: 13px;">
 
-						<img 
-							th:src="@{/static/images/next_arrow.png}"
+						<img th:src="@{/static/images/next_arrow.png}"
 							style="max-width: 10px;" />
 					</button>
 				</div>
@@ -105,14 +101,23 @@
 	<footer>
 		<div th:include="fragments/scripts :: general" />
 		<div th:include="fragments/scripts :: carrusel" />
+		<div th:include="fragments/scripts :: user" />
 	</footer>
 	<script>
    	  window.addEventListener('load', () => {
-   		loadImage("[[@{'/'}]]");
+   		
+   		if (checkLoggedIn()){
+   			document.getElementById("editButton").onclick = () => editImage("[[@{'/'}]]", getImageId(), document.getElementById("editDescriptionInput").value)
+   	     	document.getElementById("deleteButton").onclick = () => deleteImage("[[@{'/'}]]", getImageId())
+   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
+   			loadImage("[[@{'/'}]]");
+   		} else {
+   			window.location.href = "[[@{'/login'}]]";
+   		}
+   		
+   		
    	  });
-   	  document.getElementById("editButton").onclick = () => editImage("[[@{'/'}]]", getImageId(), document.getElementById("editDescriptionInput").value)
-   	  document.getElementById("deleteButton").onclick = () => deleteImage("[[@{'/'}]]", getImageId())
-   	  document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
+   	  
    	  </script>
 
 </body>
