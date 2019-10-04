@@ -31,11 +31,11 @@
 
 
 				<div class="row">
-					<button class="btn btn-success ml-1 mr-auto" id="addButton">ADD</button>
+					<button class="btn btn-success ml-1 mr-auto" id="addButton">Add</button>
 					<button class="btn btn-warning ml-auto mr-auto" data-toggle="modal"
-						data-target="#editModal">EDIT</button>
+						data-target="#editModal">Edit</button>
 					<button class="btn btn-danger mr-1 ml-auto" data-toggle="modal"
-						data-target="#deleteModal">DELETE</button>
+						data-target="#deleteModal">Delete</button>
 				</div>
 			</div>
 			<div class="col-2 align-self-center">
@@ -65,7 +65,7 @@
 					<p>Do you really want to delete this photo?</p>
 				</div>
 				<div class="modal-footer">
-					<button id="deleteButton" type="button" class="btn btn-danger">Delete</button>
+					<button id="deleteButton" type="button" class="btn btn-danger">Confirm</button>
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Back</button>
 				</div>
@@ -76,21 +76,20 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">New description</h5>
+					<h5 class="modal-title">Introduce the new description</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>Introduce the new description</p>
 					<div class="form-area">
-						<label for="editDescriptionInput"> Description: </label> <input
-							type="text" id="editDescriptionInput" required />
+						<label for="editDescriptionInput"> Description: </label> 
+						<input type="text" id="editDescriptionInput" required style="border:solid black 1px;" />
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button id="editButton" type="button" class="btn btn-warning">Edit</button>
+					<button id="editButton" type="button" class="btn btn-warning">Confirm</button>
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Back</button>
 				</div>

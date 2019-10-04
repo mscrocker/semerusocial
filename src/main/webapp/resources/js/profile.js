@@ -17,9 +17,9 @@ const initProfile = (baseURL) => {
 				UserData.sex = body.sex;
 				UserData.city = body.city;
 				
-				document.getElementById("ageField").innerText = body.age;
-				document.getElementById("cityField").innerText = body.city;
-				document.getElementById("sexField").innerText = body.sex;
+				document.getElementById("ageField").innerText = " "+body.age;
+				document.getElementById("cityField").innerText = " "+body.city;
+				document.getElementById("sexField").innerText = " "+body.sex;
 			}
 			);
 		});

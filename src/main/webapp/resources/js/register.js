@@ -20,14 +20,17 @@ const handleRegister = (e, params, baseUrl) => {
 
 	fetch(url, fetchParams).then((response) => {
 		if (response.status !== 201){
-			console.log("ERROR ON REGISTER PROCEDURE IN!");
 			response.json().then((body) => {
 				showAlert("Error");
 			});
 		}
 		else {
 		response.json().then((body) => {
-			window.location.href = baseUrl + "login";
+			
+			sessionStorage.setItem('user_jwt', body.jwt);
+			sessionStorage.setItem('user_name', body.userName);
+			
+			window.location.href = baseUrl ;
 		});
 	}
 		
