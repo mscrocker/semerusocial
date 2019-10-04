@@ -41,19 +41,23 @@ const dropImage = (event, previewImageArea) => {
 const finishUploadImage = (result, baseURL) => {
 	if (result.status !== 201){
 		showAlert("Error uploading image");
+		document.getElementById("uploadButton").disabled = false;
 		return;
 	}
 	result.json().then((body) => {
+		document.getElementById("uploadButton").disabled = false;
 		showAlert(null);
 		window.location.href = baseURL + "carrusel/" + body.imageId;
 	}).catch((errors) => {
 		showAlert("Error uploading image");
 	});
+	
 };
 
 const finishUploadWithErrors = (errors) => {
 	showAlert("Error uploading image");
 };
+
 
 const uploadImage = (description, image, baseURL) => {
 	showAlert(null);
@@ -65,6 +69,9 @@ const uploadImage = (description, image, baseURL) => {
 		showAlert("Error: image is mandatory.");
 		return;
 	}
+	
+	document.getElementById("uploadButton").disabled = true;
+	
 	
 	authFetch(baseURL + "images/add", {
 		method: "POST",
