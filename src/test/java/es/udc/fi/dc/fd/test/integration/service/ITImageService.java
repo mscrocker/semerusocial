@@ -58,10 +58,6 @@ public class ITImageService {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
-	private ImageImpl createImage(UserImpl user, byte[] image, String description, String type) {
-		return new ImageImpl(user, image, description, type);
-	}
-
 	private ImageImpl createImage(UserImpl user, byte[] image, String description) {
 		return new ImageImpl(user, image, description, "jpg");
 	}

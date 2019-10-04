@@ -204,7 +204,6 @@ public class TestImageController {
 	@Test
 	public void TestImageController_EditImage() throws InstanceNotFoundException, ItsNotYourImageException, Exception {
 
-		getImage();
 		byte[] converted = getBytes();
 
 		String description = "Prueba de imagen";
@@ -246,7 +245,6 @@ public class TestImageController {
 	public void TestImageController_EditImage_InstanceNotFoundException()
 			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
 
-		getImage();
 		byte[] converted = getBytes();
 		String description = "Prueba de imagen";
 
@@ -287,7 +285,6 @@ public class TestImageController {
 	@Test
 	public void TestImageController_EditImage_ItsNotYourImageException()
 			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
-		getImage();
 		byte[] converted = getBytes();
 		String description = "Prueba de imagen";
 		// ImagenDto que devuelve el servicio
@@ -390,7 +387,6 @@ public class TestImageController {
 	public void TestImageController_getImagesById() throws InstanceNotFoundException, Exception {
 
 		String description1 = "asd";
-		getImage();
 		byte[] converted1 = getBytes();
 		ImageImpl returnedImage1 = new ImageImpl();
 		ImageImpl returnedImage2 = new ImageImpl();

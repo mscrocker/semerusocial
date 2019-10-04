@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class ImageConversor {
 	}
 
 	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()));
+		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 		return new ImageCreationDto(encoded, image.getDescription());
 	}
 
@@ -66,7 +67,7 @@ public class ImageConversor {
 	}
 
 	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()));
+		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 		return new ReturnedImageDto(encoded, image.getDescription(), image.getType());
 	}
 
@@ -80,7 +81,7 @@ public class ImageConversor {
 	}
 
 	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()));
+		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 
 		return new ReturnedImagesDto(image.getImageId(), encoded);
 	}
