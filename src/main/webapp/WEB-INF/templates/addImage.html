@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<!-- <link rel="stylesheet" type="text/css"
+	th:href="@{/resources/css/utils.css}" media="all" />
+ -->
+<head th:include="fragments/header :: header" />
+<body>
+	<header class="header" th:include="fragments/menu :: menu" />
+
+	<section id="main-section" class="container-fluid">
+		<div th:include="fragments/errorAlert"></div>
+		<div class="card">
+			<div class="row">
+				<div class="col-6">
+					<div class="card bg-info text-white">
+						<img class="card-img" id="filePreviewArea"
+							th:src="@{/static/images/drag_and_drop.png}"
+							style="max-height: 450px !important;" />
+					</div>
+
+				</div>
+				<div class="col-6">
+					<div class="h-100 card-body">
+						<div class="row">
+							<h1 id="descriptionField">UPLOAD IMAGE</h1>
+						</div>
+						<div class="h-25 row">
+							<input class="btn" type="file" id="pic"
+								accept="image/x-png,image/png,image/jpg,image/gif,image/jpeg" />
+						</div>
+
+						<div class="row">
+							<label for="descriptionInput">Description: </label> <input
+								id="descriptionInput" name="descriptionInput" type="text"
+								style="border:solid black 1px;" />
+						</div>
+						<div class="row mt-4">
+							<button class="w-75 btn btn-success" id="uploadButton">UPLOAD</button>
+						</div>
+
+
+					</div>
+
+
+				</div>
+
+			</div>
+		</div>
+
+
+	</section>
+
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+		<div th:include="fragments/scripts :: addImage" />
+	</footer>
+	<script>
+   	  window.addEventListener('load', () => {
+   		
+   		initAddImage(
+   				document.getElementById("filePreviewArea"),
+   				document.getElementById("uploadButton"),document.getElementById("pic"),
+   				"[[@{'/'}]]"
+   		);
+   	  });
+   </script>
+</body>
+
+</html>

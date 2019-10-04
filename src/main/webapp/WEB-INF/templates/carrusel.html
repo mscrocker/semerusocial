@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="fragments/header :: header" />
+<body>
+	<header class="header" th:include="fragments/menu :: menu" />
+	<div class="card container pb-3 pt-5 mb-3 bg-light"
+		style="max-width: 600px;">
+		<div class="row justify-content-md-center">
+			<div class="col-2 align-self-center">
+				<div class="card-block">
+					<button id="previousButton"
+						onclick="if (previousLink !== null) {window.location.href=previousLink;};"
+						class="btn" style="border-radius: 13px;">
+
+						<img th:src="@{/static/images/back_arrow.png}"
+							style="max-width: 10px;" />
+					</button>
+				</div>
+			</div>
+			<div class="col-8">
+				<div class="row justify-content-center">
+					<img style="max-height: 400px; max-width: 100%;"
+						class="carruselImg" id="imgField"
+						th:src="@{/static/images/loading.gif}" />
+				</div>
+				<div class="row">
+					<h1 id="descriptionField"></h1>
+				</div>
+
+
+				<div class="row">
+					<button class="btn btn-success ml-1 mr-auto" id="addButton"
+						style="border-radius: 15px;">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+					<button class="btn btn-warning ml-auto mr-auto" data-toggle="modal"
+						data-target="#editModal" style="border-radius: 15px;">
+						<span class="glyphicon glyphicon-pencil"></span>
+					</button>
+					<button class="btn btn-danger mr-1 ml-auto" data-toggle="modal"
+						data-target="#deleteModal" style="border-radius: 15px;">
+						<span class="glyphicon glyphicon-trash"></span>
+					</button>
+				</div>
+			</div>
+			<div class="col-2 align-self-center">
+				<div class="card-block">
+					<button id="nextButton"
+						onclick="if (nextLink !== null) {window.location.href=nextLink;};"
+						class="btn" style="border-radius: 13px;">
+
+						<img th:src="@{/static/images/next_arrow.png}"
+							style="max-width: 10px;" />
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="card mt-4 pt-3 center-block">
+			<div class="col-12 bg-light" style="min-width: 200px;">
+				<div class="row">
+					<p>Age:</p>
+					<p id="ageField"></p>
+				</div>
+				<div class="row">
+					<p>Sex:</p>
+					<p id="sexField"></p>
+				</div>
+				<div class="row">
+					<p>City:</p>
+					<p id="cityField"></p>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	<div id="deleteModal" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Confirmation dialog</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Do you really want to delete this photo?</p>
+				</div>
+				<div class="modal-footer">
+					<button id="deleteButton" type="button" class="btn btn-danger">Confirm</button>
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Back</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div id="editModal" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Introduce the new description</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-area">
+						<label for="editDescriptionInput"> Description: </label> <input
+							type="text" id="editDescriptionInput" required
+							style="border: solid black 1px;" />
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="editButton" type="button" class="btn btn-warning">Confirm</button>
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Back</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+		<div th:include="fragments/scripts :: carrusel" />
+		<div th:include="fragments/scripts :: user" />
+		<div th:include="fragments/scripts :: profile" />
+	</footer>
+	<script>
+   	  window.addEventListener('load', () => {
+   		
+   		if (checkLoggedIn()){
+   			document.getElementById("editButton").onclick = () => editImage("[[@{'/'}]]", getImageId(), document.getElementById("editDescriptionInput").value)
+   	     	document.getElementById("deleteButton").onclick = () => deleteImage("[[@{'/'}]]", getImageId())
+   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
+   			loadImage("[[@{'/'}]]");
+   			initProfile("[[@{'/'}]]");
+   		} else {
+   			window.location.href = "[[@{'/login'}]]";
+   		}
+   		
+   		
+   	  });
+   	  
+   	  </script>
+
+</body>
+
+</html>

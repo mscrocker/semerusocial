@@ -39,7 +39,7 @@
       </property>
    </bean>
 
-   <bean id="contentNegotiationManager" class="${view.contentNegotiationManager.class}">
+   <bean id="contentNegotiationManager" class="${view.contentNegotiationManager.class}" primary="true">
       <property name="favorPathExtension" value="true" />
       <property name="ignoreAcceptHeader" value="true" />
       <property name="defaultContentType" value="text/html" />
