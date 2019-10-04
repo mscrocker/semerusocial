@@ -22,16 +22,12 @@ const handleRegister = (e, params, baseUrl) => {
 		if (response.status !== 201){
 			console.log("ERROR ON REGISTER PROCEDURE IN!");
 			response.json().then((body) => {
-				showAlert(body.globalError );
+				showAlert("Error");
 			});
 		}
 		else {
 		response.json().then((body) => {
-			sessionStorage.setItem('user_jwt', body.jwt);
-			sessionStorage.setItem('user_name', body.userName);
-			
-			window.location.href =window.location.origin +"/carrusel";
-			
+			window.location.href = baseUrl + "login";
 		});
 	}
 		
