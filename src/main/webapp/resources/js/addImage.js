@@ -38,18 +38,24 @@ const dropImage = (event, previewImageArea) => {
 };
 
 
-const finishUploadImage = (result) => {
+const finishUploadImage = (result, baseURL) => {
 	if (result.status !== 201){
 		showAlert("Error uploading image");
 		return;
 	}
+	result.json().then((body) => {
+		showAlert(null);
+		window.location.href = baseURL + "carrusel/" + body.imageId;
+	}).catch((errors) => {
+		showAlert("Error uploading image");
+	});
 };
 
 const finishUploadWithErrors = (errors) => {
 	showAlert("Error uploading image");
 };
 
-const uploadImage = (description, image, uploadURL) => {
+const uploadImage = (description, image, baseURL) => {
 	showAlert(null);
 	if ((description === undefined) || (description === null) || (description === "")){
 		showAlert("Error: description is mandatory.");
@@ -60,17 +66,17 @@ const uploadImage = (description, image, uploadURL) => {
 		return;
 	}
 	
-	authFetch(uploadURL, {
+	authFetch(baseURL + "images/add", {
 		method: "POST",
 		body: JSON.stringify({
 			data: image,
 			description: description
 		}),
 		headers: { "Content-Type": "application/json" }
-	}, finishUploadImage, finishUploadWithErrors);
+	}, (result) => finishUploadImage(result, baseURL), finishUploadWithErrors);
 };
 
-const initAddImage = (filePreviewArea, uploadButton,uploadFile, uploadURL) => {
+const initAddImage = (filePreviewArea, uploadButton,uploadFile, baseURL) => {
 	filePreviewArea.addEventListener("drop", (event) => dropImage(event, filePreviewArea), false);
 	window.addEventListener("dragover",function(e){
 	  e = e || event;
@@ -87,7 +93,7 @@ const initAddImage = (filePreviewArea, uploadButton,uploadFile, uploadURL) => {
 	uploadButton.addEventListener("click", () => uploadImage(
 		document.getElementById("descriptionInput").value,
 		loadedImage ? document.getElementById("filePreviewArea").src : undefined,
-		uploadURL
+		baseURL
 	));
 };
 
