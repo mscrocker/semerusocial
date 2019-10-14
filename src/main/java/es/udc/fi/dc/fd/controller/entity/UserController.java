@@ -61,7 +61,7 @@ public class UserController {
 	JwtGenerator JwtGenerator() {
 		return new JwtGeneratorImpl();
 	}
-	
+
 	@Autowired
 	public UserController(final UserService userService, final MessageSource messageSource) {
 		super();

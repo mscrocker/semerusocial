@@ -17,6 +17,8 @@ public interface User extends Serializable {
 
     public String getCity();
 
+	public User getSuggestion();
+
     public void setId(final Long userId);
 
     public void setUserName(final String userName);
@@ -28,5 +30,7 @@ public interface User extends Serializable {
     public void setSex(final String sex);
 
     public void setCity(final String city);
-    
+
+	public void setSuggestion(final User suggestion);
+
 }

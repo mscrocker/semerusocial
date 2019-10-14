@@ -58,8 +58,19 @@
 			referencedTableName="UserTable" />
 	</changeSet>
 
-
-
-	
+    <changeSet author="liquibase-docs" id="addSuggestionColumn">
+        <addColumn tableName="UserTable">
+            <column name="suggestion" type="BIGINT">
+                <constraints nullable="true" unique="false" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint
+            baseColumnNames="suggestion"
+            baseTableName="UserTable"
+            constraintName="fk_suggestionId"
+            onDelete="SET NULL"
+            referencedColumnNames="id" 
+            referencedTableName="UserTable" />
+    </changeSet>
 
 </databaseChangeLog>
