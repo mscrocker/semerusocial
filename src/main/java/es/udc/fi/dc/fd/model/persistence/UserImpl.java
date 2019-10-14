@@ -6,48 +6,60 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.User;
 
 @Entity(name = "User")
 @Table(name = "UserTable")
-public class UserImpl implements User{
+public class UserImpl implements User {
 
-    @Transient
+	@Transient
 	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false, unique = true)
+	private Long id;
 
-    @Column(name = "userName", nullable = false, unique = true)
-    private String userName;
+	@Column(name = "userName", nullable = false, unique = true)
+	private String userName;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+	@Column(name = "date")
+	private LocalDateTime date;
 
-    @Column(name = "sex")
-    private String sex;
+	@Column(name = "sex")
+	private String sex;
 
-    @Column(name = "city")
-    private String city;
+	@Column(name = "city")
+	private String city;
 
 	@Column(name = "suggestion")
 	private User suggestion;
 
-    public UserImpl() {
-        super();
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "criteriaSex")
+	private SexCriteriaEnum criteriaSex = SexCriteriaEnum.ANY;
 
+	@Column(name = "criteriaMinAge")
+	private int criteriaMinAge;
+
+	@Column(name = "criteriaMaxAge")
+	private int criteriaMaxAge;
+
+	public UserImpl() {
+		super();
+	}
 
 	@Override
 	public Long getId() {
@@ -63,7 +75,6 @@ public class UserImpl implements User{
 	public String getPassword() {
 		return password;
 	}
-
 
 	@Override
 	public String getSex() {
@@ -120,6 +131,36 @@ public class UserImpl implements User{
 		this.suggestion = suggestion;
 	}
 
+	@Override
+	public SexCriteriaEnum getCriteriaSex() {
+		return criteriaSex;
+	}
+
+	@Override
+	public void setCriteriaSex(SexCriteriaEnum criteriaSex) {
+		this.criteriaSex = criteriaSex;
+	}
+
+	@Override
+	public int getCriteriaMinAge() {
+		return criteriaMinAge;
+	}
+
+	@Override
+	public void setCriteriaMinAge(int criteriaMinAge) {
+		this.criteriaMinAge = criteriaMinAge;
+	}
+
+	@Override
+	public int getCriteriaMaxAge() {
+		return criteriaMaxAge;
+	}
+
+	@Override
+	public void setCriteriaMaxAge(int criteriaMaxAge) {
+		this.criteriaMaxAge = criteriaMaxAge;
+	}
+
 	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city) {
 		super();
 		this.userName = userName;
@@ -134,6 +175,9 @@ public class UserImpl implements User{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + criteriaMaxAge;
+		result = prime * result + criteriaMinAge;
+		result = prime * result + ((criteriaSex == null) ? 0 : criteriaSex.hashCode());
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
@@ -142,7 +186,6 @@ public class UserImpl implements User{
 		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -161,6 +204,19 @@ public class UserImpl implements User{
 				return false;
 			}
 		} else if (!city.equals(other.city)) {
+			return false;
+		}
+		if (criteriaMaxAge != other.criteriaMaxAge) {
+			return false;
+		}
+		if (criteriaMinAge != other.criteriaMinAge) {
+			return false;
+		}
+		if (criteriaSex == null) {
+			if (other.criteriaSex != null) {
+				return false;
+			}
+		} else if (!criteriaSex.equals(other.criteriaSex)) {
 			return false;
 		}
 		if (date == null) {
@@ -208,12 +264,11 @@ public class UserImpl implements User{
 		return true;
 	}
 
-
 	@Override
 	public String toString() {
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
-				+ sex + ", city=" + city + ", suggestion=" + suggestion + "]";
+				+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
+				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + "]";
 	}
-
 
 }

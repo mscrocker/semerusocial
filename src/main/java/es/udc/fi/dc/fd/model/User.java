@@ -19,6 +19,12 @@ public interface User extends Serializable {
 
 	public User getSuggestion();
 
+	public SexCriteriaEnum getCriteriaSex();
+
+	public int getCriteriaMinAge();
+
+	public int getCriteriaMaxAge();
+
     public void setId(final Long userId);
 
     public void setUserName(final String userName);
@@ -32,5 +38,11 @@ public interface User extends Serializable {
     public void setCity(final String city);
 
 	public void setSuggestion(final User suggestion);
+
+	public void setCriteriaSex(final SexCriteriaEnum criteriaSex);
+
+	public void setCriteriaMinAge(final int minAge);
+
+	public void setCriteriaMaxAge(final int maxAge);
 
 }
