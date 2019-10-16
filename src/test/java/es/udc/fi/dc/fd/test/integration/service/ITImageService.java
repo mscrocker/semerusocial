@@ -22,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -68,7 +69,7 @@ public class ITImageService {
 
 		try {
 			userService.signUp(user);
-		} catch (DuplicateInstanceException e) {
+		} catch (DuplicateInstanceException | InvalidDateException e) {
 			throw new RuntimeException(e);
 		}
 

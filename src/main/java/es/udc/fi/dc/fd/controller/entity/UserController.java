@@ -30,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
@@ -50,6 +51,7 @@ public class UserController {
 	private final static String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
 	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+	private final static String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
 
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 
@@ -124,6 +126,16 @@ public class UserController {
 		return new ErrorsDto(fieldErrors);
 
 	}
+	
+	@ExceptionHandler(InvalidDateException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public ErrorsDto handleInvalidDateException(InvalidDateException exception, Locale locale) {
+		String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
+				INVALID_DATE_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
 
 	@GetMapping("/data")
 	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
@@ -144,7 +156,7 @@ public class UserController {
 
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
-			throws DuplicateInstanceException {
+			throws DuplicateInstanceException, InvalidDateException {
 
 		UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
 		userService.signUp(user);

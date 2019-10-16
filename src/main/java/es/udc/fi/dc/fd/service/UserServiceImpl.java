@@ -2,6 +2,7 @@ package es.udc.fi.dc.fd.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -36,9 +38,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Long signUp(UserImpl user) throws DuplicateInstanceException {
+	public Long signUp(UserImpl user) throws DuplicateInstanceException, InvalidDateException {
+		
 		if (getUserRepository().existsByUserName(user.getUserName()))
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
+		
+		if (user.getDate().isAfter(LocalDateTime.now().minusYears(3))) {
+			throw new InvalidDateException("Fecha de nacimiento minima: "+LocalDateTime.now().minusYears(3).toString());
+		}
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword((passwordEncoder.encode(user.getPassword())));
