@@ -20,6 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
@@ -53,7 +54,7 @@ public class ITUserService {
 	//----- signUp -----
 
 	@Test
-	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException {
+	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
 		UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId", getDateTime(1,1,2000), "hombre", "coruna");
 		
 		userService.signUp(user);
@@ -63,7 +64,7 @@ public class ITUserService {
 	}
 	
 	@Test
-	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException {
+	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException, InvalidDateException {
 		UserImpl user = createUser("usuarioSignUpDuplicated","contraseñaSignUpDuplicated", getDateTime(1,1,2000), "hombre", "coruna");
 		userService.signUp(user);
 		
@@ -72,10 +73,18 @@ public class ITUserService {
 		});
 	}
 	
+	@Test
+	public void testSignUpInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
+		UserImpl user = createUser("usuarioSignUpIDE","contraseñaSignUpIDE", LocalDateTime.now(),"nombre", "coruna");
+		assertThrows(InvalidDateException.class,() -> {
+			userService.signUp(user);
+		});
+	}
+	
 	//----- login -----
 	
 	@Test
-	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException {
+	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException, InvalidDateException {
 		UserImpl user = createUser("usuarioLogin","contraseñaLogin", getDateTime(1,1,2000), "hombre", "coruna");
 		String clearPassword = user.getPassword();
 
@@ -91,7 +100,7 @@ public class ITUserService {
 	}
 	
 	@Test
-	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException {
+	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, InvalidDateException {
 		UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass", getDateTime(1,1,2000), "hombre", "coruna");
 		String clearPassword = user.getPassword();
 		
@@ -109,7 +118,7 @@ public class ITUserService {
 	//----- loginFromUserId -----
 	
 	@Test
-	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException {
+	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
 		UserImpl user = createUser("userLoginFromUserId","passwordLoginFromUserId", getDateTime(1,1,2000), "hombre", "coruna");
 		
 		userService.signUp(user);
@@ -118,7 +127,7 @@ public class ITUserService {
 	}
 	
 	@Test
-	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException {
+	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException, InvalidDateException {
 		UserImpl user = createUser("userLoginFromUserIdINFE","passwordLoginFromUserIdINFE", getDateTime(1,1,2000), "hombre", "coruna");
 		
 		userService.signUp(user);
