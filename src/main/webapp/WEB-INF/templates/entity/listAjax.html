@@ -4,23 +4,23 @@
 
 <head th:include="fragments/header :: header" />
 <body>
-   <header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu" />
 
-   <section id="main-section" class="container-fluid">
-      <h1 th:text="#{title.entity.list}">Entity list</h1>
-      <p>This view shows data loaded through an AJAX request.</p>
-      <table class="table table-striped display dataTableAjax">
-         <thead>
-            <tr>
-               <th th:text="#{label.name}">Name</th>
-            </tr>
-         </thead>
-      </table>
-   </section>
+	<section id="main-section" class="container-fluid">
+		<h1 th:text="#{title.entity.list}">Entity list</h1>
+		<p>This view shows data loaded through an AJAX request.</p>
+		<table class="table table-striped display dataTableAjax">
+			<thead>
+				<tr>
+					<th th:text="#{label.name}">Name</th>
+				</tr>
+			</thead>
+		</table>
+	</section>
 
-   <footer>
-      <div th:include="fragments/scripts :: general" />
-   </footer>
+	<footer>
+		<div th:include="fragments/scripts :: general" />
+	</footer>
 </body>
 
 </html>

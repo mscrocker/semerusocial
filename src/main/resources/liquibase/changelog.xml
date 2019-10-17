@@ -49,63 +49,54 @@
 	<changeSet author="liquibase-docs"
 		id="addForeignKeyConstraint">
 		<addForeignKeyConstraint
-			baseColumnNames="user"
-			 baseTableName="ImageTable"
-			constraintName="fk_userId"
-			referencedColumnNames="id" 
+			baseColumnNames="user" baseTableName="ImageTable"
+			constraintName="fk_userId" referencedColumnNames="id"
 			referencedTableName="UserTable" />
 	</changeSet>
 
-    <changeSet author="liquibase-docs" id="addSuggestionColumn">
-        <addColumn tableName="UserTable">
-            <column name="suggestion" type="BIGINT">
-                <constraints nullable="true" unique="false" />
-            </column>
-        </addColumn>
-        <addForeignKeyConstraint
-            baseColumnNames="suggestion"
-            baseTableName="UserTable"
-            constraintName="fk_suggestionId"
-            onDelete="SET NULL"
-            referencedColumnNames="id" 
-            referencedTableName="UserTable" />
-    </changeSet>
-    
-    <changeSet id="table CitiesCriteria" author="">
-        <sqlFile encoding="utf8" path="scripts/createCitiesCriteria.sql"
-            relativeToChangelogFile="true" stripComments="true" />
-    </changeSet>
-    
-    <changeSet id="criteria_UserTable" author="liquibase-docs">
-        <addColumn tableName="UserTable">
-            <column name="criteriaSex" type="ENUM('FEMALE','MALE','OTHER','ANY')">
-                <constraints nullable="false" unique="false" />
-            </column>
-            <column name="criteriaMinAge" type="INT">
-                <constraints nullable="false" unique="false" />                
-            </column>
-            <column name="criteriaMaxAge" type="INT">
-                <constraints nullable="false" unique="false" />                
-            </column>
-        </addColumn>
-        
-        <addDefaultValue 
-            columnName="criteriaSex" 
-            tableName="UserTable"
-            defaultValue="Any"/>
-            
-        <addDefaultValue 
-            tableName="UserTable"
-            columnName="criteriaMinAge"
-            defaultValueNumeric="0"/>
-        
-        <addDefaultValue 
-            tableName="UserTable"
-            columnName="criteriaMaxAge"
-            defaultValueNumeric="99"/>
-        
-    </changeSet>
-    
-    
+	<changeSet author="liquibase-docs" id="addSuggestionColumn">
+		<addColumn tableName="UserTable">
+			<column name="suggestion" type="BIGINT">
+				<constraints nullable="true" unique="false" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint
+			baseColumnNames="suggestion" baseTableName="UserTable"
+			constraintName="fk_suggestionId" onDelete="SET NULL"
+			referencedColumnNames="id" referencedTableName="UserTable" />
+	</changeSet>
+
+	<changeSet id="table CitiesCriteria" author="">
+		<sqlFile encoding="utf8"
+			path="scripts/createCitiesCriteria.sql"
+			relativeToChangelogFile="true" stripComments="true" />
+	</changeSet>
+
+	<changeSet id="criteria_UserTable" author="liquibase-docs">
+		<addColumn tableName="UserTable">
+			<column name="criteriaSex"
+				type="ENUM('FEMALE','MALE','OTHER','ANY')">
+				<constraints nullable="false" unique="false" />
+			</column>
+			<column name="criteriaMinAge" type="INT">
+				<constraints nullable="false" unique="false" />
+			</column>
+			<column name="criteriaMaxAge" type="INT">
+				<constraints nullable="false" unique="false" />
+			</column>
+		</addColumn>
+
+		<addDefaultValue columnName="criteriaSex"
+			tableName="UserTable" defaultValue="Any" />
+
+		<addDefaultValue tableName="UserTable"
+			columnName="criteriaMinAge" defaultValueNumeric="0" />
+
+		<addDefaultValue tableName="UserTable"
+			columnName="criteriaMaxAge" defaultValueNumeric="99" />
+
+	</changeSet>
+
+
 
 </databaseChangeLog>
