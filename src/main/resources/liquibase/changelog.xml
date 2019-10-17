@@ -78,7 +78,7 @@
     
     <changeSet id="criteria_UserTable" author="liquibase-docs">
         <addColumn tableName="UserTable">
-            <column name="criteriaSex" type="ENUM('Female','Male','Other','Any')">
+            <column name="criteriaSex" type="ENUM('FEMALE','MALE','OTHER','ANY')">
                 <constraints nullable="false" unique="false" />
             </column>
             <column name="criteriaMinAge" type="INT">

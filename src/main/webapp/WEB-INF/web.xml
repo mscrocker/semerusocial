@@ -52,11 +52,11 @@
    </filter>
    <filter-mapping>
    	  <filter-name>JwtFilter</filter-name>
-   	  <url-pattern>/images/*</url-pattern>
+   	  <url-pattern>/backend/images/*</url-pattern>
    </filter-mapping>
    <filter-mapping>
    	  <filter-name>JwtFilter</filter-name>
-   	  <url-pattern>/users/data</url-pattern>
+   	  <url-pattern>/backend/users/data</url-pattern>
    </filter-mapping>
    
 

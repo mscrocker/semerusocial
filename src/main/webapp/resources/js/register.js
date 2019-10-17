@@ -1,7 +1,6 @@
 const handleRegister = (e, params, baseUrl) => {
 	e.preventDefault();
-	console.log("yes");
-	const url = baseUrl + "users/signUp";
+	const url = baseUrl + "backend/users/signUp";
 	const date = new Date(params.date);
 	const userData = {
 			userName: params.username,

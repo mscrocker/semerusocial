@@ -5,7 +5,7 @@ let UserData = {
 };
 
 const initProfile = (baseURL) => {
-	const url = baseURL + "users/data" ;
+	const url = baseURL + "backend/users/data" ;
 	if (checkLoggedIn()){
 		authFetch(url, {method: 'GET'}, (response) => {	
 			if (response.status !== 200){

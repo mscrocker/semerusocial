@@ -73,7 +73,7 @@ const uploadImage = (description, image, baseURL) => {
 	document.getElementById("uploadButton").disabled = true;
 	
 	
-	authFetch(baseURL + "images/add", {
+	authFetch(baseURL + "backend/images/add", {
 		method: "POST",
 		body: JSON.stringify({
 			data: image,

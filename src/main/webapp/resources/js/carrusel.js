@@ -10,7 +10,7 @@ const getImageId = () => {
 
 const getImageIdUrl = () => {
 	let baseURL = "[[@{'/'}]]";
-	let url = baseURL + "images/first";
+	let url = baseURL + "backend/images/first";
 	let params = {
 		method: "GET"
 	};
@@ -37,7 +37,7 @@ const getImageIdUrl = () => {
 
 const loadImage = (baseURL) => {
 	const imageId = getImageId();
-	const url = baseURL + "images/carrusel/" + imageId;
+	const url = baseURL + "backend/images/carrusel/" + imageId;
 	authFetch(url, {
 		method: 'GET'
 	}, (response) => {
@@ -90,7 +90,7 @@ const getNextLink = (baseURL) => {
 };
 
 const deleteImage = (baseURL, imageID) => {
-	let url = baseURL + "images/remove/" + imageID;
+	let url = baseURL + "backend/images/remove/" + imageID;
 	let params = {
 			method: "DELETE"
 	};
@@ -125,7 +125,7 @@ const editImage = (baseURL, imageID, description) => {
 		showAlert("Error: description is mandatory.");
 		return;
 	}
-	let url = baseURL + "images/edit/" + imageID;
+	let url = baseURL + "backend/images/edit/" + imageID;
 	authFetch(url, {
 		method: "PUT",
 		body: JSON.stringify({

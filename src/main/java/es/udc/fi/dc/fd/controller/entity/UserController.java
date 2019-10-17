@@ -45,7 +45,7 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/backend/users")
 public class UserController {
 
 	private final static String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";

@@ -1,7 +1,7 @@
 const handleLogin = (e,params, baseUrl) => {
 	e.preventDefault();
 	showAlert(null);
-	const url = baseUrl + "users/login";
+	const url = baseUrl + "backend/users/login";
 	const userData = {
 		userName: params.username,
 		password: params.password

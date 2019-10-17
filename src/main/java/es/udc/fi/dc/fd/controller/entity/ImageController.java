@@ -43,7 +43,7 @@ import es.udc.fi.dc.fd.service.BlockImageByUserId;
 import es.udc.fi.dc.fd.service.ImageService;
 
 @RestController
-@RequestMapping("/images")
+@RequestMapping("/backend/images")
 public class ImageController {
 
 	private final static String ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE = "project.exceptions.ItsNotYourImageException";
