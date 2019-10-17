@@ -21,7 +21,11 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
+import es.udc.fi.dc.fd.controller.exception.ToMuchAgeException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -49,6 +53,9 @@ public class ITUserService {
 	}
 	private LocalDateTime getDateTime(int day, int month, int year) {
 		return LocalDateTime.of(year, month, day, 00, 01);
+	}
+	private SearchCriteriaDto createCriteria(String sex , int minAge , int maxAge) {
+		return new SearchCriteriaDto(sex,minAge,maxAge);
 	}
 	
 	//----- signUp -----
@@ -139,4 +146,68 @@ public class ITUserService {
 		});
 	}
 	
+	//------------- setSearchCriteria -----------------
+	
+	@Test
+	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
+		
+		UserImpl user = createUser("userSetSearchCriteria","passwordSetSearchCriteria", getDateTime(1,1,2000), "hombre", "coruna");
+		Long userId = userService.signUp(user);
+		
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+		
+		SearchCriteriaDto criteria = createCriteria("Male"  , 30, 60);
+				
+		UserImpl registeredUser  = userService.setSearchCriteria(userId, criteria);
+		
+		assertEquals(user, registeredUser);
+	}
+	
+	@Test
+	public void testSetSearchCriteriaInstanceNotFoundException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
+		
+		SearchCriteriaDto criteria = createCriteria("Male", 30, 60);
+				
+		
+		assertThrows(InstanceNotFoundException.class,() -> {
+			userService.setSearchCriteria(-1L, criteria);
+		});
+	}
+	
+	@Test
+	public void testSetSearchCriteriaToMuchAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
+		
+		UserImpl user = createUser("CriteriaToMuchAgeException","CriteriaToMuchAgeException", getDateTime(1,1,2000), "hombre", "coruna");
+		Long userId = userService.signUp(user);
+		
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+		
+		SearchCriteriaDto criteria = createCriteria("Male"  , 30, 150);
+		
+		assertThrows(ToMuchAgeException.class,() -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+	}
+	
+	@Test
+	public void testSetSearchCriteriaNotEnoughAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
+		
+		UserImpl user = createUser("SearchCriteriaNotEnoughAge","pSearchCriteriaNotEnoughAge", getDateTime(1,1,2000), "hombre", "coruna");
+		Long userId = userService.signUp(user);
+		
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+		
+		SearchCriteriaDto criteria = createCriteria("Male"  , -40, 89);
+		
+		assertThrows(NotEnoughAgeException.class,() -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+	}
+
 }

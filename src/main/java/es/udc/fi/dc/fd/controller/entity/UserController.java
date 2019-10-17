@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,10 +32,13 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
+import es.udc.fi.dc.fd.controller.exception.ToMuchAgeException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
@@ -169,5 +173,12 @@ public class UserController {
 
 		return ResponseEntity.created(location).body(userAuthenticated);
 	}
+	
+	@PutMapping("/searchCriteria")
+	public void setSearchCriteria(@Validated @RequestBody SearchCriteriaDto criteria)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
+		long userId = 1L;
+		userService.setSearchCriteria(userId, criteria);
 
+	}
 }

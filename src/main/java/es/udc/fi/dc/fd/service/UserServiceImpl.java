@@ -14,7 +14,10 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
+import es.udc.fi.dc.fd.controller.exception.ToMuchAgeException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
@@ -84,5 +87,27 @@ public class UserServiceImpl implements UserService {
 	public UserRepository getUserRepository() {
 		return userRepository;
 	}
+	
+	@Override
+	public UserImpl setSearchCriteria(Long userId, SearchCriteriaDto criteria) throws InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
+		
+		UserImpl user = permissionChecker.checkUserByUserId(userId);
+		
+		if (criteria.getMaxAge() > 99) {
+			throw new ToMuchAgeException("Age must be lower than 99 years");
+		}
+		if (criteria.getMinAge() < 0) {
+			throw new NotEnoughAgeException("Age must be higher than 0 years");
+		}
+		
+		user.setCriteriaSex(criteria.getSex());
+		user.setCriteriaMaxAge(criteria.getMaxAge());
+		user.setCriteriaMinAge(criteria.getMinAge());
+		
+		UserImpl userSaved = getUserRepository().save(user);
+		
+		return userSaved;
+	}
+	
 
 }
