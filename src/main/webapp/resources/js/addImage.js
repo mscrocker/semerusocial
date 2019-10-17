@@ -2,7 +2,7 @@
 var loadedImage = false;
 
 const previewFile  =  (preview, fileInput) => {
-	 var encoding = ["png","jpeg","jpg"];
+	 var encoding = ["png","jpeg","jpg","gif"];
 	 var file    = fileInput.files[0];
 	  if (!encoding.includes(file.name.split(".")[1]))
 		  {
@@ -39,12 +39,13 @@ const dropImage = (event, previewImageArea) => {
 
 
 const finishUploadImage = (result, baseURL) => {
-	if (result.status !== 201){
-		showAlert("Error uploading image");
-		document.getElementById("uploadButton").disabled = false;
-		return;
-	}
+	
 	result.json().then((body) => {
+		if (result.status !== 201){
+			showAlert(body);
+			document.getElementById("uploadButton").disabled = false;
+			return;
+		}
 		document.getElementById("uploadButton").disabled = false;
 		showAlert(null);
 		window.location.href = baseURL + "carrusel/" + body.imageId;

@@ -20,7 +20,7 @@ const handleRegister = (e, params, baseUrl) => {
 	fetch(url, fetchParams).then((response) => {
 		if (response.status !== 201){
 			response.json().then((body) => {
-				showAlert("Error");
+				showAlert(body);
 			});
 		}
 		else {

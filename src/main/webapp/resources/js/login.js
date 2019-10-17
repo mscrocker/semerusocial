@@ -16,7 +16,7 @@ const handleLogin = (e,params, baseUrl) => {
 		
 		response.json().then((body) => {
 			if (response.status !== 200){
-				showAlert("Error: unable to log in with given credentials");
+				showAlert(body);
 				return;
 			}
 			

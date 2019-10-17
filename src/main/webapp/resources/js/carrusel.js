@@ -42,12 +42,12 @@ const loadImage = (baseURL) => {
 		method: 'GET'
 	}, (response) => {
 		
-		if (response.status !== 200){
-			console.log("ERROR!");
-			return;
-		}
+		
 		response.json().then((body) => {
-
+			if (response.status !== 200){
+				showAlert(body);
+				return;
+			}
 			
 			// data + type -> string
 			
@@ -110,13 +110,15 @@ const deleteImage = (baseURL, imageID) => {
 
 const finishEditImage = (result) => {
 	if (result.status !== 204){
-		showAlert("Error uploading image");
+		response.json().then((body) => {
+		showAlert(body);
 		return;
+		});
 	}
 };
 
 const finishEditWithErrors = (errors) => {
-	showAlert("Error uploading image");
+	showAlert(errors);
 };
 
 const editImage = (baseURL, imageID, description) => {
