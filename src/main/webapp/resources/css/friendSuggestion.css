@@ -1,0 +1,125 @@
+.html {
+	height: 100%!important;
+}
+.body {
+	max-height: 100vw!important;
+	width: 70vw!important;
+
+	background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%)!important;
+}
+
+.container {
+	height: 80%;
+	width: 100%;
+	background-color: #fff;
+	margin: 0 auto;
+	border: 1px solid #c0c0c0;
+}
+#container {
+    border-radius: 25px;
+    /* border: 10px solid #ff000000; */
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    /* border-radius: 25px; */
+	
+}
+
+.carousel-item {
+	heigth: 70%;
+}
+
+.carr {
+	max-width: 70% !important; !
+	margin: auto !important;
+}
+
+.tinfo {
+	font-family: 'Helvetica', sans-serif;
+}
+
+.tinfo .fa-users, .tinfo .fa-book {
+	color: #c0c0c0;
+	float: right;
+	position: relative;
+	font-size: 24px;
+	padding: 12px;
+}
+
+.tcontrols {
+text-align: center;	
+    padding-bottom: 25px;
+}
+
+.tno {
+	    vertical-align: middle;
+	background-color: #fff;
+	height: 120px;
+	width: 120px;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	-ms-border-radius: 50%;
+	position: relative;
+	display: inline-block;
+
+	padding-right:25px;
+	    margin-right: 25px;
+	
+	border: 10px solid #f0f0f0;
+}
+
+.tno i {
+	color: #ff695b;
+	font-size: 80px;
+    padding: 6px 20px;}
+
+.ti {
+	    vertical-align: middle;
+	background-color: #fff;
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	-ms-border-radius: 50%;
+	position: relative;
+	display: inline-block;
+	
+
+	border: 10px solid #f0f0f0;
+}
+
+.ti .fa-info {
+	font-size: 23px;
+	/* padding: 15px 20px;
+	 */color: #398beb;
+}
+
+.tyes {
+	    vertical-align: middle;
+	background-color: #fff;
+	height: 120px;
+	width: 120px;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	-ms-border-radius: 50%;
+	position: relative;
+	display: inline-block;
+	border: 10px solid #f0f0f0;
+	    margin-left: 25px;
+	
+}
+
+.tyes i {
+	color: #5de19c;
+	font-size: 60px;
+	padding: 25px 17px;
+}
+#imgField {	
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    border-radius: 25px;
+
+}
+#carouselExampleControls {
+	padding: 50px;
+}
