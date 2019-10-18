@@ -138,6 +138,15 @@ public class ImageController {
 		return ImageConversor.toReturnedImagesDto(image);
 	}
 
+	@GetMapping("/carrusel/user/{userId}")
+	public BlockDto<ReturnedImageDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
+			throws InstanceNotFoundException {
+		Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
+		BlockDto<ReturnedImageDto> blockDto = ImageConversor.toReturnedImageDto(images);
+
+		return blockDto;
+	}
+
 	@DeleteMapping("/remove/{imageId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void removeImage(@PathVariable Long imageId, @RequestAttribute Long userId)

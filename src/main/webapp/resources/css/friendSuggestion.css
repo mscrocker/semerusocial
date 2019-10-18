@@ -46,7 +46,7 @@
 
 .tcontrols {
 text-align: center;	
-    padding-bottom: 25px;
+    padding-top: 25px;
 }
 
 .tno {
@@ -122,4 +122,8 @@ text-align: center;
 }
 #carouselExampleControls {
 	padding: 50px;
+}
+img {
+    max-width: 100%!important;
+    max-height: 70vh!important;
 }
