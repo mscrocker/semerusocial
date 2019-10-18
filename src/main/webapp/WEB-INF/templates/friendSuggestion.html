@@ -17,12 +17,12 @@
 	<div id="container" class="w-75 m-auto vh-80%">
 		<div id="loader" class="text-center hidden">
 			<div class="spinner-border " role="status"
-				style="width: 5rem; height: 3rem;">
+				style="width: 5rem; height: 5rem;">
 				<span class="sr-only">Loading...</span>
 			</div>
 		</div>
 		<div class="carousel" th:object="${block}">
-			<div id="carouselExampleControls" class="carousel" >
+			<div id="carouselExampleControls" class="carousel">
 				<div class="carousel-inner">
 
 					<div id="imagesController">
@@ -31,22 +31,23 @@
 								th:src="${'data:image/'+ image.type + ';base64, ' +  image.data}" />
 						</div>
 					</div>
-					<div class="carousel-caption d-none d-md-block" th:object="${user}" >
+					<div class="carousel-caption d-none d-md-block" th:object="${user}">
 
-						<h3 id="descriptionField" ></h3>
-						<div  th:object="${age}">
-						<h3 id="ageField" th:text="${age}">Age</h3>
+						<h3 id="descriptionField"></h3>
+						<div th:object="${age}">
+							<h3 id="ageField" th:text="${age}">Age</h3>
 
 						</div>
 						<h3 id="CityField" th:text=*{city}></h3>
 						<h3 id="GenreField" th:text=*{sex}></h3>
-						
+
 
 					</div>
 
-					<a id="previousButton" class="carousel-control-prev" role="button"
-						data-slide="prev"> <span class="carousel-control-prev-icon"
-						aria-hidden="true"></span> <span class="sr-only">Previous</span>
+					<a id="previousButton" class="carousel-control-prev hidden"
+						role="button" data-slide="prev"> <span
+						class="carousel-control-prev-icon" aria-hidden="true"></span> <span
+						class="sr-only">Previous</span>
 					</a> <a id="nextButton" class="carousel-control-next" role="button"
 						data-slide="next"> <span class="carousel-control-next-icon"
 						aria-hidden="true"></span> <span class="sr-only">Next</span>
