@@ -9,57 +9,22 @@
 </head>
 
 
-<body class="w-100 h-100" style="height: 100%; background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);" >
+<body class="w-100 h-100"
+	style="height: 100%; background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);">
 
 	<header class="header" th:include="fragments/menu :: menu" />
 
 	<div id="container" class="w-75 m-auto vh-80%">
-		<div class="carousel">
-			<div id="carouselExampleControls" class="carousel slide"
+		<div class="carousel" th:object="${block}">
+			<div id="carouselExampleControls" class="carousel "
 				data-ride="carousel">
-				<div class="carousel-inner ">
-					<div class="carousel-item active">
-						<img class="d-block mx-auto" id="imgField"
-							th:src="@{/static/images/loading.gif}" />
+				<div class="carousel-inner">
 
-
-
-
-					</div>
-					<div class="item">
-						<img src="" alt="Chicago">
-					</div>
-
-					<div class="item">
-						<img src="" alt="New York">
-					</div>
-					<div class="item">
-						<img src="" alt="Chicago">
-					</div>
-
-					<div class="item">
-						<img src="" alt="New York">
-					</div>
-					<div class="item">
-						<img src="" alt="Chicago">
-					</div>
-
-					<div class="item">
-						<img src="" alt="New York">
-					</div>
-					<div class="item">
-						<img src="" alt="Chicago">
-					</div>
-
-					<div class="item">
-						<img src="" alt="New York">
-					</div>
-					<div class="item">
-						<img src="" alt="Chicago">
-					</div>
-
-					<div class="item">
-						<img src="" alt="New York">
+					<div id="imagesController">
+						<div class="carousel-item" th:each="image,index : *{images}">
+							<img class="d-block mx-auto" th:id="'imgField' + ${index.index}"
+								th:src="${'data:image/'+ image.type + ';base64, ' +  image.data}" />
+						</div>
 					</div>
 					<div class="carousel-caption d-none d-md-block">
 
@@ -68,34 +33,32 @@
 						<h3 id="GenreField">Genre</h3>
 
 					</div>
+
+					<a id="previousButton" class="carousel-control-prev" role="button"
+						data-slide="prev"> <span class="carousel-control-prev-icon"
+						aria-hidden="true"></span> <span class="sr-only">Previous</span>
+					</a> <a id="nextButton" class="carousel-control-next" role="button"
+						data-slide="next"> <span class="carousel-control-next-icon"
+						aria-hidden="true"></span> <span class="sr-only">Next</span>
+					</a>
 				</div>
 
-
-				<a id="previousButton" class="carousel-control-prev" role="button"
-					data-slide="prev"> <span class="carousel-control-prev-icon"
-					aria-hidden="true"></span> <span class="sr-only">Previous</span>
-				</a> <a id="nextButton" class="carousel-control-next" role="button"
-					data-slide="next"> <span class="carousel-control-next-icon"
-					aria-hidden="true"></span> <span class="sr-only">Next</span>
-				</a>
-			</div>
-
-			<div class="tcontrols">
-				<div class="tno">
-					<i class="fa fa-times" aria-hidden="true"></i>
-				</div>
-				<div class="ti">
-					<i class="fa fa-info" aria-hidden="true"></i>
-				</div>
-				<div class="tyes">
-					<i class="fa fa-heart" aria-hidden="true"></i>
+				<div class="tcontrols">
+					<div class="tno">
+						<i class="fa fa-times" aria-hidden="true"></i>
+					</div>
+					<div class="ti">
+						<i class="fa fa-info" aria-hidden="true"></i>
+					</div>
+					<div class="tyes">
+						<i class="fa fa-heart" aria-hidden="true"></i>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
 
-	<!-- <div class="tphoto">
+		<!-- <div class="tphoto">
 			<img
 				src="http://www.amicnews.com/wp-content/uploads/2015/04/Sunglasses-Trends-for-Summer-2015.jpg"
 				title="tphoto" alt="Tinder Photo" />
@@ -108,5 +71,19 @@
 			</div>
 		</div>
 	 -->
+		<footer>
+			<div th:include="fragments/scripts :: general" />
+			<div th:include="fragments/scripts :: friendSuggestion" />
+			<div th:include="fragments/scripts :: user" />
+			<div th:include="fragments/scripts :: profile" />
+		</footer>
+		<script type="text/javascript">
+	 window.addEventListener('load', () => {
+	 document.getElementById("nextButton").onclick =  onNextPressed;
+	 document.getElementById("previousButton").onclick =  onPrevPressed;
+	 initSuggestion();	
+   	  });
+   	  
+   	  </script>
 </body>
 </html>
