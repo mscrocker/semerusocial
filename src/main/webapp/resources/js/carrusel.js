@@ -53,7 +53,6 @@ const loadImage = (baseURL) => {
 			
 			let metadata  = "data:image/" +body.image.type +   ";base64, ";
 			document.getElementById("imgField").src = metadata + body.image.data;
-			document.getElementById("descriptionField").innerText = body.image.description;
 			
 			let baseLink = baseURL + "carrusel/";
 			if (body.nextId){
@@ -106,32 +105,4 @@ const deleteImage = (baseURL, imageID) => {
 	}, (errors) => {
 		console.log("ERROR");
 	});
-};
-
-const finishEditImage = (result) => {
-	if (result.status !== 204){
-		showAlert("Error uploading image");
-		return;
-	}
-};
-
-const finishEditWithErrors = (errors) => {
-	showAlert("Error uploading image");
-};
-
-const editImage = (baseURL, imageID, description) => {
-	$("#editModal").modal("hide");
-	if ((description === undefined) || (description === null) || (description === "")){
-		showAlert("Error: description is mandatory.");
-		return;
-	}
-	let url = baseURL + "backend/images/edit/" + imageID;
-	authFetch(url, {
-		method: "PUT",
-		body: JSON.stringify({
-			description: description
-		}),
-		headers: { "Content-Type": "application/json" }
-	}, finishEditImage, finishEditWithErrors);
-	document.getElementById('descriptionField').innerText=description;
 };

@@ -59,12 +59,8 @@ const finishUploadWithErrors = (errors) => {
 };
 
 
-const uploadImage = (description, image, baseURL) => {
+const uploadImage = (image, baseURL) => {
 	showAlert(null);
-	if ((description === undefined) || (description === null) || (description === "")){
-		showAlert("Error: description is mandatory.");
-		return;
-	}
 	if (image === undefined){
 		showAlert("Error: image is mandatory.");
 		return;
@@ -77,7 +73,6 @@ const uploadImage = (description, image, baseURL) => {
 		method: "POST",
 		body: JSON.stringify({
 			data: image,
-			description: description
 		}),
 		headers: { "Content-Type": "application/json" }
 	}, (result) => finishUploadImage(result, baseURL), finishUploadWithErrors);
@@ -98,7 +93,6 @@ const initAddImage = (filePreviewArea, uploadButton,uploadFile, baseURL) => {
 
 	
 	uploadButton.addEventListener("click", () => uploadImage(
-		document.getElementById("descriptionInput").value,
 		loadedImage ? document.getElementById("filePreviewArea").src : undefined,
 		baseURL
 	));

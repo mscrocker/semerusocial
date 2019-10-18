@@ -24,7 +24,7 @@ public class ImageServiceImpl implements ImageService {
 
 	private final ImageRepository imageRepository;
 
-	private PermissionChecker permissionChecker;
+	private final PermissionChecker permissionChecker;
 
 	@Autowired
 	public ImageServiceImpl(final ImageRepository imageRepository, final PermissionChecker permissionChecker) {
@@ -39,7 +39,7 @@ public class ImageServiceImpl implements ImageService {
 
 	@Override
 	public ImageImpl addImage(ImageImpl image, Long userId) throws InstanceNotFoundException {
-		UserImpl user = permissionChecker.checkUserByUserId(userId);
+		final UserImpl user = permissionChecker.checkUserByUserId(userId);
 
 		image.setUser(user);
 
@@ -47,34 +47,18 @@ public class ImageServiceImpl implements ImageService {
 	}
 
 	@Override
-	public ImageImpl editImage(ImageImpl image, Long imageId, Long userId)
-			throws InstanceNotFoundException, ItsNotYourImageException {
-		permissionChecker.checkUserExists(userId);
-
-		Optional<ImageImpl> resultImage = getImageRepository().findById(imageId);
-
-		if (!resultImage.isPresent())
-			throw new InstanceNotFoundException("Image with imageId=" + image.getImageId() + " doesn't exist",
-					resultImage);
-		if (!resultImage.get().getUser().getId().equals(userId))
-			throw new ItsNotYourImageException("You can't edit a image that doesn't belong to you.");
-
-		resultImage.get().setDescription(image.getDescription());
-
-		return getImageRepository().save(resultImage.get());
-	}
-
-	@Override
 	public void removeImage(Long imageId, Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
 		permissionChecker.checkUserExists(userId);
 
-		Optional<ImageImpl> i = getImageRepository().findById(imageId);
+		final Optional<ImageImpl> i = getImageRepository().findById(imageId);
 
-		if (!i.isPresent())
+		if (!i.isPresent()) {
 			throw new InstanceNotFoundException("Image with imageId=" + imageId + " doesn't exist", i);
+		}
 
-		if (!i.get().getUser().getId().equals(userId))
+		if (!i.get().getUser().getId().equals(userId)) {
 			throw new ItsNotYourImageException("You can't remove a image that doesn't belong to you.");
+		}
 
 		getImageRepository().delete(i.get());
 	}
@@ -84,7 +68,7 @@ public class ImageServiceImpl implements ImageService {
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 
-		Slice<ImageImpl> images = getImageRepository().findByUserId(userId, PageRequest.of(page, 10));
+		final Slice<ImageImpl> images = getImageRepository().findByUserId(userId, PageRequest.of(page, 10));
 
 		return new Block<>(images.getContent(), images.hasNext());
 	}
@@ -95,32 +79,34 @@ public class ImageServiceImpl implements ImageService {
 			throws InstanceNotFoundException, ItsNotYourImageException {
 		permissionChecker.checkUserExists(userId);
 
-		Optional<ImageImpl> image = getImageRepository().findById(imageId);
+		final Optional<ImageImpl> image = getImageRepository().findById(imageId);
 
-		if (!image.isPresent())
+		if (!image.isPresent()) {
 			throw new InstanceNotFoundException("Image with imageId=" + imageId + " doesn't exist", image);
+		}
 
-		if (!image.get().getUser().getId().equals(userId))
+		if (!image.get().getUser().getId().equals(userId)) {
 			throw new ItsNotYourImageException("You can't access to image that doesn't belong to you.");
-		List<ImageImpl> images = getImageRepository().findByUserId(userId);
+		}
+		final List<ImageImpl> images = getImageRepository().findByUserId(userId);
 
-		List<Long> ids = new ArrayList<>();
-		for (ImageImpl image2 : images) {
+		final List<Long> ids = new ArrayList<>();
+		for (final ImageImpl image2 : images) {
 			ids.add(image2.getImageId());
 		}
 
 		Long prevId;
 		Long nextId;
-		int position = ids.indexOf(imageId);
+		final int position = ids.indexOf(imageId);
 
 		try {
 			prevId = ids.get(position - 1);
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			prevId = null;
 		}
 		try {
 			nextId = ids.get(position + 1);
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			nextId = null;
 		}
 
@@ -132,10 +118,11 @@ public class ImageServiceImpl implements ImageService {
 	public Long getFirstImageIdByUserId(Long userId) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 
-		List<ImageImpl> images = getImageRepository().findByUserId(userId);
+		final List<ImageImpl> images = getImageRepository().findByUserId(userId);
 
-		if (images.size() == 0)
+		if (images.size() == 0) {
 			return null;
+		}
 		return images.get(0).getImageId();
 	}
 
