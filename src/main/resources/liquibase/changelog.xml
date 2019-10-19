@@ -111,6 +111,44 @@
         <dropColumn tableName="ImageTable"
             columnName="description"/>
     </changeSet>
+    
+    <changeSet author="AlexMartinez" id="AddRequestMatchRejectTables">
+        <createTable tableName="RequestTable">
+            <column name="subject" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="object" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="MatchTable">
+            <column name="user1" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="user2" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="RejectedTable">
+            <column name="subject" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="object" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+    </changeSet>
 
 
 
