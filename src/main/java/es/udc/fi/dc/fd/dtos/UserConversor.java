@@ -8,9 +8,10 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 public class UserConversor {
 
 	public final static User fromRegisterDto(RegisterParamsDto params) {
-		
-		LocalDateTime date = LocalDateTime.of(params.getYear(), params.getMonth(), params.getDay(), 00, 01);
-		return new UserImpl(params.getUserName(), params.getPassword(), date, params.getSex(), params.getCity());
+
+		final LocalDateTime date = LocalDateTime.of(params.getYear(), params.getMonth(), params.getDay(), 00, 01);
+		return new UserImpl(params.getUserName(), params.getPassword(), date, params.getSex(), params.getCity(),
+				params.getDescription());
 	}
 
 	private UserConversor() {}

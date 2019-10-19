@@ -1,7 +1,8 @@
 let UserData = {
 		'age' : null,
 		'sex' : null, 
-		'city' : null
+		'city' : null,
+		'description' : null
 };
 
 const initProfile = (baseURL) => {
@@ -16,10 +17,12 @@ const initProfile = (baseURL) => {
 				UserData.age = body.age;
 				UserData.sex = body.sex;
 				UserData.city = body.city;
+				UserData.description = body.description;
 				
 				document.getElementById("ageField").innerText = " "+body.age;
 				document.getElementById("cityField").innerText = " "+body.city;
 				document.getElementById("sexField").innerText = " "+body.sex;
+				document.getElementById("descriptionField").innerText = " "+body.description;
 			}
 			);
 		});
