@@ -6,30 +6,108 @@
 <head th:include="fragments/header :: header" />
 <body>
 	<header class="header" th:include="fragments/menu :: menu" />
-	<div class="card container bg-dark">
-		<h1 class="card-title" style="text-align: center; color: azure">User
-			Data</h1>
-		<div class="row">
-			<p class="card-text">Age :</p>
-			<p id="ageField" class="card-text">Age :</p>
-		</div>
-		<div class="row">
-			<p class="card-text">Sex :</p>
-			<p id="sexField" class="card-text">Sex :</p>
-		</div>
-		<div class="row">
-			<p class="card-text">City :</p>
-			<p id="cityField" class="card-text">City :</p>
+	<div id="profileForm"
+		class="container bg-light border border-primary mb-5 hidden">
+		<h1 class="" style="text-align: center;">User Data</h1>
+		<form class="form">
+			<div class="">
+				<div class="form-group">
+					<label for="ageField">Age: </label> <input id="ageField"
+						class="form-control" value="10" type="number" required="">
+					<div class="invalid-feedback">
+						<p id="ageFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sexField">Sex: </label> <select id="sexField"
+						class="form-control">
+						<option>Male</option>
+						<option>Female</option>
+						<option>Other</option>
+					</select>
+					<div class="invalid-feedback">
+						<p id="sexFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cityField">City: </label> <input id="cityField"
+						class="card-text" / value="loading" required>
+					<div class="invalid-feedback">
+						<p id="cityFieldFeedback"></p>
+					</div>
+				</div>
+				<button class="btn btn-primary mb-3" disabled>Update</button>
+			</div>
+		</form>
+	</div>
+	<div id="criteriaForm"
+		class="container bg-light border border-primary mt-5 hidden">
+		<h1 class="" style="text-align: center;">Search Criteria</h1>
+		<form class="form">
+			<div class="">
+				<div class="form-group">
+					<label for="minAgeCriteriaField">Minimum age: </label> <input
+						id="minAgeCriteriaField" class="form-control" value="10"
+						type="number" required>
+					<div class="invalid-feedback">
+						<p id="minAgeCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="maxAgeCriteriaField">Maximum age: </label> <input
+						id="maxAgeCriteriaField" class="form-control" value="10"
+						type="number" required>
+					<div class="invalid-feedback">
+						<p id="maxAgeCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sexCriteriaField">Sex: </label> <select
+						id="sexCriteriaField" class="form-control">
+						<option>Male</option>
+						<option>Female</option>
+						<option>Other</option>
+						<option>Any</option>
+					</select>
+					<div class="invalid-feedback">
+						<p id="sexCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cityCriteriaField">City: </label> <input
+						id="cityCriteriaField" class="card-text" / value="loading"
+						required>
+					<div class="invalid-feedback">
+						<p id="cityCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<button class="btn btn-primary mb-3" disabled>Update</button>
+			</div>
+		</form>
+	</div>
+	<div id="loadingIcon" class="container text-center mt-5">
+		<div class="spinner-border text-primary" role="status"
+			style="min-width: 100px; min-height: 100px;">
+			<span class="sr-only">Loading...</span>
 		</div>
 	</div>
 	<footer>
 		<div th:include="fragments/scripts :: general" />
 		<div th:include="fragments/scripts :: profile" />
+		<div th:include="fragments/scripts :: criteria" />
 	</footer>
 	<script>
 	window.addEventListener("load", () => {
 		initProfile("[[@{'/'}]]");
+		criteriaSettings.init("[[@{'/'}]]");
+
+		document.getElementById("profileForm").classList.remove("hidden");
+		document.getElementById("criteriaForm").classList.remove("hidden");
+		document.getElementById("loadingIcon").classList.add("hidden");
+		
+		
 	});
+	
    	 </script>
 </body>
 
