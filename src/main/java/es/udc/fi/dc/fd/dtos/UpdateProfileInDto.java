@@ -19,6 +19,7 @@ public class UpdateProfileInDto {
 	private int month;
 
 	@NotNull
+	@Min(value = 1)
 	private int year;
 
 	@NotEmpty
