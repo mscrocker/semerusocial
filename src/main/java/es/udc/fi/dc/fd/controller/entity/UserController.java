@@ -55,7 +55,7 @@ public class UserController {
 
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 
-	private MessageSource messageSource;
+	private final MessageSource messageSource;
 
 	private final UserService userService;
 
@@ -74,7 +74,7 @@ public class UserController {
 	}
 
 	private String generateServiceToken(UserImpl user) {
-		JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
+		final JwtInfo jwtInfo = new JwtInfo(user.getId(), user.getUserName());
 
 		return jwtGenerator.generate(jwtInfo);
 	}
@@ -84,8 +84,8 @@ public class UserController {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {
-		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
-		String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE,
+		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+		final String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE,
 				new Object[] { nameMessage, exception.getKey().toString() }, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
@@ -95,7 +95,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public ErrorsDto handleIncorrectLoginException(IncorrectLoginException exception, Locale locale) {
-		String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
+		final String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
 				INCORRECT_LOGIN_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
@@ -106,8 +106,8 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleInstanceNotFoundException(InstanceNotFoundException exception, Locale locale) {
 
-		String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
-		String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
+		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+		final String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
 				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
@@ -119,55 +119,55 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-		List<FieldErrorDto> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
+		final List<FieldErrorDto> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
 				.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
 				.collect(Collectors.toList());
 
 		return new ErrorsDto(fieldErrors);
 
 	}
-	
+
 	@ExceptionHandler(InvalidDateException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ResponseBody
 	public ErrorsDto handleInvalidDateException(InvalidDateException exception, Locale locale) {
-		String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
+		final String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
 				INVALID_DATE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
-	}
-
-	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		UserImpl user = userService.loginFromUserId(userId);
-		LocalDateTime today = LocalDateTime.now();
-		Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
-
-		return new UserDataDto(period.getYears(), user.getSex(), user.getCity());
-	}
-
-	@PostMapping("/login")
-	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
-
-		UserImpl user = userService.login(params);
-
-		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
 	}
 
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
 			throws DuplicateInstanceException, InvalidDateException {
 
-		UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
+		final UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
 		userService.signUp(user);
 
-		UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(),
+		final UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(),
 				generateServiceToken(user));
 
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
+		final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
 				.toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
+	}
+
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
+
+		final UserImpl user = userService.login(params);
+
+		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
+	}
+
+	@GetMapping("/data")
+	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		final UserImpl user = userService.loginFromUserId(userId);
+		final LocalDateTime today = LocalDateTime.now();
+		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
+
+		return new UserDataDto(period.getYears(), user.getSex(), user.getCity(), user.getDescription());
 	}
 
 }
