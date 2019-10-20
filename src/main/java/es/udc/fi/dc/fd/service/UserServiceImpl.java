@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	private final PermissionChecker permissionChecker;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker){
+	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker) {
 		super();
 
 		this.userRepository = checkNotNull(userRepository,

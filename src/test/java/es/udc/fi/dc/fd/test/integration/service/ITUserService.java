@@ -48,21 +48,26 @@ public class ITUserService {
 		super();
 	}
 
-	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city) {
-		return new UserImpl(userName, password, date, sex, city);
+	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
+			String description) {
+		return new UserImpl(userName, password, date, sex, city, description);
 	}
 	private LocalDateTime getDateTime(int day, int month, int year) {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
+
 	private SearchCriteriaDto createCriteria(String sex , int minAge , int maxAge) {
 		return new SearchCriteriaDto(sex,minAge,maxAge);
 	}
+
 
 	//----- signUp -----
 
 	@Test
 	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
-		final UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("usuarioSignUpAndLoginFromId", "contraseñaSignUpAndLoginFromId",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
@@ -72,7 +77,10 @@ public class ITUserService {
 
 	@Test
 	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException, InvalidDateException {
-		final UserImpl user = createUser("usuarioSignUpDuplicated","contraseñaSignUpDuplicated", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("usuarioSignUpDuplicated", "contraseñaSignUpDuplicated",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		userService.signUp(user);
 
 		assertThrows(DuplicateInstanceException.class,() -> {
@@ -82,7 +90,10 @@ public class ITUserService {
 
 	@Test
 	public void testSignUpInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
-		final UserImpl user = createUser("usuarioSignUpIDE","contraseñaSignUpIDE", LocalDateTime.now(),"nombre", "coruna");
+
+		final UserImpl user = createUser("usuarioSignUpIDE", "contraseñaSignUpIDE", LocalDateTime.now(), "nombre",
+				"coruna", "descripcion");
+
 		assertThrows(InvalidDateException.class,() -> {
 			userService.signUp(user);
 		});
@@ -92,7 +103,10 @@ public class ITUserService {
 
 	@Test
 	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException, InvalidDateException {
-		final UserImpl user = createUser("usuarioLogin","contraseñaLogin", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("usuarioLogin", "contraseñaLogin", getDateTime(1, 1, 2000), "hombre", "coruna",
+				"descripcion");
+
 		final String clearPassword = user.getPassword();
 
 		userService.signUp(user);
@@ -108,7 +122,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, InvalidDateException {
-		final UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("usuarioLoginIncorrectPass", "contraseñaLoginIncorrectPass",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		final String clearPassword = user.getPassword();
 
 		userService.signUp(user);
@@ -126,7 +143,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
-		final UserImpl user = createUser("userLoginFromUserId","passwordLoginFromUserId", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("userLoginFromUserId", "passwordLoginFromUserId", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
 
 		userService.signUp(user);
 
@@ -135,7 +155,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException, InvalidDateException {
-		final UserImpl user = createUser("userLoginFromUserIdINFE","passwordLoginFromUserIdINFE", getDateTime(1,1,2000), "hombre", "coruna");
+
+		final UserImpl user = createUser("userLoginFromUserIdINFE", "passwordLoginFromUserIdINFE",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 
 		userService.signUp(user);
 
@@ -146,12 +169,13 @@ public class ITUserService {
 		});
 	}
 
+
 	// ----- setSearchCriteria -----
 
 	@Test
 	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
 
-		final UserImpl user = createUser("userSetSearchCriteria","passwordSetSearchCriteria", getDateTime(1,1,2000), "hombre", "coruna");
+		final UserImpl user = createUser("userSetSearchCriteria","passwordSetSearchCriteria", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -179,7 +203,7 @@ public class ITUserService {
 	@Test
 	public void testSetSearchCriteriaToMuchAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
 
-		final UserImpl user = createUser("CriteriaToMuchAgeException","CriteriaToMuchAgeException", getDateTime(1,1,2000), "hombre", "coruna");
+		final UserImpl user = createUser("CriteriaToMuchAgeException","CriteriaToMuchAgeException", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -196,7 +220,7 @@ public class ITUserService {
 	@Test
 	public void testSetSearchCriteriaNotEnoughAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
 
-		final UserImpl user = createUser("SearchCriteriaNotEnoughAge","pSearchCriteriaNotEnoughAge", getDateTime(1,1,2000), "hombre", "coruna");
+		final UserImpl user = createUser("SearchCriteriaNotEnoughAge","pSearchCriteriaNotEnoughAge", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -209,5 +233,6 @@ public class ITUserService {
 			userService.setSearchCriteria(userId, criteria);
 		});
 	}
+
 
 }

@@ -141,23 +141,6 @@ public class UserController {
 		return new ErrorsDto(errorMessage);
 	}
 
-	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		final UserImpl user = userService.loginFromUserId(userId);
-		final LocalDateTime today = LocalDateTime.now();
-		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
-
-		return new UserDataDto(period.getYears(), user.getSex(), user.getCity());
-	}
-
-	@PostMapping("/login")
-	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
-
-		final UserImpl user = userService.login(params);
-
-		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
-	}
-
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
 			throws DuplicateInstanceException, InvalidDateException {
@@ -180,4 +163,23 @@ public class UserController {
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
 		userService.setSearchCriteria(userId, criteria);
 	}
+
+	@PostMapping("/login")
+	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
+
+		final UserImpl user = userService.login(params);
+
+		return new UserAuthenticatedDto(params.getUserName(), generateServiceToken(user));
+	}
+
+	@GetMapping("/data")
+	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+		final UserImpl user = userService.loginFromUserId(userId);
+		final LocalDateTime today = LocalDateTime.now();
+		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
+
+		return new UserDataDto(period.getYears(), user.getSex(), user.getCity(), user.getDescription());
+	}
+
+
 }
