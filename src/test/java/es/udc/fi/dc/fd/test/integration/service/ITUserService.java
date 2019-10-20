@@ -30,113 +30,121 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml",
-        "classpath:context/persistence.xml",
-        "classpath:context/application-context.xml" })
+		"classpath:context/persistence.xml",
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties",
-        "classpath:config/service.properties" })
+"classpath:config/service.properties" })
 public class ITUserService {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
-    public ITUserService() {
-        super();
-    }
-	
-	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city) {
-		return new UserImpl(userName, password, date, sex, city);
+	public ITUserService() {
+		super();
+	}
+
+	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
+			String description) {
+		return new UserImpl(userName, password, date, sex, city, description);
 	}
 	private LocalDateTime getDateTime(int day, int month, int year) {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
-	
+
 	//----- signUp -----
 
 	@Test
 	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
-		UserImpl user = createUser("usuarioSignUpAndLoginFromId","contraseñaSignUpAndLoginFromId", getDateTime(1,1,2000), "hombre", "coruna");
-		
+		final UserImpl user = createUser("usuarioSignUpAndLoginFromId", "contraseñaSignUpAndLoginFromId",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		userService.signUp(user);
-		
-		UserImpl loggedInUser = userService.loginFromUserId(user.getId());
+
+		final UserImpl loggedInUser = userService.loginFromUserId(user.getId());
 		assertEquals(user, loggedInUser);
 	}
-	
+
 	@Test
 	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException, InvalidDateException {
-		UserImpl user = createUser("usuarioSignUpDuplicated","contraseñaSignUpDuplicated", getDateTime(1,1,2000), "hombre", "coruna");
+		final UserImpl user = createUser("usuarioSignUpDuplicated", "contraseñaSignUpDuplicated",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 		userService.signUp(user);
-		
+
 		assertThrows(DuplicateInstanceException.class,() -> {
 			userService.signUp(user);
 		});
 	}
-	
+
 	@Test
 	public void testSignUpInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
-		UserImpl user = createUser("usuarioSignUpIDE","contraseñaSignUpIDE", LocalDateTime.now(),"nombre", "coruna");
+		final UserImpl user = createUser("usuarioSignUpIDE", "contraseñaSignUpIDE", LocalDateTime.now(), "nombre",
+				"coruna", "descripcion");
 		assertThrows(InvalidDateException.class,() -> {
 			userService.signUp(user);
 		});
 	}
-	
+
 	//----- login -----
-	
+
 	@Test
 	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException, InvalidDateException {
-		UserImpl user = createUser("usuarioLogin","contraseñaLogin", getDateTime(1,1,2000), "hombre", "coruna");
-		String clearPassword = user.getPassword();
+		final UserImpl user = createUser("usuarioLogin", "contraseñaLogin", getDateTime(1, 1, 2000), "hombre", "coruna",
+				"descripcion");
+		final String clearPassword = user.getPassword();
 
 		userService.signUp(user);
 
-		LoginParamsDto loginDto = new LoginParamsDto();
+		final LoginParamsDto loginDto = new LoginParamsDto();
 		loginDto.setUserName(user.getUserName());
 		loginDto.setPassword(clearPassword);
-		
-		UserImpl loggedInUser = userService.login(loginDto);
+
+		final UserImpl loggedInUser = userService.login(loginDto);
 
 		assertEquals(user, loggedInUser);
 	}
-	
+
 	@Test
 	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, InvalidDateException {
-		UserImpl user = createUser("usuarioLoginIncorrectPass","contraseñaLoginIncorrectPass", getDateTime(1,1,2000), "hombre", "coruna");
-		String clearPassword = user.getPassword();
-		
+		final UserImpl user = createUser("usuarioLoginIncorrectPass", "contraseñaLoginIncorrectPass",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+		final String clearPassword = user.getPassword();
+
 		userService.signUp(user);
-		
-		LoginParamsDto loginDto = new LoginParamsDto();
+
+		final LoginParamsDto loginDto = new LoginParamsDto();
 		loginDto.setUserName(user.getUserName());
 		loginDto.setPassword("xd" + clearPassword);
-		
+
 		assertThrows(IncorrectLoginException.class,() -> {
 			userService.login(loginDto);
 		});
 	}
-	
+
 	//----- loginFromUserId -----
-	
+
 	@Test
 	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
-		UserImpl user = createUser("userLoginFromUserId","passwordLoginFromUserId", getDateTime(1,1,2000), "hombre", "coruna");
-		
+		final UserImpl user = createUser("userLoginFromUserId", "passwordLoginFromUserId", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
 		userService.signUp(user);
-		
+
 		userService.loginFromUserId(user.getId());
 	}
-	
+
 	@Test
 	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException, InvalidDateException {
-		UserImpl user = createUser("userLoginFromUserIdINFE","passwordLoginFromUserIdINFE", getDateTime(1,1,2000), "hombre", "coruna");
-		
+		final UserImpl user = createUser("userLoginFromUserIdINFE", "passwordLoginFromUserIdINFE",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		userService.signUp(user);
-		
+
 		user.setId(-1L);
-		
+
 		assertThrows(InstanceNotFoundException.class,() -> {
 			userService.loginFromUserId(user.getId());
 		});
 	}
-	
+
 }

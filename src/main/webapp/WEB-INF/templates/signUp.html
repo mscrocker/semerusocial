@@ -74,6 +74,10 @@
 							<input class="input--style-3" type="text" id="city"
 								placeholder="City" name="city" required>
 						</div>
+						<div class="input-group">
+                            <input class="input--style-3" type="text" id="description"
+                                placeholder="Description" name="description" required>
+                        </div>
 						<div class="form-login">
 							<button class="signup" type="submit">Sign up</button>
 							<p>
@@ -110,7 +114,8 @@
    			password: document.getElementById("password").value,
    			date: document.getElementById("birthday").value,
    			genre: document.getElementById("genre").value,
-   			city: document.getElementById("city").value
+   			city: document.getElementById("city").value,
+   			description: document.getElementById("description").value
    		}};
    		document.getElementById("signUpForm").addEventListener('submit', (e) => handleRegister(e, params(), "[[@{'/'}]]"));
    	});
