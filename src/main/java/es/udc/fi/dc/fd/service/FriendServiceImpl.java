@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
@@ -47,16 +48,16 @@ public class FriendServiceImpl implements FriendService {
 		validateRecommendation(subject, object);
 
 		// Check whether the request done from the other user exists
-		RequestId inverseRequestId = new RequestId(object, subject);
-		Optional<RequestImpl> inverse = requestRepository.findById(inverseRequestId);
+		final RequestId inverseRequestId = new RequestId(object, subject);
+		final Optional<RequestImpl> inverse = requestRepository.findById(inverseRequestId);
 		// If it exists it means we now have a match, we need to also delete the inverse
 		// request
 		if (inverse.isPresent()) {
 
 			// There's a db requirement to sort the ids
-			Long firstId = Math.min(object, subject);
-			Long secondId = subject.equals(firstId) ? object : subject;
-			MatchImpl match = new MatchImpl(new MatchId(firstId, secondId), LocalDateTime.now());
+			final Long firstId = Math.min(object, subject);
+			final Long secondId = subject.equals(firstId) ? object : subject;
+			final MatchImpl match = new MatchImpl(new MatchId(firstId, secondId), LocalDateTime.now());
 			matchRepository.save(match);
 			requestRepository.delete(inverse.get());
 		}
@@ -78,33 +79,59 @@ public class FriendServiceImpl implements FriendService {
 
 	private void validateRecommendation(Long subject, Long object)
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
-		Optional<UserImpl> objectUserOpt = userRepository.findById(object);
+		final Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
+		final Optional<UserImpl> objectUserOpt = userRepository.findById(object);
 
-		if (subjectUserOpt.isEmpty())
+		if (subjectUserOpt.isEmpty()) {
 			throw new InstanceNotFoundException("Subject User Doesn't Exist", subject);
+		}
 
-		if (objectUserOpt.isEmpty())
+		if (objectUserOpt.isEmpty()) {
 			throw new InstanceNotFoundException("Object User Doesn't Exist", object);
+		}
 
-		UserImpl subjectUser = subjectUserOpt.get();
+		final UserImpl subjectUser = subjectUserOpt.get();
 
-		UserImpl objectUser = objectUserOpt.get();
+		final UserImpl objectUser = objectUserOpt.get();
 
-		Optional<RejectedImpl> optRejected = rejectedRepository.findById(new RejectedId(subject, object));
-		if (optRejected.isPresent())
+		final Optional<RejectedImpl> optRejected = rejectedRepository.findById(new RejectedId(subject, object));
+		if (optRejected.isPresent()) {
 			throw new AlreadyRejectedException("Object user was already rejected", object);
+		}
 
-		int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
+		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
 
-		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge())
+		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+		}
 
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equals(objectUser.getSex()))
+			if (!subjectUser.getCriteriaSex().toString().equals(objectUser.getSex())) {
 				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+			}
 		}
 		// TODO City Criteria
+	}
+
+	@Override
+	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException {
+
+		if (userId == null) {
+			throw new InstanceNotFoundException("userId can not be null", userId);
+		}
+		if (!userRepository.existsById(userId)) {
+			throw new InstanceNotFoundException("User does not exists", userId);
+		}
+
+		// TODO -> LLAMAR AL SERVICIO PARA OBTENER LA CRITERIA DEL USUARIO
+		final SearchCriteriaDto criteriaMock = new SearchCriteriaDto();
+		criteriaMock.setMaxAge(99);
+		criteriaMock.setMinAge(18);
+		criteriaMock.setSex(SexCriteriaEnum.FEMALE);
+
+		final Optional<UserImpl> userSuggested = userRepository.findByCriteria(criteriaMock, userId);
+
+		return userSuggested;
 	}
 
 }

@@ -1,6 +1,7 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -41,10 +44,11 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+	SqlScriptsTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 public class ITFriendService {
 
@@ -93,7 +97,7 @@ public class ITFriendService {
 
 	}
 
-	// ----- addImage -----
+	// -----addImage-----
 
 	@Test
 	public void testDefaultCriteriaRequest()
@@ -103,10 +107,10 @@ public class ITFriendService {
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 		user1 = userRepository.save(user1);
-		UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
 		// assertTrue(requestRepository.count() == 1);
-		Optional<RequestImpl> opt = requestRepository.findById(new RequestId(user1.getId(), user2.getId()));
+		final Optional<RequestImpl> opt = requestRepository.findById(new RequestId(user1.getId(), user2.getId()));
 
 		assertTrue(opt.isPresent());
 		assertEquals(opt.get().getRequestId().getObject(), user2.getId());
@@ -117,28 +121,28 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
-		UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
 
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
 		user2.setDate(getDateTime(10, 10, 1998));
-//TODO with cities
+		// TODO with cities
 		// user2.setCity("Espanya");
 		userRepository.save(user2);
-//
-//		assertThrows(InvalidRecommendationException.class, () -> {
-//			friendService.acceptRecommendation(user1.getId(), user2.getId());
-//		});
-//		user2.setCity("Catalunya");
-//		userRepository.save(user2);
+		//
+		// assertThrows(InvalidRecommendationException.class, () -> {
+		// friendService.acceptRecommendation(user1.getId(), user2.getId());
+		// });
+		// user2.setCity("Catalunya");
+		// userRepository.save(user2);
 
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
 		// assertTrue(requestRepository.count() == 1);
@@ -148,17 +152,17 @@ public class ITFriendService {
 	@Test
 	public void testReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
-		UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
 		// assertTrue(rejectedRepository.count() == 1);
-		Optional<RejectedImpl> opt = rejectedRepository.findById(new RejectedId(user1.getId(), user2.getId()));
+		final Optional<RejectedImpl> opt = rejectedRepository.findById(new RejectedId(user1.getId(), user2.getId()));
 
 		assertTrue(opt.isPresent());
 		assertEquals(opt.get().getRejectedId().getObject(), user2.getId());
@@ -168,14 +172,14 @@ public class ITFriendService {
 	@Test
 	public void testRejectAlreadyRejected()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
-		UserImpl user2 = signUp("manolo10", "pass2", 23, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo10", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
 		assertThrows(AlreadyRejectedException.class, () -> {
 			friendService.rejectRecommendation(user1.getId(), user2.getId());
@@ -188,28 +192,28 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
-		UserImpl user2 = signUp("manolo12", "pass2", 102, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo12", "pass2", 102, "Female", "Catalunya");
 
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.rejectRecommendation(user1.getId(), user2.getId());
 		});
 		user2.setDate(getDateTime(10, 10, 1998));
-//TODO With cities
+		// TODO With cities
 		// user2.setCity("Espanya");
 		userRepository.save(user2);
-//
-//		assertThrows(InvalidRecommendationException.class, () -> {
-//			friendService.rejectRecommendation(user1.getId(), user2.getId());
-//		});
-//		user2.setCity("Catalunya");
-//		userRepository.save(user2);
+		//
+		// assertThrows(InvalidRecommendationException.class, () -> {
+		// friendService.rejectRecommendation(user1.getId(), user2.getId());
+		// });
+		// user2.setCity("Catalunya");
+		// userRepository.save(user2);
 
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
 		// assertTrue(rejectedRepository.count() == 1);
@@ -218,14 +222,14 @@ public class ITFriendService {
 
 	@Test
 	public void MatchTest() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo13", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo13", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
-		UserImpl user2 = signUp("manolo14", "pass2", 44, "Female", "Catalunya");
+		final UserImpl user2 = signUp("manolo14", "pass2", 44, "Female", "Catalunya");
 		user2.setCriteriaMaxAge(99);
 		user2.setCriteriaMinAge(18);
 		user2.setCriteriaSex(SexCriteriaEnum.ANY);
@@ -235,19 +239,19 @@ public class ITFriendService {
 		friendService.acceptRecommendation(user2.getId(), user1.getId());
 		// assertTrue(requestRepository.count() == 0);
 		// assertTrue(matchRepository.count() == 1);
-		Long firstId = Math.min(user1.getId(), user2.getId());
-		Long secondId = user1.getId().equals(firstId) ? user2.getId() : user1.getId();
-		Optional<MatchImpl> opt = matchRepository.findById(new MatchId(firstId, secondId));
+		final Long firstId = Math.min(user1.getId(), user2.getId());
+		final Long secondId = user1.getId().equals(firstId) ? user2.getId() : user1.getId();
+		final Optional<MatchImpl> opt = matchRepository.findById(new MatchId(firstId, secondId));
 		assertTrue(opt.isPresent());
-		MatchImpl matchImpl = opt.get();
-		MatchId matchId = matchImpl.getMatchId();
+		final MatchImpl matchImpl = opt.get();
+		final MatchId matchId = matchImpl.getMatchId();
 		assertEquals(matchId.getUser1(), firstId);
 		assertEquals(matchId.getUser2(), secondId);
 	}
 
 	@Test
 	public void TestINFE() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo15", "pass", 22, "Male", "Catalunya");
+		final UserImpl user1 = signUp("manolo15", "pass", 22, "Male", "Catalunya");
 		user1.setCriteriaMaxAge(99);
 		user1.setCriteriaMinAge(18);
 		user1.setCriteriaSex(SexCriteriaEnum.ANY);
@@ -263,6 +267,38 @@ public class ITFriendService {
 		});
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.acceptRecommendation(-1L, -1L);
+		});
+	}
+
+	/******* SUGGEST FRIEND TESTS *************************************/
+	@Test
+	@Sql(scripts = "/initialData.sql")
+	public void TestSuggestFriend() throws InstanceNotFoundException {
+		/*
+		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
+		 * CitiesCriteria //TODO
+		 */
+		//TODO -> Ajustar fechas usuarios a hoy
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(1L);
+
+		assertNotNull(userSuggested);
+		assertEquals(userSuggested.get().getId().longValue(), 3L);
+
+		// TODO: PROBARLO A FONDO CAMBIANDO LA CRITERIA:
+		// -Si CriteriaSex = ANY -> 3L
+		// -Si CriteriaSex = OTHER -> 6L
+		// -Si CriteriaSex = MALE -> null
+
+		// - Si CritSex= ANY y edad entre -- y -- (30 años) -> 7L
+		// - Si edad > 100 -> null
+
+		// TODO -> Cities
+	}
+
+	@Test
+	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.suggestFriend(-1L);
 		});
 	}
 
