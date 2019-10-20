@@ -12,14 +12,15 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface UserService {
 
-	public Long signUp(UserImpl user) 
+	public Long signUp(UserImpl user)
 			throws DuplicateInstanceException, InvalidDateException;
 
-	public UserImpl login(LoginParamsDto params)  
+	public UserImpl login(LoginParamsDto params)
 			throws IncorrectLoginException;
-	
-	public UserImpl loginFromUserId(Long userId) 
+
+	public UserImpl loginFromUserId(Long userId)
 			throws InstanceNotFoundException;
-	public UserImpl setSearchCriteria(Long userId , SearchCriteriaDto criteria) 
+
+	public UserImpl setSearchCriteria(Long userId , SearchCriteriaDto criteria)
 			throws InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException ;
 }

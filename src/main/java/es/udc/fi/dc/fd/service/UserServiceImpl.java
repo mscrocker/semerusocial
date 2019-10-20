@@ -25,51 +25,52 @@ import es.udc.fi.dc.fd.repository.UserRepository;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-	private UserRepository userRepository;
-	
-	private PermissionChecker permissionChecker;
+	private final UserRepository userRepository;
+
+	private final PermissionChecker permissionChecker;
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker){
 		super();
 
 		this.userRepository = checkNotNull(userRepository,
-                "Received a null pointer as userRepository in UserServiceImpl");
-		
+				"Received a null pointer as userRepository in UserServiceImpl");
+
 		this.permissionChecker = checkNotNull(permissionChecker,
-                "Received a null pointer as permissionChecker in UserServiceImpl");
+				"Received a null pointer as permissionChecker in UserServiceImpl");
 	}
 
 	@Override
 	public Long signUp(UserImpl user) throws DuplicateInstanceException, InvalidDateException {
-		
-		if (getUserRepository().existsByUserName(user.getUserName()))
+
+		if (getUserRepository().existsByUserName(user.getUserName())) {
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
-		
+		}
+
 		if (user.getDate().isAfter(LocalDateTime.now().minusYears(3))) {
 			throw new InvalidDateException("Fecha de nacimiento minima: "+LocalDateTime.now().minusYears(3).toString());
 		}
 
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		user.setPassword((passwordEncoder.encode(user.getPassword())));
+		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-		UserImpl userSaved = getUserRepository().save(user);
+		final UserImpl userSaved = getUserRepository().save(user);
 
 		return userSaved.getId();
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public UserImpl login(LoginParamsDto params) throws IncorrectLoginException {
-		String userName = params.getUserName();
-		String password = params.getPassword();
-		
-		Optional<UserImpl> user = getUserRepository().findByUserName(userName);
+		final String userName = params.getUserName();
+		final String password = params.getPassword();
+
+		final Optional<UserImpl> user = getUserRepository().findByUserName(userName);
 
 		if (!user.isPresent()) {
 			throw new IncorrectLoginException(userName, password);
 		}
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 		if (!passwordEncoder.matches(password, user.get().getPassword())) {
 			throw new IncorrectLoginException(userName, password);
@@ -77,37 +78,35 @@ public class UserServiceImpl implements UserService {
 
 		return user.get();
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException {
 		return permissionChecker.checkUserByUserId(userId);
 	}
 
-	public UserRepository getUserRepository() {
-		return userRepository;
-	}
-	
 	@Override
 	public UserImpl setSearchCriteria(Long userId, SearchCriteriaDto criteria) throws InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
-		
-		UserImpl user = permissionChecker.checkUserByUserId(userId);
-		
+		final UserImpl user = permissionChecker.checkUserByUserId(userId);
+
 		if (criteria.getMaxAge() > 99) {
 			throw new ToMuchAgeException("Age must be lower than 99 years");
 		}
 		if (criteria.getMinAge() < 0) {
 			throw new NotEnoughAgeException("Age must be higher than 0 years");
 		}
-		
+
 		user.setCriteriaSex(criteria.getSex());
 		user.setCriteriaMaxAge(criteria.getMaxAge());
 		user.setCriteriaMinAge(criteria.getMinAge());
-		
-		UserImpl userSaved = getUserRepository().save(user);
-		
+
+		final UserImpl userSaved = getUserRepository().save(user);
+
 		return userSaved;
 	}
-	
+
+	public UserRepository getUserRepository() {
+		return userRepository;
+	}
 
 }
