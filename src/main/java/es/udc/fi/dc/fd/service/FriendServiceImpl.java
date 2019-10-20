@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
@@ -114,7 +115,7 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	@Override
-	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException {
+	public Optional<FriendDto> suggestFriend(Long userId) throws InstanceNotFoundException {
 
 		if (userId == null) {
 			throw new InstanceNotFoundException("userId can not be null", userId);
@@ -131,7 +132,20 @@ public class FriendServiceImpl implements FriendService {
 
 		final Optional<UserImpl> userSuggested = userRepository.findByCriteria(criteriaMock, userId);
 
-		return userSuggested;
+		return userImplToFriendDto(userSuggested);
 	}
 
+	private Optional<FriendDto> userImplToFriendDto(Optional<UserImpl> user) {
+
+		Optional<FriendDto> friend = Optional.empty();
+		if (!user.isEmpty()) {
+			final LocalDateTime today = LocalDateTime.now();
+			final Period period = Period.between(user.get().getDate().toLocalDate(), today.toLocalDate());
+
+			final FriendDto friendDto = new FriendDto(user.get().getUserName(), period.getYears(), user.get().getSex(),
+					user.get().getCity(), user.get().getDescription());
+			friend = Optional.of(friendDto);
+		}
+		return friend;
+	}
 }

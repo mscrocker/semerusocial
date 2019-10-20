@@ -27,6 +27,7 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
@@ -279,10 +280,10 @@ public class ITFriendService {
 		 * CitiesCriteria //TODO
 		 */
 		//TODO -> Ajustar fechas usuarios a hoy
-		final Optional<UserImpl> userSuggested = friendService.suggestFriend(1L);
+		final Optional<FriendDto> userSuggested = friendService.suggestFriend(1L);
 
 		assertNotNull(userSuggested);
-		assertEquals(userSuggested.get().getId().longValue(), 3L);
+		assertEquals(userSuggested.get().getUserName(), "User3");
 
 		// TODO: PROBARLO A FONDO CAMBIANDO LA CRITERIA:
 		// -Si CriteriaSex = ANY -> 3L

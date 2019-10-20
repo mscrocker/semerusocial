@@ -5,7 +5,7 @@ import java.util.Optional;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
-import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.dtos.FriendDto;
 
 public interface FriendService {
 	public void acceptRecommendation(Long subject, Long object)
@@ -14,5 +14,5 @@ public interface FriendService {
 	public void rejectRecommendation(Long subject, Long object)
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException;
 
-	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
+	public Optional<FriendDto> suggestFriend(Long userId) throws InstanceNotFoundException;
 }
