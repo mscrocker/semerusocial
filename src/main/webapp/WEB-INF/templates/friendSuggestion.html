@@ -56,13 +56,13 @@
 
 				<div class="tcontrols">
 					<div class="tno">
-						<i class="fa fa-times" aria-hidden="true"></i>
+						<i id="dislike" class="fa fa-times" aria-hidden="true"></i>
 					</div>
 					<div class="ti">
 						<i class="fa fa-info" aria-hidden="true"></i>
 					</div>
 					<div class="tyes">
-						<i class="fa fa-heart" aria-hidden="true"></i>
+						<i id="like" class="fa fa-heart" aria-hidden="true"></i>
 					</div>
 				</div>
 			</div>
@@ -89,13 +89,19 @@
 			<div th:include="fragments/scripts :: profile" />
 		</footer>
 		<script type="text/javascript">
-	 window.addEventListener('load', () => {
-	 document.getElementById("nextButton").onclick =  () => onNextPressed("[[@{'/'}]]");
-	 document.getElementById("previousButton").onclick =  onPrevPressed;
-	 //Pass thymeleaf object value of has more to initSuggestion;
-	 initSuggestion("[[@{'/'}]]");
-	 
-   	  });
+		if (user.checkLoggedIn()){
+			 window.addEventListener('load', () => {
+			 document.getElementById("nextButton").onclick =   friendSuggestion.onNextPressed;
+			 document.getElementById("previousButton").onclick =  friendSuggestion.onPrevPressed;
+			 document.getElementById("like").onclick = friendSuggestion.onLikePressed;
+			 document.getElementById("dislike").onclick = friendSuggestion.onDislikePressed;
+			 //hymeleaf object value of has more to initSuggestion;
+			friendSuggestion.initSuggestion("[[@{'/'}]]");
+			 });
+		 } else {
+		window.location.href = "[[@{'/login'}]]";
+		}
+   	  
    	  
    	  </script>
 </body>
