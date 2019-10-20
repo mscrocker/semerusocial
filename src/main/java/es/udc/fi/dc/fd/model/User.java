@@ -5,17 +5,17 @@ import java.time.LocalDateTime;
 
 public interface User extends Serializable {
 
-    public Long getId();
+	public Long getId();
 
-    public String getUserName();
+	public String getUserName();
 
-    public String getPassword();
+	public String getPassword();
 
-    public LocalDateTime getDate();
+	public LocalDateTime getDate();
 
-    public String getSex();
+	public String getSex();
 
-    public String getCity();
+	public String getCity();
 
 	public User getSuggestion();
 
@@ -25,17 +25,19 @@ public interface User extends Serializable {
 
 	public int getCriteriaMaxAge();
 
-    public void setId(final Long userId);
+	public String getDescription();
 
-    public void setUserName(final String userName);
+	public void setId(final Long userId);
 
-    public void setPassword(final String password);
+	public void setUserName(final String userName);
 
-    public void setDate(final LocalDateTime date);
+	public void setPassword(final String password);
 
-    public void setSex(final String sex);
+	public void setDate(final LocalDateTime date);
 
-    public void setCity(final String city);
+	public void setSex(final String sex);
+
+	public void setCity(final String city);
 
 	public void setSuggestion(final User suggestion);
 
@@ -44,5 +46,7 @@ public interface User extends Serializable {
 	public void setCriteriaMinAge(final int minAge);
 
 	public void setCriteriaMaxAge(final int maxAge);
+
+	public void setDescription(final String description);
 
 }
