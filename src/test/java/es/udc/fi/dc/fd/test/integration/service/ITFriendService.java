@@ -266,6 +266,4 @@ public class ITFriendService {
 		});
 	}
 
-	// ----- removeImage -----
-
 }
