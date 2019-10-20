@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Locale;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.BlockGetFriendListDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FriendConversor;
@@ -30,6 +33,7 @@ import es.udc.fi.dc.fd.service.FriendService;
 public class FriendController {
 
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 
 	private final FriendService friendService;
 
@@ -57,11 +61,21 @@ public class FriendController {
 
 	}
 
+	@ExceptionHandler(RequestParamException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleRequestParamException(RequestParamException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(REQUEST_PARAM_EXCEPTION_CODE, null,
+				REQUEST_PARAM_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
 	@GetMapping("/friendList")
 	public BlockGetFriendListDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
-			@RequestParam int page, @RequestParam int request)
-					throws InstanceNotFoundException {
-		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, request);
+			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
+					throws InstanceNotFoundException, RequestParamException {
+		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, size);
 
 		return FriendConversor.toGetFriendListOutDto(friends);
 	}

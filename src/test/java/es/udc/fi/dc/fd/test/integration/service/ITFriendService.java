@@ -20,6 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -63,7 +64,8 @@ public class ITFriendService {
 	// ----- getFriendList -----
 
 	@Test
-	public void testGetFriendList() throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException {
+	public void testGetFriendList()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
 		final UserImpl user1 = createUser("usuarioFriendList1", "contraseñaFriendList1", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
 		final UserImpl user2 = createUser("usuarioFriendList2", "contraseñaFriendList2", getDateTime(1, 1, 2000),
@@ -103,6 +105,22 @@ public class ITFriendService {
 	public void testGetFriendListWithInstanceNotFoundException() {
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.getFriendList(-1L, 0, 10);
+		});
+	}
+
+	@Test
+	public void testGetFriendListRequestParamException() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioFriendListRPE", "contraseñaFriendListRPE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+
+		assertThrows(RequestParamException.class, () -> {
+			friendService.getFriendList(user.getId(), -1, 10);
+		});
+
+		assertThrows(RequestParamException.class, () -> {
+			friendService.getFriendList(user.getId(), 0, 0);
 		});
 	}
 
