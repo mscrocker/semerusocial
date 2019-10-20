@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
@@ -168,6 +170,14 @@ public class UserController {
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
 		return new UserDataDto(period.getYears(), user.getSex(), user.getCity(), user.getDescription());
+	}
+
+	@PutMapping("/updateProfile")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updateProfile(@RequestAttribute Long userId,
+			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
+					throws InstanceNotFoundException, InvalidDateException {
+		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
 
 }

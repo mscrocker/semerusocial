@@ -82,6 +82,27 @@ public class UserServiceImpl implements UserService {
 		return permissionChecker.checkUserByUserId(userId);
 	}
 
+	@Override
+	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException {
+		final Optional<UserImpl> userFound = getUserRepository().findById(userId);
+
+		if (!userFound.isPresent()) {
+			throw new InstanceNotFoundException("User with userId=" + userId + " doesn't exist", userFound);
+		}
+
+		if (user.getDate().isAfter(LocalDateTime.now().minusYears(3))) {
+			throw new InvalidDateException(
+					"Fecha de nacimiento minima: " + LocalDateTime.now().minusYears(3).toString());
+		}
+
+		userFound.get().setDate(user.getDate());
+		userFound.get().setSex(user.getSex());
+		userFound.get().setCity(user.getCity());
+		userFound.get().setDescription(user.getDescription());
+
+		getUserRepository().save(userFound.get());
+	}
+
 	public UserRepository getUserRepository() {
 		return userRepository;
 	}
