@@ -99,17 +99,17 @@
 	<footer>
 		<div th:include="fragments/scripts :: general" />
 		<div th:include="fragments/scripts :: carrusel" />
-		<div th:include="fragments/scripts :: user" />
 		<div th:include="fragments/scripts :: profile" />
 	</footer>
 	<script>
    	  window.addEventListener('load', () => {
    		
-   		if (checkLoggedIn()){
-   	     	document.getElementById("deleteButton").onclick = () => deleteImage("[[@{'/'}]]", getImageId())
+   		if (user.checkLoggedIn()){
+   			document.getElementById("editButton").onclick = () => carrusel.editImage("[[@{'/'}]]", carrusel.getImageId(), document.getElementById("editDescriptionInput").value)
+   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage("[[@{'/'}]]", carrusel.getImageId())
    	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
-   			loadImage("[[@{'/'}]]");
-   			initProfile("[[@{'/'}]]");
+   			carrusel.loadImage("[[@{'/'}]]");
+   			profile.initProfile("[[@{'/'}]]");
    		} else {
    			window.location.href = "[[@{'/login'}]]";
    		}
