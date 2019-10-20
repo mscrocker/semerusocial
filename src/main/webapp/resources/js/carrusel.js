@@ -54,7 +54,6 @@ const carrusel = {
 				
 				let metadata  = "data:image/" +body.image.type +   ";base64, ";
 				document.getElementById("imgField").src = metadata + body.image.data;
-				document.getElementById("descriptionField").innerText = body.image.description;
 				
 				let baseLink = baseURL + "carrusel/";
 				if (body.nextId){
