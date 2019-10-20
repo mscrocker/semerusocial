@@ -57,7 +57,28 @@
 			referencedColumnNames="id" 
 			referencedTableName="UserTable" />
 	</changeSet>
+	<changeSet author="Marco" id="FixUniquePassword">
+		
+	
+		
+		
+		<addColumn tableName="UserTable">
+			<column name="password_fix" type="VARCHAR(60)" />
+		</addColumn>
+		<sql>
+			UPDATE UserTable SET password_fix = password;
+		</sql>
+		<dropColumn tableName="UserTable" columnName="password" />
+		<renameColumn 
+			tableName="UserTable"
+			oldColumnName="password_fix"
+			newColumnName="password"
+			columnDataType="VARCHAR(60)" />
+		
+		
+		
 
+	</changeSet>
 
 
 	
