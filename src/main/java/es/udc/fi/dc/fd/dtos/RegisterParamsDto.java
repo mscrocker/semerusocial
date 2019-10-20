@@ -27,7 +27,6 @@ public class RegisterParamsDto {
 	private int month;
 
 	@NotNull
-
 	private int year;
 
 	@NotEmpty

@@ -147,4 +147,47 @@ public class ITUserService {
 		});
 	}
 
+	// ----- updateProfile -----
+
+	@Test
+	public void testUpdateProfile() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+		final UserImpl user = createUser("userUpdateProfile", "passwordUpdateProfile", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl newUser = new UserImpl(getDateTime(1, 1, 1999), "mujer", "lugo", "descripcion editada");
+
+		userService.signUp(user);
+
+		userService.updateProfile(user.getId(), newUser);
+
+		final UserImpl userFound = userService.loginFromUserId(user.getId());
+
+		assertEquals(userFound.getDate(), newUser.getDate());
+		assertEquals(userFound.getSex(), newUser.getSex());
+		assertEquals(userFound.getCity(), newUser.getCity());
+		assertEquals(userFound.getDescription(), newUser.getDescription());
+	}
+
+	@Test
+	public void testUpdateProfileWithInstanceNotFoundException() {
+		final UserImpl newUser = new UserImpl(getDateTime(1, 1, 1999), "mujer", "lugo", "descripcion editada");
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.updateProfile(-1L, newUser);
+		});
+	}
+
+	@Test
+	public void testUpdateProfileWithInvalidDateException()
+			throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl newUser = new UserImpl(LocalDateTime.now(), "mujer", "lugo", "descripcion editada");
+
+		userService.signUp(user);
+
+		assertThrows(InvalidDateException.class, () -> {
+			userService.updateProfile(user.getId(), newUser);
+		});
+	}
+
 }
