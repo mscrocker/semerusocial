@@ -3,6 +3,8 @@ package es.udc.fi.dc.fd.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.model.persistence.CityCriteriaId;
+import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
 @Service
@@ -26,8 +33,10 @@ public class UserServiceImpl implements UserService {
 
 	private final PermissionChecker permissionChecker;
 
+	private final CityCriteriaRepository cityCriteriaRepository;
+
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker) {
+	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker , CityCriteriaRepository cityCriteriaRepository) {
 		super();
 
 		this.userRepository = checkNotNull(userRepository,
@@ -35,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
 		this.permissionChecker = checkNotNull(permissionChecker,
 				"Received a null pointer as permissionChecker in UserServiceImpl");
+
+		this.cityCriteriaRepository = checkNotNull(cityCriteriaRepository,
+				"Received a null pointer as cityCriteriaRepository in UserServiceImpl");
 	}
 
 	@Override
@@ -83,6 +95,45 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void setSearchCriteria(Long userId, SearchCriteriaDto criteria)
+			throws InstanceNotFoundException, InvalidAgeException {
+		final UserImpl user = permissionChecker.checkUserByUserId(userId);
+		
+		if (criteria.getMinAge() < 18) {
+			throw new InvalidAgeException("Age must be higher than 18 years, not " + criteria.getMinAge());
+		}
+		if (criteria.getMinAge() > criteria.getMaxAge() ) {
+			throw new InvalidAgeException("MinAge must be lower than MaxAge : " + criteria.getMinAge() +" > " + criteria.getMaxAge() );
+		}
+		
+		//Borramos de la base de datos todos las ciudades que tenia el usuario
+		List <String> toDeleteList = getCityCriteriaRepository().findCitiesByUserId(userId);
+		for (String city : toDeleteList) {
+			CityCriteriaImpl cityCriteriaId  = new CityCriteriaImpl(new CityCriteriaId(userId, city));
+			getCityCriteriaRepository().delete(cityCriteriaId);
+		}
+		
+		final List<String> cityList = criteria.getCity();
+		
+		//Para cada ciudad de la lista
+		for (final String city : cityList) {
+			//Creamos el par userId , ciudad
+			final CityCriteriaId id = new CityCriteriaId(userId, city.toLowerCase());
+			final CityCriteriaImpl cityCriteria = new CityCriteriaImpl(id);
+			
+			//guardamos la nueva ciudad
+			getCityCriteriaRepository().save(cityCriteria);
+
+		}
+
+		user.setCriteriaSex(criteria.getSex());
+		user.setCriteriaMaxAge(criteria.getMaxAge());
+		user.setCriteriaMinAge(criteria.getMinAge());
+
+		getUserRepository().save(user);
+	}
+
+	@Override
 	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException {
 		final Optional<UserImpl> userFound = getUserRepository().findById(userId);
 
@@ -105,6 +156,10 @@ public class UserServiceImpl implements UserService {
 
 	public UserRepository getUserRepository() {
 		return userRepository;
+	}
+
+	public CityCriteriaRepository getCityCriteriaRepository() {
+		return cityCriteriaRepository;
 	}
 
 }
