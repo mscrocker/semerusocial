@@ -57,12 +57,12 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>JwtFilter</filter-name>
-		<url-pattern>/backend/users/data</url-pattern>
+		<url-pattern>/backend/users/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>JwtFilter</filter-name>
-		<url-pattern>/findFriend/</url-pattern>
-	</filter-mapping>
+        <filter-name>JwtFilter</filter-name>
+        <url-pattern>/backend/friends/*</url-pattern>
+    </filter-mapping>
 
 
 </web-app>

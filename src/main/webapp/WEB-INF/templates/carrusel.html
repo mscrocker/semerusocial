@@ -105,7 +105,6 @@
    	  window.addEventListener('load', () => {
    		
    		if (user.checkLoggedIn()){
-   			document.getElementById("editButton").onclick = () => carrusel.editImage("[[@{'/'}]]", carrusel.getImageId(), document.getElementById("editDescriptionInput").value)
    	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage("[[@{'/'}]]", carrusel.getImageId())
    	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
    			carrusel.loadImage("[[@{'/'}]]");
