@@ -56,6 +56,7 @@ public class UserController {
 	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
 	private final static String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
+	private final static String INVALID_AGE_EXCEPTION_CODE = "project.exceptions.InvalidAgeException";
 
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 
@@ -132,11 +133,21 @@ public class UserController {
 	}
 
 	@ExceptionHandler(InvalidDateException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorsDto handleInvalidDateException(InvalidDateException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
 				INVALID_DATE_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
+	@ExceptionHandler(InvalidAgeException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleInvalidAgeException(InvalidAgeException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(INVALID_AGE_EXCEPTION_CODE, null,
+				INVALID_AGE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
