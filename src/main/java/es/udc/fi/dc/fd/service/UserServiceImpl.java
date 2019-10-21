@@ -3,7 +3,6 @@ package es.udc.fi.dc.fd.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +33,16 @@ public class UserServiceImpl implements UserService {
 	private final PermissionChecker permissionChecker;
 
 	private final CityCriteriaRepository cityCriteriaRepository;
+	
+	
+	
+	
+	
+	private void setDefaultCriteria(UserImpl user) {
+		user.setCriteriaMinAge(DefaultCriteria.DEFAULT_CRITERIA_MIN_AGE);
+		user.setCriteriaMaxAge(DefaultCriteria.DEFAULT_CRITERIA_MAX_AGE);
+		user.setCriteriaSex(DefaultCriteria.DEFAULT_CRITERIA_SEX);
+	}
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker , CityCriteriaRepository cityCriteriaRepository) {
@@ -62,6 +71,8 @@ public class UserServiceImpl implements UserService {
 
 		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		
+		setDefaultCriteria(user);
 
 		final UserImpl userSaved = getUserRepository().save(user);
 
