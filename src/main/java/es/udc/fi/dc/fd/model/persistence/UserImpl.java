@@ -74,6 +74,14 @@ public class UserImpl implements User {
 		this.description = description;
 	}
 
+	public UserImpl(LocalDateTime date, String sex, String city, String description) {
+		super();
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+	}
+
 	@Override
 	public Long getId() {
 		return id;

@@ -18,4 +18,6 @@ public interface UserService {
 	public UserImpl loginFromUserId(Long userId)
 			throws InstanceNotFoundException;
 
+	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
+
 }
