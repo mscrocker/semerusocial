@@ -98,30 +98,32 @@ public class UserServiceImpl implements UserService {
 	public void setSearchCriteria(Long userId, SearchCriteriaDto criteria)
 			throws InstanceNotFoundException, InvalidAgeException {
 		final UserImpl user = permissionChecker.checkUserByUserId(userId);
-
-		if (criteria.getMaxAge() > 99) {
-			throw new InvalidAgeException("Age must be lower than 99 years, not " + criteria.getMaxAge());
-		}
+		
 		if (criteria.getMinAge() < 18) {
 			throw new InvalidAgeException("Age must be higher than 18 years, not " + criteria.getMinAge());
 		}
-
+		if (criteria.getMinAge() > criteria.getMaxAge() ) {
+			throw new InvalidAgeException("MinAge must be lower than MaxAge : " + criteria.getMinAge() +" > " + criteria.getMaxAge() );
+		}
+		
+		//Borramos de la base de datos todos las ciudades que tenia el usuario
+		List <String> toDeleteList = getCityCriteriaRepository().findCitiesByUserId(userId);
+		for (String city : toDeleteList) {
+			CityCriteriaImpl cityCriteriaId  = new CityCriteriaImpl(new CityCriteriaId(userId, city));
+			getCityCriteriaRepository().delete(cityCriteriaId);
+		}
+		
 		final List<String> cityList = criteria.getCity();
-		//lista de ciudades que se han insertado nuevas
-		final List<String> insertedCities = new ArrayList<>();
+		
 		//Para cada ciudad de la lista
-
 		for (final String city : cityList) {
 			//Creamos el par userId , ciudad
-			final CityCriteriaId id = new CityCriteriaId(userId, city);
+			final CityCriteriaId id = new CityCriteriaId(userId, city.toLowerCase());
 			final CityCriteriaImpl cityCriteria = new CityCriteriaImpl(id);
+			
+			//guardamos la nueva ciudad
+			getCityCriteriaRepository().save(cityCriteria);
 
-			//Si ya existe en base de datos no hacemos nada , sino la guardamos
-			if (!getCityCriteriaRepository().existsById(id)) {
-				getCityCriteriaRepository().save(cityCriteria);
-
-				insertedCities.add(cityCriteria.getCityCriteriaId().getCity());
-			}
 		}
 
 		user.setCriteriaSex(criteria.getSex());

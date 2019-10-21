@@ -13,4 +13,7 @@ public interface CityCriteriaRepository extends JpaRepository<CityCriteriaImpl, 
 	@Query("SELECT c.cityCriteriaId.city FROM Cities c WHERE c.cityCriteriaId.userId = ?1")
 	List<String> findCitiesByUserId(Long userId);
 
+	//Devuelve todos los pares de id de un usuario
+	@Query("SELECT c.cityCriteriaId FROM Cities c WHERE c.cityCriteriaId.userId = ?1")
+	List<CityCriteriaImpl> findCitiesIdByUserId(Long userId);
 }

@@ -14,7 +14,7 @@ public class SearchCriteriaDto {
 	@NotNull
 	@Min(18)
 	private int minAge;
-	@Max(99)
+
 	private int maxAge;
 
 	private List<String> city;
