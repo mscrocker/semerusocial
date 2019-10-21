@@ -43,12 +43,12 @@ const carrusel = {
 			method: 'GET'
 		}, (response) => {
 			
-		
-			response.json().then((body) => {
-				if (response.status !== 200){
-					console.log(body);
+			if (response.status !== 200){
+				customAlert.showAlertFromResponse(response);
 					return;
-				}
+			}
+			response.json().then((body) => {
+				
 				
 				// data + type -> string
 				
@@ -98,7 +98,7 @@ const carrusel = {
 			$("deleteModal").modal("hide");
 			if (resp.status === 204){
 				console.log("SUCCESS!");
-				window.location.href = getNextLink(baseURL);
+				window.location.href = carrusel.getNextLink(baseURL);
 			} else {
 				console.log("ERROR");
 				
@@ -110,21 +110,19 @@ const carrusel = {
 
 	finishEditImage: (result) => {
 		if (result.status !== 204){
-		    response.json().then((body) => {
-			showAlert(body);
+			customAlert.showAlertFromResponse(response);
 			return;
-		});
 	}
 },
 
 	finishEditWithErrors: (errors) => {
-		showAlert(errors);
+		customAlert.showAlert(errors);
 	},
 
 	editImage: (baseURL, imageID, description) => {
 		$("#editModal").modal("hide");
 		if ((description === undefined) || (description === null) || (description === "")){
-			showAlert("Error: description is mandatory.");
+			customAlert.showAlert("Error: description is mandatory.");
 			return;
 		}
 		let url = baseURL + "backend/images/edit/" + imageID;

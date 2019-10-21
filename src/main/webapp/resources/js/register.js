@@ -1,5 +1,7 @@
 const handleRegister = (e, params, baseUrl) => {
 	e.preventDefault();
+	customAlert.hideAlert();
+
 	const url = baseUrl + "backend/users/signUp";
 	const date = new Date(params.date);
 	const userData = {
@@ -20,9 +22,7 @@ const handleRegister = (e, params, baseUrl) => {
 
 	fetch(url, fetchParams).then((response) => {
 		if (response.status !== 201){
-			response.json().then((body) => {
-				showAlert(body);
-			});
+			customAlert.showAlertFromResponse(response);
 		}
 		else {
 		response.json().then((body) => {

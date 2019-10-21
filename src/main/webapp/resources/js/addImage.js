@@ -10,7 +10,7 @@ const addImage = {
 			  	preview.src = "";
 			  	return;
 			  }
-		  showAlert(null);
+		  customAlert.hideAlert();
 		  var reader  = new FileReader();
 
 		  reader.onloadend = function () {
@@ -38,15 +38,15 @@ const addImage = {
 	},
 	
 	finishUploadImage: (result, baseURL) => {
-
-		result.json().then((body) => {
-			if (result.status !== 201){
-				showAlert(body);
-				document.getElementById("uploadButton").disabled = false;
-				return;
-			}
+		if (result.status !== 201){
+			customAlert.showAlertFromResponse(result);
 			document.getElementById("uploadButton").disabled = false;
-			showAlert(null);
+			return;
+		}
+		result.json().then((body) => {
+			
+			document.getElementById("uploadButton").disabled = false;
+			customAlert.hideAlert();
 			window.location.href = baseURL + "carrusel/" + body.imageId;
 		}).catch((errors) => {
 			showAlert("Error uploading image");
@@ -54,12 +54,12 @@ const addImage = {
 		
 	},
 	finishUploadWithErrors: (errors) => {
-		showAlert("Error uploading image");
+		customAlert.showAlert("Error uploading image");
 	},
 	uploadImage: (image, baseURL) => {
-		showAlert(null);
+		customAlert.hideAlert();
 		if (image === undefined){
-			showAlert("Error: image is mandatory.");
+			customAlert.showAlert("Error: image is mandatory.");
 			return;
 		}
 		
