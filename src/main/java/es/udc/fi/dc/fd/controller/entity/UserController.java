@@ -33,7 +33,7 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
-import es.udc.fi.dc.fd.controller.exception.ToMuchAgeException;
+import es.udc.fi.dc.fd.controller.exception.TooMuchAgeException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
@@ -159,9 +159,9 @@ public class UserController {
 
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
-		userService.setSearchCriteria(userId, criteria);
+	public List<String> setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
+		return userService.setSearchCriteria(userId, criteria);
 	}
 
 	@PostMapping("/login")

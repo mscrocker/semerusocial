@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +24,7 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
-import es.udc.fi.dc.fd.controller.exception.ToMuchAgeException;
+import es.udc.fi.dc.fd.controller.exception.TooMuchAgeException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
@@ -56,8 +58,8 @@ public class ITUserService {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
-	private SearchCriteriaDto createCriteria(String sex , int minAge , int maxAge) {
-		return new SearchCriteriaDto(sex,minAge,maxAge);
+	private SearchCriteriaDto createCriteria(String sex , int minAge , int maxAge,List<String> CityList) {
+		return new SearchCriteriaDto(sex,minAge,maxAge, CityList);
 	}
 
 
@@ -173,7 +175,7 @@ public class ITUserService {
 	// ----- setSearchCriteria -----
 
 	@Test
-	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
+	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
 
 		final UserImpl user = createUser("userSetSearchCriteria","passwordSetSearchCriteria", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
@@ -181,18 +183,50 @@ public class ITUserService {
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
 		user.setCriteriaMaxAge(60);
 		user.setCriteriaMinAge(30);
+		
+		List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteriaDto criteria = createCriteria("Male" , 30, 60,cityList);
 
-		final SearchCriteriaDto criteria = createCriteria("Male"  , 30, 60);
+		final List<String> registeredCities  = userService.setSearchCriteria(userId, criteria);
+		
+		UserImpl registeredUser  = userService.loginFromUserId(userId);
 
-		final UserImpl registeredUser  = userService.setSearchCriteria(userId, criteria);
-
+		assertEquals(user, registeredUser);
+		assertEquals(cityList, registeredCities);
+		
+		/////////////////////////////// Hacemos el registro de los mismos datos ////////////////////
+		List<String> emptyList = new ArrayList<>();
+		final List<String> registeredCities2  = userService.setSearchCriteria(userId, criteria);
+		
+		registeredUser  = userService.loginFromUserId(userId);
+		
+		assertEquals(emptyList, registeredCities2);
+		assertEquals(user, registeredUser);
+		
+		/////////////////////////////// Hacemos el registro de datos nuevos ////////////////////
+		cityList.add("Marruecos");
+		List<String> marruecosList = new ArrayList<>();
+		marruecosList.add("Marruecos");
+		final SearchCriteriaDto criteria2 = createCriteria("Male" , 30, 60,cityList);
+		final List<String> registeredCities3  = userService.setSearchCriteria(userId, criteria2);
+		
+		registeredUser  = userService.loginFromUserId(userId);
+		
+		assertEquals(marruecosList, registeredCities3);
 		assertEquals(user, registeredUser);
 	}
 
 	@Test
-	public void testSetSearchCriteriaInstanceNotFoundException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException {
-
-		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60);
+	public void testSetSearchCriteriaInstanceNotFoundException() throws   InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
+		
+		List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60,cityList);
 
 
 		assertThrows(InstanceNotFoundException.class,() -> {
@@ -201,7 +235,7 @@ public class ITUserService {
 	}
 
 	@Test
-	public void testSetSearchCriteriaToMuchAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
+	public void testSetSearchCriteriaToMuchAgeException() throws   InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("CriteriaToMuchAgeException","CriteriaToMuchAgeException", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
@@ -209,16 +243,20 @@ public class ITUserService {
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
 		user.setCriteriaMaxAge(60);
 		user.setCriteriaMinAge(30);
+		
+		List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteriaDto criteria = createCriteria("Male"  , 30, 150 ,cityList);
 
-		final SearchCriteriaDto criteria = createCriteria("Male"  , 30, 150);
-
-		assertThrows(ToMuchAgeException.class,() -> {
+		assertThrows(TooMuchAgeException.class,() -> {
 			userService.setSearchCriteria(userId, criteria);
 		});
 	}
 
 	@Test
-	public void testSetSearchCriteriaNotEnoughAgeException() throws   InstanceNotFoundException, ToMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
+	public void testSetSearchCriteriaNotEnoughAgeException() throws   InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("SearchCriteriaNotEnoughAge","pSearchCriteriaNotEnoughAge", getDateTime(1,1,2000), "hombre", "coruna","description");
 		final Long userId = userService.signUp(user);
@@ -226,8 +264,13 @@ public class ITUserService {
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
 		user.setCriteriaMaxAge(60);
 		user.setCriteriaMinAge(30);
-
-		final SearchCriteriaDto criteria = createCriteria("Male"  , -40, 89);
+		
+		List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		
+		final SearchCriteriaDto criteria = createCriteria("Male"  , 17, 89,cityList);
 
 		assertThrows(NotEnoughAgeException.class,() -> {
 			userService.setSearchCriteria(userId, criteria);
