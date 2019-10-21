@@ -36,6 +36,13 @@
 						<p id="cityFieldFeedback"></p>
 					</div>
 				</div>
+				<div class="form-group">
+					<label for="descriptionField">Description: </label> <input id="descriptionField"
+						class="card-text" / value="loading" required>
+					<div class="invalid-feedback">
+						<p id="descriptionFieldFeedback"></p>
+					</div>
+				</div>
 				<button class="btn btn-primary mb-3" disabled>Update</button>
 			</div>
 		</form>
@@ -98,7 +105,7 @@
 	</footer>
 	<script>
 	window.addEventListener("load", () => {
-		initProfile("[[@{'/'}]]");
+		profile.initProfile("[[@{'/'}]]");
 		criteriaSettings.init("[[@{'/'}]]");
 
 		document.getElementById("profileForm").classList.remove("hidden");

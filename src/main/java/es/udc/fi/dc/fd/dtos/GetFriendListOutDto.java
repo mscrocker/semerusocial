@@ -1,6 +1,8 @@
 package es.udc.fi.dc.fd.dtos;
 
-public class UserDataDto {
+public class GetFriendListOutDto {
+
+	private String userName;
 
 	private int age;
 
@@ -8,50 +10,44 @@ public class UserDataDto {
 
 	private String city;
 
-	private String description;
-
-	public UserDataDto() {
+	public GetFriendListOutDto(String userName, int age, String sex, String city) {
 		super();
+		this.userName = userName;
+		this.age = age;
+		this.sex = sex;
+		this.city = city;
 	}
 
-	public UserDataDto(int age, String sex, String city, String description) {
-		super();
-		setAge(age);
-		setSex(sex);
-		setCity(city);
-		setDescription(description);
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public int getAge() {
 		return age;
 	}
 
-	public String getSex() {
-		return sex;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
 	public void setAge(int age) {
 		this.age = age;
+	}
+
+	public String getSex() {
+		return sex;
 	}
 
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
 
-	public void setCity(String city) {
-		this.city = city;
+	public String getCity() {
+		return city;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	@Override
@@ -60,8 +56,8 @@ public class UserDataDto {
 		int result = 1;
 		result = prime * result + age;
 		result = prime * result + (city == null ? 0 : city.hashCode());
-		result = prime * result + (description == null ? 0 : description.hashCode());
 		result = prime * result + (sex == null ? 0 : sex.hashCode());
+		result = prime * result + (userName == null ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -76,7 +72,7 @@ public class UserDataDto {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final UserDataDto other = (UserDataDto) obj;
+		final GetFriendListOutDto other = (GetFriendListOutDto) obj;
 		if (age != other.age) {
 			return false;
 		}
@@ -87,13 +83,6 @@ public class UserDataDto {
 		} else if (!city.equals(other.city)) {
 			return false;
 		}
-		if (description == null) {
-			if (other.description != null) {
-				return false;
-			}
-		} else if (!description.equals(other.description)) {
-			return false;
-		}
 		if (sex == null) {
 			if (other.sex != null) {
 				return false;
@@ -101,12 +90,19 @@ public class UserDataDto {
 		} else if (!sex.equals(other.sex)) {
 			return false;
 		}
+		if (userName == null) {
+			if (other.userName != null) {
+				return false;
+			}
+		} else if (!userName.equals(other.userName)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "UserDataDto [age=" + age + ", sex=" + sex + ", city=" + city + ", description=" + description + "]";
+		return "GetFriendListOutDto [userName=" + userName + ", age=" + age + ", sex=" + sex + ", city=" + city + "]";
 	}
 
 }

@@ -3,7 +3,6 @@ package es.udc.fi.dc.fd.model.persistence;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,9 +39,6 @@ public class ImageImpl implements Image {
 	@Column(name = "data", nullable = false)
 	private byte[] data;
 
-	@Column(name = "description")
-	private String description;
-
 	@Column(name = "type")
 	private String type;
 
@@ -51,26 +47,18 @@ public class ImageImpl implements Image {
 		super();
 	}
 
-	public ImageImpl(UserImpl user, byte[] data, String description, String type) {
+	public ImageImpl(UserImpl user, byte[] data, String type) {
 		super();
 		setUser(user);
 		setData(data);
-		setDescription(description);
 		setType(type);
 
 	}
 
-	public ImageImpl(byte[] data, String description, String type) {
+	public ImageImpl(byte[] data, String type) {
 		super();
 		setData(data);
-		setDescription(description);
 		setType(type);
-	}
-
-	public ImageImpl(String description) {
-		super();
-		setDescription(description);
-
 	}
 
 	@Override
@@ -89,11 +77,6 @@ public class ImageImpl implements Image {
 	}
 
 	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	@Override
 	public void setImageId(Long imageId) {
 		this.imageId = checkNotNull(imageId, "Received a null pointer as imageId in ImageImpl");
 	}
@@ -106,11 +89,6 @@ public class ImageImpl implements Image {
 	@Override
 	public void setData(byte[] data) {
 		this.data = checkNotNull(data, "Received a null pointer as data in ImageImpl");
-	}
-
-	@Override
-	public void setDescription(String description) {
-		this.description = checkNotNull(description, "Received a null pointer as description in ImageImpl");
 	}
 
 	@Override
@@ -128,28 +106,55 @@ public class ImageImpl implements Image {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.hashCode(data);
-		result = prime * result + Objects.hash(description, imageId, type, user);
+		result = prime * result + (imageId == null ? 0 : imageId.hashCode());
+		result = prime * result + (type == null ? 0 : type.hashCode());
+		result = prime * result + (user == null ? 0 : user.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		ImageImpl other = (ImageImpl) obj;
-		return Arrays.equals(data, other.data) && Objects.equals(description, other.description)
-				&& Objects.equals(imageId, other.imageId) && Objects.equals(type, other.type)
-				&& Objects.equals(user, other.user);
+		}
+		final ImageImpl other = (ImageImpl) obj;
+		if (!Arrays.equals(data, other.data)) {
+			return false;
+		}
+		if (imageId == null) {
+			if (other.imageId != null) {
+				return false;
+			}
+		} else if (!imageId.equals(other.imageId)) {
+			return false;
+		}
+		if (type == null) {
+			if (other.type != null) {
+				return false;
+			}
+		} else if (!type.equals(other.type)) {
+			return false;
+		}
+		if (user == null) {
+			if (other.user != null) {
+				return false;
+			}
+		} else if (!user.equals(other.user)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ImageImpl [imageId=" + imageId + ", user=" + user + ", image=" + Arrays.toString(data)
-				+ ", description=" + description + "]";
+		return "ImageImpl [imageId=" + imageId + ", user=" + user + ", data=" + Arrays.toString(data) + ", type=" + type
+				+ "]";
 	}
 
 }

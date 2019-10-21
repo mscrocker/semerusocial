@@ -26,7 +26,7 @@ const criteriaSettings = {
 		let params = {
 			METHOD: 'GET'
 		};
-		authFetch(url, params, (response) => {
+		user.authFetch(url, params, (response) => {
 			if (response.status === 200){
 				response.json().then((body) => {
 					criteriaSettings.criteria = body;
@@ -92,7 +92,7 @@ const criteriaSettings = {
 				method: 'PUT',
 				body: criteria
 			};
-			authFetch(url, params, (response) => {
+			user.authFetch(url, params, (response) => {
 				
 			}, (errors) => {
 				
