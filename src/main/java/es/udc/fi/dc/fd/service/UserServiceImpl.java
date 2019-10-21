@@ -20,6 +20,7 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaId;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
+import es.udc.fi.dc.fd.model.persistence.DefaultCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -33,16 +34,6 @@ public class UserServiceImpl implements UserService {
 	private final PermissionChecker permissionChecker;
 
 	private final CityCriteriaRepository cityCriteriaRepository;
-	
-	
-	
-	
-	
-	private void setDefaultCriteria(UserImpl user) {
-		user.setCriteriaMinAge(DefaultCriteria.DEFAULT_CRITERIA_MIN_AGE);
-		user.setCriteriaMaxAge(DefaultCriteria.DEFAULT_CRITERIA_MAX_AGE);
-		user.setCriteriaSex(DefaultCriteria.DEFAULT_CRITERIA_SEX);
-	}
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, PermissionChecker permissionChecker , CityCriteriaRepository cityCriteriaRepository) {
@@ -72,7 +63,6 @@ public class UserServiceImpl implements UserService {
 		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		
-		setDefaultCriteria(user);
 
 		final UserImpl userSaved = getUserRepository().save(user);
 
