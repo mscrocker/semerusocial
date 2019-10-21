@@ -39,6 +39,7 @@ import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
@@ -178,7 +179,15 @@ public class UserController {
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
-		return new UserDataDto(period.getYears(), user.getSex(), user.getCity(), user.getDescription());
+		return new UserDataDto(user.getDate(), period.getYears(), user.getSex(), user.getCity(), user.getDescription());
+	}
+
+	@PutMapping("/updateProfile")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updateProfile(@RequestAttribute Long userId,
+			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
+					throws InstanceNotFoundException, InvalidDateException {
+		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
 
 

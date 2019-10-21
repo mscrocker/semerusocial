@@ -14,6 +14,14 @@ public class UserConversor {
 				params.getDescription());
 	}
 
+	public final static UserImpl toUserImpl(UpdateProfileInDto updateProfileInDto) {
+
+		final LocalDateTime date = LocalDateTime.of(updateProfileInDto.getYear(), updateProfileInDto.getMonth(),
+				updateProfileInDto.getDay(), 00, 01);
+		return new UserImpl(date, updateProfileInDto.getSex(), updateProfileInDto.getCity(),
+				updateProfileInDto.getDescription());
+	}
+
 	private UserConversor() {}
 
 }

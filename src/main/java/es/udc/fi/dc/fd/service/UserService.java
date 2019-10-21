@@ -23,6 +23,11 @@ public interface UserService {
 	public UserImpl loginFromUserId(Long userId)
 			throws InstanceNotFoundException;
 
+
 	public List<String> setSearchCriteria(Long userId , SearchCriteriaDto criteria)
 			throws InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException ;
+
+	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
+
+
 }

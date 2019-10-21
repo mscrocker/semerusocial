@@ -1,6 +1,10 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.time.LocalDateTime;
+
 public class UserDataDto {
+
+	private LocalDateTime date;
 
 	private int age;
 
@@ -14,12 +18,21 @@ public class UserDataDto {
 		super();
 	}
 
-	public UserDataDto(int age, String sex, String city, String description) {
+	public UserDataDto(LocalDateTime date, int age, String sex, String city, String description) {
 		super();
+		setDate(date);
 		setAge(age);
 		setSex(sex);
 		setCity(city);
 		setDescription(description);
+	}
+
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
 	}
 
 	public int getAge() {
@@ -60,6 +73,7 @@ public class UserDataDto {
 		int result = 1;
 		result = prime * result + age;
 		result = prime * result + (city == null ? 0 : city.hashCode());
+		result = prime * result + (date == null ? 0 : date.hashCode());
 		result = prime * result + (description == null ? 0 : description.hashCode());
 		result = prime * result + (sex == null ? 0 : sex.hashCode());
 		return result;
@@ -87,6 +101,13 @@ public class UserDataDto {
 		} else if (!city.equals(other.city)) {
 			return false;
 		}
+		if (date == null) {
+			if (other.date != null) {
+				return false;
+			}
+		} else if (!date.equals(other.date)) {
+			return false;
+		}
 		if (description == null) {
 			if (other.description != null) {
 				return false;
@@ -106,7 +127,8 @@ public class UserDataDto {
 
 	@Override
 	public String toString() {
-		return "UserDataDto [age=" + age + ", sex=" + sex + ", city=" + city + ", description=" + description + "]";
+		return "UserDataDto [date=" + date + ", age=" + age + ", sex=" + sex + ", city=" + city + ", description="
+				+ description + "]";
 	}
 
 }

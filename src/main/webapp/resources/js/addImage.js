@@ -54,12 +54,8 @@ const addImage = {
 	finishUploadWithErrors: (errors) => {
 		showAlert("Error uploading image");
 	},
-	uploadImage: (description, image, baseURL) => {
+	uploadImage: (image, baseURL) => {
 		showAlert(null);
-		if ((description === undefined) || (description === null) || (description === "")){
-			showAlert("Error: description is mandatory.");
-			return;
-		}
 		if (image === undefined){
 			showAlert("Error: image is mandatory.");
 			return;
@@ -71,8 +67,7 @@ const addImage = {
 		user.authFetch(baseURL + "backend/images/add", {
 			method: "POST",
 			body: JSON.stringify({
-				data: image,
-				description: description
+				data: image
 			}),
 			headers: { "Content-Type": "application/json" }
 		}, (result) => addImage.finishUploadImage(result, baseURL), addImage.finishUploadWithErrors);
@@ -92,7 +87,6 @@ const addImage = {
 
 		
 		uploadButton.addEventListener("click", () => addImage.uploadImage(
-			document.getElementById("descriptionInput").value,
 			addImage.loadedImage ? document.getElementById("filePreviewArea").src : undefined,
 			baseURL
 		));
