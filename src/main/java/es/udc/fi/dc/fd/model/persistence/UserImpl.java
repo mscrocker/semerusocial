@@ -57,8 +57,29 @@ public class UserImpl implements User {
 	@Column(name = "criteriaMaxAge")
 	private int criteriaMaxAge;
 
+	@Column(name = "description")
+	private String description;
+
 	public UserImpl() {
 		super();
+	}
+
+	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city, String description) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+	}
+
+	public UserImpl(LocalDateTime date, String sex, String city, String description) {
+		super();
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
 	}
 
 	@Override
@@ -161,29 +182,31 @@ public class UserImpl implements User {
 		this.criteriaMaxAge = criteriaMaxAge;
 	}
 
-	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city) {
-		super();
-		this.userName = userName;
-		this.password = password;
-		this.date = date;
-		this.sex = sex;
-		this.city = city;
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + (city == null ? 0 : city.hashCode());
 		result = prime * result + criteriaMaxAge;
 		result = prime * result + criteriaMinAge;
-		result = prime * result + ((criteriaSex == null) ? 0 : criteriaSex.hashCode());
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
-		result = prime * result + ((suggestion == null) ? 0 : suggestion.hashCode());
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		result = prime * result + (criteriaSex == null ? 0 : criteriaSex.hashCode());
+		result = prime * result + (date == null ? 0 : date.hashCode());
+		result = prime * result + (description == null ? 0 : description.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
+		result = prime * result + (password == null ? 0 : password.hashCode());
+		result = prime * result + (sex == null ? 0 : sex.hashCode());
+		result = prime * result + (suggestion == null ? 0 : suggestion.hashCode());
+		result = prime * result + (userName == null ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -198,7 +221,7 @@ public class UserImpl implements User {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		UserImpl other = (UserImpl) obj;
+		final UserImpl other = (UserImpl) obj;
 		if (city == null) {
 			if (other.city != null) {
 				return false;
@@ -212,11 +235,7 @@ public class UserImpl implements User {
 		if (criteriaMinAge != other.criteriaMinAge) {
 			return false;
 		}
-		if (criteriaSex == null) {
-			if (other.criteriaSex != null) {
-				return false;
-			}
-		} else if (!criteriaSex.equals(other.criteriaSex)) {
+		if (criteriaSex != other.criteriaSex) {
 			return false;
 		}
 		if (date == null) {
@@ -224,6 +243,13 @@ public class UserImpl implements User {
 				return false;
 			}
 		} else if (!date.equals(other.date)) {
+			return false;
+		}
+		if (description == null) {
+			if (other.description != null) {
+				return false;
+			}
+		} else if (!description.equals(other.description)) {
 			return false;
 		}
 		if (id == null) {
@@ -268,7 +294,8 @@ public class UserImpl implements User {
 	public String toString() {
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
 				+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
-				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + "]";
+				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
+				+ description + "]";
 	}
 
 }

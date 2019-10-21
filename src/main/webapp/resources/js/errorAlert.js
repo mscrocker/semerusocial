@@ -1,4 +1,3 @@
-
 const showAlert = (message) => {
 	const errorAlert = document.getElementById("ErrorAlert");
 	if (message === null){
@@ -8,3 +7,4 @@ const showAlert = (message) => {
 		errorAlert.innerText = message;
 	}
 };
+

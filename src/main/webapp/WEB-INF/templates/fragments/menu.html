@@ -18,9 +18,9 @@
 						role="button" aria-haspopup="true" aria-expanded="false">Options
 						<span aria-hidden="true"></span>
 					</a>
-					<ul  class="dropdown-menu" role="menu">
+					<ul class="dropdown-menu" role="menu">
 						<li><a th:href="@{/}">My photos</a></li>
-						<li onclick="logOut()"><a th:href="@{/login}">LogOut</a></li>
+						<li id="logOut" ><a th:href="@{/login}">LogOut</a></li>
 						<li><a th:href="@{/addImage}">Add new Image</a></li>
 					</ul>
 				</div>
@@ -34,12 +34,15 @@
 	<div th:include="fragments/scripts :: user" />
 	<div th:include="fragments/scripts :: welcome" />
 	<script>
-		window.addEventListener('load', updateLoggedIn("loginButton",
-				"[[@{'/users/profile'}]]"), false);
 		
 		window.addEventListener("load", () => {
-			if (!checkLoggedIn()){
+			user.updateLoggedIn("loginButton","[[@{'/users/profile'}]]");
+			if (!user.checkLoggedIn()){
+				
 				document.getElementById("loggedInOptions").classList.add("hidden");
+			}
+			else {
+			    document.getElementById("logOut").onclick = user.logOut
 			}
 		});
 		

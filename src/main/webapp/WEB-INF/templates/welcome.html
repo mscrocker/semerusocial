@@ -7,13 +7,12 @@
 	<header class="header" th:include="fragments/menu :: menu" />
 
 	<section id="main-section" class="container-fluid">
-		<img th:src="@{/static/images/loading.gif}"/>
+		<img th:src="@{/static/images/loading.gif}" />
 	</section>
 
 	<footer>
 		<div th:include="fragments/scripts :: general" />
-		<div th:include="fragments/scripts :: user"/>
-		<div th:include="fragments/scripts :: welcome"/>
+		<div th:include="fragments/scripts :: welcome" />
 	</footer>
 	<script>
 		window.addEventListener("load", () => {

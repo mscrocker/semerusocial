@@ -1,12 +1,12 @@
+
 let init = (baseURL) => {
-	console.log("sadasfsaasfasf");
-	let url = baseURL + "images/first";
+	let url = baseURL + "backend/images/first";
 	let params = {
 		method: "GET"
 	};
 	
-	if (checkLoggedIn()){
-		authFetch(url, params, (result) => {
+	if (user.checkLoggedIn()){
+		user.authFetch(url, params, (result) => {
 			result.json().then((body) => {
 				if (body.imageId){
 					window.location.href = baseURL + "carrusel/" + body.imageId;
