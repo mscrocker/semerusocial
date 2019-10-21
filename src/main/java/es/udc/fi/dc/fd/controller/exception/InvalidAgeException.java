@@ -1,9 +1,9 @@
 package es.udc.fi.dc.fd.controller.exception;
 
 @SuppressWarnings("serial")
-public class TooMuchAgeException extends Exception {
+public class InvalidAgeException extends Exception {
 
-	public TooMuchAgeException(String message) {
+	public InvalidAgeException(String message) {
 		super(message);
 	}
 }

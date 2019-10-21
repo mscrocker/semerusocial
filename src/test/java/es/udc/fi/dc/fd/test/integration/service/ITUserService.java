@@ -22,13 +22,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
-import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
-import es.udc.fi.dc.fd.controller.exception.TooMuchAgeException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
@@ -36,12 +36,15 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 public class ITUserService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CityCriteriaRepository cityCriteriaRepository;
 
 	@Autowired
 	public ITUserService() {
@@ -174,7 +177,7 @@ public class ITUserService {
 
 	@Test
 	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException,
-			InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
+	InstanceNotFoundException, InvalidAgeException {
 
 		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "description");
@@ -184,57 +187,147 @@ public class ITUserService {
 		user.setCriteriaMaxAge(60);
 		user.setCriteriaMinAge(30);
 
-		List<String> cityList = new ArrayList<>();
+		final List<String> cityList = new ArrayList<>();
 		cityList.add("A Coruna");
 		cityList.add("Madrid");
 		cityList.add("Vigo");
 		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
 
-		final List<String> registeredCities = userService.setSearchCriteria(userId, criteria);
+		userService.setSearchCriteria(userId, criteria);
+
+		final List<String> registeredCities = cityCriteriaRepository.findCitiesByUserId(userId);
 
 		UserImpl registeredUser = userService.loginFromUserId(userId);
 
-		assertEquals(user, registeredUser);
 		assertEquals(cityList, registeredCities);
+		assertEquals(user, registeredUser);
 
 		/////////////////////////////// Hacemos el registro de los mismos datos
 		/////////////////////////////// ////////////////////
-		List<String> emptyList = new ArrayList<>();
-		final List<String> registeredCities2 = userService.setSearchCriteria(userId, criteria);
+		userService.setSearchCriteria(userId, criteria);
+
+		final List<String> registeredCities2 = cityCriteriaRepository.findCitiesByUserId(userId);
 
 		registeredUser = userService.loginFromUserId(userId);
 
-		assertEquals(emptyList, registeredCities2);
+		assertEquals(cityList, registeredCities2);
 		assertEquals(user, registeredUser);
 
 		/////////////////////////////// Hacemos el registro de datos nuevos
 		/////////////////////////////// ////////////////////
 		cityList.add("Marruecos");
-		List<String> marruecosList = new ArrayList<>();
-		marruecosList.add("Marruecos");
+		final List<String> cityList2 = new ArrayList<>();
+		cityList2.add("A Coruna");
+		cityList2.add("Madrid");
+		cityList2.add("Marruecos");
+		cityList2.add("Vigo");
 		final SearchCriteriaDto criteria2 = createCriteria("Male", 30, 60, cityList);
-		final List<String> registeredCities3 = userService.setSearchCriteria(userId, criteria2);
+		userService.setSearchCriteria(userId, criteria2);
+
+		final List<String> registeredCities3 = cityCriteriaRepository.findCitiesByUserId(userId);
 
 		registeredUser = userService.loginFromUserId(userId);
 
-		assertEquals(marruecosList, registeredCities3);
+		assertEquals(cityList2, registeredCities3);
 		assertEquals(user, registeredUser);
 	}
 
 	@Test
-	public void testSetSearchCriteriaInstanceNotFoundException() throws   InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
-		
-		List<String> cityList = new ArrayList<>();
+	public void testSetSearchCriteriaInstanceNotFoundException() throws InvalidAgeException {
+
+		final List<String> cityList = new ArrayList<>();
 		cityList.add("A Coruna");
 		cityList.add("Madrid");
 		cityList.add("Vigo");
 		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60,cityList);
 
-
 		assertThrows(InstanceNotFoundException.class,() -> {
 			userService.setSearchCriteria(-1L, criteria);
 		});
 	}
+
+	@Test
+	public void testSetSearchCriteriaWithInvalidAgeException()
+			throws InstanceNotFoundException, DuplicateInstanceException, InvalidDateException {
+
+		final UserImpl user = createUser("CriteriaUserIAE", "CriteriaPassIAE",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "description");
+		final Long userId = userService.signUp(user);
+
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteriaDto criteria = createCriteria("Male", 30, 150, cityList);
+
+		assertThrows(InvalidAgeException.class, () -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+
+		final SearchCriteriaDto criteria2 = createCriteria("Male", 17, 60, cityList);
+
+		assertThrows(InvalidAgeException.class, () -> {
+			userService.setSearchCriteria(userId, criteria2);
+		});
+	}
+
+	/*
+	 * @Test public void testSetSearchCriteriaWithInvalidDateException() throws
+	 * DuplicateInstanceException, InvalidDateException, InstanceNotFoundException,
+	 * InvalidAgeException {
+	 *
+	 * final UserImpl user = createUser("userSetSearchCriteria",
+	 * "passwordSetSearchCriteria", getDateTime(1, 1, 2000), "hombre", "coruna",
+	 * "description"); final Long userId = userService.signUp(user);
+	 *
+	 * user.setCriteriaSex(SexCriteriaEnum.MALE); user.setCriteriaMaxAge(60);
+	 * user.setCriteriaMinAge(30);
+	 *
+	 * final List<String> cityList = new ArrayList<>(); cityList.add("A Coruna");
+	 * cityList.add("Madrid"); cityList.add("Vigo"); final SearchCriteriaDto
+	 * criteria = createCriteria("Male", 30, 60, cityList);
+	 *
+	 * userService.setSearchCriteria(userId, criteria);
+	 *
+	 * final List<String> registeredCities =
+	 * cityCriteriaRepository.findCitiesByUserId(userId);
+	 *
+	 * UserImpl registeredUser = userService.loginFromUserId(userId);
+	 *
+	 * assertEquals(cityList, registeredCities); assertEquals(user, registeredUser);
+	 *
+	 * /////////////////////////////// Hacemos el registro de los mismos datos
+	 * /////////////////////////////// //////////////////// final List<String>
+	 * emptyList = new ArrayList<>(); userService.setSearchCriteria(userId,
+	 * criteria);
+	 *
+	 * final List<String> registeredCities2 =
+	 * cityCriteriaRepository.findCitiesByUserId(userId);
+	 *
+	 * registeredUser = userService.loginFromUserId(userId);
+	 *
+	 * assertEquals(emptyList, registeredCities2); assertEquals(user,
+	 * registeredUser);
+	 *
+	 * /////////////////////////////// Hacemos el registro de datos nuevos
+	 * /////////////////////////////// ////////////////////
+	 * cityList.add("Marruecos"); final List<String> marruecosList = new
+	 * ArrayList<>(); marruecosList.add("Marruecos"); final SearchCriteriaDto
+	 * criteria2 = createCriteria("Male", 30, 60, cityList);
+	 * userService.setSearchCriteria(userId, criteria2);
+	 *
+	 * final List<String> registeredCities3 =
+	 * cityCriteriaRepository.findCitiesByUserId(userId);
+	 *
+	 * registeredUser = userService.loginFromUserId(userId);
+	 *
+	 * assertEquals(marruecosList, registeredCities3); assertEquals(user,
+	 * registeredUser); }
+	 */
 	// ----- updateProfile -----
 
 	@Test
@@ -263,52 +356,6 @@ public class ITUserService {
 			userService.updateProfile(-1L, newUser);
 		});
 	}
-
-	@Test
-	public void testSetSearchCriteriaToMuchAgeException() throws   InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
-
-		final UserImpl user = createUser("CriteriaToMuchAgeException","CriteriaToMuchAgeException", getDateTime(1,1,2000), "hombre", "coruna","description");
-		final Long userId = userService.signUp(user);
-
-		user.setCriteriaSex(SexCriteriaEnum.MALE);
-		user.setCriteriaMaxAge(60);
-		user.setCriteriaMinAge(30);
-		
-		List<String> cityList = new ArrayList<>();
-		cityList.add("A Coruna");
-		cityList.add("Madrid");
-		cityList.add("Vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male"  , 30, 150 ,cityList);
-
-		assertThrows(TooMuchAgeException.class,() -> {
-			userService.setSearchCriteria(userId, criteria);
-		});
-	}
-
-	@Test
-	public void testSetSearchCriteriaNotEnoughAgeException() throws InstanceNotFoundException, TooMuchAgeException,
-			NotEnoughAgeException, DuplicateInstanceException, InvalidDateException {
-
-		final UserImpl user = createUser("SearchCriteriaNotEnoughAge", "pSearchCriteriaNotEnoughAge",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "description");
-		final Long userId = userService.signUp(user);
-
-		user.setCriteriaSex(SexCriteriaEnum.MALE);
-		user.setCriteriaMaxAge(60);
-		user.setCriteriaMinAge(30);
-
-		List<String> cityList = new ArrayList<>();
-		cityList.add("A Coruna");
-		cityList.add("Madrid");
-		cityList.add("Vigo");
-
-		final SearchCriteriaDto criteria = createCriteria("Male", 17, 89, cityList);
-
-		assertThrows(NotEnoughAgeException.class, () -> {
-			userService.setSearchCriteria(userId, criteria);
-		});
-	}
-
 
 	public void testUpdateProfileWithInvalidDateException()
 			throws DuplicateInstanceException, InvalidDateException {

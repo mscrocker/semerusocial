@@ -15,9 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
-import es.udc.fi.dc.fd.controller.exception.NotEnoughAgeException;
-import es.udc.fi.dc.fd.controller.exception.TooMuchAgeException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaId;
@@ -33,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 
 	private final PermissionChecker permissionChecker;
-	
+
 	private final CityCriteriaRepository cityCriteriaRepository;
 
 	@Autowired
@@ -45,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
 		this.permissionChecker = checkNotNull(permissionChecker,
 				"Received a null pointer as permissionChecker in UserServiceImpl");
-		
+
 		this.cityCriteriaRepository = checkNotNull(cityCriteriaRepository,
 				"Received a null pointer as cityCriteriaRepository in UserServiceImpl");
 	}
@@ -96,44 +95,43 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<String> setSearchCriteria(Long userId, SearchCriteriaDto criteria) throws InstanceNotFoundException, TooMuchAgeException, NotEnoughAgeException {
+	public void setSearchCriteria(Long userId, SearchCriteriaDto criteria)
+			throws InstanceNotFoundException, InvalidAgeException {
 		final UserImpl user = permissionChecker.checkUserByUserId(userId);
 
 		if (criteria.getMaxAge() > 99) {
-			throw new TooMuchAgeException("Age must be lower than 99 years");
+			throw new InvalidAgeException("Age must be lower than 99 years, not " + criteria.getMaxAge());
 		}
 		if (criteria.getMinAge() < 18) {
-			throw new NotEnoughAgeException("Age must be higher than 18 years");
+			throw new InvalidAgeException("Age must be higher than 18 years, not " + criteria.getMinAge());
 		}
-		
-		List<String> cityList = criteria.getCity();
+
+		final List<String> cityList = criteria.getCity();
 		//lista de ciudades que se han insertado nuevas
-		List<String> insertedCities = new ArrayList<String>();
+		final List<String> insertedCities = new ArrayList<>();
 		//Para cada ciudad de la lista
-		
-		for (String city : cityList) {
-			//Creamos el par userId , ciudad 
-			CityCriteriaId id = new CityCriteriaId(userId, city);
-			CityCriteriaImpl cityCriteria = new CityCriteriaImpl(id);
-			
+
+		for (final String city : cityList) {
+			//Creamos el par userId , ciudad
+			final CityCriteriaId id = new CityCriteriaId(userId, city);
+			final CityCriteriaImpl cityCriteria = new CityCriteriaImpl(id);
+
 			//Si ya existe en base de datos no hacemos nada , sino la guardamos
 			if (!getCityCriteriaRepository().existsById(id)) {
 				getCityCriteriaRepository().save(cityCriteria);
-				
+
 				insertedCities.add(cityCriteria.getCityCriteriaId().getCity());
 			}
 		}
-		
+
 		user.setCriteriaSex(criteria.getSex());
 		user.setCriteriaMaxAge(criteria.getMaxAge());
 		user.setCriteriaMinAge(criteria.getMinAge());
 
 		getUserRepository().save(user);
-		
-		
-		return insertedCities;
 	}
 
+	@Override
 	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException {
 		final Optional<UserImpl> userFound = getUserRepository().findById(userId);
 
@@ -157,7 +155,7 @@ public class UserServiceImpl implements UserService {
 	public UserRepository getUserRepository() {
 		return userRepository;
 	}
-	
+
 	public CityCriteriaRepository getCityCriteriaRepository() {
 		return cityCriteriaRepository;
 	}
