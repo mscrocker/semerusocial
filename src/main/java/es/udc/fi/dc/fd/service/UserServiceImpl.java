@@ -3,7 +3,6 @@ package es.udc.fi.dc.fd.service;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,29 +97,29 @@ public class UserServiceImpl implements UserService {
 	public void setSearchCriteria(Long userId, SearchCriteriaDto criteria)
 			throws InstanceNotFoundException, InvalidAgeException {
 		final UserImpl user = permissionChecker.checkUserByUserId(userId);
-		
+
 		if (criteria.getMinAge() < 18) {
 			throw new InvalidAgeException("Age must be higher than 18 years, not " + criteria.getMinAge());
 		}
 		if (criteria.getMinAge() > criteria.getMaxAge() ) {
 			throw new InvalidAgeException("MinAge must be lower than MaxAge : " + criteria.getMinAge() +" > " + criteria.getMaxAge() );
 		}
-		
+
 		//Borramos de la base de datos todos las ciudades que tenia el usuario
-		List <String> toDeleteList = getCityCriteriaRepository().findCitiesByUserId(userId);
-		for (String city : toDeleteList) {
-			CityCriteriaImpl cityCriteriaId  = new CityCriteriaImpl(new CityCriteriaId(userId, city));
+		final List <String> toDeleteList = getCityCriteriaRepository().findCitiesByUserId(userId);
+		for (final String city : toDeleteList) {
+			final CityCriteriaImpl cityCriteriaId  = new CityCriteriaImpl(new CityCriteriaId(userId, city));
 			getCityCriteriaRepository().delete(cityCriteriaId);
 		}
-		
+
 		final List<String> cityList = criteria.getCity();
-		
+
 		//Para cada ciudad de la lista
 		for (final String city : cityList) {
 			//Creamos el par userId , ciudad
 			final CityCriteriaId id = new CityCriteriaId(userId, city.toLowerCase());
 			final CityCriteriaImpl cityCriteria = new CityCriteriaImpl(id);
-			
+
 			//guardamos la nueva ciudad
 			getCityCriteriaRepository().save(cityCriteria);
 

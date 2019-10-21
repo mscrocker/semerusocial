@@ -5,8 +5,6 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 
 public class SearchCriteriaDto {
@@ -19,7 +17,7 @@ public class SearchCriteriaDto {
 
 	private int maxAge;
 
-	@NotEmpty
+	@NotNull
 	private List<String> city;
 
 	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city) {
