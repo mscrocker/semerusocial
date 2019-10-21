@@ -19,41 +19,44 @@ const friendList = {
 	
 	enableButton: (name, baseURL, currentPage) => {
 		let button = document.getElementById(name);
-		let destination = (name === "next") ? currentPage + 1 : 
-							((name === "previous") ? currentPage - 1 : null);
+		let destination = (name === "nextButton") ? currentPage + 1 : 
+							((name === "previousButton") ? currentPage - 1 : null);
 		button.addEventListener("click", () => {
-			window.location.href = baseURL + "/users/friends?page=" + destination;
+			window.location.href = baseURL + "users/friends?page=" + destination;
 		});
 		button.classList.add("btn-primary");
 	},
 	
-	insertFriendHTML: (html) => {
-		document.getElementById("friendsTable").innerText = html;
+	insertHTML: (html) => {
+		document.getElementById("friendsTable").innerHTML = html;
 	},
 	
 	init: (baseURL) => {
 		let page = friendList.getPage();
 		
-		let url = baseURL + "/backend/friends?page=" + page;
+		let url = baseURL + "/backend/friends/friendList?page=" + page;
 		let params = {
 			METHOD: 'GET'
 		};
-		authFetch(url, params, (response) => {
+		user.authFetch(url, params, (response) => {
 			response.json().then((body) => {
 				showAlert(null);
 				if (page > 0){
-					friendList.enableButton("back", baseURL, page);
+					friendList.enableButton("previousButton", baseURL, page);
 				}
-				if (body.hasNext === true){
-					friendList.enableButton("forward", baseURL, page);
+				if (body.existMoreFriends === true){
+					friendList.enableButton("nextButton", baseURL, page);
 				}
 				
-				let friends = body.data;
+				let friends = body.friends;
 				let aux = "";
 				for (let i = 0; i < friends.length; i++){
 					aux += friendList.generateHTML(friends[i]);
 				}
 				friendList.insertHTML(aux);
+				
+				
+				
 			}).catch((errors) => {
 				showAlert("Error getting friend list");
 				console.log("ERROR: " + errors);
