@@ -31,11 +31,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
@@ -155,6 +157,13 @@ public class UserController {
 		return ResponseEntity.created(location).body(userAuthenticated);
 	}
 
+	@PutMapping("/searchCriteria")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+		userService.setSearchCriteria(userId, criteria);
+	}
+
 	@PostMapping("/login")
 	public UserAuthenticatedDto login(@Validated @RequestBody LoginParamsDto params) throws IncorrectLoginException {
 
@@ -179,5 +188,6 @@ public class UserController {
 					throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
+
 
 }
