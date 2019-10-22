@@ -6,14 +6,17 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class RegisterParamsDto {
 
 	@NotEmpty
+	@Length(min = 4, max = 20)
 	private String userName;
 
 	@NotEmpty
+	@Length(min = 4, max = 20)
 	private String password;
 
 	@NotNull
@@ -27,13 +30,13 @@ public class RegisterParamsDto {
 	private int month;
 
 	@NotNull
-
 	private int year;
 
 	@NotEmpty
 	private String sex;
 
 	@NotEmpty
+	@Length(max = 200)
 	private String city;
 
 	@NotEmpty

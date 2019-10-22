@@ -3,15 +3,20 @@ package es.udc.fi.dc.fd.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
@@ -32,16 +37,48 @@ import es.udc.fi.dc.fd.repository.UserRepository;
 public class FriendServiceImpl implements FriendService {
 
 	@Autowired
-	RequestRepository requestRepository;
+	private RequestRepository requestRepository;
 
 	@Autowired
-	RejectedRepository rejectedRepository;
+	private RejectedRepository rejectedRepository;
 
 	@Autowired
-	MatchRepository matchRepository;
+	private MatchRepository matchRepository;
 
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
+
+	@Autowired
+	private PermissionChecker permissionChecker;
+
+	@Override
+	@Transactional(readOnly = true)
+	public BlockFriendList<UserImpl> getFriendList(Long userId, int page, int size)
+			throws InstanceNotFoundException, RequestParamException {
+		permissionChecker.checkUserExists(userId);
+
+		if (page < 0)
+			throw new RequestParamException("Page must be at less 0, you have passed as page=" + page);
+		if (size < 1)
+			throw new RequestParamException("Size must be at less 1, you have passed as size=" + size);
+
+		final Slice<MatchImpl> friendsResult = matchRepository.findFriends(userId, PageRequest.of(page, size));
+
+		final List<UserImpl> friends = new ArrayList<>();
+		UserImpl user;
+		Long friendId;
+		for (final MatchImpl friend : friendsResult.getContent()) {
+			if (friend.getMatchId().getUser1() == userId) {
+				friendId = friend.getMatchId().getUser2();
+			} else {
+				friendId = friend.getMatchId().getUser1();
+			}
+			user = permissionChecker.checkUserByUserId(friendId);
+			friends.add(user);
+		}
+
+		return new BlockFriendList<>(friends, friendsResult.hasNext());
+	}
 
 	@Override
 	public void acceptRecommendation(Long subject, Long object)
@@ -83,33 +120,28 @@ public class FriendServiceImpl implements FriendService {
 		final Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
 		final Optional<UserImpl> objectUserOpt = userRepository.findById(object);
 
-		if (subjectUserOpt.isEmpty()) {
+		if (subjectUserOpt.isEmpty())
 			throw new InstanceNotFoundException("Subject User Doesn't Exist", subject);
-		}
 
-		if (objectUserOpt.isEmpty()) {
+		if (objectUserOpt.isEmpty())
 			throw new InstanceNotFoundException("Object User Doesn't Exist", object);
-		}
 
 		final UserImpl subjectUser = subjectUserOpt.get();
 
 		final UserImpl objectUser = objectUserOpt.get();
 
 		final Optional<RejectedImpl> optRejected = rejectedRepository.findById(new RejectedId(subject, object));
-		if (optRejected.isPresent()) {
+		if (optRejected.isPresent())
 			throw new AlreadyRejectedException("Object user was already rejected", object);
-		}
 
 		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
 
-		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
+		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge())
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
-		}
 
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equals(objectUser.getSex())) {
+			if (!subjectUser.getCriteriaSex().toString().equals(objectUser.getSex()))
 				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
-			}
 		}
 		// TODO City Criteria
 	}
@@ -117,12 +149,10 @@ public class FriendServiceImpl implements FriendService {
 	@Override
 	public Optional<FriendDto> suggestFriend(Long userId) throws InstanceNotFoundException {
 
-		if (userId == null) {
+		if (userId == null)
 			throw new InstanceNotFoundException("userId can not be null", userId);
-		}
-		if (!userRepository.existsById(userId)) {
+		if (!userRepository.existsById(userId))
 			throw new InstanceNotFoundException("User does not exists", userId);
-		}
 
 		// TODO -> LLAMAR AL SERVICIO PARA OBTENER LA CRITERIA DEL USUARIO
 		final SearchCriteriaDto criteriaMock = new SearchCriteriaDto();

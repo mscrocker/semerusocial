@@ -27,6 +27,7 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
@@ -40,16 +41,16 @@ import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
+import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-	SqlScriptsTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, SqlScriptsTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
+		"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 public class ITFriendService {
 
@@ -59,15 +60,15 @@ public class ITFriendService {
 	@Autowired
 	private FriendService friendService;
 	@Autowired
-	RequestRepository requestRepository;
+	private RequestRepository requestRepository;
 
 	@Autowired
-	RejectedRepository rejectedRepository;
+	private RejectedRepository rejectedRepository;
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	MatchRepository matchRepository;
+	private MatchRepository matchRepository;
 
 	@Autowired
 	public ITFriendService() {
@@ -279,7 +280,7 @@ public class ITFriendService {
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
 		 * CitiesCriteria //TODO
 		 */
-		//TODO -> Ajustar fechas usuarios a hoy
+		// TODO -> Ajustar fechas usuarios a hoy
 		final Optional<FriendDto> userSuggested = friendService.suggestFriend(1L);
 
 		assertNotNull(userSuggested);
@@ -300,6 +301,67 @@ public class ITFriendService {
 	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.suggestFriend(-1L);
+		});
+	}
+
+	@Test
+	public void testGetFriendList()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final UserImpl user1 = createUser("usuarioFriendList1", "contraseñaFriendList1", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioFriendList2", "contraseñaFriendList2", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user3 = createUser("usuarioFriendList3", "contraseñaFriendList3", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user4 = createUser("usuarioFriendList4", "contraseñaFriendList4", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user5 = createUser("usuarioFriendList5", "contraseñaFriendList5", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user1);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+		userService.signUp(user5);
+
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user2.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user4.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user5.getId()), getDateTime(1, 1, 2000)));
+
+		BlockFriendList<UserImpl> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
+		assertEquals(user1Result.getFriends().size(), 2);
+		assertEquals(user1Result.getExistMoreFriends(), true);
+
+		user1Result = friendService.getFriendList(user1.getId(), 1, 2);
+		assertEquals(user1Result.getFriends().size(), 2);
+		assertEquals(user1Result.getExistMoreFriends(), false);
+
+		user1Result = friendService.getFriendList(user1.getId(), 2, 2);
+		assertEquals(user1Result.getFriends().size(), 0);
+		assertEquals(user1Result.getExistMoreFriends(), false);
+	}
+
+	@Test
+	public void testGetFriendListWithInstanceNotFoundException() {
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.getFriendList(-1L, 0, 10);
+		});
+	}
+
+	@Test
+	public void testGetFriendListRequestParamException() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioFriendListRPE", "contraseñaFriendListRPE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+
+		assertThrows(RequestParamException.class, () -> {
+			friendService.getFriendList(user.getId(), -1, 10);
+		});
+
+		assertThrows(RequestParamException.class, () -> {
+			friendService.getFriendList(user.getId(), 0, 0);
 		});
 	}
 

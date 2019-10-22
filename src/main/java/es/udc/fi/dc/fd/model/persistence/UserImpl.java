@@ -49,13 +49,13 @@ public class UserImpl implements User {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "criteriaSex")
-	private SexCriteriaEnum criteriaSex = SexCriteriaEnum.ANY;
+	private SexCriteriaEnum criteriaSex = DefaultCriteria.DEFAULT_CRITERIA_SEX;
 
 	@Column(name = "criteriaMinAge")
-	private int criteriaMinAge;
+	private int criteriaMinAge = DefaultCriteria.DEFAULT_CRITERIA_MIN_AGE;
 
 	@Column(name = "criteriaMaxAge")
-	private int criteriaMaxAge;
+	private int criteriaMaxAge = DefaultCriteria.DEFAULT_CRITERIA_MAX_AGE;
 
 	@Column(name = "description")
 	private String description;
@@ -68,6 +68,14 @@ public class UserImpl implements User {
 		super();
 		this.userName = userName;
 		this.password = password;
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+	}
+
+	public UserImpl(LocalDateTime date, String sex, String city, String description) {
+		super();
 		this.date = date;
 		this.sex = sex;
 		this.city = city;

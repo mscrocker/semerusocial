@@ -1,36 +1,31 @@
-package es.udc.fi.dc.fd.dtos;
+package es.udc.fi.dc.fd.model.persistence;
 
 import java.util.List;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 
-public class SearchCriteriaDto {
-	@NotNull
+public class SearchCriteria {
 
 	private SexCriteriaEnum sex;
-	@NotNull
-	@Min(18)
+
 	private int minAge;
 
-	@Min(18)
 	private int maxAge;
 
-	@NotNull
 	private List<String> city;
+	
+	
 
-	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city) {
+	public SearchCriteria() {
 		super();
-		this.sex = SexCriteriaEnum.fromCode(sex);
+	}
+
+	public SearchCriteria(SexCriteriaEnum sex, int minAge, int maxAge, List<String> city) {
+		super();
+		this.sex = sex;
 		this.minAge = minAge;
 		this.maxAge = maxAge;
 		this.city = city;
-	}
-
-	public SearchCriteriaDto() {
-		super();
 	}
 
 	public SexCriteriaEnum getSex() {
@@ -69,10 +64,10 @@ public class SearchCriteriaDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (city == null ? 0 : city.hashCode());
+		result = prime * result + ((city == null) ? 0 : city.hashCode());
 		result = prime * result + maxAge;
 		result = prime * result + minAge;
-		result = prime * result + (sex == null ? 0 : sex.hashCode());
+		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
 		return result;
 	}
 
@@ -84,7 +79,7 @@ public class SearchCriteriaDto {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final SearchCriteriaDto other = (SearchCriteriaDto) obj;
+		SearchCriteria other = (SearchCriteria) obj;
 		if (city == null) {
 			if (other.city != null)
 				return false;
@@ -101,7 +96,8 @@ public class SearchCriteriaDto {
 
 	@Override
 	public String toString() {
-		return "SearchCriteriaDto [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city + "]";
+		return "SearchCriteria [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city + "]";
 	}
-
+	
+	
 }

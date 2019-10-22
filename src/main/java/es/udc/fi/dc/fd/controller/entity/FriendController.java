@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +26,15 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.BlockGetFriendListDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
+import es.udc.fi.dc.fd.dtos.FriendConversor;
 import es.udc.fi.dc.fd.dtos.FriendDto;
+import es.udc.fi.dc.fd.dtos.GetFriendListOutDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
+import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
 
 @RestController
@@ -37,6 +46,7 @@ public class FriendController {
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
 	private final static String INVALID_RECOMMENDATION_EXCEPTION = "project.exceptions.InvalidRecommendationException";
 	private final static String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
+	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 
 	@Autowired
 	private final MessageSource messageSource;
@@ -52,6 +62,16 @@ public class FriendController {
 
 		this.messageSource = checkNotNull(messageSource,
 				"Received a null pointer as messageSource in FriendController");
+	}
+
+	@ExceptionHandler(RequestParamException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleRequestParamException(RequestParamException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(REQUEST_PARAM_EXCEPTION_CODE, null,
+				REQUEST_PARAM_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
 	}
 
 	@ExceptionHandler(InvalidRecommendationException.class)
@@ -131,10 +151,18 @@ public class FriendController {
 
 		final Optional<FriendDto> friend = friendService.suggestFriend(userId);
 
-		if (friend.isEmpty()) {
+		if (friend.isEmpty())
 			throw new NoMoreSuggestionFound("There are no more users suggested with the current criteria", null);
-		}
 		return friend.get();
+	}
+
+	@GetMapping("/friendList")
+	public BlockGetFriendListDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
+			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
+			throws InstanceNotFoundException, RequestParamException {
+		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, size);
+
+		return FriendConversor.toGetFriendListOutDto(friends);
 	}
 
 }
