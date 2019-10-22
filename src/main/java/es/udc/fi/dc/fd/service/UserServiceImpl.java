@@ -20,6 +20,7 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaId;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
+import es.udc.fi.dc.fd.model.persistence.DefaultCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
 
 		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		
 
 		final UserImpl userSaved = getUserRepository().save(user);
 
