@@ -29,6 +29,7 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.service.UserService;
@@ -206,8 +207,7 @@ public class ITUserService {
 		assertEquals(cityList, registeredCities);
 		assertEquals(user, registeredUser);
 
-		/////////////////////////////// Hacemos el registro de datos nuevos
-		/////////////////////////////// ////////////////////
+		/////////////////// Hacemos el registro de datos nuevos////////////
 		final List<String> cityList2 = new ArrayList<>();
 		cityList2.add("lugo");
 		cityList2.add("orense");
@@ -265,6 +265,44 @@ public class ITUserService {
 		assertThrows(InvalidAgeException.class, () -> {
 			userService.setSearchCriteria(userId, criteria2);
 		});
+	}
+	
+	// ----- getSearchCriteria -----
+	
+	@Test
+	public void testGetSearchCriteria() throws 	InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+
+		final UserImpl user = createUser("userGetSearchCriteria", "passwordGetSearchCriteria", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "description");
+		
+		final Long userId = userService.signUp(user);
+
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("a coruna");
+		cityList.add("madrid");
+		cityList.add("vigo");
+		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
+
+		userService.setSearchCriteria(userId, criteria);
+		SearchCriteria userCriteria = userService.getSearchCriteria(userId);
+		
+		SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(),
+				user.getCriteriaMinAge(), user.getCriteriaMaxAge(), cityList);
+		
+		assertEquals(searchCriteria, userCriteria);
+	}
+	
+	@Test
+	public void testGetSearchCriteriaInstaceNotFoundException() throws 	InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+
+		assertThrows(InstanceNotFoundException.class,() -> {
+			userService.getSearchCriteria(-1L);
+		});
+
 	}
 	
 	// ----- updateProfile -----

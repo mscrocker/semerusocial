@@ -7,6 +7,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface UserService {
@@ -22,6 +23,9 @@ public interface UserService {
 
 	public void setSearchCriteria(Long userId, SearchCriteriaDto criteria)
 			throws InstanceNotFoundException, InvalidAgeException;
+	
+	public SearchCriteria getSearchCriteria(Long userId)
+			throws InstanceNotFoundException;
 
 	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
 

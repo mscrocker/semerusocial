@@ -37,6 +37,7 @@ import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
@@ -45,6 +46,7 @@ import es.udc.fi.dc.fd.dtos.UserDataDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -173,6 +175,14 @@ public class UserController {
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
 		userService.setSearchCriteria(userId, criteria);
+	}
+	
+	@GetMapping("/searchCriteria")
+	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+		SearchCriteria criteria = userService.getSearchCriteria(userId);
+		
+		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
 	}
 
 	@PostMapping("/login")
