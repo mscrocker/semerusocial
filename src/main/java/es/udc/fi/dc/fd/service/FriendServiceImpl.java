@@ -17,8 +17,6 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
-import es.udc.fi.dc.fd.dtos.FriendDto;
-import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
@@ -26,6 +24,7 @@ import es.udc.fi.dc.fd.model.persistence.RejectedId;
 import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
@@ -47,6 +46,9 @@ public class FriendServiceImpl implements FriendService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private PermissionChecker permissionChecker;
@@ -84,6 +86,8 @@ public class FriendServiceImpl implements FriendService {
 	public void acceptRecommendation(Long subject, Long object)
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		validateRecommendation(subject, object);
+
+		// MAYBE can be easily implemented with Database triggers instead
 
 		// Check whether the request done from the other user exists
 		final RequestId inverseRequestId = new RequestId(object, subject);
@@ -140,42 +144,30 @@ public class FriendServiceImpl implements FriendService {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equals(objectUser.getSex()))
+			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex()))
 				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 		}
-		// TODO City Criteria
+
+		SearchCriteria searchCriteria = userService.getSearchCriteria(subject);
+		if (!searchCriteria.getCity().isEmpty()
+				&& !searchCriteria.getCity().stream().anyMatch(objectUser.getCity()::equalsIgnoreCase))
+			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+
 	}
 
 	@Override
-	public Optional<FriendDto> suggestFriend(Long userId) throws InstanceNotFoundException {
+	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException {
 
 		if (userId == null)
 			throw new InstanceNotFoundException("userId can not be null", userId);
 		if (!userRepository.existsById(userId))
 			throw new InstanceNotFoundException("User does not exists", userId);
 
-		// TODO -> LLAMAR AL SERVICIO PARA OBTENER LA CRITERIA DEL USUARIO
-		final SearchCriteriaDto criteriaMock = new SearchCriteriaDto();
-		criteriaMock.setMaxAge(99);
-		criteriaMock.setMinAge(18);
-		criteriaMock.setSex(SexCriteriaEnum.FEMALE);
+		SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
 
-		final Optional<UserImpl> userSuggested = userRepository.findByCriteria(criteriaMock, userId);
+		final Optional<UserImpl> userSuggested = userRepository.findByCriteria(searchCriteria, userId);
 
-		return userImplToFriendDto(userSuggested);
+		return userSuggested;
 	}
 
-	private Optional<FriendDto> userImplToFriendDto(Optional<UserImpl> user) {
-
-		Optional<FriendDto> friend = Optional.empty();
-		if (!user.isEmpty()) {
-			final LocalDateTime today = LocalDateTime.now();
-			final Period period = Period.between(user.get().getDate().toLocalDate(), today.toLocalDate());
-
-			final FriendDto friendDto = new FriendDto(user.get().getUserName(), period.getYears(), user.get().getSex(),
-					user.get().getCity(), user.get().getDescription());
-			friend = Optional.of(friendDto);
-		}
-		return friend;
-	}
 }

@@ -1,11 +1,13 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -13,22 +15,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
-import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
@@ -36,6 +39,7 @@ import es.udc.fi.dc.fd.model.persistence.RejectedId;
 import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
@@ -52,6 +56,8 @@ import es.udc.fi.dc.fd.service.UserService;
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
 		"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@Rollback
+@Transactional
 public class ITFriendService {
 
 	@Autowired
@@ -84,10 +90,16 @@ public class ITFriendService {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
+	private LocalDateTime getDateTimeFromAge(int age) {
+		assert age > 0;
+
+		return LocalDate.now().minusYears(age).atStartOfDay();
+
+	}
+
 	private UserImpl signUp(String userName, String password, int age, String sex, String city) {
 
-		final UserImpl user = createUser(userName, password, getDateTime(1, 1, LocalDateTime.now().getYear() - age),
-				sex, city, "descripcion");
+		final UserImpl user = createUser(userName, password, getDateTimeFromAge(age), sex, city, "descripcion");
 
 		try {
 			userService.signUp(user);
@@ -99,16 +111,23 @@ public class ITFriendService {
 
 	}
 
+	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities) {
+		try {
+			userService.setSearchCriteria(id,
+					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities)));
+		} catch (InstanceNotFoundException | InvalidAgeException e) {
+			e.printStackTrace();
+			fail();
+
+		}
+	}
+
 	// -----addImage-----
 
 	@Test
 	public void testDefaultCriteriaRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		UserImpl user1 = signUp("manolo3", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
-		user1 = userRepository.save(user1);
 		final UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
 		// assertTrue(requestRepository.count() == 1);
@@ -124,27 +143,24 @@ public class ITFriendService {
 	public void testInvalidCriteriaRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
-
-		userRepository.save(user1);
-
+		// user1.setCriteriaMaxAge(50);
+		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
+		// userRepository.save(user1);
 		final UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
 
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
-		user2.setDate(getDateTime(10, 10, 1998));
-		// TODO with cities
-		// user2.setCity("Espanya");
+
+		user2.setDate(getDateTimeFromAge(45));
+		user2.setCity("Espanya");
 		userRepository.save(user2);
-		//
-		// assertThrows(InvalidRecommendationException.class, () -> {
-		// friendService.acceptRecommendation(user1.getId(), user2.getId());
-		// });
-		// user2.setCity("Catalunya");
-		// userRepository.save(user2);
+
+		assertThrows(InvalidRecommendationException.class, () -> {
+			friendService.acceptRecommendation(user1.getId(), user2.getId());
+		});
+		user2.setCity("Catalunya");
+		userRepository.save(user2);
 
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
 		// assertTrue(requestRepository.count() == 1);
@@ -155,12 +171,6 @@ public class ITFriendService {
 	public void testReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		final UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
-
-		userRepository.save(user1);
-
 		final UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
 		// assertTrue(rejectedRepository.count() == 1);
@@ -175,10 +185,6 @@ public class ITFriendService {
 	public void testRejectAlreadyRejected()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		final UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
-
 		userRepository.save(user1);
 
 		final UserImpl user2 = signUp("manolo10", "pass2", 23, "Female", "Catalunya");
@@ -195,27 +201,24 @@ public class ITFriendService {
 	public void testInvalidCriteriaReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
-
-		userRepository.save(user1);
+		// user1.setCriteriaMaxAge(99);
+		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
+		// userRepository.save(user1);
 
 		final UserImpl user2 = signUp("manolo12", "pass2", 102, "Female", "Catalunya");
 
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.rejectRecommendation(user1.getId(), user2.getId());
 		});
-		user2.setDate(getDateTime(10, 10, 1998));
-		// TODO With cities
-		// user2.setCity("Espanya");
+		user2.setDate(getDateTimeFromAge(35));
+		user2.setCity("Espanya");
 		userRepository.save(user2);
-		//
-		// assertThrows(InvalidRecommendationException.class, () -> {
-		// friendService.rejectRecommendation(user1.getId(), user2.getId());
-		// });
-		// user2.setCity("Catalunya");
-		// userRepository.save(user2);
+
+		assertThrows(InvalidRecommendationException.class, () -> {
+			friendService.rejectRecommendation(user1.getId(), user2.getId());
+		});
+		user2.setCity("Catalunya");
+		userRepository.save(user2);
 
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
 		// assertTrue(rejectedRepository.count() == 1);
@@ -225,16 +228,10 @@ public class ITFriendService {
 	@Test
 	public void MatchTest() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
 		final UserImpl user1 = signUp("manolo13", "pass", 22, "Male", "Catalunya");
-		user1.setCriteriaMaxAge(99);
-		user1.setCriteriaMinAge(18);
-		user1.setCriteriaSex(SexCriteriaEnum.ANY);
 
 		userRepository.save(user1);
 
 		final UserImpl user2 = signUp("manolo14", "pass2", 44, "Female", "Catalunya");
-		user2.setCriteriaMaxAge(99);
-		user2.setCriteriaMinAge(18);
-		user2.setCriteriaSex(SexCriteriaEnum.ANY);
 		userRepository.save(user2);
 
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
@@ -243,6 +240,7 @@ public class ITFriendService {
 		// assertTrue(matchRepository.count() == 1);
 		final Long firstId = Math.min(user1.getId(), user2.getId());
 		final Long secondId = user1.getId().equals(firstId) ? user2.getId() : user1.getId();
+
 		final Optional<MatchImpl> opt = matchRepository.findById(new MatchId(firstId, secondId));
 		assertTrue(opt.isPresent());
 		final MatchImpl matchImpl = opt.get();
@@ -274,17 +272,65 @@ public class ITFriendService {
 
 	/******* SUGGEST FRIEND TESTS *************************************/
 	@Test
-	@Sql(scripts = "/initialData.sql")
+//	@Sql(scripts = "/initialData.sql")
 	public void TestSuggestFriend() throws InstanceNotFoundException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
 		 * CitiesCriteria //TODO
 		 */
-		// TODO -> Ajustar fechas usuarios a hoy
-		final Optional<FriendDto> userSuggested = friendService.suggestFriend(1L);
 
-		assertNotNull(userSuggested);
-		assertEquals(userSuggested.get().getUserName(), "User3");
+		final UserImpl user1 = signUp("testSuggestFriend", "pass", 22, "Male", "osaka");
+		final UserImpl user2 = signUp("testSuggestFriend2", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user1.getId(), "Male", 18, 45, "osaka");
+
+		// With default matches
+		Optional<UserImpl> userSuggested = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user2.getUserName());
+
+		// MaxAge under the target -> fails
+		user1.setCriteriaMaxAge(21);
+		userRepository.save(user1);
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isEmpty());
+
+		// Genre doesnt match -> fails
+		user1.setCriteriaSex(SexCriteriaEnum.FEMALE);
+		user1.setCriteriaMaxAge(25);
+		userRepository.save(user1);
+
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isEmpty());
+
+		// Genre does match -> success
+		user1.setCriteriaSex(SexCriteriaEnum.MALE);
+		userRepository.save(user1);
+
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user2.getUserName());
+
+		// Genre does match -> success
+		user1.setCriteriaSex(SexCriteriaEnum.ANY);
+		userRepository.save(user1);
+
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user2.getUserName());
+
+		// City doesnt match -> fail
+		setSearchCriteria(user1.getId(), "Female", 19, 28, new String[] { "Los Angeles", "Rabat" });
+
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isEmpty());
+
+		// City
+		setSearchCriteria(user1.getId(), "Female", 19, 28, new String[] { "Osaka" });
+		userSuggested = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested.isEmpty());
+
+		// TODO -> Ajustar fechas usuarios a hoy
 
 		// TODO: PROBARLO A FONDO CAMBIANDO LA CRITERIA:
 		// -Si CriteriaSex = ANY -> 3L

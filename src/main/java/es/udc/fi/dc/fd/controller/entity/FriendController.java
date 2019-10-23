@@ -120,7 +120,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(NO_MORE_SUGGESTION_FOUND,
-				new Object[] { nameMessage, exception.getKey().toString() }, ALREADY_REJECTED_EXCEPTION, locale);
+				new Object[] { nameMessage, exception.getKey().toString() }, NO_MORE_SUGGESTION_FOUND, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -149,11 +149,11 @@ public class FriendController {
 	public FriendDto suggestFriend(@RequestAttribute Long userId)
 			throws InstanceNotFoundException, NoMoreSuggestionFound {
 
-		final Optional<FriendDto> friend = friendService.suggestFriend(userId);
+		final Optional<UserImpl> friend = friendService.suggestFriend(userId);
 
 		if (friend.isEmpty())
-			throw new NoMoreSuggestionFound("There are no more users suggested with the current criteria", null);
-		return friend.get();
+			throw new NoMoreSuggestionFound("There are no more users suggested with the current criteria", userId);
+		return FriendConversor.fromUserImpl(friend.get());
 	}
 
 	@GetMapping("/friendList")

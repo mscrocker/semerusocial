@@ -9,8 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
@@ -20,7 +20,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<UserImpl> findByCriteria(SearchCriteriaDto criteria, Long userId) {
+	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
 
 		String queryString = "SELECT p FROM User p ";
 
@@ -35,6 +35,13 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		// Que no te sugiera a ti mismo
 		queryString += "AND p.id != :userId ";
+		if (!criteria.getCity().isEmpty()) {
+			queryString += "AND p.city in (:cities) ";
+		}
+
+//		if (!criteria.getCity().isEmpty()) {
+//			queryString += "AND p.city IN :cities ";
+//		}
 
 		// Si ya son amigos que no lo sugiera
 		queryString += "AND p.id NOT IN (SELECT m1.matchId.user1 FROM Match m1 WHERE m1.matchId.user2=:userId) ";
@@ -58,6 +65,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		query.setParameter("userId", userId);
 		if (criteria.getSex() != SexCriteriaEnum.ANY && criteria.getSex() != SexCriteriaEnum.OTHER) {
 			query.setParameter("sex", criteria.getSex().toString());
+		}
+		if (!criteria.getCity().isEmpty()) {
+			query.setParameter("cities", criteria.getCity());
 		}
 
 		final List<UserImpl> users = query.getResultList();
