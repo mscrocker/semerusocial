@@ -6,21 +6,22 @@
 <head th:include="fragments/header :: header" />
 <body>
 	<header class="header" th:include="fragments/menu :: menu" />
+	<div th:include="fragments/errorAlert"></div>
 	<div id="profileForm"
 		class="container bg-light border border-primary mb-5 hidden">
 		<h1 class="" style="text-align: center;">User Data</h1>
 		<form class="form">
 			<div class="">
 				<div class="form-group">
-					<label for="ageField">Age: </label> <input id="ageField"
-						class="form-control" value="10" type="number" required="">
+					<label for="birthDateField">Age: </label> <input id="birthDateField"
+						class="form-control" type="date" required="">
 					<div class="invalid-feedback">
 						<p id="ageFieldFeedback"></p>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="sexField">Sex: </label> <select id="sexField"
-						class="form-control">
+						class="custom-select">
 						<option>Male</option>
 						<option>Female</option>
 						<option>Other</option>
@@ -31,19 +32,33 @@
 				</div>
 				<div class="form-group">
 					<label for="cityField">City: </label> <input id="cityField"
-						class="card-text" / value="loading" required>
+						class="form-control" / value="loading" required>
 					<div class="invalid-feedback">
 						<p id="cityFieldFeedback"></p>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="descriptionField">Description: </label> <input id="descriptionField"
-						class="card-text" / value="loading" required>
+					<label for="descriptionField">Description: </label> <input
+						id="descriptionField" class="form-control" / value="loading" required>
 					<div class="invalid-feedback">
 						<p id="descriptionFieldFeedback"></p>
 					</div>
 				</div>
-				<button id="profileButton" class="btn btn-primary mb-3" disabled>Update</button>
+				<div class="row ml-4">
+					<button id="profileButton" class="btn btn-primary mb-3"
+						disabled>Update</button>
+					<div class="ml-2 spinner-border text-primary" role="status"
+						id="profileLoading">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="ml-2 text-primary" id="profileFinished">
+						<h3 class="glyphicon glyphicon-ok"></h3>
+					</div>
+					<div class="ml-2 text-danger" id="profileError">
+						<h3 class="glyphicon glyphicon-remove"></h3>
+					</div>
+				</div>
+			</div>
 			</div>
 		</form>
 	</div>
@@ -70,25 +85,50 @@
 				</div>
 				<div class="form-group">
 					<label for="sexCriteriaField">Sex: </label> <select
-						id="sexCriteriaField" class="form-control">
-						<option>Male</option>
-						<option>Female</option>
-						<option>Other</option>
-						<option>Any</option>
+						id="sexCriteriaField" class="custom-select">
+						<option>MALE</option>
+						<option>FEMALE</option>
+						<option>OTHER</option>
+						<option>ANY</option>
 					</select>
 					<div class="invalid-feedback">
 						<p id="sexCriteriaFieldFeedback"></p>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="cityCriteriaField">City: </label> <input
-						id="cityCriteriaField" class="card-text" / value="loading"
-						required>
-					<div class="invalid-feedback">
-						<p id="cityCriteriaFieldFeedback"></p>
+					<label for="cityCriteriaField">Cities: </label>
+					<div class="col-6">
+						<table class="table table-vcenter" id="citiesTable1">
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-6">
+						<table class="table table-vcenter" id="citiesTable2">
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					
+					<button type="button" class="btn btn-success mt-3 mb-3" id="addCityButton">
+						<span class="glyphicon glyphicon-plus ">Add</span>
+					</button>
+					
+				</div>
+				<div class="row ml-4">
+					<button id="criteriaButton" class="btn btn-primary mb-3"
+						disabled>Update</button>
+					<div class="ml-2 spinner-border text-primary" role="status"
+						id="criteriaLoading">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="ml-2 text-primary" id="criteriaFinished">
+						<h3 class="glyphicon glyphicon-ok"></h3>
+					</div>
+					<div class="ml-2 text-danger" id="criteriaError">
+						<h3 class="glyphicon glyphicon-remove"></h3>
 					</div>
 				</div>
-				<button class="btn btn-primary mb-3" disabled>Update</button>
 			</div>
 		</form>
 	</div>
@@ -101,7 +141,7 @@
 	<footer>
 		<div th:include="fragments/scripts :: general" />
 		<div th:include="fragments/scripts :: profile" />
-		<div th:include="fragments/scripts :: criteria" />
+		<div th:include="fragments/scripts :: validation" />
 	</footer>
 	<script>
 	window.addEventListener("load", () => {
