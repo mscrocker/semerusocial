@@ -57,6 +57,7 @@ public class FriendServiceImpl implements FriendService {
 	@Transactional(readOnly = true)
 	public BlockFriendList<UserImpl> getFriendList(Long userId, int page, int size)
 			throws InstanceNotFoundException, RequestParamException {
+
 		permissionChecker.checkUserExists(userId);
 
 		if (page < 0)
@@ -85,6 +86,7 @@ public class FriendServiceImpl implements FriendService {
 	@Override
 	public void acceptRecommendation(Long subject, Long object)
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+
 		validateRecommendation(subject, object);
 
 		// MAYBE can be easily implemented with Database triggers instead
@@ -112,6 +114,7 @@ public class FriendServiceImpl implements FriendService {
 	@Override
 	public void rejectRecommendation(Long subject, Long object)
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+
 		validateRecommendation(subject, object);
 		// TODO WE can safely delete the invert request if it were to exist because it
 		// doesnt do anything anymore
@@ -134,23 +137,27 @@ public class FriendServiceImpl implements FriendService {
 
 		final UserImpl objectUser = objectUserOpt.get();
 
+		// If the object user was already rejected -> exception
 		final Optional<RejectedImpl> optRejected = rejectedRepository.findById(new RejectedId(subject, object));
 		if (optRejected.isPresent())
 			throw new AlreadyRejectedException("Object user was already rejected", object);
 
 		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
-
+		// If object user age not in between the criteria -> exception
 		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge())
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 
+		// If object user sex doesnt fit criteria -> exception
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
 			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex()))
 				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 		}
 
+		// If object user city doesnt fit criteria -> exception
+		// If CityCriteria is blank means we accept all possible cities
 		SearchCriteria searchCriteria = userService.getSearchCriteria(subject);
-		if (!searchCriteria.getCity().isEmpty()
-				&& !searchCriteria.getCity().stream().anyMatch(objectUser.getCity()::equalsIgnoreCase))
+		if (searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()
+				&& searchCriteria.getCity().stream().noneMatch(objectUser.getCity()::equalsIgnoreCase))
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 
 	}
@@ -165,9 +172,7 @@ public class FriendServiceImpl implements FriendService {
 
 		SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
 
-		final Optional<UserImpl> userSuggested = userRepository.findByCriteria(searchCriteria, userId);
-
-		return userSuggested;
+		return userRepository.findByCriteria(searchCriteria, userId);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,8 +36,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		// Que no te sugiera a ti mismo
 		queryString += "AND p.id != :userId ";
-		if (!criteria.getCity().isEmpty()) {
-			queryString += "AND p.city in (:cities) ";
+		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
+			queryString += "AND LOWER(p.city) in (:cities) ";
 		}
 
 //		if (!criteria.getCity().isEmpty()) {
@@ -66,8 +67,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		if (criteria.getSex() != SexCriteriaEnum.ANY && criteria.getSex() != SexCriteriaEnum.OTHER) {
 			query.setParameter("sex", criteria.getSex().toString());
 		}
-		if (!criteria.getCity().isEmpty()) {
-			query.setParameter("cities", criteria.getCity());
+		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
+			query.setParameter("cities",
+					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
 
 		final List<UserImpl> users = query.getResultList();

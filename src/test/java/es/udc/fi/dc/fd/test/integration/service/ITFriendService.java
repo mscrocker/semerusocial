@@ -272,6 +272,7 @@ public class ITFriendService {
 
 	/******* SUGGEST FRIEND TESTS *************************************/
 	@Test
+
 //	@Sql(scripts = "/initialData.sql")
 	public void TestSuggestFriend() throws InstanceNotFoundException {
 		/*
@@ -320,15 +321,22 @@ public class ITFriendService {
 		assertEquals(userSuggested.get().getUserName(), user2.getUserName());
 
 		// City doesnt match -> fail
-		setSearchCriteria(user1.getId(), "Female", 19, 28, new String[] { "Los Angeles", "Rabat" });
+		setSearchCriteria(user1.getId(), "Female", 19, 28, "Los Angeles", "Rabat");
 
 		userSuggested = friendService.suggestFriend(user1.getId());
 		assertTrue(userSuggested.isEmpty());
 
 		// City
-		setSearchCriteria(user1.getId(), "Female", 19, 28, new String[] { "Osaka" });
+		setSearchCriteria(user1.getId(), "Female", 19, 28, "Osaka");
 		userSuggested = friendService.suggestFriend(user1.getId());
 		assertTrue(userSuggested.isEmpty());
+
+		// Ignores casing on the city
+		setSearchCriteria(user1.getId(), "Male", 18, 45, "OSAKA");
+		userSuggested = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user2.getUserName());
 
 		// TODO -> Ajustar fechas usuarios a hoy
 
