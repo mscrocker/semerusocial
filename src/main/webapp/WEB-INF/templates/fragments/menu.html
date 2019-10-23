@@ -20,7 +20,7 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li><a th:href="@{/}">My photos</a></li>
-						<li onclick="logOut()"><a th:href="@{/login}">LogOut</a></li>
+						<li id="logOut" ><a th:href="@{/login}">LogOut</a></li>
 						<li><a th:href="@{/addImage}">Add new Image</a></li>
 					</ul>
 				</div>
@@ -40,6 +40,9 @@
 			if (!user.checkLoggedIn()){
 				
 				document.getElementById("loggedInOptions").classList.add("hidden");
+			}
+			else {
+			    document.getElementById("logOut").onclick = user.logOut
 			}
 		});
 		

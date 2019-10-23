@@ -3,7 +3,8 @@ const profile = {
 	UserData: {
 		'age' : null,
 		'sex' : null, 
-		'city' : null
+		'city' : null,
+		'description': null
 	},
 	
 	notifyChange: () => {
@@ -98,6 +99,28 @@ const profile = {
 					document.getElementById("descriptionField").value = ""+body.description;
 				}
 				);
+			});
+		}else {
+			window.location.href = baseURL + "login";
+		}
+	},
+	
+	initProfileDisplay: (baseURL) => {
+		const url = baseURL + "backend/users/data" ;
+		if (user.checkLoggedIn()){
+			
+			
+			user.authFetch(url, {method: 'GET'}, (response) => {	
+				if (response.status !== 200){
+					console.log("ERROR!");
+					return;
+				}
+				response.json().then((body) => {
+					document.getElementById("ageField").innerText = ""+body.age;
+					document.getElementById("cityField").innerText = ""+body.city;
+					document.getElementById("sexField").innerText = ""+body.sex;
+					document.getElementById("descriptionField").innerText = ""+body.description;
+				});
 			});
 		}else {
 			window.location.href = baseURL + "login";

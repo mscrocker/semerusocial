@@ -44,17 +44,16 @@ const carrusel = {
 		}, (response) => {
 			
 			if (response.status !== 200){
-				console.log("ERROR!");
-				return;
+				customAlert.showAlertFromResponse(response);
+					return;
 			}
 			response.json().then((body) => {
-
+				
 				
 				// data + type -> string
 				
 				let metadata  = "data:image/" +body.image.type +   ";base64, ";
 				document.getElementById("imgField").src = metadata + body.image.data;
-				document.getElementById("descriptionField").innerText = body.image.description;
 				
 				let baseLink = baseURL + "carrusel/";
 				if (body.nextId){
@@ -99,7 +98,7 @@ const carrusel = {
 			$("deleteModal").modal("hide");
 			if (resp.status === 204){
 				console.log("SUCCESS!");
-				window.location.href = getNextLink(baseURL);
+				window.location.href = carrusel.getNextLink(baseURL);
 			} else {
 				console.log("ERROR");
 				
@@ -111,19 +110,19 @@ const carrusel = {
 
 	finishEditImage: (result) => {
 		if (result.status !== 204){
-			showAlert("Error uploading image");
+			customAlert.showAlertFromResponse(response);
 			return;
-		}
-	},
+	}
+},
 
 	finishEditWithErrors: (errors) => {
-		showAlert("Error uploading image");
+		customAlert.showAlert(errors);
 	},
 
 	editImage: (baseURL, imageID, description) => {
 		$("#editModal").modal("hide");
 		if ((description === undefined) || (description === null) || (description === "")){
-			showAlert("Error: description is mandatory.");
+			customAlert.showAlert("Error: description is mandatory.");
 			return;
 		}
 		let url = baseURL + "backend/images/edit/" + imageID;

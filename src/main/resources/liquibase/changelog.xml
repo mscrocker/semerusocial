@@ -53,6 +53,26 @@
 			constraintName="fk_userId" referencedColumnNames="id"
 			referencedTableName="UserTable" />
 	</changeSet>
+	<changeSet author="Marco" id="FixUniquePassword">
+		
+	
+		
+		
+		<addColumn tableName="UserTable">
+			<column name="password_fix" type="VARCHAR(60)" />
+		</addColumn>
+		<sql>
+			UPDATE UserTable SET password_fix = password;
+		</sql>
+		<dropColumn tableName="UserTable" columnName="password" />
+		<renameColumn 
+			tableName="UserTable"
+			oldColumnName="password_fix"
+			newColumnName="password"
+			columnDataType="VARCHAR(60)" />
+		</changeSet>
+		
+		
 
 	<changeSet author="liquibase-docs" id="addSuggestionColumn">
 		<addColumn tableName="UserTable">
@@ -64,6 +84,7 @@
 			baseColumnNames="suggestion" baseTableName="UserTable"
 			constraintName="fk_suggestionId" onDelete="SET NULL"
 			referencedColumnNames="id" referencedTableName="UserTable" />
+
 	</changeSet>
 
 	<changeSet id="table CitiesCriteria" author="">
@@ -148,6 +169,57 @@
                 <constraints nullable="false" unique="false" />
             </column>
         </createTable>
+        <addForeignKeyConstraint 
+        	constraintName="request_subject_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="subject" 
+        	baseTableName="RequestTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="request_object_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="object" 
+        	baseTableName="RequestTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="rejected_subject_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="subject" 
+        	baseTableName="RejectedTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="rejected_object_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="object" 
+        	baseTableName="RejectedTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="match_user1_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="user1" 
+        	baseTableName="MatchTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="match_user2_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="user2" 
+        	baseTableName="MatchTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        
+        
+        
     </changeSet>
 
 
