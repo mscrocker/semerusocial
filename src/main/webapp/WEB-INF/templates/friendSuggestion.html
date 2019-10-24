@@ -12,6 +12,7 @@
 <body class="w-100"
 	style="background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);">
 
+
 	<header class="header" th:include="fragments/menu :: menu">></header>
 	<div id="loader" class="text-center hidden">
 		<div class="spinner-border " role="status"
@@ -63,13 +64,39 @@
 				</div>
 			</div>
 		</div>
+
 	</div>
+	<div id="criteriaModal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">No users found with your criteria</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>With your established criteria we coudn't find any user that matches it :'( <br>
+					Try changing your criteria to something different!</p>
+				</div>
+				<div class="modal-footer">
+					<button id="cancelButton" type="button" class="btn btn-secondary"
+						data-dismiss="modal">Back</button>
+					<button id="criteriaButton" type="button" class="btn btn-primary">Change Criteria</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- Modal -->
 
 
 	<footer>
 		<div th:include="fragments/scripts :: general"></div>
 		<div th:include="fragments/scripts :: friendSuggestion"></div>
-		<div th:include="fragments/scripts :: user"></div>
 		<div th:include="fragments/scripts :: profile"></div>
 	</footer>
 	<script type="text/javascript">
@@ -80,7 +107,7 @@
 			 document.getElementById("like").onclick = friendSuggestion.onLikePressed;
 			 document.getElementById("dislike").onclick = friendSuggestion.onDislikePressed;
 			 document.onkeyup = friendSuggestion.keyHandler;
-			 
+			 document.getElementById("criteriaButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'criteria'}
 			 //hymeleaf object value of has more to initSuggestion;
 			friendSuggestion.initSuggestion("[[@{'/'}]]");
 			 });

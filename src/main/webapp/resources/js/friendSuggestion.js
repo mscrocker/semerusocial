@@ -27,7 +27,7 @@ const friendSuggestion = {
     initRecommendation: () => {
         // Probably need to await for second
         friendSuggestion.getRecommendation();
-        friendSuggestion.loadImages();
+      friendSuggestion.loadImages();
     },
     getRecommendation: () => {
         /*
@@ -38,6 +38,8 @@ const friendSuggestion = {
 	 * friendSuggestion.descriptionField.innerText = `${body.userName},
 	 * ${body.age} @ {body.city}`; } ); });
 	 */
+	$('#criteriaModal').modal('show');
+
         friendSuggestion.id = 1;
         friendSuggestion.userField.innerText = `${"jesulin"}, ${12} @ ${"Catalunya"}`;
         friendSuggestion.descriptionField.innerText = "La vida es muy loca";

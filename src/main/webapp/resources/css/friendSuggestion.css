@@ -24,9 +24,10 @@ html {
 
 #container {
 	max-width: fit-content;
-	border-radius: 25px;
+	max-width: -moz-fit-content; border-radius : 25px;
 	/* border: 10px solid #ff000000; */
 	background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+	border-radius: 25px;
 	/* border-radius: 25px; */
 }
 
@@ -146,6 +147,7 @@ h3 {
 	margin: auto;
 	position: relative;
 	padding: 0 10px;
+	max-width: -moz-fit-content;
 }
 
 #noImageMessage {
@@ -157,4 +159,16 @@ h3 {
 	background-color: rgba(0, 0, 0, 0.1);
 	top: 0px;
 	margin-top: 20px;
+}
+
+.modal-title {
+	font-size: 2em;
+}
+
+.modal-body {
+	font-size: 1.7em;
+}
+
+#criteriaButton,#cancelButton {
+	font-size: 1.7em;
 }
