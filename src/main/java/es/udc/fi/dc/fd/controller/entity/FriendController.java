@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
@@ -43,6 +44,7 @@ import es.udc.fi.dc.fd.service.FriendService;
 public class FriendController {
 
 	private final static String ALREADY_REJECTED_EXCEPTION = "project.exceptions.AlreadyRejectedException";
+	private final static String ALREADY_ACEPTED_EXCEPTION = "project.exceptions.AlreadyAceptedException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
 	private final static String INVALID_RECOMMENDATION_EXCEPTION = "project.exceptions.InvalidRecommendationException";
 	private final static String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
@@ -113,6 +115,19 @@ public class FriendController {
 
 	}
 
+	@ExceptionHandler(AlreadyAceptedException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleAlreadyAveptedException(AlreadyAceptedException exception, Locale locale) {
+
+		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
+		final String errorMessage = messageSource.getMessage(ALREADY_ACEPTED_EXCEPTION,
+				new Object[] { nameMessage, exception.getKey().toString() }, ALREADY_ACEPTED_EXCEPTION, locale);
+
+		return new ErrorsDto(errorMessage);
+
+	}
+
 	@ExceptionHandler(NoMoreSuggestionFound.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
@@ -129,7 +144,8 @@ public class FriendController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@PostMapping("/accept")
 	public void acceptRequest(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 
 		final long objectId = params.getId();
 		friendService.acceptRecommendation(userId, objectId);
@@ -138,7 +154,8 @@ public class FriendController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@PostMapping("/reject")
 	public void rejectRequest(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 
 		final long objectId = params.getId();
 		friendService.rejectRecommendation(userId, objectId);
@@ -151,15 +168,16 @@ public class FriendController {
 
 		final Optional<UserImpl> friend = friendService.suggestFriend(userId);
 
-		if (friend.isEmpty())
+		if (friend.isEmpty()) {
 			throw new NoMoreSuggestionFound("There are no more users suggested with the current criteria", userId);
+		}
 		return FriendConversor.fromUserImpl(friend.get());
 	}
 
 	@GetMapping("/friendList")
 	public BlockGetFriendListDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
-			throws InstanceNotFoundException, RequestParamException {
+					throws InstanceNotFoundException, RequestParamException {
 		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, size);
 
 		return FriendConversor.toGetFriendListOutDto(friends);

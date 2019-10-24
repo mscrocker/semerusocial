@@ -25,6 +25,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -54,7 +55,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, SqlScriptsTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -126,8 +127,9 @@ public class ITFriendService {
 
 	@Test
 	public void testDefaultCriteriaRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
-		UserImpl user1 = signUp("manolo3", "pass", 22, "Male", "Catalunya");
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
+		final UserImpl user1 = signUp("manolo3", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
 		// assertTrue(requestRepository.count() == 1);
@@ -141,7 +143,8 @@ public class ITFriendService {
 
 	@Test
 	public void testInvalidCriteriaRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(50);
 		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
@@ -169,7 +172,8 @@ public class ITFriendService {
 
 	@Test
 	public void testReject()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
@@ -183,7 +187,8 @@ public class ITFriendService {
 
 	@Test
 	public void testRejectAlreadyRejected()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
 		userRepository.save(user1);
 
@@ -198,8 +203,25 @@ public class ITFriendService {
 	}
 
 	@Test
+	public void testRejectAlreadyAcepted() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
+		final UserImpl user1 = signUp("manolo17", "pass", 22, "Male", "Catalunya");
+		userRepository.save(user1);
+
+		final UserImpl user2 = signUp("manolo18", "pass2", 23, "Female", "Catalunya");
+		friendService.acceptRecommendation(user1.getId(), user2.getId());
+		assertThrows(AlreadyAceptedException.class, () -> {
+			friendService.rejectRecommendation(user1.getId(), user2.getId());
+		});
+		assertThrows(AlreadyAceptedException.class, () -> {
+			friendService.acceptRecommendation(user1.getId(), user2.getId());
+		});
+	}
+
+	@Test
 	public void testInvalidCriteriaReject()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
 		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
@@ -226,7 +248,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void MatchTest() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+	public void MatchTest() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo13", "pass", 22, "Male", "Catalunya");
 
 		userRepository.save(user1);
@@ -273,7 +296,7 @@ public class ITFriendService {
 	/******* SUGGEST FRIEND TESTS *************************************/
 	@Test
 
-//	@Sql(scripts = "/initialData.sql")
+	//	@Sql(scripts = "/initialData.sql")
 	public void TestSuggestFriend() throws InstanceNotFoundException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"

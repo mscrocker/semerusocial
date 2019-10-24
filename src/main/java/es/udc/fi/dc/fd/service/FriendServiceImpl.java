@@ -13,6 +13,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
@@ -60,10 +61,12 @@ public class FriendServiceImpl implements FriendService {
 
 		permissionChecker.checkUserExists(userId);
 
-		if (page < 0)
+		if (page < 0) {
 			throw new RequestParamException("Page must be at less 0, you have passed as page=" + page);
-		if (size < 1)
+		}
+		if (size < 1) {
 			throw new RequestParamException("Size must be at less 1, you have passed as size=" + size);
+		}
 
 		final Slice<MatchImpl> friendsResult = matchRepository.findFriends(userId, PageRequest.of(page, size));
 
@@ -85,7 +88,8 @@ public class FriendServiceImpl implements FriendService {
 
 	@Override
 	public void acceptRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 
@@ -113,7 +117,8 @@ public class FriendServiceImpl implements FriendService {
 
 	@Override
 	public void rejectRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 		// TODO WE can safely delete the invert request if it were to exist because it
@@ -123,15 +128,19 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	private void validateRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException {
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException {
 		final Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
+
+		if (subjectUserOpt.isEmpty()) {
+			throw new InstanceNotFoundException("Subject User Doesn't Exist", subject);
+		}
+
 		final Optional<UserImpl> objectUserOpt = userRepository.findById(object);
 
-		if (subjectUserOpt.isEmpty())
-			throw new InstanceNotFoundException("Subject User Doesn't Exist", subject);
-
-		if (objectUserOpt.isEmpty())
+		if (objectUserOpt.isEmpty()) {
 			throw new InstanceNotFoundException("Object User Doesn't Exist", object);
+		}
 
 		final UserImpl subjectUser = subjectUserOpt.get();
 
@@ -139,38 +148,50 @@ public class FriendServiceImpl implements FriendService {
 
 		// If the object user was already rejected -> exception
 		final Optional<RejectedImpl> optRejected = rejectedRepository.findById(new RejectedId(subject, object));
-		if (optRejected.isPresent())
+		if (optRejected.isPresent()) {
 			throw new AlreadyRejectedException("Object user was already rejected", object);
+		}
+
+		// If the object user was already acepted -> exception
+		final Optional<RequestImpl> optAcepted = requestRepository.findById(new RequestId(subject, object));
+		if (optAcepted.isPresent()) {
+			throw new AlreadyAceptedException("Object user was already acepted", object);
+		}
 
 		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
 		// If object user age not in between the criteria -> exception
-		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge())
+		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+		}
 
 		// If object user sex doesnt fit criteria -> exception
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex()))
+			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex())) {
 				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+			}
 		}
 
 		// If object user city doesnt fit criteria -> exception
 		// If CityCriteria is blank means we accept all possible cities
-		SearchCriteria searchCriteria = userService.getSearchCriteria(subject);
+		final SearchCriteria searchCriteria = userService.getSearchCriteria(subject);
 		if (searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()
-				&& searchCriteria.getCity().stream().noneMatch(objectUser.getCity()::equalsIgnoreCase))
+				&& searchCriteria.getCity().stream().noneMatch(objectUser.getCity()::equalsIgnoreCase)) {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+		}
 
 	}
 
 	@Override
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException {
 
-		if (userId == null)
+		if (userId == null) {
 			throw new InstanceNotFoundException("userId can not be null", userId);
-		if (!userRepository.existsById(userId))
+		}
+		if (!userRepository.existsById(userId)) {
 			throw new InstanceNotFoundException("User does not exists", userId);
+		}
 
-		SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
+		final SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
 
 		return userRepository.findByCriteria(searchCriteria, userId);
 	}
