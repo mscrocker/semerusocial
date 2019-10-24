@@ -40,7 +40,7 @@ const friendList = {
 		};
 		user.authFetch(url, params, (response) => {
 			response.json().then((body) => {
-				showAlert(null);
+				customAlert.hideAlert();
 				if (page > 0){
 					friendList.enableButton("previousButton", baseURL, page);
 				}
@@ -58,12 +58,10 @@ const friendList = {
 				
 				
 			}).catch((errors) => {
-				showAlert("Error getting friend list");
-				console.log("ERROR: " + errors);
+				customAlert.showAlert(errors);
 			});
-		}, (erros) => {
-			showAlert("Error getting friend list");
-			console.log("ERROR: " + errors);
+		}, (errors) => {
+			customAlert.showAlertFromResponse(response);
 		});
 	}
 };
