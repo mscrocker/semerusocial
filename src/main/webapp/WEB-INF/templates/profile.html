@@ -3,7 +3,10 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:include="fragments/header :: header" />
+<head th:include="fragments/header :: header">
+<link th:href="@{/resources/vendor/datepicker/daterangepicker.css}"
+	rel="stylesheet" media="all">
+</head>
 <body>
 	<header class="header" th:include="fragments/menu :: menu" />
 	<div th:include="fragments/errorAlert"></div>
@@ -13,11 +16,9 @@
 		<form class="form">
 			<div class="">
 				<div class="form-group">
-					<label for="birthDateField">Age: </label> <input id="birthDateField"
-						class="form-control" type="date" required="">
-					<div class="invalid-feedback">
-						<p id="ageFieldFeedback"></p>
-					</div>
+					<input class="js-datepicker form-control" type="text"
+						name="birthday" id="birthday" required>
+					<i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
 				</div>
 				<div class="form-group">
 					<label for="sexField">Sex: </label> <select id="sexField"
@@ -32,7 +33,7 @@
 				</div>
 				<div class="form-group">
 					<label for="cityField">City: </label> <input id="cityField"
-						class="form-control" / value="loading" required>
+						class="form-control" value="loading" required>
 					<div class="invalid-feedback">
 						<p id="cityFieldFeedback"></p>
 					</div>
@@ -46,7 +47,7 @@
 				</div>
 				<div class="row ml-4">
 					<button id="profileButton" class="btn btn-primary mb-3"
-						disabled>Update</button>
+						disabled type="button">Update</button>
 					<div class="ml-2 spinner-border text-primary" role="status"
 						id="profileLoading">
 						<span class="sr-only">Loading...</span>
@@ -117,7 +118,7 @@
 				</div>
 				<div class="row ml-4">
 					<button id="criteriaButton" class="btn btn-primary mb-3"
-						disabled>Update</button>
+						disabled type="button">Update</button>
 					<div class="ml-2 spinner-border text-primary" role="status"
 						id="criteriaLoading">
 						<span class="sr-only">Loading...</span>
@@ -143,6 +144,15 @@
 		<div th:include="fragments/scripts :: profile" />
 		<div th:include="fragments/scripts :: validation" />
 	</footer>
+	
+	
+
+	<!-- Vendor JS-->
+	<script th:src="@{/static/vendor/select2/select2.min.js}"></script>
+	<script th:src="@{/static/vendor/datepicker/moment.min.js}"></script>
+	<script th:src="@{/static/vendor/datepicker/daterangepicker.js}"></script>
+	<script th:src="@{/static/js/signupBeauty.js}"></script>
+	
 	<script>
 	window.addEventListener("load", () => {
 		profile.initProfile("[[@{'/'}]]");

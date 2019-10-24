@@ -43,17 +43,17 @@ let profile = null;
 
 	validation: {
 		clearAllFields: () => {
-			validation.clearField(document.getElementById("birthDateField"));
+			validation.clearField(document.getElementById("birthday"));
 			validation.clearField(document.getElementById("sexField"));
 			validation.clearField(document.getElementById("cityField"));
 			validation.clearField(document.getElementById("descriptionField"));
 		},
 		
 		validateBirthDate: (updateField) => {
-			let age = new Date(new Date() - new Date(document.getElementById("birthDateField").value)).getFullYear() - 1970;
+			let age = new Date(new Date() - new Date(document.getElementById("birthday").value)).getFullYear() - 1970;
 			let result = (age >= 18);
 			if (updateField === true){
-				validation.updateField(document.getElementById("birthDateField"), result);
+				validation.updateField(document.getElementById("birthday"), result);
 			}
 			return result;
 		},
@@ -90,7 +90,7 @@ let profile = null;
 	updateCriteria: () => {
 		document.getElementById("profileButton").disabled = true;
 		profile.clearStatusIcons();
-		let date = new Date(document.getElementById("birthDateField").value);
+		let date = new Date(document.getElementById("birthday").value);
 		let profileData = {
 			day: date.getUTCDate(),
 			month: date.getUTCMonth(),
@@ -127,7 +127,7 @@ let profile = null;
 		const url = baseURL + "backend/users/data" ;
 		if (user.checkLoggedIn()){
 			
-			document.getElementById("birthDateField").onchange = () => profile.notifyChange("birthDate");
+			document.getElementById("birthday").onchange = () => profile.notifyChange("birthDate");
 			document.getElementById("descriptionField").onchange = () => profile.notifyChange("description");
 			document.getElementById("sexField").onclick = () => profile.notifyChange("sex");
 			document.getElementById("cityField").onclick = () => profile.notifyChange("city");
@@ -149,7 +149,7 @@ let profile = null;
 					profile.UserData.city = body.city;
 					profile.UserData.description = body.description;
 					
-					document.getElementById("birthDateField").value = profile.UserData.birthDate.toISOString().substr(0,10);
+					document.getElementById("birthday").value = profile.UserData.birthDate.toISOString().substr(0,10);
 					document.getElementById("cityField").value = ""+body.city;
 					document.getElementById("sexField").value = ""+body.sex;
 					document.getElementById("descriptionField").value = ""+body.description;
@@ -172,7 +172,7 @@ let profile = null;
 					return;
 				}
 				response.json().then((body) => {
-					document.getElementById("ageField").innerText = ""+body.age;
+					document.getElementById("birthday").innerText = ""+body.age;
 					document.getElementById("cityField").innerText = ""+body.city;
 					document.getElementById("sexField").innerText = ""+body.sex;
 					document.getElementById("descriptionField").innerText = ""+body.description;
