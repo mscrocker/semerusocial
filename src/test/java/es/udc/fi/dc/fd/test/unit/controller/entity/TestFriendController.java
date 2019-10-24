@@ -6,10 +6,17 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +37,10 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.dtos.IdDto;
+import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -69,12 +79,42 @@ public class TestFriendController {
 		super();
 	}
 
+	private LocalDateTime getDateTimeFromAge(int age) {
+		assert age > 0;
+		return LocalDate.now().minusYears(age).atStartOfDay();
+	}
+
+	private void CreateUser(long id) {
+		final UserImpl user = new UserImpl();
+		user.setCriteriaMaxAge(99);
+		user.setCriteriaMinAge(18);
+		user.setPassword("pass");
+		user.setCriteriaSex(SexCriteriaEnum.ANY);
+		user.setDate(getDateTimeFromAge(SUGGESTIONAGE));
+		user.setDescription(SUGGESTIONDESCRIPTION);
+		user.setCity(SUGGESTIONCITY);
+		user.setId(id);
+		user.setSex(SUGGESTIONSEX);
+		user.setUserName(SUGGESTIONNAME);
+		SUGGESTION = user;
+	}
+
 	private static final Long USERID_OK = 1L;
 	private static final Long USERID_NOTFOUND = 2L;
 	private static final Long OBJECT_OK = 3L;
 	private static final Long OBJECT_NOTFOUND = 4L;
 	private static final Long OBJECT_ACCEPTED = 5L;
 	private static final Long OBJECT_REJECTED = 6L;
+	private static final Long USERID_NM = 8L;
+
+	private static final Long SUGGESTIONID = 9L;
+	private static final int SUGGESTIONAGE = 20;
+	private static final String SUGGESTIONSEX = "Patata";
+	private static final String SUGGESTIONNAME = "Patatón";
+	private static final String SUGGESTIONDESCRIPTION = "Desc";
+	private static final String SUGGESTIONCITY = "Coruña";
+
+	private static UserImpl SUGGESTION = null;
 	private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
@@ -143,8 +183,7 @@ public class TestFriendController {
 	public void TestFriendController_AceptRequest_InvalidRecommendationException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
-		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND))
-		.when(friendServiceMock)
+		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND)).when(friendServiceMock)
 		.acceptRecommendation(USERID_OK, OBJECT_NOTFOUND);
 
 		// @formatter:off
@@ -172,8 +211,8 @@ public class TestFriendController {
 	public void TestFriendController_AceptRequest_AlreadyRejectedException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
-		doThrow(new AlreadyRejectedException("", OBJECT_REJECTED))
-		.when(friendServiceMock).acceptRecommendation(USERID_OK, OBJECT_REJECTED);
+		doThrow(new AlreadyRejectedException("", OBJECT_REJECTED)).when(friendServiceMock)
+		.acceptRecommendation(USERID_OK, OBJECT_REJECTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
@@ -201,14 +240,14 @@ public class TestFriendController {
 	public void TestFriendController_AceptRequest_AlreadyAceptedException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
-		doThrow(new AlreadyAceptedException("", OBJECT_REJECTED)).when(friendServiceMock)
-		.acceptRecommendation(USERID_OK, OBJECT_REJECTED);
+		doThrow(new AlreadyAceptedException("", OBJECT_ACCEPTED)).when(friendServiceMock)
+		.acceptRecommendation(USERID_OK, OBJECT_ACCEPTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
 				.contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
+				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
 		.andExpect(status().isBadRequest());
 		// @formatter:on
 
@@ -221,7 +260,7 @@ public class TestFriendController {
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_OK));
-		assertThat(objectCaptor.getValue(), is(OBJECT_REJECTED));
+		assertThat(objectCaptor.getValue(), is(OBJECT_ACCEPTED));
 
 	}
 
@@ -290,8 +329,8 @@ public class TestFriendController {
 	public void TestFriendController_RejectRequest_InvalidRecommendationException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
-		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND))
-		.when(friendServiceMock).rejectRecommendation(USERID_OK, OBJECT_NOTFOUND);
+		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND)).when(friendServiceMock)
+		.rejectRecommendation(USERID_OK, OBJECT_NOTFOUND);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST )
@@ -347,14 +386,14 @@ public class TestFriendController {
 	public void TestFriendController_RejectRequest_AlreadyAceptedException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
-		doThrow(new AlreadyAceptedException("", OBJECT_REJECTED)).when(friendServiceMock)
-		.rejectRecommendation(USERID_OK, OBJECT_REJECTED);
+		doThrow(new AlreadyAceptedException("", OBJECT_ACCEPTED)).when(friendServiceMock)
+		.rejectRecommendation(USERID_OK, OBJECT_ACCEPTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
 				.contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
+				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
 		.andExpect(status().isBadRequest());
 		// @formatter:on
 
@@ -367,7 +406,90 @@ public class TestFriendController {
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_OK));
-		assertThat(objectCaptor.getValue(), is(OBJECT_REJECTED));
+		assertThat(objectCaptor.getValue(), is(OBJECT_ACCEPTED));
 
 	}
+
+	/****
+	 * ACEPT REQUEST TESTS
+	 *
+	 ****************************************************************/
+	@Test
+	public void TestFriendController_SuggestFriend()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		CreateUser(SUGGESTIONID);
+		when(friendServiceMock.suggestFriend(USERID_OK)).thenReturn(Optional.of(SUGGESTION));
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK)
+				)
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+		.andExpect(jsonPath("$.userName").value(SUGGESTIONNAME))
+		.andExpect(jsonPath("$.id").value(SUGGESTIONID))
+		.andExpect(jsonPath("$.age").value(SUGGESTIONAGE))
+		.andExpect(jsonPath("$.sex").value(SUGGESTIONSEX))
+		.andExpect(jsonPath("$.city").value(SUGGESTIONCITY))
+		.andExpect(jsonPath("$.description").value(SUGGESTIONDESCRIPTION));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).suggestFriend(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+
+	}
+
+	@Test
+	public void TestFriendController_SuggestFriend_InstanceNotFoundException()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+
+		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
+		.suggestFriend(USERID_NOTFOUND);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_NOTFOUND)
+				)
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).suggestFriend(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_NOTFOUND));
+	}
+
+	@Test
+	public void TestFriendController_SuggestFriend_NoMoreSuggestionFound()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+
+		when(friendServiceMock.suggestFriend(USERID_NM)).thenReturn(Optional.empty());
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_NM)
+				)
+		.andExpect(status().isBadRequest());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).suggestFriend(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_NM));
+	}
+
 }

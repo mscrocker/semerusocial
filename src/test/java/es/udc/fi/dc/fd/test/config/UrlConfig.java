@@ -54,6 +54,8 @@ public final class UrlConfig {
 	public static final String URL_FRIEND_ACCEPT_POST = "/backend/friends/accept";
 
 	public static final String URL_FRIEND_REJECT_POST = "/backend/friends/reject";
+
+	public static final String URL_FRIEND_SUGGESTION_GET = "/backend/friends/suggestion";
 	/**
 	 * Default constructor to avoid initialization.
 	 */
