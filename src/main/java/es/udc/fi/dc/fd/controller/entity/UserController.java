@@ -176,12 +176,12 @@ public class UserController {
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
 		userService.setSearchCriteria(userId, criteria);
 	}
-	
+
 	@GetMapping("/searchCriteria")
 	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
-		SearchCriteria criteria = userService.getSearchCriteria(userId);
-		
+			throws InstanceNotFoundException {
+		final SearchCriteria criteria = userService.getSearchCriteria(userId);
+
 		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
 	}
 
