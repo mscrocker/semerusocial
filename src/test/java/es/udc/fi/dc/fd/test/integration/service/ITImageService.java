@@ -13,12 +13,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
@@ -33,11 +36,13 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
+		"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@Rollback
+@Transactional
 public class ITImageService {
 
 	@Autowired
@@ -96,12 +101,12 @@ public class ITImageService {
 		final UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
-		user.setId(-1L);
+//		user.setId(-1L);
 
 		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.addImage(i, i.getUser().getId());
+			imageService.addImage(i, -1L);
 		});
 	}
 
@@ -131,10 +136,10 @@ public class ITImageService {
 
 		final ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
-		user.setId(-1L);
+		// user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.removeImage(imageCreated.getImageId(), user.getId());
+			imageService.removeImage(imageCreated.getImageId(), -1L);
 		});
 	}
 
@@ -234,10 +239,10 @@ public class ITImageService {
 
 		imageService.addImage(i1, user.getId());
 
-		user.setId(-1L);
+		// user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.getImagesByUserId(user.getId(), 0);
+			imageService.getImagesByUserId(-1L, 0);
 		});
 	}
 
@@ -275,12 +280,12 @@ public class ITImageService {
 
 		final ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 });
 
-		final ImageImpl imageResult = imageService.addImage(i1, user.getId());
+		imageService.addImage(i1, user.getId());
 
-		imageResult.setImageId(-1L);
+		// imageResult.setImageId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.getImageByUserId(imageResult.getImageId(), user.getId());
+			imageService.getImageByUserId(-1L, user.getId());
 		});
 	}
 

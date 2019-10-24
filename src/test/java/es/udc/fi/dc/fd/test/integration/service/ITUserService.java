@@ -13,12 +13,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
@@ -28,7 +31,6 @@ import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
-import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
@@ -36,11 +38,13 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
+		"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@Rollback
+@Transactional
 public class ITUserService {
 
 	@Autowired
@@ -169,18 +173,18 @@ public class ITUserService {
 
 		userService.signUp(user);
 
-		user.setId(-1L);
+//		user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
-			userService.loginFromUserId(user.getId());
+			userService.loginFromUserId(-1L);
 		});
 	}
 
 	// ----- setSearchCriteria -----
 
 	@Test
-	public void testSetSearchCriteria() throws DuplicateInstanceException, InvalidDateException,
-	InstanceNotFoundException, InvalidAgeException {
+	public void testSetSearchCriteria()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
 
 		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "description");
@@ -201,7 +205,7 @@ public class ITUserService {
 		final List<String> registeredCities = cityCriteriaRepository.findCitiesByUserId(userId);
 
 		UserImpl registeredUser = userService.loginFromUserId(userId);
-		
+
 		Collections.sort(cityList);
 		Collections.sort(registeredCities);
 		assertEquals(cityList, registeredCities);
@@ -217,7 +221,7 @@ public class ITUserService {
 		userService.setSearchCriteria(userId, criteria2);
 
 		final List<String> registeredCities2 = cityCriteriaRepository.findCitiesByUserId(userId);
-		
+
 		Collections.sort(cityList2);
 		Collections.sort(registeredCities2);
 		assertEquals(cityList2, registeredCities2);
@@ -225,15 +229,15 @@ public class ITUserService {
 	}
 
 	@Test
-	public void testSetSearchCriteriaInstanceNotFoundException() throws InstanceNotFoundException,InvalidAgeException {
+	public void testSetSearchCriteriaInstanceNotFoundException() throws InstanceNotFoundException, InvalidAgeException {
 
 		final List<String> cityList = new ArrayList<>();
 		cityList.add("A Coruna");
 		cityList.add("Madrid");
 		cityList.add("Vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60,cityList);
+		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
 
-		assertThrows(InstanceNotFoundException.class,() -> {
+		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.setSearchCriteria(-1L, criteria);
 		});
 	}
@@ -242,8 +246,8 @@ public class ITUserService {
 	public void testSetSearchCriteriaWithInvalidAgeException()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidDateException {
 
-		final UserImpl user = createUser("CriteriaUserIAE", "CriteriaPassIAE",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "description");
+		final UserImpl user = createUser("CriteriaUserIAE", "CriteriaPassIAE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "description");
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -266,15 +270,16 @@ public class ITUserService {
 			userService.setSearchCriteria(userId, criteria2);
 		});
 	}
-	
+
 	// ----- getSearchCriteria -----
-	
+
 	@Test
-	public void testGetSearchCriteria() throws 	InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+	public void testGetSearchCriteria()
+			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("userGetSearchCriteria", "passwordGetSearchCriteria", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "description");
-		
+
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -289,22 +294,23 @@ public class ITUserService {
 
 		userService.setSearchCriteria(userId, criteria);
 		SearchCriteria userCriteria = userService.getSearchCriteria(userId);
-		
-		SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(),
-				user.getCriteriaMinAge(), user.getCriteriaMaxAge(), cityList);
-		
+
+		SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
+				user.getCriteriaMaxAge(), cityList);
+
 		assertEquals(searchCriteria, userCriteria);
 	}
-	
-	@Test
-	public void testGetSearchCriteriaInstaceNotFoundException() throws 	InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
 
-		assertThrows(InstanceNotFoundException.class,() -> {
+	@Test
+	public void testGetSearchCriteriaInstaceNotFoundException()
+			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+
+		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.getSearchCriteria(-1L);
 		});
 
 	}
-	
+
 	// ----- updateProfile -----
 
 	@Test
@@ -334,8 +340,7 @@ public class ITUserService {
 		});
 	}
 
-	public void testUpdateProfileWithInvalidDateException()
-			throws DuplicateInstanceException, InvalidDateException {
+	public void testUpdateProfileWithInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
 		final UserImpl newUser = new UserImpl(LocalDateTime.now(), "mujer", "lugo", "descripcion editada");
