@@ -43,6 +43,8 @@ public final class UrlConfig {
 
 	public static final String URL_USER_CRITERIA_PUT = "/backend/users/searchCriteria";
 
+	public static final String URL_USER_UPDATEPROFILE_PUT = "/backend/users/updateProfile";
+
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
 	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";

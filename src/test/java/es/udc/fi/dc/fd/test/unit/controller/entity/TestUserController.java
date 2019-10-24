@@ -44,6 +44,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
@@ -467,5 +468,83 @@ public final class TestUserController {
 		assertThat(critCaptor.getValue(), is(criteriaDto));
 
 	}
-	// TODO: Tests de updateProfile
+
+	/****
+	 * TESTS UPDATEPROFILE
+	 ********************************************************************************/
+
+	@Test
+	public void TestUserController_UpdateProfile() throws InstanceNotFoundException, InvalidDateException, Exception {
+		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+				"descripción");
+		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(newProfile)))
+		.andExpect(status().isNoContent());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
+		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(userCaptor.getValue(), is(user));
+
+	}
+
+	public void TestUserController_UpdateProfile_InstanceNotFoundException()
+			throws InstanceNotFoundException, InvalidDateException, Exception {
+		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+				"descripción");
+		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
+
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updateProfile(any(Long.class),
+				any(UserImpl.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(newProfile)))
+		.andExpect(status().isNotFound())
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
+		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(userCaptor.getValue(), is(user));
+	}
+
+	public void TestUserController_UpdateProfile_InvalidDateException()
+			throws InstanceNotFoundException, InvalidDateException, Exception {
+		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+				"descripción");
+		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
+
+		doThrow(new InvalidDateException("")).when(userServiceMock).updateProfile(any(Long.class), any(UserImpl.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(newProfile)))
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidDateException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
+		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(userCaptor.getValue(), is(user));
+
+	}
 }
