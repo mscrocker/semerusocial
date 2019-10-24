@@ -1,47 +1,43 @@
 <!DOCTYPE html>
 
-<html class="h-100" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="" lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 <link rel="stylesheet" type="text/css"
 	th:href="@{/resources/css/friendSuggestion.css}" media="all" />
-<div th:include="fragments/header :: header" />
+<div th:include="fragments/header :: header"></div>
 </head>
 
 
-<body class="w-100 h-100"
-	style="height: 100%; background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);">
+<body class="w-100"
+	style="background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);">
 
-	<header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu">></header>
+	<div id="loader" class="text-center hidden">
+		<div class="spinner-border " role="status"
+			style="width: 5rem; height: 5rem; margin: auto">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div>
 
 	<div id="container" class="w-75 m-auto vh-80%">
-		<div id="loader" class="text-center hidden">
-			<div class="spinner-border " role="status"
-				style="width: 5rem; height: 5rem;">
-				<span class="sr-only">Loading...</span>
-			</div>
-		</div>
+
 		<div class="carousel" th:object="${block}">
 			<div id="carouselExampleControls" class="carousel">
 				<div class="carousel-inner">
 
-					<div id="imagesController">
-						<div class="carousel-item" th:each="image,index : *{images}">
-							<img class="d-block mx-auto" th:id="'imgField' + ${index.index}"
-								th:src="${'data:image/'+ image.type + ';base64, ' +  image.data}" />
+					<div id="imagesController"></div>
+					<div id="noImagesSection" class="hidden">
+						<div class="carousel-item">
+							<img class="d-block mx-auto"
+								th:src="@{/resources/images/noimages.png}" />
+						</div>
+						<div id="noImageMessage" class="carousel-caption ">
+							<h3>"This user doesn't have any image"</h3>
 						</div>
 					</div>
-					<div class="carousel-caption d-none d-md-block" th:object="${user}">
-
-						<h3 id="descriptionField"></h3>
-						<div th:object="${age}">
-							<h3 id="ageField" th:text="${age}">Age</h3>
-
-						</div>
-						<h3 id="CityField" th:text=*{city}></h3>
-						<h3 id="GenreField" th:text=*{sex}></h3>
-
-
+					<div class="carousel-caption ">
+						<h3 id="userField"></h3>
 					</div>
 
 					<a id="previousButton" class="carousel-control-prev hidden"
@@ -53,48 +49,38 @@
 						aria-hidden="true"></span> <span class="sr-only">Next</span>
 					</a>
 				</div>
-
+				<div class="">
+					<h3 id="descriptionField"></h3>
+				</div>
 				<div class="tcontrols">
-					<div class="tno">
-						<i id="dislike" class="fa fa-times" aria-hidden="true"></i>
-					</div>
-					<div class="ti">
-						<i class="fa fa-info" aria-hidden="true"></i>
-					</div>
 					<div class="tyes">
 						<i id="like" class="fa fa-heart" aria-hidden="true"></i>
 					</div>
+					<div class="tno">
+						<i id="dislike" class="fa fa-times" aria-hidden="true"></i>
+					</div>
+
 				</div>
 			</div>
 		</div>
+	</div>
 
 
-		<!-- <div class="tphoto">
-			<img
-				src="http://www.amicnews.com/wp-content/uploads/2015/04/Sunglasses-Trends-for-Summer-2015.jpg"
-				title="tphoto" alt="Tinder Photo" />
-			<div class="tname">
-				Jane Doe, <span class="age">27</span>
-			</div>
-			<div class="tinfo">
-				<i class="fa fa-book" aria-hidden="true"> 0</i><i
-					class="fa fa-users" aria-hidden="true"> 0</i>
-			</div>
-		</div>
-	 -->
-		<footer>
-			<div th:include="fragments/scripts :: general" />
-			<div th:include="fragments/scripts :: friendSuggestion" />
-			<div th:include="fragments/scripts :: user" />
-			<div th:include="fragments/scripts :: profile" />
-		</footer>
-		<script type="text/javascript">
+	<footer>
+		<div th:include="fragments/scripts :: general"></div>
+		<div th:include="fragments/scripts :: friendSuggestion"></div>
+		<div th:include="fragments/scripts :: user"></div>
+		<div th:include="fragments/scripts :: profile"></div>
+	</footer>
+	<script type="text/javascript">
 		if (user.checkLoggedIn()){
 			 window.addEventListener('load', () => {
 			 document.getElementById("nextButton").onclick =   friendSuggestion.onNextPressed;
 			 document.getElementById("previousButton").onclick =  friendSuggestion.onPrevPressed;
 			 document.getElementById("like").onclick = friendSuggestion.onLikePressed;
 			 document.getElementById("dislike").onclick = friendSuggestion.onDislikePressed;
+			 document.onkeyup = friendSuggestion.keyHandler;
+			 
 			 //hymeleaf object value of has more to initSuggestion;
 			friendSuggestion.initSuggestion("[[@{'/'}]]");
 			 });

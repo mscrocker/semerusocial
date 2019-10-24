@@ -1,52 +1,70 @@
 const friendSuggestion = {
-
+    id: null,
     baseUrl: "",
     controller: null,
+    egg: null,
     prev: null,
     spinner: null,
     next: null,
-
+    descriptionField: null,
+    userField: null,
     counter: 0,
     page: 0,
     page_size: 10,
     askForMore: true,
     initSuggestion: (Url) => {
         friendSuggestion.baseUrl = Url;
-	friendSuggestion.controller = document.getElementById("imagesController");
-	friendSuggestion.spinner = document.getElementById("loader");
-	friendSuggestion.next = document.getElementById("nextButton");
-	friendSuggestion.prev = document.getElementById("previousButton");
-
-
-        if (friendSuggestion.controller.childElementCount < friendSuggestion.page_size) {
-            friendSuggestion.askForMore = false;
-            // Do Something special when user doens't have any image
-        }
-        if (friendSuggestion.controller.childElementCount === 0) {
-            // Do Something special when user doens't have any image
-        } else {
-            friendSuggestion.controller.firstElementChild.classList.add("active");
-            // counter++;
-        }
+        friendSuggestion.controller = document.getElementById("imagesController");
+        friendSuggestion.spinner = document.getElementById("loader");
+        friendSuggestion.next = document.getElementById("nextButton");
+        friendSuggestion.prev = document.getElementById("previousButton");
+        friendSuggestion.egg = document.getElementById("noImagesSection");
+        friendSuggestion.descriptionField = document.getElementById("descriptionField");
+        friendSuggestion.userField = document.getElementById("userField");
+        friendSuggestion.initRecommendation();
 
     },
+    initRecommendation: () => {
+        // Probably need to await for second
+        friendSuggestion.getRecommendation();
+        friendSuggestion.loadImages();
+    },
+    getRecommendation: () => {
+        /*
+	 * user.authFetch(friendSuggestion.baseUrl + "backend/x", {method:
+	 * 'GET'}, (response) => { if (response.status !== 200){
+	 * console.log("ERROR!"); return; } response.json().then((body) => {
+	 * friendSuggestion.id = body.id;
+	 * friendSuggestion.descriptionField.innerText = `${body.userName},
+	 * ${body.age} @ {body.city}`; } ); });
+	 */
+        friendSuggestion.id = 1;
+        friendSuggestion.userField.innerText = `${"jesulin"}, ${12} @ ${"Catalunya"}`;
+        friendSuggestion.descriptionField.innerText = "La vida es muy loca";
+
+    },
+
     restartCarrousel: () => {
+        friendSuggestion.egg.classList.add("hidden");
+        friendSuggestion.egg.firstElementChild.classList.remove("active");
+
+
         while (friendSuggestion.controller.lastChild) {
             friendSuggestion.controller.lastChild.remove();
-        };
+        }
         friendSuggestion.counter = 0;
-	friendSuggestion.askForMore = true;
-	friendSuggestion.page = 0;
-	// loadDescription();
-	friendSuggestion.loadImages()
+        friendSuggestion.askForMore = true;
+        friendSuggestion.page = 0;
+        // loadDescription();
+        friendSuggestion.initRecommendation();
     },
     loadImages: () => {
         // Show a spinner while we load it
         // Hide the next button till we process the request
-	friendSuggestion.next.classList.add("hidden");
-	friendSuggestion.spinner.classList.remove("hidden");
+        friendSuggestion.next.classList.add("hidden");
+        friendSuggestion.spinner.classList.remove("hidden");
         // Todo , get userId of suggestedUser
-        const url = friendSuggestion.baseUrl + "backend/images/carrusel/user/1" + "?page=" + friendSuggestion.page;
+        const url = friendSuggestion.baseUrl + `backend/images/carrusel/user/${friendSuggestion.id}?page=${friendSuggestion.page}`;
         user.authFetch(url, {
             method: 'GET'
         }, (response) => {
@@ -80,19 +98,32 @@ const friendSuggestion = {
                 // Move to the next image in case we had at least one more
                 if (images.length >= 1) {
                     // This is the case where we adding more images to an
-		    // existing carrusel or we are building a new one
-                    if (friendSuggestion.counter +1 === friendSuggestion.page_size){
-                	friendSuggestion.controller.children[friendSuggestion.counter].classList.remove("active");
-                    	friendSuggestion.counter++;
-                    }
-                    else {
-                	friendSuggestion.prev.classList.add("hidden");
+                    // existing carrusel or we are building a new one
+                    if (friendSuggestion.counter + 1 === friendSuggestion.page_size) {
+                        friendSuggestion.controller.children[friendSuggestion.counter].classList.remove("active");
+                        friendSuggestion.counter++;
+                    } else {
+                        friendSuggestion.prev.classList.add("hidden");
                     }
                     friendSuggestion.controller.children[friendSuggestion.counter].classList.add("active");
-                    
+
                     if (images.length !== 1) {
-                	friendSuggestion.next.classList.remove("hidden");
+                        friendSuggestion.next.classList.remove("hidden");
                     }
+
+
+
+                }
+                // We didnt receive any image
+                else {
+                    friendSuggestion.egg.classList.remove("hidden");
+                    friendSuggestion.egg.firstElementChild.classList.add("active");
+
+                }
+
+                if (friendSuggestion.controller.childElementCount < friendSuggestion.page_size) {
+                    friendSuggestion.askForMore = false;
+                    // Do Something special when user doens't have any image
                 }
                 // data + type -> string
                 friendSuggestion.spinner.classList.add("hidden");
@@ -145,29 +176,55 @@ const friendSuggestion = {
         friendSuggestion.controller.children[--friendSuggestion.counter].classList.add("active");
     },
     onLikePressed: () => {
-	user.authFetch(friendSuggestion.baseUrl + "backend/friends/accept", {
-		method: "POST",
-		body: JSON.stringify({
-			id: 1
-		}),
-		headers: { "Content-Type": "application/json" }
-	}, (result) => friendSuggestion.onFinishedSuggestion() , friendSuggestion.onFinishedSuggestion);
+        user.authFetch(friendSuggestion.baseUrl + "backend/friends/accept", {
+            method: "POST",
+            body: JSON.stringify({
+                id: 1
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }, (result) => friendSuggestion.onFinishedSuggestion(), friendSuggestion.onFinishedSuggestion);
 
     },
     onDislikePressed: () => {
-	user.authFetch(friendSuggestion.baseUrl + "backend/friends/reject", {
-		method: "POST",
-		body: JSON.stringify({
-			id: 1
-		}),
-		headers: { "Content-Type": "application/json" }
-	}, (result) => friendSuggestion.onFinishedSuggestion(), friendSuggestion.onFinishedSuggestion);
+        user.authFetch(friendSuggestion.baseUrl + "backend/friends/reject", {
+            method: "POST",
+            body: JSON.stringify({
+                id: 1
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }, (result) => friendSuggestion.onFinishedSuggestion(), friendSuggestion.onFinishedSuggestion);
 
     },
     onFinishedSuggestion: () => {
-	 // location.reload(true);
-	let id = 1;
-	friendSuggestion.restartCarrousel();
-	// console.log("whattt")
+        // location.reload(true);
+        let id = 1;
+        friendSuggestion.restartCarrousel();
+        // console.log("whattt")
+    },
+    keyHandler: (evt) => {
+        evt = evt || window.event;
+
+        switch (evt.keyCode) {
+            case 39:
+                if (!friendSuggestion.next.classList.contains("hidden")) {
+                    friendSuggestion.onNextPressed();
+                }
+                break;
+            case 37:
+                if (!friendSuggestion.prev.classList.contains("hidden")) {
+                    friendSuggestion.onPrevPressed();
+                }
+                break;
+            case 65:
+                friendSuggestion.onLikePressed();
+                break;
+            case 68:
+                friendSuggestion.onDislikePressed();
+                break;
+        }
     }
 };
