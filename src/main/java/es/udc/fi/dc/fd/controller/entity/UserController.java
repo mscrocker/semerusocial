@@ -173,7 +173,7 @@ public class UserController {
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+			throws InstanceNotFoundException, InvalidAgeException {
 		userService.setSearchCriteria(userId, criteria);
 	}
 

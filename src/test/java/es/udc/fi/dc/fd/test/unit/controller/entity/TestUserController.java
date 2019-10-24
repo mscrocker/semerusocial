@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,9 +39,11 @@ import es.udc.fi.dc.fd.controller.entity.UserController;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
@@ -55,7 +58,6 @@ public final class TestUserController {
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	public static final String PASSWORD = "pass";
 	public static final String USER_NAME = "name";
-
 
 	/********************************************************************************************/
 
@@ -330,7 +332,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_GetSearchCriteria() throws InstanceNotFoundException, Exception {
 
-		final List <String> cities = new ArrayList <>();
+		final List<String> cities = new ArrayList<>();
 		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities);
 		when(userServiceMock.getSearchCriteria(any(Long.class))).thenReturn(criteria);
 
@@ -360,8 +362,7 @@ public final class TestUserController {
 	public void TestUserController_GetSearchCriteria_InstanceNotFoundException()
 			throws InstanceNotFoundException, Exception {
 
-		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock)
-				.getSearchCriteria(any(Long.class));
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).getSearchCriteria(any(Long.class));
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_USER_CRITERIA_GET)
@@ -377,7 +378,94 @@ public final class TestUserController {
 
 	}
 
-	// TODO: Tests de getsearchcriteria
-	// TODO: Tests de setSearchCriteria
+	/****
+	 * TESTS SETSEARCHCRITERIA
+	 ********************************************************************************/
+
+	@Test
+	public void TestUserController_SetSearchCriteria()
+			throws InstanceNotFoundException, InvalidAgeException, Exception {
+
+		final List<String> cities = new ArrayList<>();
+		final SearchCriteriaDto criteriaDto = new SearchCriteriaDto("Female", 20, 22, cities);
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(criteriaDto)))
+		.andExpect(status().isNoContent());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<SearchCriteriaDto> critCaptor = ArgumentCaptor.forClass(SearchCriteriaDto.class);
+
+		verify(userServiceMock, times(1)).setSearchCriteria(userIdCaptor.capture(), critCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+
+		// Comprueba los valores de lo captado
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(critCaptor.getValue(), is(criteriaDto));
+	}
+
+	@Test
+	public void TestUserController_SetSearchCriteria_InstanceNotFoundException()
+			throws InstanceNotFoundException, InvalidAgeException, Exception {
+		final List<String> cities = new ArrayList<>();
+		final SearchCriteriaDto criteriaDto = new SearchCriteriaDto("Female", 20, 22, cities);
+
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).setSearchCriteria(any(Long.class),
+				any(SearchCriteriaDto.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(criteriaDto)))
+		.andExpect(status().isNotFound())
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<SearchCriteriaDto> critCaptor = ArgumentCaptor.forClass(SearchCriteriaDto.class);
+
+		verify(userServiceMock, times(1)).setSearchCriteria(userIdCaptor.capture(), critCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+
+		// Comprueba los valores de lo captado
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(critCaptor.getValue(), is(criteriaDto));
+
+	}
+
+	@Test
+	public void TestUserController_SetSearchCriteria_InvalidAgeException()
+			throws InstanceNotFoundException, InvalidAgeException, Exception {
+		final List<String> cities = new ArrayList<>();
+		final SearchCriteriaDto criteriaDto = new SearchCriteriaDto("Female", 20, 22, cities);
+
+		doThrow(new InvalidAgeException("")).when(userServiceMock).setSearchCriteria(any(Long.class),
+				any(SearchCriteriaDto.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(criteriaDto)))
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidAgeException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<SearchCriteriaDto> critCaptor = ArgumentCaptor.forClass(SearchCriteriaDto.class);
+
+		verify(userServiceMock, times(1)).setSearchCriteria(userIdCaptor.capture(), critCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+
+		// Comprueba los valores de lo captado
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(critCaptor.getValue(), is(criteriaDto));
+
+	}
 	// TODO: Tests de updateProfile
 }

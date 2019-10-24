@@ -41,7 +41,7 @@ public final class UrlConfig {
 
 	public static final String URL_USER_CRITERIA_GET = "/backend/users/searchCriteria";
 
-	public static final String URL_USER_CRITERIA_POST = "/backend/users/searchCriteria";
+	public static final String URL_USER_CRITERIA_PUT = "/backend/users/searchCriteria";
 
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
