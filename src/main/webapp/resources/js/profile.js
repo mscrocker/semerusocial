@@ -149,7 +149,7 @@ let profile = null;
 					profile.UserData.city = body.city;
 					profile.UserData.description = body.description;
 					
-					document.getElementById("birthday").value = profile.UserData.birthDate.toISOString().substr(0,10);
+					document.getElementById("birthday").value = profile.UserData.birthDate.toLocaleDateString();
 					document.getElementById("cityField").value = ""+body.city;
 					document.getElementById("sexField").value = ""+body.sex;
 					document.getElementById("descriptionField").value = ""+body.description;
