@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
-public interface UserRepository extends JpaRepository<UserImpl, Long> {
+public interface UserRepository extends JpaRepository<UserImpl, Long>, UserRepositoryCustom {
 
 	boolean existsByUserName(String userName);
 
@@ -14,5 +14,4 @@ public interface UserRepository extends JpaRepository<UserImpl, Long> {
 
 	@Override
 	Optional<UserImpl> findById(Long userId);
-
 }

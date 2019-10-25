@@ -27,4 +27,15 @@ public class FriendConversor {
 		return new GetFriendListOutDto(user.getUserName(), period.getYears(), user.getSex(), user.getCity());
 	}
 
+	public final static FriendDto fromUserImpl(UserImpl userImpl) {
+
+		final LocalDateTime today = LocalDateTime.now();
+
+		final Period period = Period.between(userImpl.getDate().toLocalDate(), today.toLocalDate());
+
+		final FriendDto friendDto = new FriendDto(userImpl.getId(), userImpl.getUserName(), period.getYears(),
+				userImpl.getSex(), userImpl.getCity(), userImpl.getDescription());
+		return friendDto;
+	}
+
 }

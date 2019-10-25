@@ -340,7 +340,7 @@ public class TestImageController {
 		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGEBYID_GET, "1").contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", 2L)).andExpect(status().isOk())
 		.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.prevId").isEmpty())
-				.andExpect(jsonPath("$.nextId").value(2)).andExpect(jsonPath("$.image.data").value(image));
+		.andExpect(jsonPath("$.nextId").value(2)).andExpect(jsonPath("$.image.data").value(image));
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
