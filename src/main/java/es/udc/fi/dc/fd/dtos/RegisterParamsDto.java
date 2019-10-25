@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class RegisterParamsDto {
 
 	@NotEmpty
-	@Length(min = 4, max = 20)
+	@Length(min = 4, max = 30)
 	private String userName;
 
 	@NotEmpty
@@ -36,10 +36,11 @@ public class RegisterParamsDto {
 	private String sex;
 
 	@NotEmpty
-	@Length(max = 200)
+	@Length(max = 30)
 	private String city;
 
 	@NotEmpty
+	@Length(max = 60)
 	private String description;
 
 	public RegisterParamsDto() {
@@ -140,60 +141,44 @@ public class RegisterParamsDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		final RegisterParamsDto other = (RegisterParamsDto) obj;
 		if (city == null) {
-			if (other.city != null) {
+			if (other.city != null)
 				return false;
-			}
-		} else if (!city.equals(other.city)) {
+		} else if (!city.equals(other.city))
 			return false;
-		}
-		if (day != other.day) {
+		if (day != other.day)
 			return false;
-		}
 		if (description == null) {
-			if (other.description != null) {
+			if (other.description != null)
 				return false;
-			}
-		} else if (!description.equals(other.description)) {
+		} else if (!description.equals(other.description))
 			return false;
-		}
-		if (month != other.month) {
+		if (month != other.month)
 			return false;
-		}
 		if (password == null) {
-			if (other.password != null) {
+			if (other.password != null)
 				return false;
-			}
-		} else if (!password.equals(other.password)) {
+		} else if (!password.equals(other.password))
 			return false;
-		}
 		if (sex == null) {
-			if (other.sex != null) {
+			if (other.sex != null)
 				return false;
-			}
-		} else if (!sex.equals(other.sex)) {
+		} else if (!sex.equals(other.sex))
 			return false;
-		}
 		if (userName == null) {
-			if (other.userName != null) {
+			if (other.userName != null)
 				return false;
-			}
-		} else if (!userName.equals(other.userName)) {
+		} else if (!userName.equals(other.userName))
 			return false;
-		}
-		if (year != other.year) {
+		if (year != other.year)
 			return false;
-		}
 		return true;
 	}
 

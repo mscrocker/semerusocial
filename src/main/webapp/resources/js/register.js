@@ -8,7 +8,8 @@ const handleRegister = (e, params, baseUrl) => {
 			userName: params.username,
 			password: params.password,
 			day: date.getDate(),
-			month: date.getMonth() + 1, // from 0 -> 11 and we want 1 -> 12
+			month: date.getMonth() + 1, // from 0 -> 11 and we want
+						    // 1 -> 12
 			year:date.getFullYear(),
 			sex: params.genre,
 			city: params.city,
@@ -27,8 +28,8 @@ const handleRegister = (e, params, baseUrl) => {
 		else {
 		response.json().then((body) => {
 			
-			sessionStorage.setItem('user_jwt', body.jwt);
-			sessionStorage.setItem('user_name', body.userName);
+		    localStorage.setItem('user_jwt', body.jwt);
+		    localStorage.setItem('user_name', body.userName);
 			
 			window.location.href = baseUrl ;
 		});

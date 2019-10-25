@@ -25,9 +25,9 @@
 			<h3 class="form-signin-heading" style="text-align: center"
 				th:text="Welcome"></h3>
 			<br /> <input type="text" id="username" name="username"
-				th:placeholder="Username" class="form-control" /> <br /> <input
-				type="password" th:placeholder="Password" id="password"
-				name="password" class="form-control" /> <br />
+				th:placeholder="Username" class="form-control" required maxlength="30" /> <br /> <input
+				type="password" th:placeholder="Password" id="password" maxlength="20"
+				name="password" class="form-control" required/> <br />
 
 			<div align="center" th:if="${param.error}">
 				<p style="font-size: 20; color: #FF1C19;">Email or Password
