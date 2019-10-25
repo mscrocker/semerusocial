@@ -1,19 +1,19 @@
 const user = {
 	updateLoggedIn: (loginButtonName, userURL) => {
-		if ((sessionStorage.user_jwt === undefined) || (sessionStorage.user_name === undefined)){
+		if ((localStorage.user_jwt === undefined) || (localStorage.user_name === undefined)){
 			return;
 		}
-		document.getElementById(loginButtonName).innerText = sessionStorage.user_name;
+		document.getElementById(loginButtonName).innerText = localStorage.user_name;
 		document.getElementById(loginButtonName).formAction = userURL;
 	},
 
 	authFetch: (url, params, onSuccess, onErrors) => {
-		if (sessionStorage.user_jwt !== undefined){
+		if (localStorage.user_jwt !== undefined){
 			if (params.headers === undefined){
 				params.headers = {};
 			}
 			
-			params.headers.Authorization = 'Bearer ' + sessionStorage.user_jwt;
+			params.headers.Authorization = 'Bearer ' + localStorage.user_jwt;
 		}
 		fetch(url, params)
 		.then((response) => onSuccess(response))
@@ -21,12 +21,12 @@ const user = {
 	},
 
 	checkLoggedIn: () => {
-		return sessionStorage.user_jwt !== undefined;
+		return localStorage.user_jwt !== undefined;
 	},
 
 	logOut: () => {
-		delete sessionStorage.user_jwt;
-		delete sessionStorage.user_name;
+		delete localStorage.user_jwt;
+		delete localStorage.user_name;
 	}
 };
 

@@ -31,13 +31,17 @@ package es.udc.fi.dc.fd.test.config;
  */
 public final class UrlConfig {
 
-
-
 	public static final String URL_USER_REGISTER_POST = "/backend/users/signUp";
 
 	public static final String URL_USER_LOGIN_POST = "/backend/users/login";
 
 	public static final String URL_USER_GET_USER_DATA = "/backend/users/data";
+
+	public static final String URL_USER_CRITERIA_GET = "/backend/users/searchCriteria";
+
+	public static final String URL_USER_CRITERIA_PUT = "/backend/users/searchCriteria";
+
+	public static final String URL_USER_UPDATEPROFILE_PUT = "/backend/users/updateProfile";
 
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
@@ -56,6 +60,10 @@ public final class UrlConfig {
 	public static final String URL_FRIEND_REJECT_POST = "/backend/friends/reject";
 
 	public static final String URL_FRIEND_SUGGESTION_GET = "/backend/friends/suggestion";
+
+	public static final String URL_FRIEND_FRIENDLIST_GET = "/backend/friends/friendList";
+
+
 	/**
 	 * Default constructor to avoid initialization.
 	 */

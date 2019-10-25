@@ -172,7 +172,7 @@ public class UserController {
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+			throws InstanceNotFoundException, InvalidAgeException {		
 		SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
 				criteria.getMaxAge(), criteria.getCity());
 		userService.setSearchCriteria(userId, searchCriteria);
@@ -180,7 +180,7 @@ public class UserController {
 
 	@GetMapping("/searchCriteria")
 	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+			throws InstanceNotFoundException {
 		SearchCriteria criteria = userService.getSearchCriteria(userId);
 
 		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);

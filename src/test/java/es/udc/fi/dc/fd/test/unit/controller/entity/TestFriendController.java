@@ -16,8 +16,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,9 +46,11 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
+import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -84,7 +94,9 @@ public class TestFriendController {
 		return LocalDate.now().minusYears(age).atStartOfDay();
 	}
 
-	private void CreateUser(long id) {
+
+	private UserImpl CreateUser(long id) {
+
 		final UserImpl user = new UserImpl();
 		user.setCriteriaMaxAge(99);
 		user.setCriteriaMinAge(18);
@@ -96,7 +108,22 @@ public class TestFriendController {
 		user.setId(id);
 		user.setSex(SUGGESTIONSEX);
 		user.setUserName(SUGGESTIONNAME);
-		SUGGESTION = user;
+
+		return user;
+	}
+
+	private static ValidatorFactory validatorFactory;
+	private static Validator validator;
+
+	@BeforeClass
+	public static void createValidator() {
+		validatorFactory = Validation.buildDefaultValidatorFactory();
+		validator = validatorFactory.getValidator();
+	}
+
+	@AfterClass
+	public static void close() {
+		validatorFactory.close();
 	}
 
 	private static final Long USERID_OK = 1L;
@@ -106,6 +133,7 @@ public class TestFriendController {
 	private static final Long OBJECT_ACCEPTED = 5L;
 	private static final Long OBJECT_REJECTED = 6L;
 	private static final Long USERID_NM = 8L;
+	private static final Long USERID_FRIEND1 = 9L;
 
 	private static final Long SUGGESTIONID = 9L;
 	private static final int SUGGESTIONAGE = 20;
@@ -114,16 +142,91 @@ public class TestFriendController {
 	private static final String SUGGESTIONDESCRIPTION = "Desc";
 	private static final String SUGGESTIONCITY = "Coruña";
 
-	private static UserImpl SUGGESTION = null;
 	private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	/****
-	 * ACEPT REQUEST TESTS
-	 *
+	 * GET FRIEND LIST TESTS
 	 ****************************************************************/
 
 	@Test
+	public void TestFriendController_GetFriendList()
+			throws InstanceNotFoundException, RequestParamException, Exception {
+
+		final UserImpl friend1 = CreateUser(USERID_FRIEND1);
+		final List<UserImpl> listFriends = new ArrayList<>();
+		listFriends.add(friend1);
+
+		final BlockFriendList<UserImpl> block = new BlockFriendList<>(listFriends, false);
+		when(friendServiceMock.getFriendList(USERID_OK, 0, 10)).thenReturn(block);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK)
+				.requestAttr("page", 0)
+				.requestAttr("size", 0))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+		.andExpect(jsonPath("$.friends").isNotEmpty())
+		.andExpect(jsonPath("$.existMoreFriends").value(false));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
+		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(int.class);
+
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
+				sizeCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+		assertThat(pageCaptor.getValue(), is(0));
+		assertThat(sizeCaptor.getValue(), is(10));
+	}
+
+	@Test
+	public void TestFriendController_GetFriendList_InstanceNotFoundException()
+			throws InstanceNotFoundException, RequestParamException, Exception {
+
+		final List<UserImpl> listFriends = new ArrayList<>();
+		final BlockFriendList<UserImpl> block = new BlockFriendList<>(listFriends, false);
+
+		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
+		.getFriendList(USERID_NOTFOUND, 1, 10);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_NOTFOUND)
+				.param("page", "1")
+				.param("size", "10"))
+		.andExpect(status().isNotFound())
+		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
+		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(int.class);
+
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
+				sizeCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_NOTFOUND));
+		assertThat(pageCaptor.getValue(), is(1));
+		assertThat(sizeCaptor.getValue(), is(10));
+	}
+
+	/****
+	 * ACEPT REQUEST TESTS
+	 ****************************************************************/
+
 	@DisplayName("AceptRequest - ok (OK)")
 	public void TestFriendController_AceptRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
@@ -325,6 +428,38 @@ public class TestFriendController {
 	}
 
 	@Test
+	public void TestFriendController_GetFriendList_RequestParamException()
+			throws InstanceNotFoundException, RequestParamException, Exception {
+
+		doThrow(new RequestParamException("")).when(friendServiceMock).getFriendList(USERID_OK, -1, 10);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK)
+				.param("page", "-1")
+				.param("size", "10"))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+		.andExpect(jsonPath("$.globalError").value("project.exceptions.RequestParamException"));
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
+		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(int.class);
+
+		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
+		// otros
+		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
+				sizeCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+		assertThat(pageCaptor.getValue(), is(-1));
+		assertThat(sizeCaptor.getValue(), is(10));
+
+	}
+
 	@DisplayName("RejectRequest - InvalidRecommendationException (BAD_REQUEST)")
 	public void TestFriendController_RejectRequest_InvalidRecommendationException()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
@@ -417,8 +552,8 @@ public class TestFriendController {
 	@Test
 	public void TestFriendController_SuggestFriend()
 			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
-		CreateUser(SUGGESTIONID);
-		when(friendServiceMock.suggestFriend(USERID_OK)).thenReturn(Optional.of(SUGGESTION));
+		final UserImpl suggestion = CreateUser(SUGGESTIONID);
+		when(friendServiceMock.suggestFriend(USERID_OK)).thenReturn(Optional.of(suggestion));
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
