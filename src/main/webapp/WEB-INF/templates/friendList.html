@@ -5,7 +5,7 @@
 
 <head th:include="fragments/header :: header" />
 <body>
-	<header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu" ></header>
 	<div th:include="fragments/errorAlert"></div>
 	<table class="table table-striped table-bordered col-9 mx-auto">
 		<colgroup span="4"></colgroup>
@@ -15,7 +15,7 @@
 					LIST</th>
 			</tr>
 			<tr>
-				<th scpoe="col">Name</th>
+				<th scope="col">Name</th>
 				<th scope="col">Age</th>
 				<th scope="col">City</th>
 				<th scope="col">Sex</th>
@@ -53,8 +53,8 @@
 	</div>
 	
 	<footer>
-		<div th:include="fragments/scripts :: general" />
-		<div th:include="fragments/scripts :: friendList" />
+		<div th:include="fragments/scripts :: general" ></div>
+		<div th:include="fragments/scripts :: friendList" ></div>
 	</footer>
 	<script>
 	window.addEventListener('load', () => {

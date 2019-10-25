@@ -20,7 +20,7 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li><a th:href="@{/}">My photos</a></li>
-						<li id="logOut" ><a th:href="@{/login}">LogOut</a></li>
+						<li id="logOut"><a th:href="@{/login}">LogOut</a></li>
 						<li><a th:href="@{/addImage}">Add new Image</a></li>
 					</ul>
 				</div>
@@ -31,8 +31,8 @@
 			</div>
 		</div>
 	</nav>
-	<div th:include="fragments/scripts :: user" />
-	<div th:include="fragments/scripts :: welcome" />
+	<div th:include="fragments/scripts :: user"></div>
+	<div th:include="fragments/scripts :: welcome"></div>
 	<script>
 		
 		window.addEventListener("load", () => {

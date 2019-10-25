@@ -4,6 +4,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class UpdateProfileInDto {
@@ -26,9 +27,11 @@ public class UpdateProfileInDto {
 	private String sex;
 
 	@NotEmpty
+	@Length(max = 30)
 	private String city;
 
 	@NotEmpty
+	@Length(max = 60)
 	private String description;
 
 	public UpdateProfileInDto() {
