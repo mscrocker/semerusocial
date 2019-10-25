@@ -167,7 +167,7 @@ const criteriaSettings = {
 					let cell1 = row.insertCell(0);
 					
 					cell1.innerHTML = [
-						`	<input id="cityInputField${i}" class="form-control" type="text" required value="${data[i]}" onchange="criteriaSettings.notifyChange('city')" />`,
+						`	<input id="cityInputField${i}" class="form-control" type="text" maxlength="30" required value="${data[i].	replace(/"/g, '&quot;')}" onchange="criteriaSettings.notifyChange('city')" />`,
 						`	<div class="invalid-feedback">`,
 						`		<p id="cityInputFieldFeedback${i}"></p>`,
 						`	</div>`

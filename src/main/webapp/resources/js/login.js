@@ -20,8 +20,8 @@ const handleLogin = (e,params, baseUrl) => {
 		response.json().then((body) => {
 			
 			
-			sessionStorage.setItem('user_jwt', body.jwt);
-			sessionStorage.setItem('user_name', body.userName);
+		    localStorage.setItem('user_jwt', body.jwt);
+		    localStorage.setItem('user_name', body.userName);
 			
 			
 			window.location.href = baseUrl;

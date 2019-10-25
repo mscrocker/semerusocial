@@ -78,11 +78,11 @@ const carrusel = {
 	},
 
 	getNextLink: (baseURL) => {
-		if (previousLink !== null){
-			return previousLink;
+		if (carrusel.previousLink !== null){
+			return carrusel.previousLink;
 		}
-		if (nextLink !== null){
-			return nextLink;
+		if (carrusel.nextLink !== null){
+			return carrusel.nextLink;
 		}
 		
 		return baseURL + "addImage";
@@ -100,6 +100,7 @@ const carrusel = {
 				console.log("SUCCESS!");
 				window.location.href = carrusel.getNextLink(baseURL);
 			} else {
+			    	customAlert.showAlertFromResponse(resp);
 				console.log("ERROR");
 				
 			}

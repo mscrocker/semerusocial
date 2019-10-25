@@ -5,6 +5,10 @@ const customAlert = {
 	},
     showAlert: (message) => {
         const errorAlert = document.getElementById("ErrorAlert");
+        document.getElementById("alertButton").onclick = customAlert.hideAlert;
+        
+        const text = document.getElementById("alertText");
+
         // If there was a previous list from a fieldError, erase it; :(
         const previousUl = document.getElementById("list");
         if (previousUl) {
@@ -16,8 +20,9 @@ const customAlert = {
 
             if (message.globalError) {
                 globalError = message.globalError;
-                errorAlert.innerText = globalError;
+                text.innerText = globalError;
             } else if (message.fieldErrors) {
+                text.innerText = "";
 
 
                 fieldErrors = [];
@@ -27,7 +32,8 @@ const customAlert = {
                 });
                 let ul = document.createElement("ul");
                 ul.setAttribute("id", "list");
-                errorAlert.appendChild(ul);
+                ul.style.flexGrow = 100;
+                errorAlert.insertBefore(ul,errorAlert.childNodes[2]);
 
                 fieldErrors.map((fieldError, index) => {
                     let li = document.createElement("li");
@@ -36,7 +42,7 @@ const customAlert = {
                     ul.appendChild(li);
                 });
             } else {
-                errorAlert.innerText = message;
+               text.innerText = message;
             }
 
             errorAlert.classList.remove("hidden");
@@ -49,6 +55,6 @@ const customAlert = {
          }
     	response.json()
     	.then((body) => customAlert.showAlert(body))
-    	.catch((e) => customAlert.showAlert("Interanl Server Error: " + response.status));
+    	.catch((e) => customAlert.showAlert("Internal Server Error: " + response.status));
     }
 };
