@@ -86,7 +86,6 @@ public class UserController {
 		return jwtGenerator.generate(jwtInfo);
 	}
 
-
 	@ExceptionHandler(DuplicateInstanceException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
@@ -173,14 +172,16 @@ public class UserController {
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws InstanceNotFoundException, InvalidAgeException {
-		userService.setSearchCriteria(userId, criteria);
+			throws InstanceNotFoundException, InvalidAgeException {		
+		SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
+				criteria.getMaxAge(), criteria.getCity());
+		userService.setSearchCriteria(userId, searchCriteria);
 	}
 
 	@GetMapping("/searchCriteria")
 	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
 			throws InstanceNotFoundException {
-		final SearchCriteria criteria = userService.getSearchCriteria(userId);
+		SearchCriteria criteria = userService.getSearchCriteria(userId);
 
 		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
 	}
@@ -206,9 +207,8 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
 			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
-					throws InstanceNotFoundException, InvalidDateException {
+			throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
-
 
 }
