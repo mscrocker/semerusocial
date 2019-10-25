@@ -26,36 +26,41 @@ package es.udc.fi.dc.fd.test.config;
 
 /**
  * Contains configuration information for the controller URLs.
- * 
+ *
  * @author Bernardo Mart&iacute;nez Garrido
  */
 public final class UrlConfig {
 
 
-    
-    public static final String URL_USER_REGISTER_POST = "/backend/users/signUp";
 
-    public static final String URL_USER_LOGIN_POST = "/backend/users/login";
-    
-    public static final String URL_USER_GET_USER_DATA = "/backend/users/data";
-    
-    public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
-    
-    public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
-  
-    public static final String URL_IMAGE_REMOVE_DELETE = "/backend/images/remove/{imageId}";
-    
-    public static final String URL_IMAGE_GETIMAGESBYID_GET = "/backend/images/carrusel";
-    
-    public static final String URL_IMAGE_GETIMAGEBYID_GET = "/backend/images/carrusel/{imageId}";
-    
-    public static final String URL_IMAGE_GETFIRST_GET = "/backend/images/first";
-    
-    /**
-     * Default constructor to avoid initialization.
-     */
-    private UrlConfig() {
-        super();
-    }
+	public static final String URL_USER_REGISTER_POST = "/backend/users/signUp";
+
+	public static final String URL_USER_LOGIN_POST = "/backend/users/login";
+
+	public static final String URL_USER_GET_USER_DATA = "/backend/users/data";
+
+	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
+
+	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
+
+	public static final String URL_IMAGE_REMOVE_DELETE = "/backend/images/remove/{imageId}";
+
+	public static final String URL_IMAGE_GETIMAGESBYID_GET = "/backend/images/carrusel";
+
+	public static final String URL_IMAGE_GETIMAGEBYID_GET = "/backend/images/carrusel/{imageId}";
+
+	public static final String URL_IMAGE_GETFIRST_GET = "/backend/images/first";
+
+	public static final String URL_FRIEND_ACCEPT_POST = "/backend/friends/accept";
+
+	public static final String URL_FRIEND_REJECT_POST = "/backend/friends/reject";
+
+	public static final String URL_FRIEND_SUGGESTION_GET = "/backend/friends/suggestion";
+	/**
+	 * Default constructor to avoid initialization.
+	 */
+	private UrlConfig() {
+		super();
+	}
 
 }

@@ -136,4 +136,13 @@ public class ImageController {
 		return new ImageCreatedDto(imageId);
 	}
 
+	@GetMapping("/carrusel/user/{userId}")
+	public BlockDto<ReturnedImageDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
+			throws InstanceNotFoundException {
+		Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
+		BlockDto<ReturnedImageDto> blockDto = ImageConversor.toReturnedImageDto(images);
+
+		return blockDto;
+	}
+
 }

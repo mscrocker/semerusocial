@@ -29,7 +29,6 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
-import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -67,8 +66,8 @@ public class ITUserService {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
-	private SearchCriteriaDto createCriteria(String sex, int minAge, int maxAge, List<String> CityList) {
-		return new SearchCriteriaDto(sex, minAge, maxAge, CityList);
+	private SearchCriteria createCriteria(String sex, int minAge, int maxAge, List<String> CityList) {
+		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList);
 	}
 
 	// ----- signUp -----
@@ -198,7 +197,7 @@ public class ITUserService {
 		cityList.add("a coruna");
 		cityList.add("madrid");
 		cityList.add("vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
 
 		userService.setSearchCriteria(userId, criteria);
 
@@ -217,7 +216,7 @@ public class ITUserService {
 		cityList2.add("orense");
 		cityList2.add("malaga");
 		cityList2.add("coruña");
-		final SearchCriteriaDto criteria2 = createCriteria("Male", 30, 60, cityList2);
+		final SearchCriteria criteria2 = createCriteria("Male", 30, 60, cityList2);
 		userService.setSearchCriteria(userId, criteria2);
 
 		final List<String> registeredCities2 = cityCriteriaRepository.findCitiesByUserId(userId);
@@ -235,7 +234,7 @@ public class ITUserService {
 		cityList.add("A Coruna");
 		cityList.add("Madrid");
 		cityList.add("Vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.setSearchCriteria(-1L, criteria);
@@ -258,13 +257,13 @@ public class ITUserService {
 		cityList.add("A Coruna");
 		cityList.add("Madrid");
 		cityList.add("Vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male", 150, 30, cityList);
+		final SearchCriteria criteria = createCriteria("Male", 150, 30, cityList);
 
 		assertThrows(InvalidAgeException.class, () -> {
 			userService.setSearchCriteria(userId, criteria);
 		});
 
-		final SearchCriteriaDto criteria2 = createCriteria("Male", 17, 60, cityList);
+		final SearchCriteria criteria2 = createCriteria("Male", 17, 60, cityList);
 
 		assertThrows(InvalidAgeException.class, () -> {
 			userService.setSearchCriteria(userId, criteria2);
@@ -290,7 +289,7 @@ public class ITUserService {
 		cityList.add("a coruna");
 		cityList.add("madrid");
 		cityList.add("vigo");
-		final SearchCriteriaDto criteria = createCriteria("Male", 30, 60, cityList);
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
 
 		userService.setSearchCriteria(userId, criteria);
 		SearchCriteria userCriteria = userService.getSearchCriteria(userId);

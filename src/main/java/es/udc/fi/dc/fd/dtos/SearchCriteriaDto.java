@@ -15,6 +15,7 @@ public class SearchCriteriaDto {
 	@Min(18)
 	private int minAge;
 
+	@Min(18)
 	private int maxAge;
 
 	@NotNull
@@ -22,7 +23,7 @@ public class SearchCriteriaDto {
 
 	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city) {
 		super();
-		this.sex = SexCriteriaEnum.fromCode(sex) ;
+		this.sex = SexCriteriaEnum.fromCode(sex);
 		this.minAge = minAge;
 		this.maxAge = maxAge;
 		this.city = city;
@@ -35,18 +36,23 @@ public class SearchCriteriaDto {
 	public SexCriteriaEnum getSex() {
 		return sex;
 	}
+
 	public void setSex(SexCriteriaEnum sex) {
 		this.sex = sex;
 	}
+
 	public int getMinAge() {
 		return minAge;
 	}
+
 	public void setMinAge(int minAge) {
 		this.minAge = minAge;
 	}
+
 	public int getMaxAge() {
 		return maxAge;
 	}
+
 	public void setMaxAge(int maxAge) {
 		this.maxAge = maxAge;
 	}
@@ -72,32 +78,24 @@ public class SearchCriteriaDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		final SearchCriteriaDto other = (SearchCriteriaDto) obj;
 		if (city == null) {
-			if (other.city != null) {
+			if (other.city != null)
 				return false;
-			}
-		} else if (!city.equals(other.city)) {
+		} else if (!city.equals(other.city))
 			return false;
-		}
-		if (maxAge != other.maxAge) {
+		if (maxAge != other.maxAge)
 			return false;
-		}
-		if (minAge != other.minAge) {
+		if (minAge != other.minAge)
 			return false;
-		}
-		if (sex != other.sex) {
+		if (sex != other.sex)
 			return false;
-		}
 		return true;
 	}
 
@@ -105,9 +103,5 @@ public class SearchCriteriaDto {
 	public String toString() {
 		return "SearchCriteriaDto [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city + "]";
 	}
-
-
-
-
 
 }
