@@ -19,9 +19,12 @@
 						<span aria-hidden="true"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
-						<li><a th:href="@{/}">My photos</a></li>
-						<li id="logOut"><a th:href="@{/login}">LogOut</a></li>
+						<li><a th:href="@{/findFriend}">Find friends</a></li>
+						<li><a th:href="@{/users/friends}">My friends</a></li>
+						<li id="myPhotos"><a>My photos</a></li>
 						<li><a th:href="@{/addImage}">Add new Image</a></li>
+						<li id="logOut" ><a th:href="@{/login}">LogOut</a></li>
+						
 					</ul>
 				</div>
 				<form id="col-6 loginForm" class="nav-link">
@@ -42,7 +45,30 @@
 				document.getElementById("loggedInOptions").classList.add("hidden");
 			}
 			else {
+				
 			    document.getElementById("logOut").onclick = user.logOut
+			    
+			    document.getElementById("myPhotos").onclick = () => {
+					let url = "[[@{'/backend/images/first'}]]";
+					let params = {
+						method: "GET"
+					};
+					
+				    user.authFetch(url, params, (result) => {
+						result.json().then((body) => {
+							if (body.imageId){
+								window.location.href = "[[@{'/carrusel/'}]]" + body.imageId;
+							} else {
+								window.location.href = "[[@{'/addImage'}]]";
+							}
+							
+						}).catch((error) => {
+							console.log("ERROR");
+						});
+					}, (errors) => {
+						console.log("ERROR");
+					});
+				}
 			}
 		});
 		
