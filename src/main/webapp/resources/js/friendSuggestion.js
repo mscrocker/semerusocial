@@ -1,6 +1,7 @@
 const friendSuggestion = {
     id: null,
     baseUrl: "",
+    container: null,
     controller: null,
     egg: null,
     prev: null,
@@ -14,6 +15,7 @@ const friendSuggestion = {
     askForMore: true,
     initSuggestion: (Url) => {
         friendSuggestion.baseUrl = Url;
+        friendSuggestion.container = document.getElementById("container");
         friendSuggestion.controller = document.getElementById("imagesController");
         friendSuggestion.spinner = document.getElementById("loader");
         friendSuggestion.next = document.getElementById("nextButton");
@@ -26,23 +28,36 @@ const friendSuggestion = {
     },
     initRecommendation: () => {
         // Probably need to await for second
+
         friendSuggestion.getRecommendation();
-      friendSuggestion.loadImages();
+
+
     },
     getRecommendation: () => {
-        /*
-	 * user.authFetch(friendSuggestion.baseUrl + "backend/x", {method:
-	 * 'GET'}, (response) => { if (response.status !== 200){
-	 * console.log("ERROR!"); return; } response.json().then((body) => {
-	 * friendSuggestion.id = body.id;
-	 * friendSuggestion.descriptionField.innerText = `${body.userName},
-	 * ${body.age} @ {body.city}`; } ); });
-	 */
-	$('#criteriaModal').modal('show');
 
-        friendSuggestion.id = 1;
-        friendSuggestion.userField.innerText = `${"jesulin"}, ${12} @ ${"Catalunya"}`;
-        friendSuggestion.descriptionField.innerText = "La vida es muy loca";
+        user.authFetch(friendSuggestion.baseUrl + "backend/friends/suggestion", {
+            method: 'GET'
+        }, (response) => {
+            if (response.status == 400) {
+                $('#criteriaModal').modal('show');
+                container.classList.add("hidden");
+                return;
+            }
+            if (response.status !== 200) {
+                console.log("ERROR!");
+                return;
+            }
+            response.json().then((body) => {
+                container.classList.remove("hidden");
+                friendSuggestion.id = body.id;
+                friendSuggestion.userField.innerText = `${body.userName},
+		  ${body.age} @ ${body.city}`;
+                friendSuggestion.descriptionField.innerText = body.description;
+                friendSuggestion.loadImages();
+
+            });
+
+        });
 
     },
 
@@ -120,6 +135,8 @@ const friendSuggestion = {
                 else {
                     friendSuggestion.egg.classList.remove("hidden");
                     friendSuggestion.egg.firstElementChild.classList.add("active");
+                    friendSuggestion.prev.classList.add("hidden");
+                    friendSuggestion.next.classList.add("hidden");
 
                 }
 
@@ -181,7 +198,7 @@ const friendSuggestion = {
         user.authFetch(friendSuggestion.baseUrl + "backend/friends/accept", {
             method: "POST",
             body: JSON.stringify({
-                id: 1
+                id: friendSuggestion.id
             }),
             headers: {
                 "Content-Type": "application/json"
@@ -193,7 +210,7 @@ const friendSuggestion = {
         user.authFetch(friendSuggestion.baseUrl + "backend/friends/reject", {
             method: "POST",
             body: JSON.stringify({
-                id: 1
+                id: friendSuggestion.id
             }),
             headers: {
                 "Content-Type": "application/json"
@@ -211,19 +228,23 @@ const friendSuggestion = {
         evt = evt || window.event;
 
         switch (evt.keyCode) {
+            // Right Arrow
             case 39:
                 if (!friendSuggestion.next.classList.contains("hidden")) {
                     friendSuggestion.onNextPressed();
                 }
                 break;
+                // Left Arrow
             case 37:
                 if (!friendSuggestion.prev.classList.contains("hidden")) {
                     friendSuggestion.onPrevPressed();
                 }
                 break;
+                // "a"
             case 65:
                 friendSuggestion.onLikePressed();
                 break;
+                // "d"
             case 68:
                 friendSuggestion.onDislikePressed();
                 break;
