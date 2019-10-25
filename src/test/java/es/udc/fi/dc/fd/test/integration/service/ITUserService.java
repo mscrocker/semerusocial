@@ -4,40 +4,53 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:context/service.xml",
-		"classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
-@TestPropertySource({ "classpath:config/persistence-access.properties",
-"classpath:config/service.properties" })
+@ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
+		"classpath:context/application-context.xml" })
+@TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@Rollback
+@Transactional
 public class ITUserService {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CityCriteriaRepository cityCriteriaRepository;
 
 	@Autowired
 	public ITUserService() {
@@ -48,14 +61,21 @@ public class ITUserService {
 			String description) {
 		return new UserImpl(userName, password, date, sex, city, description);
 	}
+
 	private LocalDateTime getDateTime(int day, int month, int year) {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
 
-	//----- signUp -----
+	private SearchCriteria createCriteria(String sex, int minAge, int maxAge, List<String> CityList) {
+		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList);
+	}
+
+	// ----- signUp -----
 
 	@Test
-	public void testSignUpAndLoginFromUserName() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+	public void testSignUpAndLoginFromUserName()
+			throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+
 		final UserImpl user = createUser("usuarioSignUpAndLoginFromId", "contraseñaSignUpAndLoginFromId",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
@@ -67,30 +87,36 @@ public class ITUserService {
 
 	@Test
 	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException, InvalidDateException {
+
 		final UserImpl user = createUser("usuarioSignUpDuplicated", "contraseñaSignUpDuplicated",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		userService.signUp(user);
 
-		assertThrows(DuplicateInstanceException.class,() -> {
+		assertThrows(DuplicateInstanceException.class, () -> {
 			userService.signUp(user);
 		});
 	}
 
 	@Test
 	public void testSignUpInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
+
 		final UserImpl user = createUser("usuarioSignUpIDE", "contraseñaSignUpIDE", LocalDateTime.now(), "nombre",
 				"coruna", "descripcion");
-		assertThrows(InvalidDateException.class,() -> {
+
+		assertThrows(InvalidDateException.class, () -> {
 			userService.signUp(user);
 		});
 	}
 
-	//----- login -----
+	// ----- login -----
 
 	@Test
 	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException, InvalidDateException {
+
 		final UserImpl user = createUser("usuarioLogin", "contraseñaLogin", getDateTime(1, 1, 2000), "hombre", "coruna",
 				"descripcion");
+
 		final String clearPassword = user.getPassword();
 
 		userService.signUp(user);
@@ -106,8 +132,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, InvalidDateException {
+
 		final UserImpl user = createUser("usuarioLoginIncorrectPass", "contraseñaLoginIncorrectPass",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+
 		final String clearPassword = user.getPassword();
 
 		userService.signUp(user);
@@ -116,15 +144,17 @@ public class ITUserService {
 		loginDto.setUserName(user.getUserName());
 		loginDto.setPassword("xd" + clearPassword);
 
-		assertThrows(IncorrectLoginException.class,() -> {
+		assertThrows(IncorrectLoginException.class, () -> {
 			userService.login(loginDto);
 		});
 	}
 
-	//----- loginFromUserId -----
+	// ----- loginFromUserId -----
 
 	@Test
-	public void testLoginFromUserId() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+	public void testLoginFromUserId()
+			throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+
 		final UserImpl user = createUser("userLoginFromUserId", "passwordLoginFromUserId", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
 
@@ -134,17 +164,150 @@ public class ITUserService {
 	}
 
 	@Test
-	public void testLoginFromUserIdWithInstanceNotFoundException() throws DuplicateInstanceException, InvalidDateException {
+	public void testLoginFromUserIdWithInstanceNotFoundException()
+			throws DuplicateInstanceException, InvalidDateException {
+
 		final UserImpl user = createUser("userLoginFromUserIdINFE", "passwordLoginFromUserIdINFE",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
-		user.setId(-1L);
+//		user.setId(-1L);
 
-		assertThrows(InstanceNotFoundException.class,() -> {
-			userService.loginFromUserId(user.getId());
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.loginFromUserId(-1L);
 		});
+	}
+
+	// ----- setSearchCriteria -----
+
+	@Test
+	public void testSetSearchCriteria()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+
+		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "description");
+		final Long userId = userService.signUp(user);
+
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("a coruna");
+		cityList.add("madrid");
+		cityList.add("vigo");
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
+
+		userService.setSearchCriteria(userId, criteria);
+
+		final List<String> registeredCities = cityCriteriaRepository.findCitiesByUserId(userId);
+
+		UserImpl registeredUser = userService.loginFromUserId(userId);
+
+		Collections.sort(cityList);
+		Collections.sort(registeredCities);
+		assertEquals(cityList, registeredCities);
+		assertEquals(user, registeredUser);
+
+		/////////////////// Hacemos el registro de datos nuevos////////////
+		final List<String> cityList2 = new ArrayList<>();
+		cityList2.add("lugo");
+		cityList2.add("orense");
+		cityList2.add("malaga");
+		cityList2.add("coruña");
+		final SearchCriteria criteria2 = createCriteria("Male", 30, 60, cityList2);
+		userService.setSearchCriteria(userId, criteria2);
+
+		final List<String> registeredCities2 = cityCriteriaRepository.findCitiesByUserId(userId);
+
+		Collections.sort(cityList2);
+		Collections.sort(registeredCities2);
+		assertEquals(cityList2, registeredCities2);
+		assertEquals(user, registeredUser);
+	}
+
+	@Test
+	public void testSetSearchCriteriaInstanceNotFoundException() throws InstanceNotFoundException, InvalidAgeException {
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.setSearchCriteria(-1L, criteria);
+		});
+	}
+
+	@Test
+	public void testSetSearchCriteriaWithInvalidAgeException()
+			throws InstanceNotFoundException, DuplicateInstanceException, InvalidDateException {
+
+		final UserImpl user = createUser("CriteriaUserIAE", "CriteriaPassIAE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "description");
+		final Long userId = userService.signUp(user);
+
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("A Coruna");
+		cityList.add("Madrid");
+		cityList.add("Vigo");
+		final SearchCriteria criteria = createCriteria("Male", 150, 30, cityList);
+
+		assertThrows(InvalidAgeException.class, () -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+
+		final SearchCriteria criteria2 = createCriteria("Male", 17, 60, cityList);
+
+		assertThrows(InvalidAgeException.class, () -> {
+			userService.setSearchCriteria(userId, criteria2);
+		});
+	}
+
+	// ----- getSearchCriteria -----
+
+	@Test
+	public void testGetSearchCriteria()
+			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+
+		final UserImpl user = createUser("userGetSearchCriteria", "passwordGetSearchCriteria", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "description");
+
+		final Long userId = userService.signUp(user);
+
+		user.setCriteriaSex(SexCriteriaEnum.MALE);
+		user.setCriteriaMaxAge(60);
+		user.setCriteriaMinAge(30);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("a coruna");
+		cityList.add("madrid");
+		cityList.add("vigo");
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
+
+		userService.setSearchCriteria(userId, criteria);
+		SearchCriteria userCriteria = userService.getSearchCriteria(userId);
+
+		SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
+				user.getCriteriaMaxAge(), cityList);
+
+		assertEquals(searchCriteria, userCriteria);
+	}
+
+	@Test
+	public void testGetSearchCriteriaInstaceNotFoundException()
+			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.getSearchCriteria(-1L);
+		});
+
 	}
 
 	// ----- updateProfile -----
@@ -176,9 +339,7 @@ public class ITUserService {
 		});
 	}
 
-	@Test
-	public void testUpdateProfileWithInvalidDateException()
-			throws DuplicateInstanceException, InvalidDateException {
+	public void testUpdateProfileWithInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
 		final UserImpl newUser = new UserImpl(LocalDateTime.now(), "mujer", "lugo", "descripcion editada");

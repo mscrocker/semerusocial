@@ -31,11 +31,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
+import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
@@ -43,6 +46,7 @@ import es.udc.fi.dc.fd.dtos.UserDataDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
+import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -54,6 +58,7 @@ public class UserController {
 	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
 	private final static String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
+	private final static String INVALID_AGE_EXCEPTION_CODE = "project.exceptions.InvalidAgeException";
 
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 
@@ -80,7 +85,6 @@ public class UserController {
 
 		return jwtGenerator.generate(jwtInfo);
 	}
-
 
 	@ExceptionHandler(DuplicateInstanceException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -130,11 +134,21 @@ public class UserController {
 	}
 
 	@ExceptionHandler(InvalidDateException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorsDto handleInvalidDateException(InvalidDateException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
 				INVALID_DATE_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
+	@ExceptionHandler(InvalidAgeException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleInvalidAgeException(InvalidAgeException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(INVALID_AGE_EXCEPTION_CODE, null,
+				INVALID_AGE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -153,6 +167,23 @@ public class UserController {
 				.toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
+	}
+
+	@PutMapping("/searchCriteria")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+		SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
+				criteria.getMaxAge(), criteria.getCity());
+		userService.setSearchCriteria(userId, searchCriteria);
+	}
+
+	@GetMapping("/searchCriteria")
+	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+		SearchCriteria criteria = userService.getSearchCriteria(userId);
+
+		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
 	}
 
 	@PostMapping("/login")
@@ -176,7 +207,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
 			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
-					throws InstanceNotFoundException, InvalidDateException {
+			throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
 

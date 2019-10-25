@@ -1,3 +1,4 @@
+
 const addImage = {
 	loadedImage: false,
 	previewFile:  (preview, fileInput) => {
@@ -9,7 +10,7 @@ const addImage = {
 			  	preview.src = "";
 			  	return;
 			  }
-		  showAlert(null);
+		  customAlert.hideAlert();
 		  var reader  = new FileReader();
 
 		  reader.onloadend = function () {
@@ -38,13 +39,14 @@ const addImage = {
 	
 	finishUploadImage: (result, baseURL) => {
 		if (result.status !== 201){
-			showAlert("Error uploading image");
+			customAlert.showAlertFromResponse(result);
 			document.getElementById("uploadButton").disabled = false;
 			return;
 		}
 		result.json().then((body) => {
+			
 			document.getElementById("uploadButton").disabled = false;
-			showAlert(null);
+			customAlert.hideAlert();
 			window.location.href = baseURL + "carrusel/" + body.imageId;
 		}).catch((errors) => {
 			showAlert("Error uploading image");
@@ -52,12 +54,12 @@ const addImage = {
 		
 	},
 	finishUploadWithErrors: (errors) => {
-		showAlert("Error uploading image");
+		customAlert.showAlert("Error uploading image");
 	},
 	uploadImage: (image, baseURL) => {
-		showAlert(null);
+		customAlert.hideAlert();
 		if (image === undefined){
-			showAlert("Error: image is mandatory.");
+			customAlert.showAlert("Error: image is mandatory.");
 			return;
 		}
 		

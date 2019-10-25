@@ -7,6 +7,7 @@ public final class UserViewConstants {
 	public static final String ADD_IMAGE_FORM = "addImage";
 	public static final String GET_PROFILE = "profile";
 	public static final String Friend_Finder = "friendSuggestion";
+	public static final String GET_FRIEND_LIST = "friendList";
 
 	/**
 	 * Private constructor to avoid initialization.
