@@ -4,16 +4,15 @@
 
 <head th:include="fragments/header :: header" />
 <body>
-	<header class="header" th:include="fragments/menu :: menu" />
+	<header class="header" th:include="fragments/menu :: menu"></header>
 
 	<section id="main-section" class="container-fluid">
-		<img th:src="@{/static/images/loading.gif}"/>
+		<img th:src="@{/static/images/loading.gif}" />
 	</section>
 
 	<footer>
-		<div th:include="fragments/scripts :: general" />
-		<div th:include="fragments/scripts :: user"/>
-		<div th:include="fragments/scripts :: welcome"/>
+		<div th:include="fragments/scripts :: general"></div>
+		<div th:include="fragments/scripts :: welcome"></div>
 	</footer>
 	<script>
 		window.addEventListener("load", () => {

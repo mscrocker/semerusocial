@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public final class LoginParamsDto implements Serializable {
@@ -11,9 +12,11 @@ public final class LoginParamsDto implements Serializable {
 	private static final long serialVersionUID = 1328776989450853492L;
 
 	@NotEmpty
+	@Length(min = 4, max = 30)
 	private String userName;
 
 	@NotEmpty
+	@Length(min = 4, max = 20)
 	private String password;
 
 	public LoginParamsDto() {
@@ -29,9 +32,9 @@ public final class LoginParamsDto implements Serializable {
 	}
 
 	public final void setUserName(final String userName) {
-   		this.userName = checkNotNull(userName, "Received a null pointer as userName in LoginParamsDto");
-   	}
-   
+		this.userName = checkNotNull(userName, "Received a null pointer as userName in LoginParamsDto");
+	}
+
 	public void setPassword(String password) {
 		this.password = checkNotNull(password, "Received a null pointer as password in LoginParamsDto");
 	}
@@ -71,8 +74,5 @@ public final class LoginParamsDto implements Serializable {
 	public String toString() {
 		return "LoginParamsDto [userName=" + userName + ", password=" + password + "]";
 	}
-	
-	
 
 }
-

@@ -1,33 +1,172 @@
- <!DOCTYPE html>
+
+<!DOCTYPE html>
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:include="fragments/header :: header" />
+<head th:include="fragments/header :: header">
+<link th:href="@{/resources/vendor/datepicker/daterangepicker.css}"
+	rel="stylesheet" media="all">
+</head>
 <body>
-	<header class="header" th:include="fragments/menu :: menu" />
-	<div class = "card container bg-dark">
-		<h1 class = "card-title" style="text-align:center;color:azure">User Data</h1>
-		<div class = "row">
-			<p class = "card-text">Age : </p>
-			<p id = "ageField" class = "card-text">Age : </p>
+	<header class="header" th:include="fragments/menu :: menu"></header>
+	<div th:include="fragments/errorAlert"></div>
+	<div id="profileForm"
+		class="container bg-light border border-primary mb-5 hidden">
+		<h1 class="" style="text-align: center;">User Data</h1>
+		<form class="form">
+			<div class="">
+				<div class="form-group">
+					<input class="js-datepicker form-control" type="text"
+						name="birthday" id="birthday" required> <i
+						class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+				</div>
+				<div class="form-group">
+					<label for="sexField">Sex: </label> <select id="sexField"
+						class="custom-select">
+						<option>Male</option>
+						<option>Female</option>
+						<option>Other</option>
+					</select>
+					<div class="invalid-feedback">
+						<p id="sexFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="cityField">City: </label> <input id="cityField"
+						class="form-control" value="loading" maxlength="30" required>
+					<div class="invalid-feedback">
+						<p id="cityFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="descriptionField">Description: </label> <input
+						id="descriptionField" class="form-control"  value="loading"
+						maxlength="60" required>
+					<div class="invalid-feedback">
+						<p id="descriptionFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="row ml-4">
+					<button id="profileButton" class="btn btn-primary mb-3" disabled
+						type="button">Update</button>
+					<div class="ml-2 spinner-border text-primary" role="status"
+						id="profileLoading">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="ml-2 text-primary" id="profileFinished">
+						<h3 class="glyphicon glyphicon-ok"></h3>
+					</div>
+					<div class="ml-2 text-danger" id="profileError">
+						<h3 class="glyphicon glyphicon-remove"></h3>
+					</div>
+				</div>
+			</div>
+		</form>
 		</div>
-		<div class = "row">
-			<p class = "card-text">Sex : </p>
-			<p id = "sexField" class = "card-text">Sex : </p>
+
+		<div id="criteriaForm"
+			class="container bg-light border border-primary mt-5 hidden">
+			<h1 class="" style="text-align: center;">Search Criteria</h1>
+			<form class="form">
+				<div class="">
+					<div class="form-group">
+						<label for="minAgeCriteriaField">Minimum age: </label> <input
+							id="minAgeCriteriaField" class="form-control" value="10"
+							type="number" required>
+						<div class="invalid-feedback">
+							<p id="minAgeCriteriaFieldFeedback"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="maxAgeCriteriaField">Maximum age: </label> <input
+							id="maxAgeCriteriaField" class="form-control" value="10"
+							type="number" required>
+						<div class="invalid-feedback">
+							<p id="maxAgeCriteriaFieldFeedback"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="sexCriteriaField">Sex: </label> <select
+							id="sexCriteriaField" class="custom-select">
+							<option>MALE</option>
+							<option>FEMALE</option>
+							<option>OTHER</option>
+							<option>ANY</option>
+						</select>
+						<div class="invalid-feedback">
+							<p id="sexCriteriaFieldFeedback"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="cityCriteriaField">Cities: </label>
+						<div class="col-6">
+							<table class="table table-vcenter" id="citiesTable1">
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div class="col-6">
+							<table class="table table-vcenter" id="citiesTable2">
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+
+						<button type="button" class="btn btn-success mt-3 mb-3"
+							id="addCityButton">
+							<span class="glyphicon glyphicon-plus ">Add</span>
+						</button>
+
+					</div>
+					<div class="row ml-4">
+						<button id="criteriaButton" class="btn btn-primary mb-3" disabled
+							type="button">Update</button>
+						<div class="ml-2 spinner-border text-primary" role="status"
+							id="criteriaLoading">
+							<span class="sr-only">Loading...</span>
+						</div>
+						<div class="ml-2 text-primary" id="criteriaFinished">
+							<h3 class="glyphicon glyphicon-ok"></h3>
+						</div>
+						<div class="ml-2 text-danger" id="criteriaError">
+							<h3 class="glyphicon glyphicon-remove"></h3>
+						</div>
+					</div>
+				</div>
+			</form>
 		</div>
-		<div class = "row">
-			<p class = "card-text">City : </p>
-			<p id = "cityField" class = "card-text">City : </p>
+		<div id="loadingIcon" class="container text-center mt-5">
+			<div class="spinner-border text-primary" role="status"
+				style="min-width: 100px; min-height: 100px;">
+				<span class="sr-only">Loading...</span>
+			</div>
 		</div>
-	</div>
-	<footer>
-		<div th:include="fragments/scripts :: general" />
-		<div th:include="fragments/scripts :: profile" />
-	</footer>
-	<script>
+		<footer>
+			<div th:include="fragments/scripts :: general" ></div>
+			<div th:include="fragments/scripts :: profile" ></div>
+			<div th:include="fragments/scripts :: validation" ></div>
+		</footer>
+
+
+
+		<!-- Vendor JS-->
+		<script th:src="@{/static/vendor/select2/select2.min.js}"></script>
+		<script th:src="@{/static/vendor/datepicker/moment.min.js}"></script>
+		<script th:src="@{/static/vendor/datepicker/daterangepicker.js}"></script>
+		<script th:src="@{/static/js/signupBeauty.js}"></script>
+
+		<script>
 	window.addEventListener("load", () => {
-		initProfile("[[@{'/'}]]");
+		profile.initProfile("[[@{'/'}]]");
+		criteriaSettings.init("[[@{'/'}]]");
+
+		document.getElementById("profileForm").classList.remove("hidden");
+		document.getElementById("criteriaForm").classList.remove("hidden");
+		document.getElementById("loadingIcon").classList.add("hidden");
+		
+		
 	});
+	
    	 </script>
 </body>
 

@@ -1,7 +1,7 @@
 const handleLogin = (e,params, baseUrl) => {
 	e.preventDefault();
-	showAlert(null);
-	const url = baseUrl + "users/login";
+	customAlert.hideAlert();
+	const url = baseUrl + "backend/users/login";
 	const userData = {
 		userName: params.username,
 		password: params.password
@@ -13,15 +13,15 @@ const handleLogin = (e,params, baseUrl) => {
 	};
 
 	fetch(url, fetchParams).then((response) => {
-		
+		if (response.status !== 200){
+			customAlert.showAlertFromResponse(response);
+			return;
+		}
 		response.json().then((body) => {
-			if (response.status !== 200){
-				showAlert("Error: unable to log in with given credentials");
-				return;
-			}
 			
-			sessionStorage.setItem('user_jwt', body.jwt);
-			sessionStorage.setItem('user_name', body.userName);
+			
+		    localStorage.setItem('user_jwt', body.jwt);
+		    localStorage.setItem('user_name', body.userName);
 			
 			
 			window.location.href = baseUrl;

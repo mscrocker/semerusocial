@@ -46,15 +46,11 @@
 		</createTable>
 	</changeSet>
 
-
-
 	<changeSet author="liquibase-docs"
 		id="addForeignKeyConstraint">
 		<addForeignKeyConstraint
-			baseColumnNames="user"
-			 baseTableName="ImageTable"
-			constraintName="fk_userId"
-			referencedColumnNames="id" 
+			baseColumnNames="user" baseTableName="ImageTable"
+			constraintName="fk_userId" referencedColumnNames="id"
 			referencedTableName="UserTable" />
 	</changeSet>
 	<changeSet author="Marco" id="FixUniquePassword">
@@ -74,13 +70,158 @@
 			oldColumnName="password_fix"
 			newColumnName="password"
 			columnDataType="VARCHAR(60)" />
+		</changeSet>
 		
 		
-		
+
+	<changeSet author="liquibase-docs" id="addSuggestionColumn">
+		<addColumn tableName="UserTable">
+			<column name="suggestion" type="BIGINT">
+				<constraints nullable="true" unique="false" />
+			</column>
+		</addColumn>
+		<addForeignKeyConstraint
+			baseColumnNames="suggestion" baseTableName="UserTable"
+			constraintName="fk_suggestionId" onDelete="SET NULL"
+			referencedColumnNames="id" referencedTableName="UserTable" />
 
 	</changeSet>
 
+	<changeSet id="table CitiesCriteria" author="">
+		<sqlFile encoding="utf8"
+			path="scripts/createCitiesCriteria.sql"
+			relativeToChangelogFile="true" stripComments="true" />
+	</changeSet>
 
+	<changeSet id="criteria_UserTable" author="liquibase-docs">
+		<addColumn tableName="UserTable">
+			<column name="criteriaSex"
+				type="ENUM('FEMALE','MALE','OTHER','ANY')">
+				<constraints nullable="false" unique="false" />
+			</column>
+			<column name="criteriaMinAge" type="INT">
+				<constraints nullable="false" unique="false" />
+			</column>
+			<column name="criteriaMaxAge" type="INT">
+				<constraints nullable="false" unique="false" />
+			</column>
+		</addColumn>
+
+		<addDefaultValue columnName="criteriaSex"
+			tableName="UserTable" defaultValue="Any" />
+
+		<addDefaultValue tableName="UserTable"
+			columnName="criteriaMinAge" defaultValueNumeric="0" />
+
+		<addDefaultValue tableName="UserTable"
+			columnName="criteriaMaxAge" defaultValueNumeric="99" />
+
+	</changeSet>
 	
+	
+    
+    <changeSet id="Add_DescriptionToUserTable" author="AlexMartinez">
+        <addColumn tableName="UserTable">
+            <column name="description" type="VARCHAR(60)">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="Drop_DescriptionFromImageTable" author="AlexMartinez">
+        <dropColumn tableName="ImageTable"
+            columnName="description"/>
+    </changeSet>
+    
+    <changeSet author="AlexMartinez" id="AddRequestMatchRejectTables">
+        <createTable tableName="RequestTable">
+            <column name="subject" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="object" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="MatchTable">
+            <column name="user1" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="user2" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+        
+        <createTable tableName="RejectedTable">
+            <column name="subject" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="object" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint 
+        	constraintName="request_subject_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="subject" 
+        	baseTableName="RequestTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="request_object_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="object" 
+        	baseTableName="RequestTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="rejected_subject_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="subject" 
+        	baseTableName="RejectedTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="rejected_object_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="object" 
+        	baseTableName="RejectedTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="match_user1_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="user1" 
+        	baseTableName="MatchTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        <addForeignKeyConstraint 
+        	constraintName="match_user2_fk" 
+        	referencedTableName="UserTable" 
+        	baseColumnNames="user2" 
+        	baseTableName="MatchTable" 
+        	referencedColumnNames="id"
+        	onDelete="CASCADE"
+        	onUpdate="CASCADE"/>
+        
+        
+        
+    </changeSet>
+
+
 
 </databaseChangeLog>

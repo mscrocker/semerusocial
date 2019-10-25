@@ -6,22 +6,19 @@ import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 
 public interface ImageService {
 
-	public ImageImpl addImage(ImageImpl image, Long userId) 
+	public ImageImpl addImage(ImageImpl image, Long userId)
 			throws InstanceNotFoundException;
 
-	public ImageImpl editImage(ImageImpl image, Long imageId, Long userId)
+	public void removeImage(Long imageId, Long userId)
 			throws InstanceNotFoundException, ItsNotYourImageException;
 
-	public void removeImage(Long imageId, Long userId) 
-			throws InstanceNotFoundException, ItsNotYourImageException;
-
-	public Block<ImageImpl> getImagesByUserId(Long userId, int page) 
+	public Block<ImageImpl> getImagesByUserId(Long userId, int page)
 			throws InstanceNotFoundException;
-	
-	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId) 
+
+	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId)
 			throws InstanceNotFoundException, ItsNotYourImageException;
-	
-	public Long getFirstImageIdByUserId(Long userId) 
+
+	public Long getFirstImageIdByUserId(Long userId)
 			throws InstanceNotFoundException;
 
 }

@@ -47,11 +47,11 @@
 					<form id="signUpForm" th:action="@{/signUp}" method="POST">
 						<div class="input-group">
 							<input class="input--style-3" type="text" id="username"
-								placeholder="Username" name="username" required>
+								placeholder="Username" name="username" maxlength="30" required>
 						</div>
 						<div class="input-group">
 							<input class="input--style-3" type="password"
-								placeholder="Password" name="password" id="password" required>
+								placeholder="Password" name="password" id="password" maxlength="20" required>
 						</div>
 						<div class="input-group">
 							<input class="input--style-3 js-datepicker" type="text"
@@ -61,7 +61,7 @@
 						<div class="input-group">
 							<div class="rs-select2 js-select-simple select--no-search">
 								<select name="gender" id="genre" required>
-									<option disabled="disabled" selected="selected">Gender</option>
+									<option value="" disabled="disabled" selected="selected">Gender</option>
 									<option>Male</option>
 									<option>Female</option>
 									<option>Non Binary</option>
@@ -72,8 +72,12 @@
 
 						<div class="input-group">
 							<input class="input--style-3" type="text" id="city"
-								placeholder="City" name="city" required>
+								placeholder="City" name="city" maxlength="30" required>
 						</div>
+						<div class="input-group">
+                            <input class="input--style-3" type="text" id="description"
+                                placeholder="Description" name="description" maxlength="60" required>
+                        </div>
 						<div class="form-login">
 							<button class="signup" type="submit">Sign up</button>
 							<p>
@@ -98,7 +102,7 @@
 	<footer>
 		<!-- 		<div th:include="fragments/scripts :: general" />
  -->
-		<div th:include="fragments/scripts :: register" />
+		<div th:include="fragments/scripts :: register"></div>
 
 
 	</footer>
@@ -110,7 +114,8 @@
    			password: document.getElementById("password").value,
    			date: document.getElementById("birthday").value,
    			genre: document.getElementById("genre").value,
-   			city: document.getElementById("city").value
+   			city: document.getElementById("city").value,
+   			description: document.getElementById("description").value
    		}};
    		document.getElementById("signUpForm").addEventListener('submit', (e) => handleRegister(e, params(), "[[@{'/'}]]"));
    	});
