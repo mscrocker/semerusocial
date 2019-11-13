@@ -99,19 +99,16 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="cityCriteriaField">Cities: </label>
+						<label id="cityCriteriaLabel" for="cityCriteriaField">Cities: </label>
 						<div class="col-6">
-							<table class="table table-vcenter" id="citiesTable1" summary="City Table 1">
-								<tbody>
+							<table class="table table-vcenter" id="citiesTable1" aria-describedby="cityCriteriaLabel">
+								<th id="citiesTable1Header"></th>
+								<tbody id="citiesTable1Body">
+									
 								</tbody>
 							</table>
 						</div>
-						<div class="col-6">
-							<table class="table table-vcenter" id="citiesTable2" summary="City Table 2">
-								<tbody>
-								</tbody>
-							</table>
-						</div>
+						
 
 						<button type="button" class="btn btn-success mt-3 mb-3"
 							id="addCityButton">
