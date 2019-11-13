@@ -163,7 +163,7 @@ const friendSuggestion = {
             friendSuggestion.next.classList.add("hidden");
         }
         // When we reach the last element
-        if (friendSuggestion.controller.childElementCount === friendSuggestion.counter + 1 && true) {
+        if (friendSuggestion.controller.childElementCount === friendSuggestion.counter + 1 ) {
             if (!friendSuggestion.askForMore)
                 return;
             friendSuggestion.page++;

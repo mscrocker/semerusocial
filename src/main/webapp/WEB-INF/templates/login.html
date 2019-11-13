@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 
 <head>
 <title>FriendMatch</title>
@@ -29,10 +29,7 @@
 				type="password" th:placeholder="Password" id="password" maxlength="20"
 				name="password" class="form-control" required/> <br />
 
-			<div align="center" th:if="${param.error}">
-				<p style="font-size: 20; color: #FF1C19;">Email or Password
-					invalid, please verify</p>
-			</div>
+			
 			<button class="btn btn-lg btn-primary btn-block" name="Submit"
 				value="Login" type="Submit" th:text="Login"></button>
 		</form>
