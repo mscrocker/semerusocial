@@ -19,13 +19,13 @@ const customAlert = {
     
 
             if (message.globalError) {
-                globalError = message.globalError;
+                let globalError = message.globalError;
                 text.innerText = globalError;
             } else if (message.fieldErrors) {
                 text.innerText = "";
 
 
-                fieldErrors = [];
+                let fieldErrors = [];
                 message.fieldErrors.forEach(e => {
                     let fieldName = e.fieldName;
                     fieldErrors.push(`${fieldName}: ${e.message}`);
