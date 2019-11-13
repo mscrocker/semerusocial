@@ -35,7 +35,7 @@ const customAlert = {
                 ul.style.flexGrow = 100;
                 errorAlert.insertBefore(ul,errorAlert.childNodes[2]);
 
-                fieldErrors.map((fieldError, index) => {
+                fieldErrors.forEach((fieldError, index) => {
                     let li = document.createElement("li");
                     li.setAttribute("id", index);
                     li.appendChild(document.createTextNode(fieldError));
