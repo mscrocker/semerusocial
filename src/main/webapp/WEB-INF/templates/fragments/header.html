@@ -1,8 +1,11 @@
+
+
 <!DOCTYPE html>
 
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<th:block th:fragment="header">
 
-<head th:fragment="header">
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta charset='utf-8'>
@@ -33,14 +36,14 @@
 
 <!-- CSS -->
 <link rel="stylesheet"
-	th:href="@{/static/bootswatch-readable/css/bootstrap.min.css}">
+    th:href="@{/static/bootswatch-readable/css/bootstrap.min.css}">
 
 <link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.css}">
 <link rel="stylesheet"
-	th:href="@{/static/bootstrap/css/bootstrap.min.css}">
+    th:href="@{/static/bootstrap/css/bootstrap.min.css}">
 
 <link rel="stylesheet"
-	th:href="@{/static/font-awesome/css/font-awesome.min.css}">
+    th:href="@{/static/font-awesome/css/font-awesome.min.css}">
 
 <!-- Custom style -->
 <link rel="stylesheet" th:href="@{/static/css/style.min.css}">
@@ -49,4 +52,7 @@
 <!--[if lt IE 9]>
     <script th:src="@{/webjars/html5shiv/html5shiv.min.js}"></script>
     <![endif]-->
+</th:block>
+
+
 </head>
