@@ -4,12 +4,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:include="fragments/header :: header" >
-    <title>Your Friend List</title>
-</head>>
+    <title id="friendListTitle">Your Friend List</title>
+</head>
 <body>
 	<header class="header" th:include="fragments/menu :: menu" ></header>
 	<div th:include="fragments/errorAlert"></div>
-	<table class="table table-striped table-bordered col-9 mx-auto" summary="Friend List">
+	<table class="table table-striped table-bordered col-9 mx-auto" aria-describedby="friendListTitle" aria-labelled-by="friendListTitle">
 		<colgroup span="4"></colgroup>
 		<thead class="thead-dark">
 			<tr>
