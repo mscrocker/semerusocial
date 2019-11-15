@@ -219,10 +219,8 @@ const friendSuggestion = {
 
     },
     onFinishedSuggestion: () => {
-        // location.reload(true);
-        let id = 1;
         friendSuggestion.restartCarrousel();
-        // console.log("whattt")
+        
     },
     keyHandler: (evt) => {
         evt = evt || window.event;
