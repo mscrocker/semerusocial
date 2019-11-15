@@ -4,36 +4,54 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class EntityTestUtils {
-	private static Object generateRandomValue(Field field, int seed) {
+	@SuppressWarnings("unchecked")
+	private static Object generateRandomValue(@SuppressWarnings("rawtypes") Class type, int seed) {
 		// WARNING: if field type is not basic, null will always be the value
 
 		Object value = null;
-		if (field.getType().isAssignableFrom(boolean.class) || field.getType().isAssignableFrom(Boolean.class)) {
+		if (type.isAssignableFrom(boolean.class) || type.isAssignableFrom(Boolean.class)) {
 			value = (seed % 2 == 0) ? Boolean.TRUE : Boolean.FALSE;
 		}
-		if (field.getType().isAssignableFrom(int.class) || field.getType().isAssignableFrom(Integer.class)) {
+		if (type.isAssignableFrom(int.class) || type.isAssignableFrom(Integer.class)) {
 			value = seed;
 		}
-		if (field.getType().isAssignableFrom(long.class) || field.getType().isAssignableFrom(Long.class)) {
+		if (type.isAssignableFrom(long.class) || type.isAssignableFrom(Long.class)) {
 			value = (long) seed;
 		}
-		if (field.getType().isAssignableFrom(float.class) || field.getType().isAssignableFrom(Float.class)) {
+		if (type.isAssignableFrom(float.class) || type.isAssignableFrom(Float.class)) {
 			value = (float) seed;
 		}
-		if (field.getType().isAssignableFrom(double.class) || field.getType().isAssignableFrom(Double.class)) {
+		if (type.isAssignableFrom(double.class) || type.isAssignableFrom(Double.class)) {
 			value = (double) seed;
 		}
-		if (field.getType().isAssignableFrom(String.class)) {
+		if (type.isAssignableFrom(byte.class) || type.isAssignableFrom(Byte.class)) {
+			value = (byte) seed;
+		}
+		if (type.isAssignableFrom(String.class)) {
 			value = "string-" + Integer.toString(seed);
+		}
+		if (value == null) {
+			if (type.isArray()) {
+				Object array = Array.newInstance(type.getComponentType(), 1);
+				Array.set(array, 0, generateRandomValue(type.getComponentType(), seed));
+				return array;
+			}
+			try {
+				return createInstance(type);
+			} catch(Exception e) {
+				return null;
+			}
 		}
 		return value;
 	}
@@ -45,8 +63,11 @@ public class EntityTestUtils {
 			@SuppressWarnings("unchecked")
 			Object object = type.getConstructor().newInstance();
 			for (Field field : fields) {
+				if (Modifier.isStatic(field.getModifiers())) {
+					continue;
+				}
 				field.setAccessible(true);
-				field.set(object, generateRandomValue(field, generator.nextInt()));
+				field.set(object, generateRandomValue(field.getType(), generator.nextInt()));
 			}
 			return object;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -62,6 +83,9 @@ public class EntityTestUtils {
 			result = ori.getClass().getConstructor().newInstance();
 			for (Field field : fields) {
 				if (field.isSynthetic()) {
+					continue;
+				}
+				if (Modifier.isStatic(field.getModifiers())) {
 					continue;
 				}
 				field.setAccessible(true);
@@ -96,15 +120,21 @@ public class EntityTestUtils {
 			if (field.isSynthetic()) {
 				continue;
 			}
+			if (Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
 			if (fieldsToIgnore.contains(field.getName())) {
 				continue;
 			}
 			try {
 				field.setAccessible(true);
 				Object oldValue = field.get(copy);
+				if (oldValue == null) {
+					continue;
+				}
 				assertEquals(object, copy);
 
-				field.set(copy, generateRandomValue(field, generator.nextInt()));
+				field.set(copy, generateRandomValue(field.getType(), generator.nextInt()));
 				assertFalse(object.equals(copy));
 				field.set(copy, oldValue);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -165,7 +195,7 @@ public class EntityTestUtils {
 				fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
 
 				Field field = type.getDeclaredField(fieldName);
-				Object value = generateRandomValue(field, generator.nextInt());
+				Object value = generateRandomValue(field.getType(), generator.nextInt());
 				field.setAccessible(true);
 				field.set(object, value);
 				getter.setAccessible(true);
@@ -177,7 +207,7 @@ public class EntityTestUtils {
 				fieldName = Character.toLowerCase(fieldName.charAt(0)) + fieldName.substring(1);
 
 				Field field = type.getDeclaredField(fieldName);
-				Object value = generateRandomValue(field, generator.nextInt());
+				Object value = generateRandomValue(field.getType(), generator.nextInt());
 				field.setAccessible(true);
 				setter.setAccessible(true);
 				setter.invoke(object, value);
@@ -199,8 +229,18 @@ public class EntityTestUtils {
 				if (field.isSynthetic() || fieldsToIgnoreToString.contains(field.getName())) {
 					continue;
 				}
+				if (Modifier.isStatic(field.getModifiers())) {
+					continue;
+				}
+				if ((!field.getType().isPrimitive()) && (field.getType() != String.class)) {
+					continue;
+				}
 				field.setAccessible(true);
-				assertTrue(string.contains(field.get(object).toString()));
+				Object val = field.get(object);
+				if (val == null) {
+					continue;
+				}
+				assertTrue(string.contains(val.toString()));
 			}
 		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
