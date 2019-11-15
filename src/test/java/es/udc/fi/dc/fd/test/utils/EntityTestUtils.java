@@ -133,8 +133,11 @@ public class EntityTestUtils {
 					continue;
 				}
 				assertEquals(object, copy);
-
-				field.set(copy, generateRandomValue(field.getType(), generator.nextInt()));
+				Object value = generateRandomValue(field.getType(), generator.nextInt());
+				while ((value != null) && value.equals(oldValue)) {
+					value = generateRandomValue(field.getType(), generator.nextInt());
+				}
+				field.set(copy, value);
 				assertFalse(object.equals(copy));
 				field.set(copy, oldValue);
 			} catch (IllegalArgumentException | IllegalAccessException e) {

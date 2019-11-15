@@ -33,7 +33,7 @@ public final class ImageCreationDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ImageCreationDto [data=" + data + "]";
+		return "ImageCreationDto [type= " + type + ", data=" + data + "]";
 	}
 
 	public String getType() {

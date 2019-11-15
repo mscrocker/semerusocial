@@ -70,7 +70,7 @@ public class ReturnedImageDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ReturnedImageDto [data=" + data + "]";
+		return "ReturnedImageDto [type=" + type + ", data=" + data + "]";
 	}
 
 	public String getType() {

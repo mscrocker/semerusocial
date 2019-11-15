@@ -7,6 +7,10 @@ public class ErrorsDto {
 	private String globalError;
 	private List<FieldErrorDto> fieldErrors;
 	
+	public ErrorsDto() {
+		super();
+	}
+	
 	public ErrorsDto(String globalError) {
 		this.globalError = globalError;
 	}
