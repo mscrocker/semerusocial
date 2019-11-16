@@ -18,9 +18,10 @@ public final class ImageCreationDto implements Serializable {
 		super();
 	}
 
-	public ImageCreationDto(String data) {
+	public ImageCreationDto(String data, String type) {
 		super();
 		setData(data);
+		setType(type);
 	}
 
 	public String getData() {
