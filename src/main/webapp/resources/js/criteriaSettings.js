@@ -160,7 +160,7 @@ const criteriaSettings = {
 			
 			if (data.length <= 5){
 				// ONE ROW DISPLAY
-				let table = document.getElementById("citiesTable1");
+				let table = document.getElementById("citiesTable1Body");
 				for (let i = data.length - 1; i >= 0; i--){
 					let row = table.insertRow(0);
 					let cell2 = row.insertCell(0);

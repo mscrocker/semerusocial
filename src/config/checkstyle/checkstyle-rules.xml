@@ -36,13 +36,6 @@
 	<!-- Checks for whitespace -->
 	<module name="FileTabCharacter" />
 
-	<!-- Checks for Headers -->
-	<!-- See http://checkstyle.sf.net/config_header.html -->
-	<!-- <module name="Header"> -->
-	<!-- <property name="headerFile" value="${checkstyle.header.file}"/> -->
-	<!-- <property name="fileExtensions" value="java"/> -->
-	<!-- </module> -->
-
 	<module name="TreeWalker">
 
 		<!-- Checks for Javadoc comments -->
@@ -56,9 +49,7 @@
 			<property name="target"
 				value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
 		</module>
-		<!-- <module name="JavadocTagContinuationIndentation"/> -->
 		<module name="NonEmptyAtclauseDescription" />
-		<!-- <module name="CommentsIndentation"/> -->
 
 		<!-- Checks for texts -->
 		<module name="IllegalTokenText">
@@ -162,7 +153,6 @@
 		<module name="EmptyLineSeparator">
 			<property name="allowNoEmptyLineBetweenFields" value="true" />
 		</module>
-		<!-- <module name="EmptyCatchBlock"/> -->
 
 	</module>
 

@@ -57,13 +57,13 @@ const carrusel = {
 				
 				let baseLink = baseURL + "carrusel/";
 				if (body.nextId){
-					nextLink = baseLink + body.nextId;
+					carrusel.nextLink = baseLink + body.nextId;
 					document.getElementById("nextButton").classList.add("btn-primary");
 				} else {
 					document.getElementById("nextButton").classList.add("btn-disabled");
 				}
 				if (body.prevId){
-					previousLink = baseLink + body.prevId;
+					carrusel.previousLink = baseLink + body.prevId;
 					document.getElementById("previousButton").classList.add("btn-primary");
 				} else {
 					document.getElementById("previousButton").classList.add("btn-disabled");
