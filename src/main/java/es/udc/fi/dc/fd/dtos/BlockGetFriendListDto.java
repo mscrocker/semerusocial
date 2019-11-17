@@ -7,6 +7,10 @@ public class BlockGetFriendListDto<T> {
 	private List<T> friends;
 	private boolean existMoreFriends;
 
+	public BlockGetFriendListDto() {
+		super();
+	}
+	
 	public BlockGetFriendListDto(List<T> friends, boolean existMoreFriends) {
 		super();
 		this.friends = friends;

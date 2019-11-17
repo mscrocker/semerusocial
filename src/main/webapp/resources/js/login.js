@@ -26,8 +26,8 @@ const handleLogin = (e,params, baseUrl) => {
 			
 			window.location.href = baseUrl;
 			
-		}).catch((e) => {
-			console.log("Error logging in!");
+		}).catch((exception) => {
+			console.log(exception);
 		});
 		
 		
