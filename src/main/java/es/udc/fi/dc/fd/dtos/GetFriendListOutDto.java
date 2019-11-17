@@ -9,6 +9,10 @@ public class GetFriendListOutDto {
 	private String sex;
 
 	private String city;
+	
+	public GetFriendListOutDto() {
+		super();
+	}
 
 	public GetFriendListOutDto(String userName, int age, String sex, String city) {
 		super();

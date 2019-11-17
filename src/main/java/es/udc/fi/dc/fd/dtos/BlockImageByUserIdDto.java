@@ -5,6 +5,10 @@ public class BlockImageByUserIdDto<T> {
 	ReturnedImageDto image;
 	Long prevId;
 	Long nextId;
+	
+	public BlockImageByUserIdDto() {
+		super();
+	}
     
     public BlockImageByUserIdDto(ReturnedImageDto image, Long prevId, Long nextId) {
         setImage(image);

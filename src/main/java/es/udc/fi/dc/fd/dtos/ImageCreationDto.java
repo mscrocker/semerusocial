@@ -18,9 +18,10 @@ public final class ImageCreationDto implements Serializable {
 		super();
 	}
 
-	public ImageCreationDto(String data) {
+	public ImageCreationDto(String data, String type) {
 		super();
 		setData(data);
+		setType(type);
 	}
 
 	public String getData() {
@@ -33,7 +34,7 @@ public final class ImageCreationDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ImageCreationDto [data=" + data + "]";
+		return "ImageCreationDto [type= " + type + ", data=" + data + "]";
 	}
 
 	public String getType() {
