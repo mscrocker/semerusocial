@@ -75,6 +75,9 @@ public class UserImpl implements User {
 	@Column(name = "minRateCriteria")
 	private int minRateCriteria;
 
+	public UserImpl() {
+		super();
+	}
 
 	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city, String description) {
 		super();

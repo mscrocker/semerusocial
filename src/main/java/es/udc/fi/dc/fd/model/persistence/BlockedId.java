@@ -11,9 +11,9 @@ public class BlockedId implements Serializable {
 	@Transient
 	private static final long serialVersionUID = 668475227762820441L;
 
-	private Long subject; // el que rechaza
+	private Long subject; // el que bloquea
 
-	private Long object; // el rechazado
+	private Long object; // el bloqueado
 
 	public BlockedId(Long subject, Long object) {
 		super();
