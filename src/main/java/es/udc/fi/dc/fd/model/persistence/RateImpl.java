@@ -1,16 +1,16 @@
 package es.udc.fi.dc.fd.model.persistence;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import es.udc.fi.dc.fd.model.Rate;
-
 @Entity(name = "Rate")
 @Table(name = "RateTable")
-public class RateImpl implements Rate {
+public class RateImpl implements Serializable {
 
 	@Transient
 	private static final long serialVersionUID = 7235476221L;
@@ -31,22 +31,18 @@ public class RateImpl implements Rate {
 		this.points = points;
 	}
 
-	@Override
 	public RateId getRateId() {
 		return rateId;
 	}
 
-	@Override
 	public void setRateId(RateId rateId) {
 		this.rateId = rateId;
 	}
 
-	@Override
 	public int getPoints() {
 		return points;
 	}
 
-	@Override
 	public void setPoints(int points) {
 		this.points = points;
 	}

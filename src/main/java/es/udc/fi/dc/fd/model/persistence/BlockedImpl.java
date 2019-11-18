@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.model.persistence;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -8,11 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import es.udc.fi.dc.fd.model.Blocked;
-
 @Entity(name = "Blocked")
 @Table(name = "BlockTable")
-public class BlockedImpl implements Blocked {
+public class BlockedImpl implements Serializable {
 
 	@Transient
 	private static final long serialVersionUID = 7235476221L;
@@ -33,22 +32,18 @@ public class BlockedImpl implements Blocked {
 		this.date = date;
 	}
 
-	@Override
 	public BlockedId getBlockedId() {
 		return blockedId;
 	}
 
-	@Override
 	public void setBlockedId(BlockedId blockedId) {
 		this.blockedId = blockedId;
 	}
 
-	@Override
 	public LocalDateTime getDate() {
 		return date;
 	}
 
-	@Override
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}

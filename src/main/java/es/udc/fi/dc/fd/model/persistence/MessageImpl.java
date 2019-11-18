@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.model.persistence;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -13,11 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import es.udc.fi.dc.fd.model.Message;
-
 @Entity(name = "Message")
 @Table(name = "MessageTable")
-public class MessageImpl implements Message {
+public class MessageImpl implements Serializable {
 
 	@Transient
 	private static final long serialVersionUID = 7235476221L;
@@ -60,62 +59,50 @@ public class MessageImpl implements Message {
 		this.date = date;
 	}
 
-	@Override
 	public Long getMessageId() {
 		return messageId;
 	}
 
-	@Override
 	public void setMessageId(Long messageId) {
 		this.messageId = messageId;
 	}
 
-	@Override
 	public UserImpl getUser1() {
 		return user1;
 	}
 
-	@Override
 	public void setUser1(UserImpl user1) {
 		this.user1 = user1;
 	}
 
-	@Override
 	public UserImpl getUser2() {
 		return user2;
 	}
 
-	@Override
 	public void setUser2(UserImpl user2) {
 		this.user2 = user2;
 	}
 
-	@Override
 	public UserImpl getTransmitter() {
 		return transmitter;
 	}
 
-	@Override
 	public void setTransmitter(UserImpl transmitter) {
 		this.transmitter = transmitter;
 	}
 
-	@Override
 	public String getMessageContent() {
 		return messageContent;
 	}
 
-	@Override
 	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
 	}
 
-	@Override
 	public LocalDateTime getDate() {
 		return date;
 	}
 
-	@Override
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
