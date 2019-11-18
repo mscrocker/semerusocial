@@ -134,6 +134,9 @@ button {
    ========================================================================== */
 .page-wrapper {
 	min-height: 100vh;
+	display: flex;
+	align-items: center;
+    justify-content: center;
 }
 
 body {
@@ -222,6 +225,7 @@ h6 {
    ========================================================================== */
 .wrapper {
 	margin: 0 auto;
+	flex-grow: 100;
 }
 
 .wrapper--w960 {
