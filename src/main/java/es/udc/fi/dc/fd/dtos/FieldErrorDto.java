@@ -5,6 +5,10 @@ public class FieldErrorDto {
 	private String fieldName;
 	private String message;
 	
+	public FieldErrorDto() {
+		super();
+	}
+	
 	public FieldErrorDto(String fieldName, String message) {
 		
 		this.fieldName = fieldName;

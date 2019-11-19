@@ -21,6 +21,9 @@ import es.udc.fi.dc.fd.model.User;
 @Table(name = "UserTable")
 public class UserImpl implements User {
 
+	private static final long DEFAULT_RATING_VOTES = 0;
+	private static final boolean DEFAULT_PREMIUM = false;
+
 	@Transient
 	private static final long serialVersionUID = 1L;
 
@@ -59,6 +62,18 @@ public class UserImpl implements User {
 
 	@Column(name = "description")
 	private String description;
+
+	@Column(name = "rating")
+	private double rating;
+
+	@Column(name = "ratingVotes")
+	private long ratingVotes = DEFAULT_RATING_VOTES;
+
+	@Column(name = "premium")
+	private boolean premium = DEFAULT_PREMIUM;
+
+	@Column(name = "minRateCriteria")
+	private int minRateCriteria;
 
 	public UserImpl() {
 		super();
@@ -193,20 +208,66 @@ public class UserImpl implements User {
 	}
 
 	@Override
+	public double getRating() {
+		return rating;
+	}
+
+	@Override
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+
+	@Override
+	public int getMinRateCriteria() {
+		return minRateCriteria;
+	}
+
+	@Override
+	public void setMinRateCriteria(int minRateCriteria) {
+		this.minRateCriteria = minRateCriteria;
+	}
+
+	@Override
+	public long getRatingVotes() {
+		return ratingVotes;
+	}
+
+	@Override
+	public void setRatingVotes(long ratingVotes) {
+		this.ratingVotes = ratingVotes;
+	}
+
+	@Override
+	public boolean isPremium() {
+		return premium;
+	}
+
+	@Override
+	public void setPremium(boolean premium) {
+		this.premium = premium;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (city == null ? 0 : city.hashCode());
+		result = prime * result + ((city == null) ? 0 : city.hashCode());
 		result = prime * result + criteriaMaxAge;
 		result = prime * result + criteriaMinAge;
-		result = prime * result + (criteriaSex == null ? 0 : criteriaSex.hashCode());
-		result = prime * result + (date == null ? 0 : date.hashCode());
-		result = prime * result + (description == null ? 0 : description.hashCode());
-		result = prime * result + (id == null ? 0 : id.hashCode());
-		result = prime * result + (password == null ? 0 : password.hashCode());
-		result = prime * result + (sex == null ? 0 : sex.hashCode());
-		result = prime * result + (suggestion == null ? 0 : suggestion.hashCode());
-		result = prime * result + (userName == null ? 0 : userName.hashCode());
+		result = prime * result + ((criteriaSex == null) ? 0 : criteriaSex.hashCode());
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + minRateCriteria;
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + (premium ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(rating);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (ratingVotes ^ (ratingVotes >>> 32));
+		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
+		result = prime * result + ((suggestion == null) ? 0 : suggestion.hashCode());
+		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -259,11 +320,23 @@ public class UserImpl implements User {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
+		if (minRateCriteria != other.minRateCriteria) {
+			return false;
+		}
 		if (password == null) {
 			if (other.password != null) {
 				return false;
 			}
 		} else if (!password.equals(other.password)) {
+			return false;
+		}
+		if (premium != other.premium) {
+			return false;
+		}
+		if (Double.doubleToLongBits(rating) != Double.doubleToLongBits(other.rating)) {
+			return false;
+		}
+		if (ratingVotes != other.ratingVotes) {
 			return false;
 		}
 		if (sex == null) {
@@ -295,7 +368,8 @@ public class UserImpl implements User {
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
 				+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
 				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
-				+ description + "]";
+				+ description + ", rating=" + rating + ", ratingVotes=" + ratingVotes + ", premium=" + premium
+				+ ", minRateCriteria=" + minRateCriteria + "]";
 	}
 
 }

@@ -386,8 +386,6 @@
 		<javaee.api.version>2.2</javaee.api.version>
 		<jasperreports.version>6.4.1</jasperreports.version>
 		<jsonpath.version>2.4.0</jsonpath.version>
-		<junit.jupiter.version>5.2.0</junit.jupiter.version>
-		<junit.platform.version>1.2.0</junit.platform.version>
 		<liquibase.version>3.5.5</liquibase.version>
 		<log4j.version>2.9.1</log4j.version>
 		<mockito.version>2.18.3</mockito.version>
@@ -410,6 +408,8 @@
 		<!-- ============================================== -->
 		<!-- ============== PLUGINS VERSIONS ============== -->
 		<!-- ============================================== -->
+		<junit.platform.version>1.5.2</junit.platform.version>
+		<junit.jupiter.version>5.5.2</junit.jupiter.version>
 		<plugin.changes.version>2.12.1</plugin.changes.version>
 		<plugin.jetty.version>9.4.8.v20171121</plugin.jetty.version>
 		<plugin.jshint.version>1.6.0</plugin.jshint.version>

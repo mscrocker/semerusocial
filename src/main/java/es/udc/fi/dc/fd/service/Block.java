@@ -7,6 +7,10 @@ public class Block<T> {
 	private List<T> images;
     private boolean existMoreImages;
 
+    public Block() {
+    	super();
+    }
+    
     public Block(List<T> items, boolean existMoreImages) {
         setImages(items);
         setExistMoreImages(existMoreImages);

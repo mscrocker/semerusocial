@@ -17,7 +17,7 @@ public class ImageConversor {
 
 	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
 		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ImageCreationDto(encoded);
+		return new ImageCreationDto(encoded, image.getType());
 	}
 
 	public final static ImageCreatedDto toImageCreatedDto(ImageImpl image) {
