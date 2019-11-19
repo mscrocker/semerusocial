@@ -107,11 +107,6 @@
 								<!-- Sample fix for plugin executions -->
 								<!-- This is to be used in case a Maven plugins gives problems in 
 									Eclipse -->
-								<!-- <lifecycleMappingMetadata> <pluginExecutions> <pluginExecution> 
-									<pluginExecutionFilter> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId> 
-									<versionRange>[0.5,)</versionRange> <goals> <goal>prepare-agent</goal> </goals> 
-									</pluginExecutionFilter> <action> <ignore /> </action> </pluginExecution> 
-									</pluginExecutions> </lifecycleMappingMetadata> -->
 								<downloadSources>true</downloadSources>
 								<downloadJavadocs>true</downloadJavadocs>
 							</configuration>
@@ -333,7 +328,6 @@
 			<id>deployment</id>
 			<properties>
 				<!-- Tests are skipped -->
-				<!--<maven.test.skip>true</maven.test.skip> -->
 			</properties>
 		</profile>
 	</profiles>
