@@ -19,7 +19,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -27,14 +26,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
@@ -43,6 +45,7 @@ import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
@@ -56,7 +59,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -77,6 +80,9 @@ public class ITFriendService {
 
 	@Autowired
 	private MatchRepository matchRepository;
+
+	@Autowired
+	private BlockedRepository blockedRepository;
 
 	@Autowired
 	public ITFriendService() {
@@ -443,4 +449,93 @@ public class ITFriendService {
 		});
 	}
 
+	@Test
+	public void testBlockUser() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockUser", "contraseñaBlockUser", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlockUser2", "contraseñaBlockUser2", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
+
+		final Long firstId = Math.min(user.getId(), user2.getId());
+		final Long secondId = user2.getId().equals(firstId) ? user.getId() : user2.getId();
+
+		// check if they are not friends now and if user blocked user2
+		assertTrue(!matchRepository.findById(new MatchId(firstId, secondId)).isPresent()
+				&& blockedRepository.findById(new BlockedId(user.getId(), user2.getId())).isPresent());
+	}
+
+	@Test
+	public void testBlockUserINFE() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioBlockUserINFE", "contraseñaBlockUserINFE", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
+		userService.signUp(user);
+
+		// user2 does not exists
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.blockUser(user.getId(), -1L);
+		});
+		// user does not exists
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.blockUser(-1L, user.getId());
+		});
+	}
+
+	@Test
+	public void testBlockUserINYF() throws InstanceNotFoundException, ItsNotYourFriendException,
+	AlreadyBlockedException, DuplicateInstanceException, InvalidDateException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockINYF", "contraseñaBlockINYF", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2INYF", "contraseñaBlock2INYF", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+
+		// user can not block user2 because they are not friends
+		assertThrows(ItsNotYourFriendException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
+		});
+	}
+
+	// AlreadyBlockedException
+	@Test
+	public void testBlockUserABE() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockABE", "contraseñaBlockABE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2ABE", "contraseñaBlock2ABE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
+		// user try to clock user2 again
+		assertThrows(AlreadyBlockedException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
+		});
+	}
 }

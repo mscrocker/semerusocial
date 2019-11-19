@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.BlockGetFriendListDto;
@@ -49,6 +51,8 @@ public class FriendController {
 	private final static String INVALID_RECOMMENDATION_EXCEPTION = "project.exceptions.InvalidRecommendationException";
 	private final static String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
+	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
+	private static final String ALREADY_BLOCKED_CODE = "project.exceptions.ItsNotYourFriendException";
 
 	@Autowired
 	private final MessageSource messageSource;
@@ -102,6 +106,16 @@ public class FriendController {
 
 	}
 
+	@ExceptionHandler(ItsNotYourFriendException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_FRIEND_CODE, null, ITS_NOT_YOUR_FRIEND_CODE,
+				locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
 	@ExceptionHandler(AlreadyRejectedException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
@@ -139,6 +153,15 @@ public class FriendController {
 
 		return new ErrorsDto(errorMessage);
 
+	}
+
+	@ExceptionHandler(AlreadyBlockedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public ErrorsDto handleAlreadyBlockedException(AlreadyBlockedException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(ALREADY_BLOCKED_CODE, null, ALREADY_BLOCKED_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
 	}
 
 	@ResponseStatus(value = HttpStatus.OK)
@@ -181,6 +204,13 @@ public class FriendController {
 		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, size);
 
 		return FriendConversor.toGetFriendListOutDto(friends);
+	}
+
+	@PostMapping("/block")
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void blockUser(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
+			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
+		friendService.blockUser(userId, params.getId());
 	}
 
 }
