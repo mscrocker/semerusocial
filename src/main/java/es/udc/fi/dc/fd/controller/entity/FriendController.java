@@ -52,7 +52,7 @@ public class FriendController {
 	private final static String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
-	private static final String ALREADY_BLOCKED_CODE = "project.exceptions.ItsNotYourFriendException";
+	private static final String ALREADY_BLOCKED_CODE = "project.exceptions.AlreadyBlockedException";
 
 	@Autowired
 	private final MessageSource messageSource;
@@ -107,7 +107,7 @@ public class FriendController {
 	}
 
 	@ExceptionHandler(ItsNotYourFriendException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
 	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_FRIEND_CODE, null, ITS_NOT_YOUR_FRIEND_CODE,
