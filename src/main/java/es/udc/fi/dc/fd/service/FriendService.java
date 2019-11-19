@@ -6,7 +6,9 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface FriendService {
@@ -23,4 +25,8 @@ public interface FriendService {
 			AlreadyAceptedException;
 
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
+
+	public void sendMessage(Long userId, Long friendId, String content)
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException;
+
 }

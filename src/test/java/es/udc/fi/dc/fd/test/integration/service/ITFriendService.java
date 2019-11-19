@@ -1,6 +1,7 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -33,10 +34,13 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
+import es.udc.fi.dc.fd.model.persistence.MessageImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
 import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
@@ -44,6 +48,7 @@ import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.MatchRepository;
+import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -56,7 +61,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -77,6 +82,9 @@ public class ITFriendService {
 
 	@Autowired
 	private MatchRepository matchRepository;
+
+	@Autowired
+	private MessageRepository messageRepository;
 
 	@Autowired
 	public ITFriendService() {
@@ -443,4 +451,178 @@ public class ITFriendService {
 		});
 	}
 
+	/******* SEND MESSAGE TESTS ****************************/
+
+	private Optional<UserImpl> createUser(String userName) {
+		final UserImpl user1 = createUser(userName, "pass", getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+		userRepository.save(user1);
+		return userRepository.findByUserName(userName);
+	}
+
+	@Test
+	public void testSendMessage() throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		//Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		//Los hacemos amigos
+		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		//Usamos el servicio
+		friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
+
+		//Asserts
+		final List<MessageImpl> msg = messageRepository.findAll();
+		assertNotNull(msg);
+		final MessageImpl item = msg.get(0);
+		assertEquals(item.getMessageContent(), content);
+		assertEquals(item.getUser1(), item.getTransmitter());
+		assertEquals(item.getUser1(), user.get());
+		assertEquals(item.getUser2(), friend.get());
+	}
+
+	@Test
+	public void testSendMessageFriendToUser()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Los hacemos amigos
+		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		// Usamos el servicio
+		friendService.sendMessage(friend.get().getId(), user.get().getId(), content);
+
+		// Asserts
+		final List<MessageImpl> msg = messageRepository.findAll();
+		assertNotNull(msg);
+		final MessageImpl item = msg.get(0);
+		assertEquals(item.getMessageContent(), content);
+		assertEquals(item.getUser2(), item.getTransmitter());
+		assertEquals(item.getUser1(), user.get());
+		assertEquals(item.getUser2(), friend.get());
+	}
+
+	@Test
+	public void testSendMessageInstanceNotFoundException()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+
+		// Usamos el servicio
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.sendMessage(user.get().getId(), 900L, content);
+		});
+	}
+
+	@Test
+	public void testSendMessageNotYourFriendException()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Usamos el servicio
+		assertThrows(NotYourFriendException.class, () -> {
+			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionUserNull()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			friendService.sendMessage(null, friend.get().getId(), content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionFriendNull()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user");
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			friendService.sendMessage(user.get().getId(), null, content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionMsgToYourself()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			friendService.sendMessage(user.get().getId(), user.get().getId(), content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionContentNull()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = null;
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Los hacemos amigos
+		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionContentBlank()
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		final String content = "   ";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Los hacemos amigos
+		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
+		});
+	}
 }
+
+
+
