@@ -3,9 +3,11 @@ package es.udc.fi.dc.fd.service;
 import java.util.Optional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
@@ -23,4 +25,7 @@ public interface FriendService {
 			AlreadyAceptedException;
 
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
+
+	void blockUser(Long userId, Long friendId)
+			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
 }
