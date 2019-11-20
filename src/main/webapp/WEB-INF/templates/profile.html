@@ -5,8 +5,6 @@
 
 <head th:include="fragments/header :: header">
 
-<link rel="stylesheet" type="text/css"
-	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <title>Your Profile</title>
 </head>
 <body>
@@ -17,10 +15,22 @@
 		<h1 class="" style="text-align: center;">User Data</h1>
 		<form class="form">
 			<div class="">
-				<div class="form-group">
-					<input class="js-datepicker form-control" type="text"
-						name="birthday" id="birthday" required> <em
-						class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></em>
+				<div class="row">
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateDayField">Day</label> <input
+							class="form-control" type="text" name="birthDateDayField"
+							id="birthDateDayField" required>
+					</div>
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateMonthField">Month</label> <input
+							class="form-control" type="text" name="birthDateMonthField"
+							id="birthDateMonthField" required>
+					</div>
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateYearField">Year</label> <input
+							class="form-control" type="text" name="birthDateYearField"
+							id="birthDateYearField" required>
+					</div>
 				</div>
 				<div class="form-group">
 					<label for="sexField">Sex: </label> <select id="sexField"
@@ -150,15 +160,7 @@
 
 
 
-	<!-- Vendor JS-->
-
-	<script type="text/javascript"
-		src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-	<script type="text/javascript"
-		src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-
 	<!-- Main JS-->
-	<script th:src="@{resources/js/signupBeauty.js}"></script>
 	<script>
 	window.addEventListener("load", () => {
 		profile.initProfile("[[@{'/'}]]");
