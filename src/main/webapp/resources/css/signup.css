@@ -447,7 +447,7 @@ input {
 
 .rs-select2 .select2-container .select2-selection--single .select2-selection__arrow:after
 	{
-	font-family: "Material-Design-Iconic-Font, sans-serif";
+	font-family: Material-Design-Iconic-Font, sans-serif;
 	content: '\f2f9';
 	font-size: 18px;
 	color: #ccc;
