@@ -11,10 +11,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
-import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -34,24 +34,21 @@ public class ChatContoller {
 	@MessageMapping("/chat.sendMessage")
 	public void sendMessage(@Payload ChatMessage chatMessage, Principal user) {
 		// TODO While we dont have the areWeFriends Method, a little hack
+		JwtInfo ownerUser = ((JwtInfo) user);
+
 		try {
-			BlockFriendList<UserImpl> friendList = friendService.getFriendList(chatMessage.getReceiverId(), 0,
-					Integer.MAX_VALUE);
-			long count = friendList.getFriends().stream().map(x -> x.getUserName())
-					.filter(x -> x.equals(user.getName())).count();
-			if (count == 1 || ((JwtInfo) user).getUserId().equals(chatMessage.getReceiverId())) {
-				UserImpl whomToSend = userService.loginFromUserId(chatMessage.getReceiverId());
-				// TODO store message on db
-				messagingTemplate.convertAndSendToUser(whomToSend.getUserName(), "/queue/reply", chatMessage);
-			}
+			UserImpl receiver = userService.loginFromUserId(chatMessage.getReceiverId());
+			friendService.sendMessage(ownerUser.getUserId(), chatMessage.getReceiverId(), chatMessage.getContent());
+			messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/reply", chatMessage);
 
-		} catch (InstanceNotFoundException e) {
-
-		} catch (RequestParamException e) {
-			e.printStackTrace();
+		} catch (InstanceNotFoundException | NotYourFriendException | ValidationException e) {
+			logger.info("Illegal access to chat");
+			System.out.println("other logger");
+			ChatMessage chatMessage2 = new ChatMessage();
+			chatMessage2.setType(MessageType.ERROR);
+			chatMessage2.setContent("Tried to send a message to an invalid person");
+			messagingTemplate.convertAndSendToUser(ownerUser.getName(), "/queue/reply", chatMessage2);
+			return;
 		}
-		logger.info("Illegal access to chat");
-		System.out.println("other logger");
-		return;
 	}
 }

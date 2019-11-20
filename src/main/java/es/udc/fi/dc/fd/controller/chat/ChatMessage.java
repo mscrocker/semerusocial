@@ -2,6 +2,10 @@ package es.udc.fi.dc.fd.controller.chat;
 
 public class ChatMessage {
 
+	public ChatMessage() {
+		super();
+	}
+
 	private MessageType type;
 	private String content;
 	private String sender;
