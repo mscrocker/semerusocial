@@ -72,8 +72,6 @@ let profile = null;
 							profile.parseDate()
 					).getYear() - 70;
 				result = (age >= 18);
-			} else {
-				result = false;
 			}
 			
 			if (updateField === true){
