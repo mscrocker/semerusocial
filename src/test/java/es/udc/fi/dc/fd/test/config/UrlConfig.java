@@ -63,6 +63,7 @@ public final class UrlConfig {
 
 	public static final String URL_FRIEND_FRIENDLIST_GET = "/backend/friends/friendList";
 
+	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
 
 	/**
 	 * Default constructor to avoid initialization.

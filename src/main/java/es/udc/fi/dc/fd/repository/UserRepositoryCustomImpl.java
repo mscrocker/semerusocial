@@ -40,9 +40,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += "AND LOWER(p.city) in (:cities) ";
 		}
 
-//		if (!criteria.getCity().isEmpty()) {
-//			queryString += "AND p.city IN :cities ";
-//		}
+		//		if (!criteria.getCity().isEmpty()) {
+		//			queryString += "AND p.city IN :cities ";
+		//		}
+
+		// Si esta bloqueado que no lo sugiera
+		queryString += "AND p.id NOT IN (SELECT b.blockedId.object FROM Blocked b WHERE b.blockedId.subject=:userId) ";
 
 		// Si ya son amigos que no lo sugiera
 		queryString += "AND p.id NOT IN (SELECT m1.matchId.user1 FROM Match m1 WHERE m1.matchId.user2=:userId) ";
