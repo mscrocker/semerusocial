@@ -26,4 +26,10 @@ public class CarruselController {
 
 		return UserViewConstants.Friend_Finder;
 	}
+
+	@GetMapping(path = "/chat")
+	public final String displayChat() {
+
+		return "chat";
+	}
 }
