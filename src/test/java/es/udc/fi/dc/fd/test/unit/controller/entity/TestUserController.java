@@ -41,7 +41,10 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
@@ -333,7 +336,7 @@ public final class TestUserController {
 	public void TestUserController_GetSearchCriteria() throws InstanceNotFoundException, Exception {
 
 		final List<String> cities = new ArrayList<>();
-		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities);
+		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 		when(userServiceMock.getSearchCriteria(any(Long.class))).thenReturn(criteria);
 
 		// @formatter:off
@@ -387,7 +390,7 @@ public final class TestUserController {
 			throws InstanceNotFoundException, InvalidAgeException, Exception {
 
 		final List<String> cities = new ArrayList<>();
-		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities);
+		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
@@ -412,7 +415,7 @@ public final class TestUserController {
 	public void TestUserController_SetSearchCriteria_InstanceNotFoundException()
 			throws InstanceNotFoundException, InvalidAgeException, Exception {
 		final List<String> cities = new ArrayList<>();
-		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities);
+		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).setSearchCriteria(any(Long.class),
 				any(SearchCriteria.class));
@@ -442,7 +445,7 @@ public final class TestUserController {
 	public void TestUserController_SetSearchCriteria_InvalidAgeException()
 			throws InstanceNotFoundException, InvalidAgeException, Exception {
 		final List<String> cities = new ArrayList<>();
-		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities);
+		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		doThrow(new InvalidAgeException("")).when(userServiceMock).setSearchCriteria(any(Long.class),
 				any(SearchCriteria.class));
@@ -495,6 +498,7 @@ public final class TestUserController {
 
 	}
 
+	@Test
 	public void TestUserController_UpdateProfile_InstanceNotFoundException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
 		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
@@ -521,6 +525,7 @@ public final class TestUserController {
 		assertThat(userCaptor.getValue(), is(user));
 	}
 
+	@Test
 	public void TestUserController_UpdateProfile_InvalidDateException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
 		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
@@ -546,4 +551,111 @@ public final class TestUserController {
 		assertThat(userCaptor.getValue(), is(user));
 
 	}
+
+	@Test
+	public void TestUserController_Rate()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		final RateDto rateDto = new RateDto(1, 1L, 2L);
+
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(rateDto)))
+		.andExpect(status().isOk());
+		// @formatter:on
+
+		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
+				objectCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(rateCaptor.getValue(), is(1));
+		assertThat(subjectCaptor.getValue(), is(1L));
+		assertThat(objectCaptor.getValue(), is(2L));
+
+	}
+
+	@Test
+	public void TestUserController_Rate_InstanceNotFound()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		final RateDto rateDto = new RateDto(1, 1L, 2L);
+
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).rateUser(any(Integer.class),
+				any(Long.class), any(Long.class));
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(rateDto)))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
+				objectCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(rateCaptor.getValue(), is(1));
+		assertThat(subjectCaptor.getValue(), is(1L));
+		assertThat(objectCaptor.getValue(), is(2L));
+
+	}
+
+	@Test
+	public void TestUserController_Rate_InvalidRateException()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		final RateDto rateDto = new RateDto(1, 1L, 2L);
+
+		doThrow(new InvalidRateException("")).when(userServiceMock).rateUser(any(Integer.class),
+				any(Long.class), any(Long.class));
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(rateDto)))
+		.andExpect(status().isBadRequest());
+		// @formatter:on
+
+		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
+				objectCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(rateCaptor.getValue(), is(1));
+		assertThat(subjectCaptor.getValue(), is(1L));
+		assertThat(objectCaptor.getValue(), is(2L));
+
+	}
+
+	@Test
+	public void TestUserController_Rate_ItsNotYourFriendException()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		final RateDto rateDto = new RateDto(1, 1L, 2L);
+
+		doThrow(new ItsNotYourFriendException("")).when(userServiceMock).rateUser(any(Integer.class),
+				any(Long.class), any(Long.class));
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(rateDto)))
+		.andExpect(status().isBadRequest());
+		// @formatter:on
+
+		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
+				objectCaptor.capture());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(rateCaptor.getValue(), is(1));
+		assertThat(subjectCaptor.getValue(), is(1L));
+		assertThat(objectCaptor.getValue(), is(2L));
+
+	}
+
 }

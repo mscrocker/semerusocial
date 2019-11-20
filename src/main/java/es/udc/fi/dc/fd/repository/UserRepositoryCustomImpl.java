@@ -34,6 +34,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += "AND LOWER(p.sex) LIKE LOWER(:sex) ";
 		}
 
+		// Que el rating que tiene sea como maximo mi minRateCriteria
+		queryString += "AND p.rating <= (SELECT u.minRateCriteria FROM User u WHERE u.id=:userId) ";
+
 		// Que no te sugiera a ti mismo
 		queryString += "AND p.id != :userId ";
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {

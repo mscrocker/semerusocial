@@ -21,16 +21,18 @@ public class SearchCriteriaDto {
 	@NotNull
 	private List<String> city;
 
-	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city) {
+	private int minRate;
+
+	public SearchCriteriaDto() {
+
+	}
+	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city, int minRate) {
 		super();
 		this.sex = SexCriteriaEnum.fromCode(sex);
 		this.minAge = minAge;
 		this.maxAge = maxAge;
 		this.city = city;
-	}
-
-	public SearchCriteriaDto() {
-		super();
+		this.minRate = minRate;
 	}
 
 	public SexCriteriaEnum getSex() {
@@ -65,6 +67,14 @@ public class SearchCriteriaDto {
 		this.city = city;
 	}
 
+	public int getMinRate() {
+		return minRate;
+	}
+
+	public void setMinRate(int minRate) {
+		this.minRate = minRate;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -72,36 +82,49 @@ public class SearchCriteriaDto {
 		result = prime * result + (city == null ? 0 : city.hashCode());
 		result = prime * result + maxAge;
 		result = prime * result + minAge;
+		result = prime * result + minRate;
 		result = prime * result + (sex == null ? 0 : sex.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final SearchCriteriaDto other = (SearchCriteriaDto) obj;
 		if (city == null) {
-			if (other.city != null)
+			if (other.city != null) {
 				return false;
-		} else if (!city.equals(other.city))
+			}
+		} else if (!city.equals(other.city)) {
 			return false;
-		if (maxAge != other.maxAge)
+		}
+		if (maxAge != other.maxAge) {
 			return false;
-		if (minAge != other.minAge)
+		}
+		if (minAge != other.minAge) {
 			return false;
-		if (sex != other.sex)
+		}
+		if (minRate != other.minRate) {
 			return false;
+		}
+		if (sex != other.sex) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "SearchCriteriaDto [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city + "]";
+		return "SearchCriteriaDto [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city
+				+ ", minRate=" + minRate + "]";
 	}
 
 }
