@@ -51,9 +51,9 @@
 }
 
 .col-2 {
-	width: -webkit-calc(( 100% - 60px)/2);
-	width: -moz-calc(( 100% - 60px)/2);
-	width: calc(( 100% - 60px)/2);
+	width: -webkit-calc(( 100% - 60px) / 2);
+	width: -moz-calc(( 100% - 60px) / 2);
+	width: calc(( 100% - 60px) / 2);
 }
 
 @media ( max-width : 767px) {
@@ -300,7 +300,6 @@ input[type="date" i] {
 }
 
 .daterangepicker {
-	border: none;
 	-webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
 	-moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
 	box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
@@ -388,10 +387,6 @@ input {
 
 .input--style-3:-ms-input-placeholder {
 	/* Internet Explorer 10-11 */
-	color: #ccc;
-}
-
-.input--style-3:-ms-input-placeholder {
 	/* Microsoft Edge */
 	color: #ccc;
 }
@@ -452,7 +447,7 @@ input {
 
 .rs-select2 .select2-container .select2-selection--single .select2-selection__arrow:after
 	{
-	font-family: "Material-Design-Iconic-Font";
+	font-family: Material-Design-Iconic-Font, sans-serif;
 	content: '\f2f9';
 	font-size: 18px;
 	color: #ccc;
