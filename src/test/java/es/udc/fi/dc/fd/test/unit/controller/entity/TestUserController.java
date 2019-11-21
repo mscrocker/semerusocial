@@ -658,4 +658,48 @@ public final class TestUserController {
 
 	}
 
+	@Test
+	public void TestUserController_UpdatePremium() throws InstanceNotFoundException, Exception {
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.requestAttr("premium", false))
+		.andExpect(status().isNoContent());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Boolean> premiumCaptor = ArgumentCaptor.forClass(Boolean.class);
+		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(premiumCaptor.getValue(), is(false));
+
+	}
+
+	@Test
+	public void TestUserController_UpdatePremium_InstanceNotFound()
+			throws InstanceNotFoundException, Exception {
+
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updatePremium(any(Long.class),
+				any(Boolean.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.requestAttr("premium", false))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Boolean> premiumCaptor = ArgumentCaptor.forClass(Boolean.class);
+		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(premiumCaptor.getValue(), is(false));
+
+	}
+
 }

@@ -29,4 +29,6 @@ public interface UserService {
 
 	public double rateUser(int rate, Long userSubject, Long userObject)
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
+
+	public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException;
 }

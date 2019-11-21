@@ -14,18 +14,22 @@ public class UserDataDto {
 
 	private String description;
 
+	private double rate;
+
 	public UserDataDto() {
 		super();
 	}
 
-	public UserDataDto(LocalDateTime date, int age, String sex, String city, String description) {
+	public UserDataDto(LocalDateTime date, int age, String sex, String city, String description, double rate) {
 		super();
-		setDate(date);
-		setAge(age);
-		setSex(sex);
-		setCity(city);
-		setDescription(description);
+		this.date = date;
+		this.age = age;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+		this.rate = rate;
 	}
+
 
 	public LocalDateTime getDate() {
 		return date;
@@ -39,33 +43,42 @@ public class UserDataDto {
 		return age;
 	}
 
-	public String getSex() {
-		return sex;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
 	public void setAge(int age) {
 		this.age = age;
+	}
+
+	public String getSex() {
+		return sex;
 	}
 
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
 
+	public String getCity() {
+		return city;
+	}
+
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public double getRate() {
+		return rate;
+	}
+
+	public void setRate(double rate) {
+		this.rate = rate;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -75,9 +88,13 @@ public class UserDataDto {
 		result = prime * result + (city == null ? 0 : city.hashCode());
 		result = prime * result + (date == null ? 0 : date.hashCode());
 		result = prime * result + (description == null ? 0 : description.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(rate);
+		result = prime * result + (int) (temp ^ temp >>> 32);
 		result = prime * result + (sex == null ? 0 : sex.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -115,6 +132,9 @@ public class UserDataDto {
 		} else if (!description.equals(other.description)) {
 			return false;
 		}
+		if (Double.doubleToLongBits(rate) != Double.doubleToLongBits(other.rate)) {
+			return false;
+		}
 		if (sex == null) {
 			if (other.sex != null) {
 				return false;
@@ -125,10 +145,12 @@ public class UserDataDto {
 		return true;
 	}
 
+
 	@Override
 	public String toString() {
 		return "UserDataDto [date=" + date + ", age=" + age + ", sex=" + sex + ", city=" + city + ", description="
-				+ description + "]";
+				+ description + ", rate=" + rate + "]";
 	}
+
 
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -226,7 +228,8 @@ public class UserController {
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
-		return new UserDataDto(user.getDate(), period.getYears(), user.getSex(), user.getCity(), user.getDescription());
+		return new UserDataDto(user.getDate(), period.getYears(), user.getSex(), user.getCity(), user.getDescription(),
+				user.getRating());
 	}
 
 	@PutMapping("/updateProfile")
@@ -242,6 +245,15 @@ public class UserController {
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 
 		return userService.rateUser(rateDto.getRate(), userId, rateDto.getUserObject());
+
+	}
+
+	@PutMapping("/premium")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updatePremium(@RequestAttribute Long userId, @NotNull boolean premium)
+			throws InstanceNotFoundException {
+
+		userService.updatePremium(userId, premium);
 
 	}
 
