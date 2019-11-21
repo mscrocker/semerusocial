@@ -9,6 +9,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
+import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface FriendService {
@@ -29,4 +30,6 @@ public interface FriendService {
 	public void sendMessage(Long userId, Long friendId, String content)
 			throws InstanceNotFoundException, NotYourFriendException, ValidationException;
 
+	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException;
 }
