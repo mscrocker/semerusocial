@@ -43,6 +43,8 @@ public final class UrlConfig {
 
 	public static final String URL_USER_UPDATEPROFILE_PUT = "/backend/users/updateProfile";
 
+	public static final String URL_USER_RATE_POST = "/backend/users/rate";
+
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
 	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
@@ -63,6 +65,7 @@ public final class UrlConfig {
 
 	public static final String URL_FRIEND_FRIENDLIST_GET = "/backend/friends/friendList";
 
+	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
 
 	/**
 	 * Default constructor to avoid initialization.

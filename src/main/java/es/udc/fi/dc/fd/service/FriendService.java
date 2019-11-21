@@ -3,10 +3,12 @@ package es.udc.fi.dc.fd.service;
 import java.util.Optional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
@@ -27,9 +29,9 @@ public interface FriendService {
 
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
 
-	public void sendMessage(Long userId, Long friendId, String content)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException;
+	
 
-	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException;
+	void blockUser(Long userId, Long friendId)
+			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
+
 }

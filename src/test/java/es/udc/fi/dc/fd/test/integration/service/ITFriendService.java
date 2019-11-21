@@ -29,17 +29,22 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.MessageImpl;
@@ -49,6 +54,7 @@ import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
@@ -72,7 +78,6 @@ public class ITFriendService {
 
 	@Autowired
 	private UserService userService;
-
 	@Autowired
 	private FriendService friendService;
 	@Autowired
@@ -88,6 +93,10 @@ public class ITFriendService {
 
 	@Autowired
 	private MessageRepository messageRepository;
+
+	@Autowired
+	private BlockedRepository blockedRepository;
+
 
 	@Autowired
 	public ITFriendService() {
@@ -124,10 +133,11 @@ public class ITFriendService {
 
 	}
 
-	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities) {
+	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities)
+			throws InvalidRateException, NotRatedException {
 		try {
 			userService.setSearchCriteria(id,
-					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities)));
+					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities), 1));
 		} catch (InstanceNotFoundException | InvalidAgeException e) {
 			e.printStackTrace();
 			fail();
@@ -141,23 +151,7 @@ public class ITFriendService {
 		return userRepository.findByUserName(userName);
 	}
 
-	private LocalDateTime createMessage(UserImpl owner, UserImpl receiver, String content) {
-		final LocalDateTime date = LocalDateTime.now();
-		final MessageImpl msg = new MessageImpl();
-		msg.setDate(date);
-		msg.setMessageContent(content);
-		msg.setTransmitter(owner);
-		if (owner.getId() > receiver.getId()) {
-			msg.setUser1(receiver);
-			msg.setUser2(owner);
-		} else {
-			msg.setUser2(receiver);
-			msg.setUser1(owner);
-		}
-		messageRepository.save(msg);
-
-		return date;
-	}
+	
 
 	// -----addImage-----
 
@@ -177,8 +171,9 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testInvalidCriteriaRequest() throws InstanceNotFoundException, InvalidRecommendationException,
-	AlreadyRejectedException, AlreadyAceptedException {
+	public void testInvalidCriteriaRequest()
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(50);
 		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
@@ -251,8 +246,10 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testInvalidCriteriaReject() throws InstanceNotFoundException, InvalidRecommendationException,
-	AlreadyRejectedException, AlreadyAceptedException {
+	public void testInvalidCriteriaReject()
+			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
+
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
 		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
@@ -324,11 +321,17 @@ public class ITFriendService {
 		});
 	}
 
-	/******* SUGGEST FRIEND TESTS *************************************/
+	/*******
+	 * SUGGEST FRIEND TESTS
+	 *
+	 * @throws NotRatedException
+	 * @throws InvalidRateException
+	 *************************************/
 	@Test
 
-	// @Sql(scripts = "/initialData.sql")
-	public void TestSuggestFriend() throws InstanceNotFoundException {
+
+	//	@Sql(scripts = "/initialData.sql")
+	public void TestSuggestFriend() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
 		 * CitiesCriteria //TODO
@@ -406,6 +409,41 @@ public class ITFriendService {
 	}
 
 	@Test
+	public void TestSuggestFriendMinRate()
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException {
+
+		final UserImpl user1 = signUp("testSuggestFriendMinRate", "pass", 22, "Male", "osaka");
+		final UserImpl user2 = signUp("testSuggestFriendMinRate2", "pass", 22, "Male", "osaka");
+		final UserImpl user3 = signUp("testSuggestFriendMinRate3", "pass", 22, "Male", "osaka");
+		final UserImpl user4 = signUp("testSuggestFriendMinRate4", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user1.getId(), "Male", 18, 45, "osaka");
+
+		// Hacemos que user 2 sea amigo de user1 ,user3y user4 y les hace una votacion
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user1.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user3.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user4.getId()), LocalDateTime.now()));
+		userService.rateUser(3, user2.getId(), user1.getId());// El user2 vota al user1
+		userService.rateUser(3, user2.getId(), user3.getId());// El user 2 vota al user3
+		userService.rateUser(1, user2.getId(), user4.getId());// El user 2 vota al user4
+
+		// Ponemos el minRate del user1 a 3
+		user1.setMinRateCriteria(3);
+		userRepository.save(user1);
+
+		// With default matches
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user3.getUserName());
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
+		// No lo encuentra ya que el user 4 tiene una media 5 y el minRate del user1 es
+		// 3
+		final Optional<UserImpl> userSuggested2 = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested2.isEmpty());
+
+	}
+
+	@Test
 	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.suggestFriend(-1L);
@@ -476,288 +514,92 @@ public class ITFriendService {
 	/******* SEND MESSAGE TESTS ****************************/
 
 	@Test
-	public void testSendMessage() throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
+	public void testBlockUser() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockUser", "contraseñaBlockUser", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlockUser2", "contraseñaBlockUser2", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
 
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
+		userService.signUp(user);
+		userService.signUp(user2);
 
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
 
-		// Usamos el servicio
-		friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
 
-		// Asserts
-		final List<MessageImpl> msg = messageRepository.findAll();
-		assertNotNull(msg);
-		final MessageImpl item = msg.get(0);
-		assertEquals(item.getMessageContent(), content);
-		assertEquals(item.getUser1(), item.getTransmitter());
-		assertEquals(item.getUser1(), user.get());
-		assertEquals(item.getUser2(), friend.get());
+		final Long firstId = Math.min(user.getId(), user2.getId());
+		final Long secondId = user2.getId().equals(firstId) ? user.getId() : user2.getId();
+
+		// check if they are not friends now and if user blocked user2
+		assertTrue(!matchRepository.findById(new MatchId(firstId, secondId)).isPresent()
+				&& blockedRepository.findById(new BlockedId(user.getId(), user2.getId())).isPresent());
 	}
 
 	@Test
-	public void testSendMessageFriendToUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
+	public void testBlockUserINFE() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioBlockUserINFE", "contraseñaBlockUserINFE", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
+		userService.signUp(user);
 
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
-
-		// Usamos el servicio
-		friendService.sendMessage(friend.get().getId(), user.get().getId(), content);
-
-		// Asserts
-		final List<MessageImpl> msg = messageRepository.findAll();
-		assertNotNull(msg);
-		final MessageImpl item = msg.get(0);
-		assertEquals(item.getMessageContent(), content);
-		assertEquals(item.getUser2(), item.getTransmitter());
-		assertEquals(item.getUser1(), user.get());
-		assertEquals(item.getUser2(), friend.get());
-	}
-
-	@Test
-	public void testSendMessageInstanceNotFoundException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-
-		// Usamos el servicio
+		// user2 does not exists
 		assertThrows(InstanceNotFoundException.class, () -> {
-			friendService.sendMessage(user.get().getId(), 900L, content);
+			friendService.blockUser(user.getId(), -1L);
 		});
-	}
-
-	@Test
-	public void testSendMessageNotYourFriendException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Usamos el servicio
-		assertThrows(NotYourFriendException.class, () -> {
-			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
-		});
-	}
-
-	@Test
-	public void testSendMessageValidationExceptionUserNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Usamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.sendMessage(null, friend.get().getId(), content);
-		});
-	}
-
-	@Test
-	public void testSendMessageValidationExceptionFriendNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user");
-
-		// Usamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.sendMessage(user.get().getId(), null, content);
-		});
-	}
-
-	@Test
-	public void testSendMessageValidationExceptionMsgToYourself()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "mensaje";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-
-		// Usamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.sendMessage(user.get().getId(), user.get().getId(), content);
-		});
-	}
-
-	@Test
-	public void testSendMessageValidationExceptionContentNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = null;
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
-
-		// Usamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
-		});
-	}
-
-	@Test
-	public void testSendMessageValidationExceptionContentBlank()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		final String content = "   ";
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
-
-		// Usamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.sendMessage(user.get().getId(), friend.get().getId(), content);
-		});
-	}
-
-	/***********
-	 * TESTS GET CONVERSATION
-	 *************************************************/
-
-	@Test
-	public void testGetConversation() throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
-
-		// Enviamos "msgCant" mensajes
-		final int msgCant = 10;
-		for (int i = 0; i < msgCant; i++) {
-			createMessage(user.get(), friend.get(), Integer.toString(i));
-		}
-
-		// Probamos el servicio
-		final int size = msgCant - 2;
-		final Block<MessageDetailsDto> conversation = friendService.getConversation(user.get().getId(),
-				friend.get().getId(), 0, size);
-
-		assertFalse(conversation.getElements().isEmpty());
-		assertTrue(conversation.isExistMoreElements());
-		assertEquals(conversation.getElements().size(), size);
-		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(0));
-	}
-
-	@Test
-	public void testGetConversationInstanceNotFoundExceptionUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-
-		// Creamos un usuario
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Probamos el servicio
+		// user does not exists
 		assertThrows(InstanceNotFoundException.class, () -> {
-			friendService.getConversation(null, friend.get().getId(), 0, 10);
+			friendService.blockUser(-1L, user.getId());
 		});
 	}
 
 	@Test
-	public void testGetConversationInstanceNotFoundExceptionFriend()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+	public void testBlockUserINYF() throws InstanceNotFoundException, ItsNotYourFriendException,
+	AlreadyBlockedException, DuplicateInstanceException, InvalidDateException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockINYF", "contraseñaBlockINYF", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2INYF", "contraseñaBlock2INYF", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
 
-		// Creamos un usuario
-		final Optional<UserImpl> user = createUser("user1");
+		userService.signUp(user);
+		userService.signUp(user2);
 
-		// Probamos el servicio
-		assertThrows(InstanceNotFoundException.class, () -> {
-			friendService.getConversation(null, user.get().getId(), 0, 10);
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+
+		// user can not block user2 because they are not friends
+		assertThrows(ItsNotYourFriendException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
 		});
 	}
 
+	// AlreadyBlockedException
 	@Test
-	public void testGetConversationNotYourFriendException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		/*
-		 * 4. Usamos el servicio
-		 */
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
+	public void testBlockUserABE() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockABE", "contraseñaBlockABE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2ABE", "contraseñaBlock2ABE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
 
-		// Probamos el servicio
-		assertThrows(NotYourFriendException.class, () -> {
-			friendService.getConversation(user.get().getId(), friend.get().getId(), 0, 10);
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
+		// user try to clock user2 again
+		assertThrows(AlreadyBlockedException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
 		});
 	}
-
-	@Test
-	public void testGetConversationValidationException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		// Intentamos obtener la conversación con nosotros mismos
-
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-
-		// Probamos el servicio
-		assertThrows(ValidationException.class, () -> {
-			friendService.getConversation(user.get().getId(), user.get().getId(), 0, 10);
-		});
-	}
-
-	@Test
-	public void testGetConversationFriendToUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		/*
-		 * 4. Usamos el servicio
-		 */
-		// Creamos los usuarios
-		final Optional<UserImpl> user = createUser("user1");
-		final Optional<UserImpl> friend = createUser("friend");
-
-		// Los hacemos amigos
-		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
-		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
-		matchRepository.save(match);
-
-		// Enviamos "msgCant" mensajes
-		final int msgCant = 10;
-		for (int i = 0; i < msgCant; i++) {
-			createMessage(user.get(), friend.get(), Integer.toString(i));
-		}
-
-		// Probamos el servicio
-		final int size = msgCant - 2;
-		final Block<MessageDetailsDto> conversation = friendService.getConversation(friend.get().getId(),
-				user.get().getId(), 0, size);
-
-		assertFalse(conversation.getElements().isEmpty());
-		assertTrue(conversation.isExistMoreElements());
-		assertEquals(conversation.getElements().size(), size);
-		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(0));
-	}
-
 }

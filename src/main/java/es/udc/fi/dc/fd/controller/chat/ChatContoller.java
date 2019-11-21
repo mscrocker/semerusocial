@@ -51,7 +51,7 @@ public class ChatContoller {
 
 		try {
 			UserImpl receiver = userService.loginFromUserId(chatMessage.getReceiverId());
-			friendService.sendMessage(ownerUser.getUserId(), chatMessage.getReceiverId(), chatMessage.getContent());
+			chatService.sendMessage(ownerUser.getUserId(), chatMessage.getReceiverId(), chatMessage.getContent());
 			messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/reply", chatMessage);
 
 		} catch (InstanceNotFoundException | NotYourFriendException | ValidationException e) {

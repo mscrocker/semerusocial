@@ -5,6 +5,9 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -18,10 +21,12 @@ public interface UserService {
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException;
 
 	public void setSearchCriteria(Long userId, SearchCriteria criteria)
-			throws InstanceNotFoundException, InvalidAgeException;
+			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException;
 
 	public SearchCriteria getSearchCriteria(Long userId) throws InstanceNotFoundException;
 
 	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
 
+	public double rateUser(int rate, Long userSubject, Long userObject)
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
 }

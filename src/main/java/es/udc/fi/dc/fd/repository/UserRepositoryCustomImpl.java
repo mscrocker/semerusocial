@@ -34,15 +34,22 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += "AND LOWER(p.sex) LIKE LOWER(:sex) ";
 		}
 
+		// Que el rating que tiene sea como minimo mi minRateCriteria o que no hayas
+		// sido votado
+		queryString += "AND (p.ratingVotes = 0 OR p.rating >= :minRate) ";
+
 		// Que no te sugiera a ti mismo
 		queryString += "AND p.id != :userId ";
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
 			queryString += "AND LOWER(p.city) in (:cities) ";
 		}
 
-//		if (!criteria.getCity().isEmpty()) {
-//			queryString += "AND p.city IN :cities ";
-//		}
+		//		if (!criteria.getCity().isEmpty()) {
+		//			queryString += "AND p.city IN :cities ";
+		//		}
+
+		// Si esta bloqueado que no lo sugiera
+		queryString += "AND p.id NOT IN (SELECT b.blockedId.object FROM Blocked b WHERE b.blockedId.subject=:userId) ";
 
 		// Si ya son amigos que no lo sugiera
 		queryString += "AND p.id NOT IN (SELECT m1.matchId.user1 FROM Match m1 WHERE m1.matchId.user2=:userId) ";
@@ -60,10 +67,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		final LocalDateTime dateMax = LocalDateTime.now().minus(criteria.getMinAge(), ChronoUnit.YEARS);
 		final LocalDateTime dateMin = LocalDateTime.now().minus(criteria.getMaxAge(), ChronoUnit.YEARS);
+		final Double minRate = Double.valueOf(criteria.getMinRate());
 
 		query.setParameter("maxDate", dateMax);
 		query.setParameter("minDate", dateMin);
 		query.setParameter("userId", userId);
+		query.setParameter("minRate", minRate);
 		if (criteria.getSex() != SexCriteriaEnum.ANY && criteria.getSex() != SexCriteriaEnum.OTHER) {
 			query.setParameter("sex", criteria.getSex().toString());
 		}

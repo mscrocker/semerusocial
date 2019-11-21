@@ -15,6 +15,7 @@ import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.dtos.ImageEditionDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
@@ -124,5 +125,10 @@ class DtoTests {
 	@Test
 	void testChatNessage() {
 		EntityTestUtils.testEntity(ChatMessage.class);
+	}
+
+	@Test
+	void testRateDto() {
+		EntityTestUtils.testEntity(RateDto.class);
 	}
 }

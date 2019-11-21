@@ -14,15 +14,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.dtos.MessageConversor;
 import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.BlockedId;
+import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.MessageImpl;
@@ -32,8 +36,10 @@ import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.MessageRepository;
+import es.udc.fi.dc.fd.repository.RateRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -52,10 +58,16 @@ public class FriendServiceImpl implements FriendService {
 	private MatchRepository matchRepository;
 
 	@Autowired
+	private BlockedRepository blockedRepository;
+
+	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private MessageRepository messageRepository;
+
+	@Autowired
+	private RateRepository rateRepository;
 
 	@Autowired
 	private UserService userService;
@@ -204,92 +216,32 @@ public class FriendServiceImpl implements FriendService {
 		return userRepository.findByCriteria(searchCriteria, userId);
 	}
 
-	@Override
-	public void sendMessage(Long userId, Long friendId, String content)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-
-		// Comprobamos que los ids no son nulos
-		if (userId == null || friendId == null) {
-			throw new ValidationException("Ids can not be null");
-		}
-		//Comprobamos que el mensaje no es nulo
-		if (content==null) {
-			throw new ValidationException("Message content can not be null");
-		}
-		//Validamos que el mensaje no se pase del largo permitido
-		if (content.length() > MAX_LENGTH_MESSAGE || content.trim().length() == 0) {
-			throw new ValidationException(
-					"Message length too large or blank. It must be less than " + MAX_LENGTH_MESSAGE);
-		}
-
-		// Comprobamos que no te estás intentando mandar un mensaje a ti mismo
-		if (userId.equals(friendId)) {
-			throw new ValidationException("You can not send a message to yourself");
-		}
-		// Comprobamos que los usuarios existen
-		final Optional<UserImpl> user = userRepository.findById(userId);
-		if (user.isEmpty()) {
-			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
-		}
-		final Optional<UserImpl> friend = userRepository.findById(friendId);
-		if (friend.isEmpty()) {
-			throw new InstanceNotFoundException(UserImpl.class.getName(), friendId);
-		}
-
-		//Comprobamos que sean amigos
-		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
-				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
-			throw new NotYourFriendException("User with id "+friendId+" is not your friend.");
-		}
-
-
-		//Podemos almacenar el mensaje
-		final MessageImpl msg = new MessageImpl();
-		msg.setDate(LocalDateTime.now());
-		msg.setMessageContent(content);
-		if (userId < friendId) {
-			msg.setUser1(user.get());
-			msg.setUser2(friend.get());
-		} else {
-			msg.setUser2(user.get());
-			msg.setUser1(friend.get());
-		}
-		msg.setTransmitter(user.get());
-		messageRepository.save(msg);
-	}
+	
 
 	@Override
-	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
-		if (userId == null) {
-			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
+	public void blockUser(Long userId, Long friendId)
+			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
+		permissionChecker.checkUserExists(userId);
+		permissionChecker.checkUserExists(friendId);
+
+		final Long firstId = Math.min(userId, friendId);
+		final Long secondId = friendId.equals(firstId) ? userId : friendId;
+		final Optional<MatchImpl> match = matchRepository.findById(new MatchId(firstId, secondId));
+		final Optional<BlockedImpl> block = blockedRepository.findById(new BlockedId(userId, friendId));
+		// check if its your friend
+		if (!match.isPresent() && !block.isPresent()) {
+			throw new ItsNotYourFriendException("It's not your friend");
+		}
+		// check if its already blocked
+		if (block.isPresent()) {
+			throw new AlreadyBlockedException("Already blocked");
 		}
 
-		if (userId.equals(friendId)) {
-			throw new ValidationException("You can not get a conversation with yourself");
-		}
+		final BlockedImpl block2 = new BlockedImpl(new BlockedId(userId, friendId), LocalDateTime.now());
 
-		// Comprobamos que sean amigos
-		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
-				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
-			throw new NotYourFriendException("User with id " + friendId + " is not your friend.");
-		}
-
-		// En BD estamos almacenando 1º el id más pequeño
-		Slice<MessageImpl> conversation;
-		if (userId<friendId) {
-			conversation = messageRepository.findMessagesByUsersId(userId, friendId, PageRequest.of(page, size));
-		}else {
-			conversation = messageRepository.findMessagesByUsersId(friendId, userId, PageRequest.of(page, size));
-		}
-
-		// Convertimos a dto
-		final List<MessageDetailsDto> items = new ArrayList<>();
-		for (final MessageImpl messageImpl : conversation) {
-			items.add(MessageConversor.messageToMessageDetailsDto(messageImpl));
-		}
-		return new Block<>(items, conversation.hasNext());
-
+		matchRepository.delete(match.get());
+		blockedRepository.save(block2);
 	}
+
 
 }

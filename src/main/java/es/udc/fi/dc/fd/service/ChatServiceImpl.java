@@ -1,9 +1,12 @@
 package es.udc.fi.dc.fd.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +15,8 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
+import es.udc.fi.dc.fd.dtos.MessageConversor;
+import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.FriendChatTitle;
 import es.udc.fi.dc.fd.model.persistence.MessageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -38,7 +43,6 @@ public class ChatServiceImpl implements ChatService {
 	private static final int MAX_LENGTH_MESSAGE = 999;
 
 	@Override
-	@Transactional
 	public void sendMessage(Long userId, Long friendId, String content)
 			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
 
@@ -46,11 +50,11 @@ public class ChatServiceImpl implements ChatService {
 		if (userId == null || friendId == null) {
 			throw new ValidationException("Ids can not be null");
 		}
-		// Comprobamos que el mensaje no es nulo
-		if (content == null) {
+		//Comprobamos que el mensaje no es nulo
+		if (content==null) {
 			throw new ValidationException("Message content can not be null");
 		}
-		// Validamos que el mensaje no se pase del largo permitido
+		//Validamos que el mensaje no se pase del largo permitido
 		if (content.length() > MAX_LENGTH_MESSAGE || content.trim().length() == 0) {
 			throw new ValidationException(
 					"Message length too large or blank. It must be less than " + MAX_LENGTH_MESSAGE);
@@ -70,13 +74,14 @@ public class ChatServiceImpl implements ChatService {
 			throw new InstanceNotFoundException(UserImpl.class.getName(), friendId);
 		}
 
-		// Comprobamos que sean amigos
+		//Comprobamos que sean amigos
 		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
 				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
-			throw new NotYourFriendException("User with id " + friendId + " is not your friend.");
+			throw new NotYourFriendException("User with id "+friendId+" is not your friend.");
 		}
 
-		// Podemos almacenar el mensaje
+
+		//Podemos almacenar el mensaje
 		final MessageImpl msg = new MessageImpl();
 		msg.setDate(LocalDateTime.now());
 		msg.setMessageContent(content);
@@ -90,6 +95,41 @@ public class ChatServiceImpl implements ChatService {
 		msg.setTransmitter(user.get());
 		messageRepository.save(msg);
 	}
+
+	@Override
+	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		if (userId == null) {
+			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
+		}
+
+		if (userId.equals(friendId)) {
+			throw new ValidationException("You can not get a conversation with yourself");
+		}
+
+		// Comprobamos que sean amigos
+		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
+				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
+			throw new NotYourFriendException("User with id " + friendId + " is not your friend.");
+		}
+
+		// En BD estamos almacenando 1º el id más pequeño
+		Slice<MessageImpl> conversation;
+		if (userId<friendId) {
+			conversation = messageRepository.findMessagesByUsersId(userId, friendId, PageRequest.of(page, size));
+		}else {
+			conversation = messageRepository.findMessagesByUsersId(friendId, userId, PageRequest.of(page, size));
+		}
+
+		// Convertimos a dto
+		final List<MessageDetailsDto> items = new ArrayList<>();
+		for (final MessageImpl messageImpl : conversation) {
+			items.add(MessageConversor.messageToMessageDetailsDto(messageImpl));
+		}
+		return new Block<>(items, conversation.hasNext());
+
+	}
+	
 
 	public Block<FriendChatTitle> getUserConversations(Long userId, int page) throws RequestParamException, InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);

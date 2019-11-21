@@ -11,9 +11,9 @@ public class RateId implements Serializable {
 	@Transient
 	private static final long serialVersionUID = 668475227762820441L;
 
-	private Long subject; // el que rechaza
+	private Long subject; // El que vota
 
-	private Long object; // el rechazado
+	private Long object; // El votado
 
 	public RateId() {
 		super();
@@ -45,8 +45,8 @@ public class RateId implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((object == null) ? 0 : object.hashCode());
-		result = prime * result + ((subject == null) ? 0 : subject.hashCode());
+		result = prime * result + (object == null ? 0 : object.hashCode());
+		result = prime * result + (subject == null ? 0 : subject.hashCode());
 		return result;
 	}
 
