@@ -9,7 +9,13 @@ import es.udc.fi.dc.fd.service.Block;
 
 public class MessageConversor {
 	public final static FriendHeaderDto toFriendHeaderDto(FriendChatTitle title) {
-		return (FriendHeaderDto) title;
+		return new FriendHeaderDto(
+			title.getFriendId(),
+			title.getFriendName(),
+			title.getContent(),
+			title.getSentByYou(),
+			title.getDate()
+		);
 	}
 
 	public final static BlockDto<FriendHeaderDto> toFriendHeadersDto(Block<FriendChatTitle> messages) {

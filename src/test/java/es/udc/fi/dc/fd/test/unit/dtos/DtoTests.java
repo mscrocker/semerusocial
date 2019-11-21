@@ -9,12 +9,14 @@ import es.udc.fi.dc.fd.dtos.BlockImageByUserIdDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.FriendDto;
+import es.udc.fi.dc.fd.dtos.FriendHeaderDto;
 import es.udc.fi.dc.fd.dtos.GetFriendListOutDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
 import es.udc.fi.dc.fd.dtos.ImageCreationDto;
 import es.udc.fi.dc.fd.dtos.ImageEditionDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
@@ -123,12 +125,22 @@ class DtoTests {
 	}
 
 	@Test
-	void testChatNessage() {
+	void testChatMessage() {
 		EntityTestUtils.testEntity(ChatMessage.class);
 	}
 
 	@Test
 	void testRateDto() {
 		EntityTestUtils.testEntity(RateDto.class);
+	}
+	
+	@Test
+	void testMessageDetailsDto() {
+		EntityTestUtils.testEntity(MessageDetailsDto.class);
+	}
+	
+	@Test
+	void testFriendHeaderDto() {
+		EntityTestUtils.testEntity(FriendHeaderDto.class);
 	}
 }
