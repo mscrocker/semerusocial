@@ -20,6 +20,8 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
+import es.udc.fi.dc.fd.dtos.MessageConversor;
+import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
@@ -254,6 +256,40 @@ public class FriendServiceImpl implements FriendService {
 		}
 		msg.setTransmitter(user.get());
 		messageRepository.save(msg);
+	}
+
+	@Override
+	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
+			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+		if (userId == null) {
+			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
+		}
+
+		if (userId.equals(friendId)) {
+			throw new ValidationException("You can not get a conversation with yourself");
+		}
+
+		// Comprobamos que sean amigos
+		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
+				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
+			throw new NotYourFriendException("User with id " + friendId + " is not your friend.");
+		}
+
+		// En BD estamos almacenando 1º el id más pequeño
+		Slice<MessageImpl> conversation;
+		if (userId<friendId) {
+			conversation = messageRepository.findMessagesByUsersId(userId, friendId, PageRequest.of(page, size));
+		}else {
+			conversation = messageRepository.findMessagesByUsersId(friendId, userId, PageRequest.of(page, size));
+		}
+
+		// Convertimos a dto
+		final List<MessageDetailsDto> items = new ArrayList<>();
+		for (final MessageImpl messageImpl : conversation) {
+			items.add(MessageConversor.messageToMessageDetailsDto(messageImpl));
+		}
+		return new Block<>(items, conversation.hasNext());
+
 	}
 
 }
