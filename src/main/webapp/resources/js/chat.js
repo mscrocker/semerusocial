@@ -75,9 +75,10 @@ const chat = {
 	            method: 'GET'
 	        }, (response) => {
 	            if (response.status == 400) {
-	                
+	                console.log("error");
 	            }
 	            else if (response.status !== 200) {
+	        	console.log("error");
 	            }
 	            else {
 	            response.json().then((body) => {
@@ -127,9 +128,10 @@ const chat = {
 	            method: 'GET'
 	        }, (response) => {
 	            if (response.status == 400) {
-	                
+	                console.log("error");
 	            }
 	            else if (response.status !== 200) {
+	        	console.log("error");
 	            }
 	            else {
 	            response.json().then((body) => {
@@ -159,7 +161,7 @@ const chat = {
 	        }
 	    fetchFriendMessage(friendId);
 	}
-}
+};
 	
 	
 	

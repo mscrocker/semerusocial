@@ -35,8 +35,8 @@ a, a:hover, a:focus {
 	height: 100%;
 	/* margin: 1px !important; */
 	padding: 0px !important;
-	background-color: d4636c;
-	border-color: d4636c;
+	background-color: #d4636c;
+	border-color: #d4636c;
 }
 
 .navbar-btn {
@@ -90,7 +90,6 @@ a, a:hover, a:focus {
 #sidebar .sidebar-header {
 	margin-bottom: 15px;
 	padding: 20px;
-	background: 3e3e3e;
 	height: 10%;
 }
 
@@ -207,7 +206,6 @@ a.article, a.article:hover {
 	padding: 8px;
 	position: relative;
 	margin: 8px 0;
-	max-width: 85%;
 	word-wrap: break-word;
 	z-index: 10000;
 	max-width: 55%;
@@ -367,7 +365,7 @@ a.article, a.article:hover {
 	right: -10px;
 }
 
-.conversation-compose .photo i {
+.conversation-compose .photo em {
 	display: block;
 	color: ffffff;
 	font-size: 24px;
@@ -481,7 +479,7 @@ a:hover {
 	display: block;
 	/* border: 0px; */
 	/* border-radius: 42px; */
-	border-radius: 42px 42px 42px 42px 2pxx;
+	border-radius: 42px 42px 42px 42px;
 	/* border: 0px; */
 	float: left;
 	/* height: 40px; */
@@ -491,7 +489,6 @@ a:hover {
 }
 
 .user-title {
-	margin-left: 5px;
 	font-size: 2.0em;
 	margin-left: 10px;
 }
@@ -530,7 +527,8 @@ a.highlight {
 	margin: 0;
 	padding-top: 15px;
 }
-html,body{/* min-height:100vh */background-color: d3e3e3;} :
+html,body{
+	background-color: #d3e3e3;} :
 
 #compose {
 	    padding: 15px 0px 8px;

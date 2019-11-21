@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <div th:replace="fragments/header :: header"></div>
 <link rel="stylesheet" type="text/css"
@@ -81,11 +83,11 @@
 						<input class="input-msg" name="input" placeholder="Type a message"
 							autocomplete="off" autofocus></input>
 						<div class="photo">
-							<i class="fa fa-paper-plane"></i>
+							<em class="fa fa-paper-plane"></em>
 						</div>
 						<button id="sender" class="send">
 							<div class="circle">
-								<i class="zmdi zmdi-mail-send"></i>
+								<em class="zmdi zmdi-mail-send"></em>
 							</div>
 						</button>
 					</form>
