@@ -4,44 +4,38 @@ import java.util.List;
 
 public class Block<T> {
 	
-	private List<T> images;
-    private boolean existMoreImages;
+	private List<T> elements;
+    private boolean existMoreElements;
 
     public Block() {
     	super();
     }
-    
-    public Block(List<T> items, boolean existMoreImages) {
-        setImages(items);
-        setExistMoreImages(existMoreImages);
-    }
-    
-	public List<T> getImages() {
-		return images;
-	}
-	
-	public void setImages(List<T> images) {
-		this.images = images;
-	}
-    
-    public boolean getExistMoreImages() {
-        return existMoreImages;
-    }
 
-	public void setExistMoreImages(boolean existMoreImages) {
-		this.existMoreImages = existMoreImages;
+	public List<T> getElements() {
+		return elements;
 	}
 
-    @Override
+	public void setElements(List<T> elements) {
+		this.elements = elements;
+	}
+
+	public boolean isExistMoreElements() {
+		return existMoreElements;
+	}
+
+	public void setExistMoreElements(boolean existMoreElements) {
+		this.existMoreElements = existMoreElements;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (existMoreImages ? 1231 : 1237);
-		result = prime * result + ((images == null) ? 0 : images.hashCode());
+		result = prime * result + ((elements == null) ? 0 : elements.hashCode());
+		result = prime * result + (existMoreElements ? 1231 : 1237);
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -51,19 +45,26 @@ public class Block<T> {
 		if (getClass() != obj.getClass())
 			return false;
 		Block other = (Block) obj;
-		if (existMoreImages != other.existMoreImages)
-			return false;
-		if (images == null) {
-			if (other.images != null)
+		if (elements == null) {
+			if (other.elements != null)
 				return false;
-		} else if (!images.equals(other.images))
+		} else if (!elements.equals(other.elements))
+			return false;
+		if (existMoreElements != other.existMoreElements)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Block [images=" + images + ", existMoreImages=" + existMoreImages + "]";
+		return "Block [elements=" + elements + ", existMoreElements=" + existMoreElements + "]";
 	}
+
+	public Block(List<T> elements, boolean existMoreElements) {
+		super();
+		this.elements = elements;
+		this.existMoreElements = existMoreElements;
+	}
+    
 	
 }

@@ -199,14 +199,14 @@ public class ITImageService {
 		imageList.add(imageCreated9);
 		imageList.add(imageCreated10);
 
-		assertEquals(imageListResult.getImages(), imageList);
+		assertEquals(imageListResult.getElements(), imageList);
 
 		final ImageImpl i11 = createImage(user, new byte[] { 1, 2, 3 });
 		final ImageImpl imageCreated11 = imageService.addImage(i11, user.getId());
 		imageList.add(imageCreated11);
 		imageListResult = imageService.getImagesByUserId(user.getId(), 0);
 
-		assertEquals(imageListResult.getExistMoreImages(), true);
+		assertEquals(imageListResult.isExistMoreElements(), true);
 
 		final UserImpl user2 = signUp("userTestGet2", "userTestGet2", 12, "hombre", "coruna");
 
@@ -228,7 +228,7 @@ public class ITImageService {
 		imageList2.add(imageCreated14);
 		imageList2.add(imageCreated15);
 
-		assertEquals(imageListResult2.getImages(), imageList2);
+		assertEquals(imageListResult2.getElements(), imageList2);
 	}
 
 	@Test
