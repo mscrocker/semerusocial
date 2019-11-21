@@ -16,19 +16,15 @@ public final class RateDto implements Serializable {
 	private int rate;
 
 	@NotNull
-	private Long userSubject;
-
-	@NotNull
 	private Long userObject;
 
 	public RateDto() {
 		super();
 	}
 
-	public RateDto(int rate, Long userSubject, Long userObject) {
+	public RateDto(int rate, Long userObject) {
 		super();
 		this.rate = rate;
-		this.userSubject = userSubject;
 		this.userObject = userObject;
 	}
 
@@ -40,16 +36,12 @@ public final class RateDto implements Serializable {
 		this.rate = rate;
 	}
 
-	public Long getUserSubject() {
-		return userSubject;
-	}
-
-	public void setUserSubject(Long userSubject) {
-		this.userSubject = userSubject;
-	}
-
 	public Long getUserObject() {
 		return userObject;
+	}
+
+	public void setUserObject(Long userObject) {
+		this.userObject = userObject;
 	}
 
 	@Override
@@ -57,8 +49,7 @@ public final class RateDto implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + rate;
-		result = prime * result + (int) (userObject ^ userObject >>> 32);
-		result = prime * result + (int) (userSubject ^ userSubject >>> 32);
+		result = prime * result + (userObject == null ? 0 : userObject.hashCode());
 		return result;
 	}
 
@@ -77,10 +68,11 @@ public final class RateDto implements Serializable {
 		if (rate != other.rate) {
 			return false;
 		}
-		if (userObject != other.userObject) {
-			return false;
-		}
-		if (userSubject != other.userSubject) {
+		if (userObject == null) {
+			if (other.userObject != null) {
+				return false;
+			}
+		} else if (!userObject.equals(other.userObject)) {
 			return false;
 		}
 		return true;
@@ -88,7 +80,8 @@ public final class RateDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "RateDto [rate=" + rate + ", userSubject=" + userSubject + ", userObject=" + userObject + "]";
+		return "RateDto [rate=" + rate + ", userObject=" + userObject + "]";
 	}
+
 
 }

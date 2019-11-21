@@ -452,6 +452,13 @@ public class ITUserService {
 		assertEquals(rating2, 2.0, 0.01);
 		assertEquals(rating2, user1.getRating(), 0.01);
 
+		// Hacemos que el usuario 4 vuelva a votar los mismo por tanto la media se
+		// mantiene igual
+		final double rating3 = userService.rateUser(1, user4.getId(), user1.getId());
+
+		assertEquals(rating3, 2.0, 0.01);
+		assertEquals(rating3, user1.getRating(), 0.01);
+
 	}
 
 	@Test
@@ -465,6 +472,10 @@ public class ITUserService {
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.rateUser(2, -1L, user1.getId());
+		});
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.rateUser(2, -1L, null);
 		});
 
 	}

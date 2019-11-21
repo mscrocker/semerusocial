@@ -34,8 +34,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += "AND LOWER(p.sex) LIKE LOWER(:sex) ";
 		}
 
-		// Que el rating que tiene sea como maximo mi minRateCriteria
-		queryString += "AND p.rating <= (SELECT u.minRateCriteria FROM User u WHERE u.id=:userId) ";
+		// Que el rating que tiene sea como minimo mi minRateCriteria o que no hayas
+		// sido votado
+		queryString += "AND (p.ratingVotes = 0 OR p.rating >= :minRate) ";
 
 		// Que no te sugiera a ti mismo
 		queryString += "AND p.id != :userId ";
@@ -66,10 +67,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		final LocalDateTime dateMax = LocalDateTime.now().minus(criteria.getMinAge(), ChronoUnit.YEARS);
 		final LocalDateTime dateMin = LocalDateTime.now().minus(criteria.getMaxAge(), ChronoUnit.YEARS);
+		final Double minRate = Double.valueOf(criteria.getMinRate());
 
 		query.setParameter("maxDate", dateMax);
 		query.setParameter("minDate", dateMin);
 		query.setParameter("userId", userId);
+		query.setParameter("minRate", minRate);
 		if (criteria.getSex() != SexCriteriaEnum.ANY && criteria.getSex() != SexCriteriaEnum.OTHER) {
 			query.setParameter("sex", criteria.getSex().toString());
 		}

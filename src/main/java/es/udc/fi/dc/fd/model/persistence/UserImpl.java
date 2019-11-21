@@ -22,6 +22,7 @@ import es.udc.fi.dc.fd.model.User;
 public class UserImpl implements User {
 
 	private static final long DEFAULT_RATING_VOTES = 0;
+	private static final long DEFAULT_RATING = 0;
 	private static final int DEFAULT_MINRATE = 1;
 	private static final boolean DEFAULT_PREMIUM = false;
 
@@ -65,7 +66,7 @@ public class UserImpl implements User {
 	private String description;
 
 	@Column(name = "rating")
-	private double rating;
+	private double rating = DEFAULT_RATING;
 
 	@Column(name = "ratingVotes")
 	private long ratingVotes = DEFAULT_RATING_VOTES;

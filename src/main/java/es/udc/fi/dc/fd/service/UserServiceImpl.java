@@ -189,6 +189,7 @@ public class UserServiceImpl implements UserService {
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 		// Comprobamos que ambos usuarios existen
 		permissionChecker.checkUserExists(userSubject);
+		permissionChecker.checkUserExists(userObject);
 
 		if (rate < 1 || rate > 5) { // Comprobamos que el rate es correcto
 			throw new InvalidRateException("Your rate was :" + rate + " but it must be between 1 > 5");
@@ -218,21 +219,21 @@ public class UserServiceImpl implements UserService {
 				user.setRating(newRate);
 				user.setRatingVotes(userVotes + 1);
 
-			} else {// Si el usuario ya habia votado modificamos la fila
+			} else {// Si el usuario ya habia votado
 				newRateImpl = rateOptional.get();// Obtenemos la votacion del subject
-				double totalVotes = 0;
-				final List<RateImpl> objectRates = rateRepository.findRatesMadeToUserId(userObject);
-				for (final RateImpl rateImpl : objectRates) {
-					totalVotes = totalVotes + rateImpl.getPoints();// calculamos la suma total de votos realizados al
-					// object
+
+				if (newRateImpl.getPoints() == rate) {// Si hace la misma votacion la media se queda igual
+					return user.getRating();
+				} else { // Si no , modificamos la fila y calculamos la nueva media
+					final double totalVotes = user.getRating() * user.getRatingVotes();
+
+					newRate = (totalVotes - newRateImpl.getPoints() + rate) / userVotes;// Calculamos la nueva media
+
+					user.setRating(newRate);
+
+					newRateImpl.setPoints(rate);
+					rateRepository.save(newRateImpl);
 				}
-
-				newRate = (totalVotes - newRateImpl.getPoints() + rate) / userVotes;// Calculamos la nueva media
-
-				user.setRating(newRate);
-
-				newRateImpl.setPoints(rate);
-				rateRepository.save(newRateImpl);
 			}
 			userRepository.save(user);
 

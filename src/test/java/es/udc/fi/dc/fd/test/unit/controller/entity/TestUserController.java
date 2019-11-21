@@ -555,7 +555,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_Rate()
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
-		final RateDto rateDto = new RateDto(1, 1L, 2L);
+		final RateDto rateDto = new RateDto(1, 2L);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
@@ -580,7 +580,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_Rate_InstanceNotFound()
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
-		final RateDto rateDto = new RateDto(1, 1L, 2L);
+		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).rateUser(any(Integer.class),
 				any(Long.class), any(Long.class));
@@ -607,7 +607,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_Rate_InvalidRateException()
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
-		final RateDto rateDto = new RateDto(1, 1L, 2L);
+		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new InvalidRateException("")).when(userServiceMock).rateUser(any(Integer.class),
 				any(Long.class), any(Long.class));
@@ -634,7 +634,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_Rate_ItsNotYourFriendException()
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
-		final RateDto rateDto = new RateDto(1, 1L, 2L);
+		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new ItsNotYourFriendException("")).when(userServiceMock).rateUser(any(Integer.class),
 				any(Long.class), any(Long.class));

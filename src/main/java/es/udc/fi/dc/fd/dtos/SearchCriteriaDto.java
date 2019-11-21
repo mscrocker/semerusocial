@@ -2,6 +2,7 @@ package es.udc.fi.dc.fd.dtos;
 
 import java.util.List;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -21,6 +22,8 @@ public class SearchCriteriaDto {
 	@NotNull
 	private List<String> city;
 
+	@Min(value = 1)
+	@Max(value = 5)
 	private int minRate;
 
 	public SearchCriteriaDto() {

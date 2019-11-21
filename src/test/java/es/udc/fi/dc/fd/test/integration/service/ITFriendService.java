@@ -388,6 +388,7 @@ public class ITFriendService {
 		// TODO -> Cities
 	}
 
+	@Test
 	public void TestSuggestFriendMinRate()
 			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException {
 
@@ -403,7 +404,7 @@ public class ITFriendService {
 		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user4.getId()), LocalDateTime.now()));
 		userService.rateUser(3, user2.getId(), user1.getId());// El user2 vota al user1
 		userService.rateUser(3, user2.getId(), user3.getId());// El user 2 vota al user3
-		userService.rateUser(5, user2.getId(), user4.getId());// El user 2 vota al user3
+		userService.rateUser(1, user2.getId(), user4.getId());// El user 2 vota al user4
 
 		// Ponemos el minRate del user1 a 3
 		user1.setMinRateCriteria(3);
@@ -414,7 +415,7 @@ public class ITFriendService {
 
 		assertTrue(userSuggested.isPresent());
 		assertEquals(userSuggested.get().getUserName(), user3.getUserName());
-
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
 		// No lo encuentra ya que el user 4 tiene una media 5 y el minRate del user1 es
 		// 3
 		final Optional<UserImpl> userSuggested2 = friendService.suggestFriend(user1.getId());
