@@ -33,9 +33,13 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
@@ -59,6 +63,8 @@ public class UserController {
 	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
 	private final static String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
 	private final static String INVALID_AGE_EXCEPTION_CODE = "project.exceptions.InvalidAgeException";
+	private final static String INVALID_RATE_EXCEPTION_CODE = "project.exceptions.InvalidRateException";
+	private final static String INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE = "project.exceptions.ItsNotYourFriendException";
 
 	private final JwtGenerator jwtGenerator = JwtGenerator();
 
@@ -133,6 +139,26 @@ public class UserController {
 
 	}
 
+	@ExceptionHandler(InvalidRateException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleInvalidRateException(InvalidRateException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(INVALID_RATE_EXCEPTION_CODE, null,
+				INVALID_RATE_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
+	@ExceptionHandler(ItsNotYourFriendException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE, null,
+				INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
 	@ExceptionHandler(InvalidDateException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
@@ -172,16 +198,16 @@ public class UserController {
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws InstanceNotFoundException, InvalidAgeException {		
-		SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
-				criteria.getMaxAge(), criteria.getCity());
+			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException {
+		final SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
+				criteria.getMaxAge(), criteria.getCity(), criteria.getMinRate());
 		userService.setSearchCriteria(userId, searchCriteria);
 	}
 
 	@GetMapping("/searchCriteria")
 	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
 			throws InstanceNotFoundException {
-		SearchCriteria criteria = userService.getSearchCriteria(userId);
+		final SearchCriteria criteria = userService.getSearchCriteria(userId);
 
 		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
 	}
@@ -207,8 +233,16 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
 			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
-			throws InstanceNotFoundException, InvalidDateException {
+					throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
+	}
+
+	@PostMapping("/rate")
+	public double rate(@RequestAttribute Long userId, @Validated @RequestBody RateDto rateDto)
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+
+		return userService.rateUser(rateDto.getRate(), userId, rateDto.getUserObject());
+
 	}
 
 }

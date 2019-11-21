@@ -32,8 +32,10 @@ import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
@@ -67,7 +69,6 @@ public class ITFriendService {
 
 	@Autowired
 	private UserService userService;
-
 	@Autowired
 	private FriendService friendService;
 	@Autowired
@@ -119,10 +120,11 @@ public class ITFriendService {
 
 	}
 
-	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities) {
+	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities)
+			throws InvalidRateException, NotRatedException {
 		try {
 			userService.setSearchCriteria(id,
-					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities)));
+					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities), 1));
 		} catch (InstanceNotFoundException | InvalidAgeException e) {
 			e.printStackTrace();
 			fail();
@@ -151,7 +153,7 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(50);
 		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
@@ -228,7 +230,7 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
 		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
@@ -300,11 +302,16 @@ public class ITFriendService {
 		});
 	}
 
-	/******* SUGGEST FRIEND TESTS *************************************/
+	/*******
+	 * SUGGEST FRIEND TESTS
+	 *
+	 * @throws NotRatedException
+	 * @throws InvalidRateException
+	 *************************************/
 	@Test
 
 	//	@Sql(scripts = "/initialData.sql")
-	public void TestSuggestFriend() throws InstanceNotFoundException {
+	public void TestSuggestFriend() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
 		 * CitiesCriteria //TODO
@@ -379,6 +386,41 @@ public class ITFriendService {
 		// - Si edad > 100 -> null
 
 		// TODO -> Cities
+	}
+
+	@Test
+	public void TestSuggestFriendMinRate()
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException {
+
+		final UserImpl user1 = signUp("testSuggestFriendMinRate", "pass", 22, "Male", "osaka");
+		final UserImpl user2 = signUp("testSuggestFriendMinRate2", "pass", 22, "Male", "osaka");
+		final UserImpl user3 = signUp("testSuggestFriendMinRate3", "pass", 22, "Male", "osaka");
+		final UserImpl user4 = signUp("testSuggestFriendMinRate4", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user1.getId(), "Male", 18, 45, "osaka");
+
+		// Hacemos que user 2 sea amigo de user1 ,user3y user4 y les hace una votacion
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user1.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user3.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user4.getId()), LocalDateTime.now()));
+		userService.rateUser(3, user2.getId(), user1.getId());// El user2 vota al user1
+		userService.rateUser(3, user2.getId(), user3.getId());// El user 2 vota al user3
+		userService.rateUser(1, user2.getId(), user4.getId());// El user 2 vota al user4
+
+		// Ponemos el minRate del user1 a 3
+		user1.setMinRateCriteria(3);
+		userRepository.save(user1);
+
+		// With default matches
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user3.getUserName());
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
+		// No lo encuentra ya que el user 4 tiene una media 5 y el minRate del user1 es
+		// 3
+		final Optional<UserImpl> userSuggested2 = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested2.isEmpty());
+
 	}
 
 	@Test

@@ -28,4 +28,5 @@ public interface FriendService {
 
 	void blockUser(Long userId, Long friendId)
 			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
+
 }
