@@ -6,6 +6,9 @@ public class FriendListOut {
 
 	private int myRating;
 
+	public FriendListOut() {
+
+	}
 	public FriendListOut(UserImpl user, int myRating) {
 		super();
 		this.user = user;

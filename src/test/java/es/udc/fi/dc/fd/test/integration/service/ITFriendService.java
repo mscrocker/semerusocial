@@ -497,6 +497,80 @@ public class ITFriendService {
 	}
 
 	@Test
+	public void testGetFriendListUser5()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final UserImpl user1 = createUser("usuarioFriendList1", "contraseñaFriendList1", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioFriendList2", "contraseñaFriendList2", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user3 = createUser("usuarioFriendList3", "contraseñaFriendList3", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user4 = createUser("usuarioFriendList4", "contraseñaFriendList4", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user5 = createUser("usuarioFriendList5", "contraseñaFriendList5", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user1);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+		userService.signUp(user5);
+
+		matchRepository.save(new MatchImpl(new MatchId(user5.getId(), user2.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user5.getId(), user3.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user5.getId(), user4.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user5.getId(), user1.getId()), getDateTime(1, 1, 2000)));
+
+		BlockFriendList<FriendListOut> user5Result = friendService.getFriendList(user5.getId(), 0, 2);
+		assertEquals(user5Result.getFriends().size(), 2);
+		assertEquals(user5Result.getExistMoreFriends(), true);
+
+		user5Result = friendService.getFriendList(user5.getId(), 1, 2);
+		assertEquals(user5Result.getFriends().size(), 2);
+		assertEquals(user5Result.getExistMoreFriends(), false);
+
+		user5Result = friendService.getFriendList(user5.getId(), 2, 2);
+		assertEquals(user5Result.getFriends().size(), 0);
+		assertEquals(user5Result.getExistMoreFriends(), false);
+	}
+
+	@Test
+	public void testGetFriendListFriendWithRating()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final UserImpl user1 = createUser("usuarioFriendList1", "contraseñaFriendList1", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioFriendList2", "contraseñaFriendList2", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user3 = createUser("usuarioFriendList3", "contraseñaFriendList3", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user4 = createUser("usuarioFriendList4", "contraseñaFriendList4", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+		final UserImpl user5 = createUser("usuarioFriendList5", "contraseñaFriendList5", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user1);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+		userService.signUp(user5);
+
+		user5.setRatingVotes(1);
+		user5.setRating(4);
+		userRepository.save(user5);
+
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user2.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user4.getId()), getDateTime(1, 1, 2000)));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user5.getId()), getDateTime(1, 1, 2000)));
+
+
+		final BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 10);
+		assertEquals(user1Result.getFriends().size(), 4);
+		assertEquals(user1Result.getExistMoreFriends(), false);
+
+	}
+
+	@Test
 	public void testGetFriendListWithInstanceNotFoundException() {
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.getFriendList(-1L, 0, 10);
