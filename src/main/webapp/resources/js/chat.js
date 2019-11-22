@@ -3,6 +3,7 @@ const chat = {
 	form: null,
 	baseURL: null,
 	scrollableDiv: null,
+	buttonCollapse: null,
 	friendScroll: null,
 	loadPrevious: false,
 	loadMoreFriends: true,
@@ -13,14 +14,21 @@ const chat = {
 	friendListPage: 0,
 	init: (baseURL) => {
 	    chat.baseURL = baseURL;
-	    $("#sidebar").mCustomScrollbar({
-			theme : "minimal",
-			onTotalScrollOffset: 130,
-			onTotalScroll: () => {
-			    console.log("Reaching");
-			    chat.loadFriendList();
-			}  
-		    });
+	  
+	    
+	    $(window).resize(function() {
+	        if (document.documentElement.clientWidth <= 760) {
+	            // scripts here
+		    	
+
+	        	if (!$('#sidebar, #content').hasClass("active")){
+	        		chat.buttonPressed();
+	        	}
+	        }
+	    });
+	    chat.buttonCollapse = document.getElementById("backArrow");
+	    $('#sidebarCollapse').on('click',chat.buttonPressed );
+
  			    
 	    chat.conversation = document.querySelector('.conversation-container');
 	    chat.friendList = document.getElementById("friendHolder");
@@ -120,7 +128,7 @@ const chat = {
             message.setAttribute('class','user-desc');
             chat.friendList.appendChild(li);
             chat.chatMessage['${friend.id}'] = {messages:[],scroll:0};
-	    
+    
 	},
 	fetchFriendMessage: (friendId) => {
 	    
@@ -160,8 +168,15 @@ const chat = {
 	            chat.conversation.lastChild.remove();
 	        }
 	    fetchFriendMessage(friendId);
+	},
+	buttonPressed: () => {
+	    	chat.buttonCollapse.classList.toggle("fa-chevron-circle-left");
+	    	chat.buttonCollapse.classList.toggle("fa-chevron-circle-right");
+	    	$('#sidebar, #content').toggleClass('active');
+	    	$('.collapse.in').toggleClass('in');
+	    	$('a[aria-expanded=true]').attr('aria-expanded', 'false');
 	}
-};
+	};
 	
 	
 	

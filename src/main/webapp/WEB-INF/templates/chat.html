@@ -20,22 +20,31 @@
 				<div class="sidebar-header">
 					<h3>Friends</h3>
 				</div>
-
+				<div id="scrollabe">
 				<ul id="friendHolder" class="list-unstyled components">
-					<li><a class="friend" href="#"> <span class="user-img"></span>
+					<li><a class="friend "  data-toggle="collapse" aria-expanded="false" 
+					 href="#">
+					 
+					  <span class="user-img"></span>
 							<span class="user-title">Bryan Adams</span>
 							<p class="user-desc">badams@music.com</p>
 					</a></li>
-					<li><a class="friend" href="#"> <span class="user-img"></span>
+					<li><a class="friend dropdown-toggle"  data-toggle="collapse" aria-expanded="false" 
+                     href="#"> <span class="user-img"></span>
 							<span class="user-title">Bryan Adams</span>
 							<p class="user-desc">badams@music.com</p>
 					</a></li>
 				</ul>
+				</div>
 			</div>
 
 			<!-- Page Content  -->
 			<div id="holder">
 				<div id="content">
+				<button type="button" id="sidebarCollapse" class="btn btn-info">
+                <i id="backArrow" class="fa fa-chevron-circle-left"></i>
+                <span>Toggle Sidebar</span>
+            </button>
 					<div class="conversation">
 						<div class="conversation-container">
 							<div class="message sent">
@@ -83,14 +92,15 @@
 						<input class="input-msg" name="input" placeholder="Type a message"
 							autocomplete="off" autofocus></input>
 						<div class="photo">
-							<em class="fa fa-paper-plane"></em>
+							<em class=""></em>
 						</div>
 						<button id="sender" class="send">
 							<div class="circle">
-								<em class="zmdi zmdi-mail-send"></em>
+								<em class="fa fa-paper-plane"></em>
 							</div>
 						</button>
 					</form>
+					
 				</div>
 			</div>
 		</div>
