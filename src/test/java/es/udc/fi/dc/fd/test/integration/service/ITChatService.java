@@ -7,17 +7,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -29,7 +27,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
@@ -56,20 +54,20 @@ import es.udc.fi.dc.fd.service.ChatService;
 public class ITChatService {
 	@Autowired
 	ChatService chatService;
-	
+
 	@Autowired
 	private MatchRepository matchRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private MessageRepository messageRepository;
 
 	private LocalDateTime getDateTime(int day, int month, int year) {
 		return LocalDateTime.of(year, month, day, 00, 01);
 	}
-	
+
 	private LocalDateTime createMessage(UserImpl owner, UserImpl receiver, String content) {
 		final LocalDateTime date = LocalDateTime.now();
 		final MessageImpl msg = new MessageImpl();
@@ -87,12 +85,12 @@ public class ITChatService {
 
 		return date;
 	}
-	
+
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
 			String description) {
 		return new UserImpl(userName, password, date, sex, city, description);
 	}
-	
+
 	private Optional<UserImpl> createUser(String userName) {
 		final UserImpl user1 = createUser(userName, "pass", getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 		userRepository.save(user1);
@@ -102,7 +100,7 @@ public class ITChatService {
 
 
 	@Test
-	public void testSendMessage() throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+	public void testSendMessage() throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -129,7 +127,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageFriendToUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -156,7 +154,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageInstanceNotFoundException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -169,8 +167,22 @@ public class ITChatService {
 	}
 
 	@Test
-	public void testSendMessageNotYourFriendException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+	public void testSendMessageInstanceNotFoundExceptionUserNotFound()
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		final String content = "mensaje";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+
+		// Usamos el servicio
+		assertThrows(InstanceNotFoundException.class, () -> {
+			chatService.sendMessage(user.get().getId() + 1, 900L, content);
+		});
+	}
+
+	@Test
+	public void testSendMessageItsNotYourFriendException()
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -178,14 +190,14 @@ public class ITChatService {
 		final Optional<UserImpl> friend = createUser("friend");
 
 		// Usamos el servicio
-		assertThrows(NotYourFriendException.class, () -> {
+		assertThrows(ItsNotYourFriendException.class, () -> {
 			chatService.sendMessage(user.get().getId(), friend.get().getId(), content);
 		});
 	}
 
 	@Test
 	public void testSendMessageValidationExceptionUserNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -199,7 +211,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionFriendNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -213,7 +225,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionMsgToYourself()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -227,7 +239,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionContentNull()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = null;
 
 		// Creamos los usuarios
@@ -247,8 +259,29 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionContentBlank()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "   ";
+
+		// Creamos los usuarios
+		final Optional<UserImpl> user = createUser("user1");
+		final Optional<UserImpl> friend = createUser("friend");
+
+		// Los hacemos amigos
+		final MatchId matchId = new MatchId(user.get().getId(), friend.get().getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		// Usamos el servicio
+		assertThrows(ValidationException.class, () -> {
+			chatService.sendMessage(user.get().getId(), friend.get().getId(), content);
+		});
+	}
+
+	@Test
+	public void testSendMessageValidationExceptionContentTooLarge()
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+
+		final String content = StringUtils.repeat("a", 1000);
 
 		// Creamos los usuarios
 		final Optional<UserImpl> user = createUser("user1");
@@ -270,7 +303,7 @@ public class ITChatService {
 	 *************************************************/
 
 	@Test
-	public void testGetConversation() throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+	public void testGetConversation() throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Creamos los usuarios
 		final Optional<UserImpl> user = createUser("user1");
@@ -300,7 +333,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationInstanceNotFoundExceptionUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Creamos un usuario
 		final Optional<UserImpl> friend = createUser("friend");
@@ -313,7 +346,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationInstanceNotFoundExceptionFriend()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Creamos un usuario
 		final Optional<UserImpl> user = createUser("user1");
@@ -325,8 +358,8 @@ public class ITChatService {
 	}
 
 	@Test
-	public void testGetConversationNotYourFriendException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+	public void testGetConversationItsNotYourFriendException()
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		/*
 		 * 4. Usamos el servicio
 		 */
@@ -335,14 +368,14 @@ public class ITChatService {
 		final Optional<UserImpl> friend = createUser("friend");
 
 		// Probamos el servicio
-		assertThrows(NotYourFriendException.class, () -> {
+		assertThrows(ItsNotYourFriendException.class, () -> {
 			chatService.getConversation(user.get().getId(), friend.get().getId(), 0, 10);
 		});
 	}
 
 	@Test
 	public void testGetConversationValidationException()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		// Intentamos obtener la conversación con nosotros mismos
 
 		// Creamos los usuarios
@@ -356,7 +389,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationFriendToUser()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		/*
 		 * 4. Usamos el servicio
 		 */
@@ -386,35 +419,69 @@ public class ITChatService {
 		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(0));
 	}
 
+	/********
+	 * TESTS GET USER CONVERSATIONS
+	 *
+	 * @throws RequestParamException
+	 * @throws InstanceNotFoundException
+	 ***********************************************************************/
+
 	@Test
-	public void testFindMessageHistory()
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException, RequestParamException {
-		
+	public void testFindMessageHistory() throws InstanceNotFoundException, RequestParamException {
+
 		final UserImpl user = createUser("user1").get();
 		final UserImpl friend = createUser("friend").get();
 		final MatchId matchId = new MatchId(user.getId(), friend.getId());
 		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
 		matchRepository.save(match);
-		
+
 		int i = 0;
 		for (; i < 10; i++) {
-			MessageImpl message = new MessageImpl();
+			final MessageImpl message = new MessageImpl();
 			message.setUser1(user);
 			message.setUser2(friend);
 			message.setTransmitter(friend);
-			message.setDate(LocalDateTime.now().plusHours((long)i));
+			message.setDate(LocalDateTime.now().plusHours(i));
 			message.setMessageContent("message" + i);
 			messageRepository.save(message);
-			
-		}
-		
-		String expectedResult = "message" + (i-1);
 
-		
-		Block<FriendChatTitle> result = chatService.getUserConversations(user.getId(), 0);
-		String resultProcessed = result.getElements().get(0).getContent();
-		
+		}
+
+		final String expectedResult = "message" + (i-1);
+
+
+		final Block<FriendChatTitle> result = chatService.getUserConversations(user.getId(), 0);
+		final String resultProcessed = result.getElements().get(0).getContent();
+
 		assertEquals(expectedResult, resultProcessed);
 	}
-	
+
+	@Test
+	public void testFindMessageHistoryRequestParamException() throws InstanceNotFoundException, RequestParamException {
+
+		final UserImpl user = createUser("user1").get();
+		final UserImpl friend = createUser("friend").get();
+		final MatchId matchId = new MatchId(user.getId(), friend.getId());
+		final MatchImpl match = new MatchImpl(matchId, LocalDateTime.now());
+		matchRepository.save(match);
+
+		int i = 0;
+		for (; i < 10; i++) {
+			final MessageImpl message = new MessageImpl();
+			message.setUser1(user);
+			message.setUser2(friend);
+			message.setTransmitter(friend);
+			message.setDate(LocalDateTime.now().plusHours(i));
+			message.setMessageContent("message" + i);
+			messageRepository.save(message);
+
+		}
+
+		final String expectedResult = "message" + (i - 1);
+
+		assertThrows(RequestParamException.class, () -> {
+			chatService.getUserConversations(user.getId(), -1);
+		});
+	}
+
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
-import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.controller.exception.ValidationException;
 import es.udc.fi.dc.fd.dtos.MessageConversor;
@@ -44,7 +44,7 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public void sendMessage(Long userId, Long friendId, String content)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Comprobamos que los ids no son nulos
 		if (userId == null || friendId == null) {
@@ -77,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
 		//Comprobamos que sean amigos
 		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
 				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
-			throw new NotYourFriendException("User with id "+friendId+" is not your friend.");
+			throw new ItsNotYourFriendException("User with id " + friendId + " is not your friend.");
 		}
 
 
@@ -98,7 +98,7 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
-			throws InstanceNotFoundException, NotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		if (userId == null) {
 			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
 		}
@@ -110,7 +110,7 @@ public class ChatServiceImpl implements ChatService {
 		// Comprobamos que sean amigos
 		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
 				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
-			throw new NotYourFriendException("User with id " + friendId + " is not your friend.");
+			throw new ItsNotYourFriendException("User with id " + friendId + " is not your friend.");
 		}
 
 		// En BD estamos almacenando 1º el id más pequeño
@@ -129,15 +129,16 @@ public class ChatServiceImpl implements ChatService {
 		return new Block<>(items, conversation.hasNext());
 
 	}
-	
 
+
+	@Override
 	public Block<FriendChatTitle> getUserConversations(Long userId, int page) throws RequestParamException, InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 		if (page < 0) {
 			throw new RequestParamException("Page must be at less 0, you have passed as page=" + page);
 		}
 
-		Slice<FriendChatTitle> result = messageRepository.getLatestConversations(userId, page, 10);
+		final Slice<FriendChatTitle> result = messageRepository.getLatestConversations(userId, page, 10);
 		return new Block<>(result.getContent(), result.hasNext());
 	}
 

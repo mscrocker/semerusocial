@@ -18,18 +18,13 @@ import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
-import es.udc.fi.dc.fd.controller.exception.NotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
-import es.udc.fi.dc.fd.controller.exception.ValidationException;
-import es.udc.fi.dc.fd.dtos.MessageConversor;
-import es.udc.fi.dc.fd.dtos.MessageDetailsDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
-import es.udc.fi.dc.fd.model.persistence.MessageImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
 import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
@@ -38,8 +33,6 @@ import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
-import es.udc.fi.dc.fd.repository.MessageRepository;
-import es.udc.fi.dc.fd.repository.RateRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -64,18 +57,10 @@ public class FriendServiceImpl implements FriendService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private MessageRepository messageRepository;
-
-	@Autowired
-	private RateRepository rateRepository;
-
-	@Autowired
 	private UserService userService;
 
 	@Autowired
 	private PermissionChecker permissionChecker;
-
-	private static final int MAX_LENGTH_MESSAGE = 999;
 
 	@Override
 	@Transactional(readOnly = true)

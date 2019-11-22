@@ -1,8 +1,11 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class MessageDetailsDto {
+public class MessageDetailsDto implements Serializable {
+
+	private static final long serialVersionUID = 1328776989350853492L;
 
 	private String messageContent;
 
