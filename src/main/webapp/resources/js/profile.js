@@ -14,6 +14,25 @@ let profile = null;
 		document.getElementById("profileError").classList.add("hidden");
 	},
 	
+	handlePremiumChange: () => {
+		let url = criteriaSettings.baseURL + "backend/users/premium";
+		let params = {
+				method: 'PUT',
+				body: JSON.stringify({
+					premium: document.getElementById("premiumField").checked
+				}),
+				headers: { "Content-Type": "application/json" }
+		};
+		user.authFetch(url, params, (response) => {
+			if (response.status !== 204){
+				customAlert.showAlertFromResponse(response);
+			}
+		}, (errors) => {
+			customAlert.showAlert(errors);
+		});
+	},
+
+	
 	notifyChange: (name) => {
 		profile.clearStatusIcons();
 		let result = false;
@@ -31,7 +50,7 @@ let profile = null;
 				result = profile.validation.validateCity(true);
 				break;
 			case "premium":
-				result = true;
+				profile.handlePremiumChange();
 				break;
 		}
 
@@ -124,8 +143,7 @@ let profile = null;
 			year: date.getUTCFullYear(),
 			description: document.getElementById("descriptionField").value,
 			city: document.getElementById("cityField").value,
-			sex: document.getElementById("sexField").value,
-			premium: document.getElementById("premiumField").checked
+			sex: document.getElementById("sexField").value
 		};
 		
 		let url = criteriaSettings.baseURL + "backend/users/updateProfile";
@@ -148,6 +166,14 @@ let profile = null;
 		}, (errors) => {
 			customAlert.showAlert(errors);
 		});
+		
+		
+		
+		
+	},
+	
+	finishUpdate: (url, params) => {
+		
 	},
 
 	initProfile: (baseURL) => {
