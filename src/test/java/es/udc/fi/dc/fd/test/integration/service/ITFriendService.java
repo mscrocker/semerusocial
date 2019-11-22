@@ -390,7 +390,8 @@ public class ITFriendService {
 
 	@Test
 	public void TestSuggestFriendMinRate()
-			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException {
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException,
+			RequestParamException {
 
 		final UserImpl user1 = signUp("testSuggestFriendMinRate", "pass", 22, "Male", "osaka");
 		final UserImpl user2 = signUp("testSuggestFriendMinRate2", "pass", 22, "Male", "osaka");
@@ -416,12 +417,38 @@ public class ITFriendService {
 		assertTrue(userSuggested.isPresent());
 		assertEquals(userSuggested.get().getUserName(), user3.getUserName());
 		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
-		// No lo encuentra ya que el user 4 tiene una media 5 y el minRate del user1 es
+		// No lo encuentra ya que el user 4 tiene una media 1 y el minRate del user1 es
 		// 3
 		final Optional<UserImpl> userSuggested2 = friendService.suggestFriend(user1.getId());
 		assertTrue(userSuggested2.isEmpty());
 
+		user4.setPremium(true);
+		userRepository.save(user4);
+
+		// Ahora al ser el user4 premium lo tiene que encontrar
+		final Optional<UserImpl> userSuggested3 = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested3.isPresent());
+		assertEquals(userSuggested3.get().getUserName(), user4.getUserName());
+
 	}
+
+	@Test
+	public void TestSuggestFriendPremium()
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException {
+
+		final UserImpl user1 = signUp("testSuggestAAAA", "pass", 80, "Female", "pepe");
+		final UserImpl user2 = signUp("testSuggestBBBB", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user2.getId(), "Male", 18, 45, "osaka");
+
+		user1.setPremium(true);
+		userRepository.save(user1);
+
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(user2.getId());
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user1.getUserName());
+	}
+
 
 	@Test
 	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {

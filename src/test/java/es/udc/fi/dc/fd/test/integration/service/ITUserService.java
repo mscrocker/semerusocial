@@ -405,6 +405,7 @@ public class ITUserService {
 		});
 	}
 
+	@Test
 	public void testUpdateProfileWithInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
@@ -521,6 +522,33 @@ public class ITUserService {
 		});
 
 
+
+	}
+
+	@Test
+	public void testUpdatePremium() throws InstanceNotFoundException {
+
+		final UserImpl user1 = createUser("userPremium", "userInvalidRate1", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+		userRepository.save(user1);
+
+		assertEquals(false, user1.isPremium()); // Comprobamos que no es premium
+		userService.updatePremium(user1.getId(), false);
+
+		assertEquals(false, user1.isPremium()); // Comprobamos que sigue sin ser premium
+
+		userService.updatePremium(user1.getId(), true);
+
+		assertEquals(true, user1.isPremium()); // Comprobamos que es premium
+
+	}
+
+	@Test
+	public void testUpdatePremiumInstanceNotFound() throws InstanceNotFoundException {
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.updatePremium(-1L, true);
+		});
 
 	}
 

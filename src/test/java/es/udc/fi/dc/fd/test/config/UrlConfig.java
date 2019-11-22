@@ -45,6 +45,8 @@ public final class UrlConfig {
 
 	public static final String URL_USER_RATE_POST = "/backend/users/rate";
 
+	public static final String URL_USER_PREMIUM_PUT = "/backend/users/premium";
+
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
 	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
