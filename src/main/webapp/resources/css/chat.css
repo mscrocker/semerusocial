@@ -115,11 +115,14 @@ li .friend, .friend:hover, .friend:focus {
 }
 
 #sidebar ul p {
+    margin: 0 0 0 5px;
+    /* margin: 0; */
     /* color: #fff; */
     /* padding: 10px; */
     /* margin-left: 20px; */
-    padding-top: 10px;
+    /* padding-top: 10px; */
 }
+
 
 #sidebar ul li a {
     /* padding: 10px; */
@@ -491,7 +494,7 @@ li .friend:hover {
 
 .user-title {
     font-size: 2.0em;
-    margin-left: 5px;
+    /* margin-left: 5px; */
     /* position: relative; */
     /* top: 10px; */
 }
@@ -622,6 +625,15 @@ div#scrollabe {
 }
 .line1 {
     position: relative;
-    top: 10px;
-    margin-bottom: 10px;
+    /* top: 10px; */
+    /* margin-bottom: 10px; */
+    margin-left: 5px;
+    /* padding-top: 1vh; */
+}
+.user-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+        justify-content: space-evenly;
+	
 }

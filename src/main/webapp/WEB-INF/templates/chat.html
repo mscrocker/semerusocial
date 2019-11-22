@@ -2,12 +2,12 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+<title>Chat</title>
 <div th:replace="fragments/header :: header"></div>
 <link rel="stylesheet" type="text/css"
 	th:href="@{/resources/css/chat.css}" media="all" />
 <link rel="stylesheet" href="2">
 
-<title>Chat</title>
 </head>
 <body>
 	<header class="header" th:include="fragments/menu :: menu"></header>
@@ -21,23 +21,21 @@
 					<h3>Friends</h3>
 				</div>
 				<div id="scrollabe">
-				<ul id="friendHolder" class="list-unstyled components">
-				
-				</ul>
+					<ul id="friendHolder" class="list-unstyled components">
+
+					</ul>
 				</div>
 			</div>
 
 			<!-- Page Content  -->
 			<div id="holder">
 				<div id="content">
-				<button type="button" id="sidebarCollapse" class="btn btn-info">
-                <i id="backArrow" class="fa fa-chevron-circle-left"></i>
-                <span>Toggle Sidebar</span>
-            </button>
+					<button type="button" id="sidebarCollapse" class="btn btn-info">
+						<i id="backArrow" class="fa fa-chevron-circle-left"></i> <span>Toggle
+							Sidebar</span>
+					</button>
 					<div class="conversation">
-						<div class="conversation-container">
-					
-						</div>
+						<div class="conversation-container"></div>
 
 					</div>
 
@@ -62,7 +60,7 @@
 							</div>
 						</button>
 					</form>
-					
+
 				</div>
 			</div>
 		</div>
