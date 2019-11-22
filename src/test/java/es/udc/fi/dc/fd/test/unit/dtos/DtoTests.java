@@ -133,14 +133,15 @@ class DtoTests {
 	void testRateDto() {
 		EntityTestUtils.testEntity(RateDto.class);
 	}
-	
+
 	@Test
 	void testMessageDetailsDto() {
 		EntityTestUtils.testEntity(MessageDetailsDto.class);
 	}
-	
+
 	@Test
 	void testFriendHeaderDto() {
 		EntityTestUtils.testEntity(FriendHeaderDto.class);
 	}
+
 }
