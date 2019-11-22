@@ -518,14 +518,10 @@ public class ITFriendService {
 		final UserImpl user5 = initialFriendList().get(4);
 
 		BlockFriendList<FriendListOut> user5Result = friendService.getFriendList(user5.getId(), 0, 2);
-		assertEquals(user5Result.getFriends().size(), 2);
-		assertEquals(user5Result.getExistMoreFriends(), true);
-
-		user5Result = friendService.getFriendList(user5.getId(), 1, 2);
-		assertEquals(user5Result.getFriends().size(), 2);
+		assertEquals(user5Result.getFriends().size(), 1);
 		assertEquals(user5Result.getExistMoreFriends(), false);
 
-		user5Result = friendService.getFriendList(user5.getId(), 2, 2);
+		user5Result = friendService.getFriendList(user5.getId(), 1, 2);
 		assertEquals(user5Result.getFriends().size(), 0);
 		assertEquals(user5Result.getExistMoreFriends(), false);
 	}
