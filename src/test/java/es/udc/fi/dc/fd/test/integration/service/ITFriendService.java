@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,7 @@ import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
@@ -469,9 +472,8 @@ public class ITFriendService {
 		});
 	}
 
-	@Test
-	public void testGetFriendList()
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+	//
+	private List<UserImpl> initialFriendList() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user1 = createUser("usuarioFriendList1", "contraseñaFriendList1", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
 		final UserImpl user2 = createUser("usuarioFriendList2", "contraseñaFriendList2", getDateTime(1, 1, 2000),
@@ -494,7 +496,22 @@ public class ITFriendService {
 		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user4.getId()), getDateTime(1, 1, 2000)));
 		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user5.getId()), getDateTime(1, 1, 2000)));
 
-		BlockFriendList<UserImpl> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
+		final List<UserImpl> list = new ArrayList<>();
+		list.add(user1);
+		list.add(user2);
+		list.add(user3);
+		list.add(user4);
+		list.add(user5);
+
+		return (list);
+	}
+
+	@Test
+	public void testGetFriendList()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final UserImpl user1 = initialFriendList().get(0);
+
+		BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
 		assertEquals(user1Result.getFriends().size(), 2);
 		assertEquals(user1Result.getExistMoreFriends(), true);
 
@@ -505,6 +522,37 @@ public class ITFriendService {
 		user1Result = friendService.getFriendList(user1.getId(), 2, 2);
 		assertEquals(user1Result.getFriends().size(), 0);
 		assertEquals(user1Result.getExistMoreFriends(), false);
+	}
+
+	@Test
+	public void testGetFriendListUser5()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final UserImpl user5 = initialFriendList().get(4);
+
+		BlockFriendList<FriendListOut> user5Result = friendService.getFriendList(user5.getId(), 0, 2);
+		assertEquals(user5Result.getFriends().size(), 1);
+		assertEquals(user5Result.getExistMoreFriends(), false);
+
+		user5Result = friendService.getFriendList(user5.getId(), 1, 2);
+		assertEquals(user5Result.getFriends().size(), 0);
+		assertEquals(user5Result.getExistMoreFriends(), false);
+	}
+
+	@Test
+	public void testGetFriendListFriendWithRating()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
+		final List<UserImpl> list = initialFriendList();
+		final UserImpl user1 = list.get(0);
+		final UserImpl user5 = list.get(4);
+
+		user5.setRatingVotes(1);
+		user5.setRating(4);
+		userRepository.save(user5);
+
+		final BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 10);
+		assertEquals(4, user1Result.getFriends().size());
+		assertEquals(false, user1Result.getExistMoreFriends());
+
 	}
 
 	@Test
