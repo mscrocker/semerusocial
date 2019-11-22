@@ -30,6 +30,10 @@ const friendList = {
 		`			onclick="ratingHandler.onMouseClickHandler(4, () => friendList.rateUser(5, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
 		`			class="text-success glyphicon ${(friendData.myRating == 5) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
 		`		</td>`,
+		`		<td>`,
+		`			<button class="btn btn-primary ml-0 mr-3" onclick="window.location.href='${baseURL}chatting/${friendData.id}'">Chat</button>`,
+		`			<button class="btn btn-danger ml-3 mr-0" onclick="friendList.blockFriend(${friendData.id},'${baseURL}')">Block</button>`,
+		`		</td>`,
 		`	</tr>`
 		];
 		return lines.join("\n");
@@ -83,6 +87,24 @@ const friendList = {
 		});
 	},
 	
+	
+	blockFriend: function (friendId, baseURL) {
+		let url = baseURL + "backend/friends/block";
+		let params = {
+			method: 'POST',
+			body: JSON.stringify({
+				id: friendId
+			}),
+			headers: { "Content-Type": "application/json" }
+		};
+		user.authFetch(url, params, (response) => {
+			if (response.status === 204){
+				window.location.reload(false);
+			}
+		}, (errors) => {
+			customAlert.showAlert(errors);
+		});
+	},
 	
 	
 	

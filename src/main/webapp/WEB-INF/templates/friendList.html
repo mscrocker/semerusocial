@@ -10,10 +10,10 @@
 	<header class="header" th:include="fragments/menu :: menu" ></header>
 	<div th:include="fragments/errorAlert"></div>
 	<table class="text-center table table-striped table-bordered col-9 mx-auto" aria-describedby="friendListTitle" aria-labelled-by="friendListTitle">
-		<colgroup span="4"></colgroup>
+		<colgroup span="6"></colgroup>
 		<thead class="thead-dark">
 			<tr>
-				<th scope="colgroup" colspan="5" class="text-center">FRIEND
+				<th scope="colgroup" colspan="6" class="text-center">FRIEND
 					LIST</th>
 			</tr>
 			<tr>
@@ -22,11 +22,12 @@
 				<th scope="col">City</th>
 				<th scope="col">Sex</th>
 				<th scope="col">Rating</th>
+				<th scope="col">Options</th>
 			</tr>
 		</thead>
 		<tbody id="friendsTable">
 			<tr>
-				<td colspan="4">
+				<td colspan="6">
 					<div class="clearfix text-center">
 					  <div class="spinner-border" role="status">
 					    <span class="sr-only">Loading...</span>
