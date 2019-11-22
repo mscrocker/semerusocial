@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +39,7 @@ import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
@@ -250,10 +249,10 @@ public class UserController {
 
 	@PutMapping("/premium")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updatePremium(@RequestAttribute Long userId, @NotNull boolean premium)
+	public void updatePremium(@RequestAttribute Long userId, @Validated @RequestBody PremiumFormDto premiumDto)
 			throws InstanceNotFoundException {
 
-		userService.updatePremium(userId, premium);
+		userService.updatePremium(userId, premiumDto.isPremium());
 
 	}
 

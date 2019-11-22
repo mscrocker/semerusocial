@@ -44,6 +44,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
+import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
@@ -660,12 +661,13 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdatePremium() throws InstanceNotFoundException, Exception {
+		final PremiumFormDto premiumDto = new PremiumFormDto(true);
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
 				.contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", 1L)
-				.requestAttr("premium", false))
+				.content(Utils.convertObjectToJsonBytes(premiumDto)))
 		.andExpect(status().isNoContent());
 		// @formatter:on
 
@@ -674,13 +676,14 @@ public final class TestUserController {
 		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
-		assertThat(premiumCaptor.getValue(), is(false));
+		assertThat(premiumCaptor.getValue(), is(true));
 
 	}
 
 	@Test
 	public void TestUserController_UpdatePremium_InstanceNotFound()
 			throws InstanceNotFoundException, Exception {
+		final PremiumFormDto premiumDto = new PremiumFormDto(true);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updatePremium(any(Long.class),
 				any(Boolean.class));
@@ -689,7 +692,7 @@ public final class TestUserController {
 		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
 				.contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", 1L)
-				.requestAttr("premium", false))
+				.content(Utils.convertObjectToJsonBytes(premiumDto)))
 		.andExpect(status().isNotFound());
 		// @formatter:on
 
@@ -698,7 +701,7 @@ public final class TestUserController {
 		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
-		assertThat(premiumCaptor.getValue(), is(false));
+		assertThat(premiumCaptor.getValue(), is(true));
 
 	}
 
