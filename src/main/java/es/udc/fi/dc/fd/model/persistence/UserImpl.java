@@ -22,6 +22,8 @@ import es.udc.fi.dc.fd.model.User;
 public class UserImpl implements User {
 
 	private static final long DEFAULT_RATING_VOTES = 0;
+	private static final long DEFAULT_RATING = 0;
+	private static final int DEFAULT_MINRATE = 1;
 	private static final boolean DEFAULT_PREMIUM = false;
 
 	@Transient
@@ -64,7 +66,7 @@ public class UserImpl implements User {
 	private String description;
 
 	@Column(name = "rating")
-	private double rating;
+	private double rating = DEFAULT_RATING;
 
 	@Column(name = "ratingVotes")
 	private long ratingVotes = DEFAULT_RATING_VOTES;
@@ -73,7 +75,7 @@ public class UserImpl implements User {
 	private boolean premium = DEFAULT_PREMIUM;
 
 	@Column(name = "minRateCriteria")
-	private int minRateCriteria;
+	private int minRateCriteria = DEFAULT_MINRATE;
 
 	public UserImpl() {
 		super();
@@ -87,6 +89,19 @@ public class UserImpl implements User {
 		this.sex = sex;
 		this.city = city;
 		this.description = description;
+	}
+
+	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city, String description,
+			double rating, long ratingVotes) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.date = date;
+		this.sex = sex;
+		this.city = city;
+		this.description = description;
+		this.rating = rating;
+		this.ratingVotes = ratingVotes;
 	}
 
 	public UserImpl(LocalDateTime date, String sex, String city, String description) {
@@ -251,23 +266,23 @@ public class UserImpl implements User {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + (city == null ? 0 : city.hashCode());
 		result = prime * result + criteriaMaxAge;
 		result = prime * result + criteriaMinAge;
-		result = prime * result + ((criteriaSex == null) ? 0 : criteriaSex.hashCode());
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + (criteriaSex == null ? 0 : criteriaSex.hashCode());
+		result = prime * result + (date == null ? 0 : date.hashCode());
+		result = prime * result + (description == null ? 0 : description.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
 		result = prime * result + minRateCriteria;
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + (password == null ? 0 : password.hashCode());
 		result = prime * result + (premium ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(rating);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (int) (ratingVotes ^ (ratingVotes >>> 32));
-		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
-		result = prime * result + ((suggestion == null) ? 0 : suggestion.hashCode());
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+		result = prime * result + (int) (temp ^ temp >>> 32);
+		result = prime * result + (int) (ratingVotes ^ ratingVotes >>> 32);
+		result = prime * result + (sex == null ? 0 : sex.hashCode());
+		result = prime * result + (suggestion == null ? 0 : suggestion.hashCode());
+		result = prime * result + (userName == null ? 0 : userName.hashCode());
 		return result;
 	}
 

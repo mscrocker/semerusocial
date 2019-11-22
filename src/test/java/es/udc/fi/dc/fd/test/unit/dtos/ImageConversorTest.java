@@ -33,16 +33,16 @@ class ImageConversorTest {
 	void testToReturnedImageDto() {
 		Block<ImageImpl> images = new Block<>();
 		UserImpl user = new UserImpl();
-		images.setImages(Arrays.asList(new ImageImpl[] {
+		images.setElements(Arrays.asList(new ImageImpl[] {
 			new ImageImpl(user, new byte[] {10,12,13}, "png"),
 			new ImageImpl(user, new byte[] {11,12,13}, "jpg"),
 			new ImageImpl(user, new byte[] {12,12,13}, "png"),
 		}));
-		images.setExistMoreImages(false);
+		images.setExistMoreElements(false);
 		
 		BlockDto<ReturnedImageDto> dto = ImageConversor.toReturnedImageDto(images);
-		assertEquals(dto.getExistMoreImages(), images.getExistMoreImages());
-		assertEquals(dto.getImages(), images.getImages().stream().map(
+		assertEquals(dto.isExistMoreElements(), images.isExistMoreElements());
+		assertEquals(dto.getElements(), images.getElements().stream().map(
 				(ImageImpl e) -> ImageConversor.toReturnedImageDto(e)
 		).collect(Collectors.toList()));
 		

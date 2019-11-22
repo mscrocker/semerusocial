@@ -19,7 +19,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -27,14 +26,19 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
@@ -43,7 +47,9 @@ import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
+import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -56,7 +62,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -64,7 +70,6 @@ public class ITFriendService {
 
 	@Autowired
 	private UserService userService;
-
 	@Autowired
 	private FriendService friendService;
 	@Autowired
@@ -77,6 +82,13 @@ public class ITFriendService {
 
 	@Autowired
 	private MatchRepository matchRepository;
+
+	@Autowired
+	private MessageRepository messageRepository;
+
+	@Autowired
+	private BlockedRepository blockedRepository;
+
 
 	@Autowired
 	public ITFriendService() {
@@ -113,10 +125,11 @@ public class ITFriendService {
 
 	}
 
-	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities) {
+	private void setSearchCriteria(Long id, String genre, int minAge, int maxAge, String... cities)
+			throws InvalidRateException, NotRatedException {
 		try {
 			userService.setSearchCriteria(id,
-					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities)));
+					new SearchCriteria(SexCriteriaEnum.fromCode(genre), minAge, maxAge, Arrays.asList(cities), 1));
 		} catch (InstanceNotFoundException | InvalidAgeException e) {
 			e.printStackTrace();
 			fail();
@@ -124,12 +137,19 @@ public class ITFriendService {
 		}
 	}
 
+	private Optional<UserImpl> createUser(String userName) {
+		final UserImpl user1 = createUser(userName, "pass", getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+		userRepository.save(user1);
+		return userRepository.findByUserName(userName);
+	}
+
+	
+
 	// -----addImage-----
 
 	@Test
-	public void testDefaultCriteriaRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testDefaultCriteriaRequest() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo3", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
@@ -145,7 +165,7 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaRequest()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(50);
 		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
@@ -172,9 +192,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testReject()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testReject() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
@@ -187,9 +206,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testRejectAlreadyRejected()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testRejectAlreadyRejected() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
 		userRepository.save(user1);
 
@@ -222,7 +240,8 @@ public class ITFriendService {
 	@Test
 	public void testInvalidCriteriaReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+			AlreadyAceptedException, InvalidRateException, NotRatedException {
+
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
 		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
@@ -294,11 +313,17 @@ public class ITFriendService {
 		});
 	}
 
-	/******* SUGGEST FRIEND TESTS *************************************/
+	/*******
+	 * SUGGEST FRIEND TESTS
+	 *
+	 * @throws NotRatedException
+	 * @throws InvalidRateException
+	 *************************************/
 	@Test
 
+
 	//	@Sql(scripts = "/initialData.sql")
-	public void TestSuggestFriend() throws InstanceNotFoundException {
+	public void TestSuggestFriend() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
 		 * CitiesCriteria //TODO
@@ -376,6 +401,68 @@ public class ITFriendService {
 	}
 
 	@Test
+	public void TestSuggestFriendMinRate()
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException,
+			RequestParamException {
+
+		final UserImpl user1 = signUp("testSuggestFriendMinRate", "pass", 22, "Male", "osaka");
+		final UserImpl user2 = signUp("testSuggestFriendMinRate2", "pass", 22, "Male", "osaka");
+		final UserImpl user3 = signUp("testSuggestFriendMinRate3", "pass", 22, "Male", "osaka");
+		final UserImpl user4 = signUp("testSuggestFriendMinRate4", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user1.getId(), "Male", 18, 45, "osaka");
+
+		// Hacemos que user 2 sea amigo de user1 ,user3y user4 y les hace una votacion
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user1.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user3.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user4.getId()), LocalDateTime.now()));
+		userService.rateUser(3, user2.getId(), user1.getId());// El user2 vota al user1
+		userService.rateUser(3, user2.getId(), user3.getId());// El user 2 vota al user3
+		userService.rateUser(1, user2.getId(), user4.getId());// El user 2 vota al user4
+
+		// Ponemos el minRate del user1 a 3
+		user1.setMinRateCriteria(3);
+		userRepository.save(user1);
+
+		// With default matches
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user3.getUserName());
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
+		// No lo encuentra ya que el user 4 tiene una media 1 y el minRate del user1 es
+		// 3
+		final Optional<UserImpl> userSuggested2 = friendService.suggestFriend(user1.getId());
+		assertTrue(userSuggested2.isEmpty());
+
+		user4.setPremium(true);
+		userRepository.save(user4);
+
+		// Ahora al ser el user4 premium lo tiene que encontrar
+		final Optional<UserImpl> userSuggested3 = friendService.suggestFriend(user1.getId());
+
+		assertTrue(userSuggested3.isPresent());
+		assertEquals(userSuggested3.get().getUserName(), user4.getUserName());
+
+	}
+
+	@Test
+	public void TestSuggestFriendPremium()
+			throws InstanceNotFoundException, InvalidRateException, NotRatedException {
+
+		final UserImpl user1 = signUp("testSuggestAAAA", "pass", 80, "Female", "pepe");
+		final UserImpl user2 = signUp("testSuggestBBBB", "pass", 22, "Male", "osaka");
+		setSearchCriteria(user2.getId(), "Male", 18, 45, "osaka");
+
+		user1.setPremium(true);
+		userRepository.save(user1);
+
+		final Optional<UserImpl> userSuggested = friendService.suggestFriend(user2.getId());
+		assertTrue(userSuggested.isPresent());
+		assertEquals(userSuggested.get().getUserName(), user1.getUserName());
+	}
+
+
+	@Test
 	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.suggestFriend(-1L);
@@ -443,4 +530,95 @@ public class ITFriendService {
 		});
 	}
 
+	/******* SEND MESSAGE TESTS ****************************/
+
+	@Test
+	public void testBlockUser() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockUser", "contraseñaBlockUser", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlockUser2", "contraseñaBlockUser2", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
+
+		final Long firstId = Math.min(user.getId(), user2.getId());
+		final Long secondId = user2.getId().equals(firstId) ? user.getId() : user2.getId();
+
+		// check if they are not friends now and if user blocked user2
+		assertTrue(!matchRepository.findById(new MatchId(firstId, secondId)).isPresent()
+				&& blockedRepository.findById(new BlockedId(user.getId(), user2.getId())).isPresent());
+	}
+
+	@Test
+	public void testBlockUserINFE() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioBlockUserINFE", "contraseñaBlockUserINFE", getDateTime(1, 1, 2000),
+				"hombre",
+				"coruna", "descripcion");
+		userService.signUp(user);
+
+		// user2 does not exists
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.blockUser(user.getId(), -1L);
+		});
+		// user does not exists
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.blockUser(-1L, user.getId());
+		});
+	}
+
+	@Test
+	public void testBlockUserINYF() throws InstanceNotFoundException, ItsNotYourFriendException,
+	AlreadyBlockedException, DuplicateInstanceException, InvalidDateException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockINYF", "contraseñaBlockINYF", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2INYF", "contraseñaBlock2INYF", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+
+		// user can not block user2 because they are not friends
+		assertThrows(ItsNotYourFriendException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
+		});
+	}
+
+	// AlreadyBlockedException
+	@Test
+	public void testBlockUserABE() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,
+	DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
+		final UserImpl user = createUser("usuarioBlockABE", "contraseñaBlockABE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2ABE", "contraseñaBlock2ABE", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "descripcion");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// user blocks user2
+		friendService.blockUser(user.getId(), user2.getId());
+		// user try to clock user2 again
+		assertThrows(AlreadyBlockedException.class, () -> {
+			friendService.blockUser(user.getId(), user2.getId());
+		});
+	}
 }

@@ -14,11 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.BlockedId;
+import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
@@ -27,6 +31,7 @@ import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
@@ -44,6 +49,9 @@ public class FriendServiceImpl implements FriendService {
 
 	@Autowired
 	private MatchRepository matchRepository;
+
+	@Autowired
+	private BlockedRepository blockedRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -87,9 +95,8 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	@Override
-	public void acceptRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void acceptRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 
@@ -116,9 +123,8 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	@Override
-	public void rejectRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void rejectRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 		// TODO WE can safely delete the invert request if it were to exist because it
@@ -127,9 +133,8 @@ public class FriendServiceImpl implements FriendService {
 
 	}
 
-	private void validateRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	private void validateRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 		final Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
 
 		if (subjectUserOpt.isEmpty()) {
@@ -195,5 +200,33 @@ public class FriendServiceImpl implements FriendService {
 
 		return userRepository.findByCriteria(searchCriteria, userId);
 	}
+
+	
+
+	@Override
+	public void blockUser(Long userId, Long friendId)
+			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
+		permissionChecker.checkUserExists(userId);
+		permissionChecker.checkUserExists(friendId);
+
+		final Long firstId = Math.min(userId, friendId);
+		final Long secondId = friendId.equals(firstId) ? userId : friendId;
+		final Optional<MatchImpl> match = matchRepository.findById(new MatchId(firstId, secondId));
+		final Optional<BlockedImpl> block = blockedRepository.findById(new BlockedId(userId, friendId));
+		// check if its your friend
+		if (!match.isPresent() && !block.isPresent()) {
+			throw new ItsNotYourFriendException("It's not your friend");
+		}
+		// check if its already blocked
+		if (block.isPresent()) {
+			throw new AlreadyBlockedException("Already blocked");
+		}
+
+		final BlockedImpl block2 = new BlockedImpl(new BlockedId(userId, friendId), LocalDateTime.now());
+
+		matchRepository.delete(match.get());
+		blockedRepository.save(block2);
+	}
+
 
 }

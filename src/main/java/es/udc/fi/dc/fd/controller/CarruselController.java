@@ -28,7 +28,7 @@ public class CarruselController {
 	}
 
 	@GetMapping(path = "/chat")
-	public final String displayChat() {
+	public final String chatScreen() {
 
 		return "chat";
 	}

@@ -280,8 +280,8 @@ public class TestImageController {
 
 		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGESBYID_GET).contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", 1L).param("page", "0")).andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.images").isArray())
-		.andExpect(jsonPath("$.images", hasSize(2))).andExpect(jsonPath("$.existMoreImages").value(false));
+		.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.elements").isArray())
+		.andExpect(jsonPath("$.elements", hasSize(2))).andExpect(jsonPath("$.existMoreElements").value(false));
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
