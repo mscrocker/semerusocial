@@ -14,7 +14,7 @@ p {
     font-size: 1.1em;
     font-weight: 300;
     line-height: 1.7em;
-    color: #999;
+    /* color: #999; */
 }
 
 .header {
@@ -491,17 +491,32 @@ li .friend:hover {
 
 .user-title {
     font-size: 2.0em;
-    margin-left: 10px;
+    margin-left: 5px;
+    /* position: relative; */
+    /* top: 10px; */
+}
+.user-date, .notis {
+	margin-right: 5%;
+}
+
+.user-circle {
+	margin-right: 5%;
+    background: #3e3e3e;
+    border-radius: 50%;
+    color: #fff;
     position: relative;
-    top: 10px;
+    width: 1vw;
+    height: 1vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .user-desc {
-    padding-left: 10px;
-    /* padding-top: 5px; */
+    /* padding-left: 10px; */
     font-size: 1.3em;
-    color: 00000;
     white-space: nowrap;
+    margin-left: 5px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -552,6 +567,15 @@ html, body {
        
 
 }
+.clicked {
+	background: #9E9E9E;
+	-webkit-transition: all ease .2s;
+	-moz-transition: all ease .2s;
+	-ms-transition: all ease .2s;
+	-o-transition: all ease .2s;
+	transition: all ease .2s;
+	color: white!important;
+}
 
 #sidebarCollapse {
     color: transparent;
@@ -590,4 +614,14 @@ html, body {
 div#scrollabe {
     height: 90%;
     max-height: 90%;
+}
+.line1, .line2{
+	    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.line1 {
+    position: relative;
+    top: 10px;
+    margin-bottom: 10px;
 }

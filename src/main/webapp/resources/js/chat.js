@@ -1,37 +1,29 @@
 const chat = {
-	conversation: null,
-	form: null,
-	baseURL: null,
-	scrollableDiv: null,
-	buttonCollapse: null,
-	friendScroll: null,
-	loadPrevious: true,
-	loadMoreFriends: false,
-	friendList: [],
-	chatMessage: {},
-	activeFriend: 0,
-	currentMessagePage: 0,
-	friendListPage: 0,
+	conversation: null, // element where messages are visible
+	baseURL: null, // To make petitions to backend
+	scrollableDiv: null,  // Scroll elemennt on chat
+	buttonCollapse: null, // Button to collapse sidebar
+	friendScroll: null, // Scroll element on friendList
+	loadPrevious: true, // Whether we know there are previous messages or
+			    // not
+	loadMoreFriends: true, // Whether we know there are more friends or not
+	friendList: [], // List of friends
+	chatMessage: {}, // Chat message
+			    // {messages:[],scroll:x,lastActivePage:y,needMoreLoading:true/false}
+	activeFriend: 0, // Id of active friend
+	currentMessagePage: 0, // Page of current fetched chat
+	friendListPage: 0,  // Page of current fetched friends
+	
+	// Called on paged load;
 	init: (baseURL) => {
-		chat.baseURL = baseURL;
-		$(window)
-			.resize(function () {
-				if (document.documentElement.clientWidth <= 761) {
-					if (!$('#sidebar, #content')
-						.hasClass("active")) {
-						chat.buttonPressed();
-					}
-				}
-			});
+	    	// Module variables initialization
+	    	chat.baseURL = baseURL;
 		chat.buttonCollapse = document.getElementById("backArrow");
-		$('#sidebarCollapse')
-			.on('click', chat.buttonPressed);
-
 		chat.conversation = document.querySelector('.conversation-container');
 		chat.friendList = document.getElementById("friendHolder");
-		chat.form = document.querySelector('.conversation-compose');
-		chat.form.addEventListener('submit', messages.newMessage);
 		chat.scrollableDiv = document.getElementById("content");
+		// When we get to the top of the chat scroll we fetch previous
+		// pages if needed
 		chat.scrollableDiv.addEventListener('scroll', () => {
 			// We need to fetch previous message
 			if (chat.loadPrevious && chat.scrollableDiv.scrollTop === 0) {
@@ -39,8 +31,27 @@ const chat = {
 				apis.fetchFriendMessages(chat.activeFriend);
 			}
 		});
-		apis.fetchFriendMessages(0);
+		
+		// Automatically collapses the sidebar on resize;
+		$(window).resize(function () {
+				if (document.documentElement.clientWidth <= 761) {
+					if (!$('#sidebar, #content')
+						.hasClass("active")) {
+						chat.buttonPressed();
+					}
+				}
+			});
+		$('#sidebarCollapse')
+			.on('click', chat.buttonPressed);
+
+		// Handler for creating your messages
+		document.querySelector('.conversation-compose').addEventListener('submit', messages.newMessage);
+		
+		// init page
+		chat.initScreen();
+		
 	},
+	// Collapse Sidebar Function
 	buttonPressed: () => {
 		chat.buttonCollapse.classList.toggle("fa-chevron-circle-left");
 		chat.buttonCollapse.classList.toggle("fa-chevron-circle-right");
@@ -50,25 +61,130 @@ const chat = {
 			.toggleClass('in');
 		$('a[aria-expanded=true]')
 			.attr('aria-expanded', 'false');
+	},
+	initScreen: () => {
+	   
+	    apis.loadFriendList();
+	    let id = window.location.pathname.split("/").pop();
+	    if (!isNaN(parseFloat(id)) && !isNaN(id - 0)){
+		chat.activeFriend = id;
+	    }
+	    else {
+		chat.activeFriend = chat.friendList.firstElementChild.getAttribute("data-id");
+	    }
+
+		chat.chatMessage[chat.activeFriend] = { messages: [], scroll: 0,needMoreLoading: true,lastActivePage:0};
+		apis.fetchFriendMessages(chat.activeFriend);
 	}
 };
 
 let friends = {
-	switchToUser: (friendId) => {
+	addFriendToList: (friend) => {
 
-		chat.currentMessagePage = 0;
-		let map = chat.chatMessage[chat.activeFriend];
-		map.scroll = chat.conversation.scrollHeight;
-		while (chat.conversation.lastChild) {
-			chat.conversation.lastChild.remove();
+		let li = document.createElement('li');
+		let a= document.createElement('div');
+		let imgSpan = document.createElement('img');
+		let div1 = document.createElement('div');
+		let div2 = document.createElement('div');
+		
+		let titleSpan = document.createElement('div');
+		let userDate = document.createElement('div');
+		let notis= document.createElement('span');
+		let message = document.createElement('p');
+		
+		message.innerText = friend.lastMessage;
+		
+		if (friend.count && friend.count !== 0) {
+		    notis.innerText = friend.count;
+		    
 		}
-		chat.activeFriend = friendId;
-		messages.loadExistingMessages(map.messages);
+		else {
+		    notis.classList.add("hidden");
+		}
+		
+		
+		titleSpan.innerText = friend.name;
+		userDate.innerText = "10-10-1998 04:04";
+		
+		
+		li.appendChild(a);
+		a.appendChild(imgSpan);
+		div1.appendChild(titleSpan);
+		div1.appendChild(userDate);
+
+		div2.appendChild(message);
+		div2.appendChild(notis);
+		a.appendChild(div1);
+		a.appendChild(div2);
+
+		
+		
+		// li.setAttribute('data-userid', friend.id);
+		a.setAttribute('class', 'friend');
+		a.setAttribute('data-toggle', 'collapse');
+		a.setAttribute('aria-expanded', 'false');
+
+		a.onclick = () => {
+			if (friend.id != chat.activeFriend) {
+				console.log(friend.id);
+				document.querySelector(`[data-id="${chat.activeFriend}"]`).firstElementChild.classList.remove("clicked");
+				document.querySelector(`[data-id="${friend.id}"]`).firstElementChild.classList.add("clicked");
+				friends.switchToUser(friend.id);
+				
+				
+			}
+		};
+
+		
+		div1.setAttribute('class',"line1");
+		div2.setAttribute('class',"line2");
+		userDate.setAttribute('class',"user-date");
+		notis.setAttribute('class',"notis user-circle");
+		
+		imgSpan.setAttribute('class', 'user-img');
+		titleSpan.setAttribute('class', 'user-title');
+		li.setAttribute('data-id', friend.id);
+
+
+		message.setAttribute('class', 'user-desc');
+		chat.friendList.appendChild(li);
+	
+
+	},
+	// change the active user for another one;
+	switchToUser: (friendId) => {
+	    
+	    // We store the current user info in case we come back to him
+	    let map = chat.chatMessage[chat.activeFriend];
+	    map.lastActivePage = chat.currentMessagePage;
+	    map.needMoreLoading = chat.loadPrevious;
+	    map.scroll = chat.scrollableDiv.scrollTop;
+	    
+	    // Cleans chat screen
+	    chat.currentMessagePage = 0;
+	    while (chat.conversation.lastChild) {
+			chat.conversation.lastChild.remove();
+	    }
+	    // Prepares for switch
+	    let newMap = chat.chatMessage[friendId];
+	    chat.activeFriend = friendId;
+	    // If we dont have information about the user we fetch it;
+	    if (!newMap) {
+		newMap  = chat.chatMessage[friendId] = { messages: [], scroll: 0,needMoreLoading: false,lastActivePage:0};
 		apis.mockUpChats();
+	    }
+	    else {
+	    messages.loadExistingMessages(newMap.messages);
+	    }
+	    chat.curretMessagePage = newMap.lastActivePage;
+	    chat.loadPrevious = newMap.needMoreLoading;
+	    chat.scrollableDiv.scrollTop = newMap.scroll;
 	},
 
-}
+};
 let messages = {
+	
+	// Adds user existing MEssages to chat Screen
 	loadExistingMessages: (messageList) => {
 		let documentFragment = document.createDocumentFragment();
 		messageList.forEach(mess => {
@@ -77,18 +193,26 @@ let messages = {
 		chat.conversation.appendChild(documentFragment);
 
 	},
+	
+	// Adds received or sent Message to DOM
 	addMessage: (message) => {
 
-		var built_message = messages.buildMessage(message);
+	    	let prevScroll = chat.scrollableDiv.scrollHeight;
+	    	var built_message = messages.buildMessage(message);
 		chat.conversation.insertAdjacentElement('afterbegin', built_message);
 		let list = chat.chatMessage[chat.activeFriend];
-		if (!list) {
-			list = chat.chatMessage[chat.activeFriend] = { messages: [], scroll: 0 };
-		}
+// if (!list) {
+// list = chat.chatMessage[chat.activeFriend] ={ messages: [], scroll:
+// 0,needMoreLoading: false,lastActivePage:0};
+// }
 		list.messages.unshift(built_message);
+		
 		messages.animateMessage(built_message);
-		chat.scrollableDiv.scrollTop = 0;
+	    	
+		chat.scrollableDiv.scrollTop += (chat.scrollableDiv.scrollHeight-prevScroll);
 	},
+	
+	
 	animateMessage: (message) => {
 		setTimeout(() => {
 			var tick = message.querySelector('.tick');
@@ -96,16 +220,13 @@ let messages = {
 		}, 500);
 
 	},
-	buildMessage: ({
-		text,
-		time,
-		sendByMe
-	}) => {
+	// From message metadata build element
+	buildMessage: ({text,time,sendByMe}) => {
 		var element = document.createElement('div');
 
-		(sendByMe === true) ? element.classList.add('message', 'sent'): element.classList.add('message',
-			'received');
+		let classname = (sendByMe) ? "sent" : "received";
 
+		element.classList.add('message', classname);
 		element.innerHTML = text +
 			'<span class="metadata">' +
 			'<span class="time">' + time + '</span>' +
@@ -116,6 +237,8 @@ let messages = {
 			'</span>';
 		return element;
 	},
+	
+	// When you input a new message
 	newMessage: (e) => {
 		var input = e.target.input;
 		if (input.value) {
@@ -125,59 +248,24 @@ let messages = {
 					.format('h:mm A'),
 				sendByMe: true
 			});
+			let list = chat.chatMessage[chat.activeFriend];
+			list.messages.push(message);
 			chat.conversation.appendChild(message);
 			chat.scrollableDiv.scrollTop = chat.scrollableDiv.scrollHeight;
 		}
-
 		input.value = '';
 		e.preventDefault();
 	}
 };
 let apis = {
-	addFriendToList: (friend) => {
-		let li = document.createElement('li');
-
-		let a = document.createElement('a');
-		let imgSpan = document.createElement('img');
-		let titleSpan = document.createElement('span');
-		let message = document.createElement('p');
-		message.innerText = friend.lastMessage;
-		titleSpan.innerText = friend.name;
-		li.appendChild(a);
-		a.appendChild(imgSpan);
-		a.appendChild(titleSpan);
-		a.appendChild(message);
-
-		li.setAttribute('id', friend.id);
-		a.setAttribute('class', 'friend');
-		a.setAttribute('data-toggle', 'collapse');
-		a.setAttribute('aria-expanded', 'false');
-
-		a.setAttribute('href', '#');
-		a.onclick = () => {
-			if (friend.id != chat.activeFriend) {
-				console.log(friend.id);
-				friends.switchToUser(friend.id);
-			}
-		};
-
-		imgSpan.setAttribute('class', 'user-img');
-		titleSpan.setAttribute('class', 'user-title');
-
-		message.setAttribute('class', 'user-desc');
-		chat.friendList.appendChild(li);
-		chat.chatMessage['friend.id'] = {
-			messages: [],
-			scroll: 0
-		};
-
-	},
+	
 	mockUpFriends: () => {
 		for (i = 0; i < 4; i++) {
 			friends.addFriendToList({
-				id: 1,
+				id: i,
 				lastMessage: "x",
-				name: i
+				name: i,
+				count: Math.random()
 			});
 		}
 	},
@@ -236,7 +324,7 @@ let apis = {
 			 * 
 			 * }); } });
 			 */
-			chat.mockUpFriends();
+			apis.mockUpFriends();
 		}
 	}
 };
