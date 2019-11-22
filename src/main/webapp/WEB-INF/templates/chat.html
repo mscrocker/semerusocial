@@ -1,72 +1,89 @@
 <!DOCTYPE html>
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head >
- <div th:replace="fragments/header :: header"></div>
+<head>
+<title>Chat</title>
+<div th:replace="fragments/header :: header"></div>
 <link rel="stylesheet" type="text/css"
-	th:href="@{/resources/css/newFile.css}" media="all" />
-<title>Friend Suggestions</title>   
+	th:href="@{/resources/css/chat.css}" media="all" />
+<link rel="stylesheet" href="2">
+
 </head>
 <body>
-	<noscript>
-		<h2>Sorry! Your browser doesn't support Javascript</h2>
-	</noscript>
+	<header class="header" th:include="fragments/menu :: menu"></header>
+	<div id="wrapper1">
 
-	<div id="username-page">
-		<div class="username-page-container">
-			<h1 class="title">Type your username</h1>
-			<form id="usernameForm" name="usernameForm">
-				<div class="form-group">
-					<input type="text" id="name" placeholder="Username"
-						autocomplete="off" class="form-control" />
-				</div>
-				<div class="form-group">
-					<button type="submit" class="accent username-submit">Start
-						Chatting</button>
-				</div>
-			</form>
-		</div>
-	</div>
 
-	<div id="chat-page" class="hidden">
-		<div class="chat-container">
-			<div class="chat-header">
-				<h2>Spring WebSocket Chat Demo</h2>
+		<div class="wrapper">
+			<!-- Sidebar  -->
+			<div id="sidebar">
+				<div class="sidebar-header">
+					<h3>Friends</h3>
+				</div>
+				<div id="scrollabe">
+					<ul id="friendHolder" class="list-unstyled components">
+
+					</ul>
+				</div>
 			</div>
-			<div class="connecting">Connecting...</div>
-			<ul id="messageArea">
 
-			</ul>
-			<form id="messageForm" name="messageForm">
-				<div class="form-group">
-					<div class="input-group clearfix">
-						<input type="text" id="message" placeholder="Type a message..."
-							autocomplete="off" class="form-control" />
-						<button type="submit" class="primary">Send</button>
+			<!-- Page Content  -->
+			<div id="holder">
+				<div id="content">
+					<button type="button" id="sidebarCollapse" class="btn btn-info">
+						<em id="backArrow" class="fa fa-chevron-circle-left"></em> <span>Toggle
+							Sidebar</span>
+					</button>
+					<div class="conversation">
+						<div class="conversation-container"></div>
+
 					</div>
-				</div>
-			</form>
-		</div>
-	</div>
 
-	<footer>
-		<div th:include="fragments/scripts :: general"></div>
-		<div th:include="fragments/scripts :: chat"></div>
-	</footer>
+				</div>
+				<div id="compose" style="padding: 15px 0px 8px;">
+					<form class="conversation-compose">
+						<div class="emoji">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								id="smiley" x="3147" y="3209">
+								<path fill-rule="evenodd" clip-rule="evenodd"
+									d="M9.153 11.603c.795 0 1.44-.88 1.44-1.962s-.645-1.96-1.44-1.96c-.795 0-1.44.88-1.44 1.96s.645 1.965 1.44 1.965zM5.95 12.965c-.027-.307-.132 5.218 6.062 5.55 6.066-.25 6.066-5.55 6.066-5.55-6.078 1.416-12.13 0-12.13 0zm11.362 1.108s-.67 1.96-5.05 1.96c-3.506 0-5.39-1.165-5.608-1.96 0 0 5.912 1.055 10.658 0zM11.804 1.01C5.61 1.01.978 6.034.978 12.23s4.826 10.76 11.02 10.76S23.02 18.424 23.02 12.23c0-6.197-5.02-11.22-11.216-11.22zM12 21.355c-5.273 0-9.38-3.886-9.38-9.16 0-5.272 3.94-9.547 9.214-9.547a9.548 9.548 0 0 1 9.548 9.548c0 5.272-4.11 9.16-9.382 9.16zm3.108-9.75c.795 0 1.44-.88 1.44-1.963s-.645-1.96-1.44-1.96c-.795 0-1.44.878-1.44 1.96s.645 1.963 1.44 1.963z"
+									fill="#7d8489" /></svg>
+						</div>
+						<input class="input-msg" name="input" placeholder="Type a message"
+							autocomplete="off" autofocus></input>
+						<div class="photo">
+							<em class=""></em>
+						</div>
+						<button id="sender" class="send">
+							<div class="circle">
+								<em class="fa fa-paper-plane"></em>
+							</div>
+						</button>
+					</form>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div th:include="fragments/scripts :: general"></div>
+	<div th:include="fragments/scripts :: chat"></div>
+
+</body>
+<script>
+	window.addEventListener('load', () => {
 	
+	    chat.init("[[@{'/'}]]");
+			});
+</script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	<script>
-	window.addEventListener("load", () => {
-		chat.init("[[@{'/'}]]");
 	
-		
-		
-	});
-
- 
-    </script>
-</body>
 </html>

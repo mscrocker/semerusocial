@@ -78,7 +78,9 @@ public final class UrlConfig {
 	/********
 	 * FRONT CONTROLLERS URLS
 	 **************/
-	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chatting/{userId}";
+	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chat/{userId}";
+	public static final String FRONT_CARROUSEL_CHATSCREEN_1 = "/chat";
+
 	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
 	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
 	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";

@@ -11,6 +11,7 @@ public class ChatMessage {
 	private String sender;
 	private String receiver;
 	private long receiverId;
+	private long senderId;
 
 	public long getReceiverId() {
 		return receiverId;
@@ -50,6 +51,14 @@ public class ChatMessage {
 
 	public void setReceiver(String receiver) {
 		this.receiver = receiver;
+	}
+
+	public long getSenderId() {
+		return senderId;
+	}
+
+	public void setSenderId(long senderId) {
+		this.senderId = senderId;
 	}
 
 }
