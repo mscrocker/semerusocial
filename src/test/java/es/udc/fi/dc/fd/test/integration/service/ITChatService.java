@@ -47,7 +47,7 @@ import es.udc.fi.dc.fd.service.ChatService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
+		"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -96,8 +96,6 @@ public class ITChatService {
 		userRepository.save(user1);
 		return userRepository.findByUserName(userName);
 	}
-
-
 
 	@Test
 	public void testSendMessage() throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
@@ -328,7 +326,7 @@ public class ITChatService {
 		assertFalse(conversation.getElements().isEmpty());
 		assertTrue(conversation.isExistMoreElements());
 		assertEquals(conversation.getElements().size(), size);
-		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(0));
+		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(9));
 	}
 
 	@Test
@@ -416,7 +414,7 @@ public class ITChatService {
 		assertFalse(conversation.getElements().isEmpty());
 		assertTrue(conversation.isExistMoreElements());
 		assertEquals(conversation.getElements().size(), size);
-		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(0));
+		assertEquals(conversation.getElements().get(0).getMessageContent(), Integer.toString(9));
 	}
 
 	/********
@@ -447,8 +445,7 @@ public class ITChatService {
 
 		}
 
-		final String expectedResult = "message" + (i-1);
-
+		final String expectedResult = "message" + (i - 1);
 
 		final Block<FriendChatTitle> result = chatService.getUserConversations(user.getId(), 0);
 		final String resultProcessed = result.getElements().get(0).getContent();
@@ -476,8 +473,6 @@ public class ITChatService {
 			messageRepository.save(message);
 
 		}
-
-		final String expectedResult = "message" + (i - 1);
 
 		assertThrows(RequestParamException.class, () -> {
 			chatService.getUserConversations(user.getId(), -1);
