@@ -30,6 +30,9 @@ let profile = null;
 			case "city":
 				result = profile.validation.validateCity(true);
 				break;
+			case "premium":
+				result = true;
+				break;
 		}
 
 		document.getElementById("profileButton").disabled = !result;
@@ -121,7 +124,8 @@ let profile = null;
 			year: date.getUTCFullYear(),
 			description: document.getElementById("descriptionField").value,
 			city: document.getElementById("cityField").value,
-			sex: document.getElementById("sexField").value
+			sex: document.getElementById("sexField").value,
+			premium: document.getElementById("premiumField").checked
 		};
 		
 		let url = criteriaSettings.baseURL + "backend/users/updateProfile";
@@ -157,6 +161,7 @@ let profile = null;
 			document.getElementById("descriptionField").onkeyup = () => profile.notifyChange("description");
 			document.getElementById("sexField").onclick = () => profile.notifyChange("sex");
 			document.getElementById("cityField").onkeyup = () => profile.notifyChange("city");
+			document.getElementById("premiumField").onclick = () => profile.notifyChange("premium");
 			
 			document.getElementById("profileButton").onclick = () => profile.updateCriteria();
 			
@@ -181,6 +186,7 @@ let profile = null;
 					document.getElementById("cityField").value = ""+body.city;
 					document.getElementById("sexField").value = ""+body.sex;
 					document.getElementById("descriptionField").value = ""+body.description;
+					document.getElementById("premiumField").checked = body.premium;
 				}
 				);
 			});
