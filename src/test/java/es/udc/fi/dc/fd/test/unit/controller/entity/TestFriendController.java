@@ -51,6 +51,7 @@ import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
@@ -156,10 +157,10 @@ public class TestFriendController {
 			throws InstanceNotFoundException, RequestParamException, Exception {
 
 		final UserImpl friend1 = CreateUser(USERID_FRIEND1);
-		final List<UserImpl> listFriends = new ArrayList<>();
-		listFriends.add(friend1);
+		final List<FriendListOut> listFriends = new ArrayList<>();
+		listFriends.add(new FriendListOut(friend1, 2));
 
-		final BlockFriendList<UserImpl> block = new BlockFriendList<>(listFriends, false);
+		final BlockFriendList<FriendListOut> block = new BlockFriendList<>(listFriends, false);
 		when(friendServiceMock.getFriendList(USERID_OK, 0, 10)).thenReturn(block);
 
 		// @formatter:off

@@ -36,6 +36,7 @@ import es.udc.fi.dc.fd.dtos.FriendConversor;
 import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.dtos.GetFriendListOutDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
@@ -201,7 +202,7 @@ public class FriendController {
 	public BlockGetFriendListDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
 					throws InstanceNotFoundException, RequestParamException {
-		final BlockFriendList<UserImpl> friends = friendService.getFriendList(userId, page, size);
+		final BlockFriendList<FriendListOut> friends = friendService.getFriendList(userId, page, size);
 
 		return FriendConversor.toGetFriendListOutDto(friends);
 	}

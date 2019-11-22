@@ -39,6 +39,7 @@ import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
@@ -455,7 +456,7 @@ public class ITFriendService {
 		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user4.getId()), getDateTime(1, 1, 2000)));
 		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user5.getId()), getDateTime(1, 1, 2000)));
 
-		BlockFriendList<UserImpl> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
+		BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
 		assertEquals(user1Result.getFriends().size(), 2);
 		assertEquals(user1Result.getExistMoreFriends(), true);
 

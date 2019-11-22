@@ -23,8 +23,11 @@ import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.MatchId;
 import es.udc.fi.dc.fd.model.persistence.MatchImpl;
+import es.udc.fi.dc.fd.model.persistence.RateId;
+import es.udc.fi.dc.fd.model.persistence.RateImpl;
 import es.udc.fi.dc.fd.model.persistence.RejectedId;
 import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
@@ -68,7 +71,7 @@ public class FriendServiceImpl implements FriendService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public BlockFriendList<UserImpl> getFriendList(Long userId, int page, int size)
+	public BlockFriendList<FriendListOut> getFriendList(Long userId, int page, int size)
 			throws InstanceNotFoundException, RequestParamException {
 
 		permissionChecker.checkUserExists(userId);
@@ -82,8 +85,10 @@ public class FriendServiceImpl implements FriendService {
 
 		final Slice<MatchImpl> friendsResult = matchRepository.findFriends(userId, PageRequest.of(page, size));
 
-		final List<UserImpl> friends = new ArrayList<>();
+		final List<FriendListOut> friends = new ArrayList<>();
+		FriendListOut out;
 		UserImpl user;
+		Optional<RateImpl> myRating;
 		Long friendId;
 		for (final MatchImpl friend : friendsResult.getContent()) {
 			if (friend.getMatchId().getUser1() == userId) {
@@ -91,8 +96,14 @@ public class FriendServiceImpl implements FriendService {
 			} else {
 				friendId = friend.getMatchId().getUser1();
 			}
-			user = permissionChecker.checkUserByUserId(friendId);
-			friends.add(user);
+			user=permissionChecker.checkUserByUserId(friendId);
+			myRating = rateRepository.findById(new RateId(userId, friendId));
+			if (myRating.isPresent()) {
+				out = new FriendListOut(user, myRating.get().getPoints());
+			} else {
+				out = new FriendListOut(user, 0);
+			}
+			friends.add(out);
 		}
 
 		return new BlockFriendList<>(friends, friendsResult.hasNext());
