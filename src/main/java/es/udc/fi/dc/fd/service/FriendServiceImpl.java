@@ -91,7 +91,7 @@ public class FriendServiceImpl implements FriendService {
 		Optional<RateImpl> myRating;
 		Long friendId;
 		for (final MatchImpl friend : friendsResult.getContent()) {
-			if (friend.getMatchId().getUser1() == userId) {
+			if (friend.getMatchId().getUser1().equals(userId)) {
 				friendId = friend.getMatchId().getUser2();
 			} else {
 				friendId = friend.getMatchId().getUser1();

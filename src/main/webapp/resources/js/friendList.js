@@ -12,23 +12,23 @@ const friendList = {
 		`		<td>${friendData.age}</td>`,
 		`		<td>${friendData.sex}</td>`,
 		`		<td>${friendData.city}</td>`,
-		`		<td id='rating-${friendData.userId}'`,
-		`			onmouseout="ratingHandler.onMouseOutHandler(${(friendData.rating >= 1) ? friendData.rating : 0}, 'rating-${friendData.userId}')">`,
-		`			<span onmousemove="ratingHandler.onMouseMoveHandler(0, 'rating-${friendData.userId}')"`,
-		`			onclick="ratingHandler.onMouseClickHandler(0, () => friendList.rateUser(1, ${friendData.userId}, '${baseURL}'), 'rating-${friendData.userId}')"`,
-		`			class="text-success glyphicon ${(friendData.rating >= 1) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
-		`			<span onmousemove="ratingHandler.onMouseMoveHandler(1, 'rating-${friendData.userId}')"`,
-		`			onclick="ratingHandler.onMouseClickHandler(1, () => friendList.rateUser(2, ${friendData.userId}, '${baseURL}'), 'rating-${friendData.userId}')"`,
-		`			class="text-success glyphicon ${(friendData.rating >= 2) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
-		`			<span onmousemove="ratingHandler.onMouseMoveHandler(2, 'rating-${friendData.userId}')"`,
-		`			onclick="ratingHandler.onMouseClickHandler(2, () => friendList.rateUser(3, ${friendData.userId}, '${baseURL}'), 'rating-${friendData.userId}')"`,
-		`			class="text-success glyphicon ${(friendData.rating >= 3) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
-		`			<span onmousemove="ratingHandler.onMouseMoveHandler(3, 'rating-${friendData.userId}')"`,
-		`			onclick="ratingHandler.onMouseClickHandler(3, () => friendList.rateUser(4, ${friendData.userId}, '${baseURL}'), 'rating-${friendData.userId}')"`,
-		`			class="text-success glyphicon ${(friendData.rating >= 4) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
-		`			<span onmousemove="ratingHandler.onMouseMoveHandler(4, 'rating-${friendData.userId}')"`,
-		`			onclick="ratingHandler.onMouseClickHandler(4, () => friendList.rateUser(5, ${friendData.userId}, '${baseURL}'), 'rating-${friendData.userId}')"`,
-		`			class="text-success glyphicon ${(friendData.rating == 5) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
+		`		<td id='rating-${friendData.id}'`,
+		`			onmouseout="ratingHandler.onMouseOutHandler(${(friendData.myRating >= 1) ? friendData.myRating : 0}, 'rating-${friendData.id}')">`,
+		`			<span onmousemove="ratingHandler.onMouseMoveHandler(0, 'rating-${friendData.id}')"`,
+		`			onclick="ratingHandler.onMouseClickHandler(0, () => friendList.rateUser(1, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
+		`			class="text-success glyphicon ${(friendData.myRating >= 1) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
+		`			<span onmousemove="ratingHandler.onMouseMoveHandler(1, 'rating-${friendData.id}')"`,
+		`			onclick="ratingHandler.onMouseClickHandler(1, () => friendList.rateUser(2, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
+		`			class="text-success glyphicon ${(friendData.myRating >= 2) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
+		`			<span onmousemove="ratingHandler.onMouseMoveHandler(2, 'rating-${friendData.id}')"`,
+		`			onclick="ratingHandler.onMouseClickHandler(2, () => friendList.rateUser(3, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
+		`			class="text-success glyphicon ${(friendData.myRating >= 3) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
+		`			<span onmousemove="ratingHandler.onMouseMoveHandler(3, 'rating-${friendData.id}')"`,
+		`			onclick="ratingHandler.onMouseClickHandler(3, () => friendList.rateUser(4, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
+		`			class="text-success glyphicon ${(friendData.myRating >= 4) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
+		`			<span onmousemove="ratingHandler.onMouseMoveHandler(4, 'rating-${friendData.id}')"`,
+		`			onclick="ratingHandler.onMouseClickHandler(4, () => friendList.rateUser(5, ${friendData.id}, '${baseURL}'), 'rating-${friendData.id}')"`,
+		`			class="text-success glyphicon ${(friendData.myRating == 5) ? 'glyphicon-star' : 'glyphicon-star-empty'}"></span>`,
 		`		</td>`,
 		`	</tr>`
 		];
@@ -87,13 +87,14 @@ const friendList = {
 	
 	
 	rateUser: (rating, userId, baseURL) => {
-		let url = baseURL + "/backend/rating";
+		let url = baseURL + "backend/users/rate";
 		let params = {
-			METHOD: 'PUT',
+			method: 'POST',
 			body: JSON.stringify({
-				rate: rating + 1,
+				rate: rating,
 				userObject: userId
-			})
+			}),
+			headers: { "Content-Type": "application/json" }
 		};
 		user.authFetch(url, params, (response) => {
 			response.json().then((body) => {
