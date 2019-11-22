@@ -43,6 +43,10 @@ public final class UrlConfig {
 
 	public static final String URL_USER_UPDATEPROFILE_PUT = "/backend/users/updateProfile";
 
+	public static final String URL_USER_RATE_POST = "/backend/users/rate";
+
+	public static final String URL_USER_PREMIUM_PUT = "/backend/users/premium";
+
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
 	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
@@ -63,6 +67,24 @@ public final class UrlConfig {
 
 	public static final String URL_FRIEND_FRIENDLIST_GET = "/backend/friends/friendList";
 
+	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
+
+	public static final String URL_CHAT_GETCONVERSATION_GET = "/backend/chat/conversation";
+
+	public static final String URL_CHAT_FRIENDHEADERS_GET = "/backend/chat/friendHeaders";
+
+	public static final String URL_CHAT_SENDMENSSAGE = "/chat.sendMessage";
+
+	/********
+	 * FRONT CONTROLLERS URLS
+	 **************/
+	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chat/{userId}";
+	public static final String FRONT_CARROUSEL_CHATSCREEN_1 = "/chat";
+
+	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
+	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
+	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
+	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel/**";
 
 	/**
 	 * Default constructor to avoid initialization.

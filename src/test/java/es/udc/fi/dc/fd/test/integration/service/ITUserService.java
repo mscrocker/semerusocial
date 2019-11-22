@@ -28,11 +28,18 @@ import es.udc.fi.dc.fd.controller.exception.IncorrectLoginException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
+import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.MatchId;
+import es.udc.fi.dc.fd.model.persistence.MatchImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.CityCriteriaRepository;
+import es.udc.fi.dc.fd.repository.MatchRepository;
+import es.udc.fi.dc.fd.repository.UserRepository;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
@@ -40,7 +47,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -53,13 +60,19 @@ public class ITUserService {
 	private CityCriteriaRepository cityCriteriaRepository;
 
 	@Autowired
+	private MatchRepository matchRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
 	public ITUserService() {
 		super();
 	}
 
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
 			String description) {
-		return new UserImpl(userName, password, date, sex, city, description);
+		return new UserImpl(userName, password, date, sex, city, description, 0, 0);
 	}
 
 	private LocalDateTime getDateTime(int day, int month, int year) {
@@ -67,7 +80,11 @@ public class ITUserService {
 	}
 
 	private SearchCriteria createCriteria(String sex, int minAge, int maxAge, List<String> CityList) {
-		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList);
+		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList, 1);
+	}
+
+	private SearchCriteria createCriteria(String sex, int minAge, int maxAge, List<String> CityList, int minRate) {
+		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList, minRate);
 	}
 
 	// ----- signUp -----
@@ -172,7 +189,7 @@ public class ITUserService {
 
 		userService.signUp(user);
 
-//		user.setId(-1L);
+		//		user.setId(-1L);
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.loginFromUserId(-1L);
@@ -183,11 +200,16 @@ public class ITUserService {
 
 	@Test
 	public void testSetSearchCriteria()
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException {
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException,
+			InvalidRateException, NotRatedException, ItsNotYourFriendException {
 
 		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "description");
+		final UserImpl user2 = createUser("userSetSearchCriteria2S", "passwordSetSearchCriteria2",
+				getDateTime(1, 1, 2000),
+				"hombre", "coruna", "description");
 		final Long userId = userService.signUp(user);
+		final Long userId2 = userService.signUp(user2);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
 		user.setCriteriaMaxAge(60);
@@ -197,18 +219,22 @@ public class ITUserService {
 		cityList.add("a coruna");
 		cityList.add("madrid");
 		cityList.add("vigo");
-		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
 
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList, 2);
+
+		matchRepository.save(new MatchImpl(new MatchId(userId, userId2), LocalDateTime.now()));
+		userService.rateUser(2, userId2, userId);
 		userService.setSearchCriteria(userId, criteria);
 
 		final List<String> registeredCities = cityCriteriaRepository.findCitiesByUserId(userId);
 
-		UserImpl registeredUser = userService.loginFromUserId(userId);
+		final UserImpl registeredUser = userService.loginFromUserId(userId);
 
 		Collections.sort(cityList);
 		Collections.sort(registeredCities);
 		assertEquals(cityList, registeredCities);
 		assertEquals(user, registeredUser);
+		assertEquals(2, user.getMinRateCriteria());
 
 		/////////////////// Hacemos el registro de datos nuevos////////////
 		final List<String> cityList2 = new ArrayList<>();
@@ -219,12 +245,14 @@ public class ITUserService {
 		final SearchCriteria criteria2 = createCriteria("Male", 30, 60, cityList2);
 		userService.setSearchCriteria(userId, criteria2);
 
+
 		final List<String> registeredCities2 = cityCriteriaRepository.findCitiesByUserId(userId);
 
 		Collections.sort(cityList2);
 		Collections.sort(registeredCities2);
 		assertEquals(cityList2, registeredCities2);
 		assertEquals(user, registeredUser);
+
 	}
 
 	@Test
@@ -270,11 +298,49 @@ public class ITUserService {
 		});
 	}
 
+	@Test
+	public void testSetSearchCriteriaInvalidRateException()
+			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, ItsNotYourFriendException,
+			DuplicateInstanceException, InvalidDateException {
+
+		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
+				"hombre", "coruna", "description");
+		final UserImpl user2 = createUser("userSetSearchCriteria2S", "passwordSetSearchCriteria2",
+				getDateTime(1, 1, 2000), "hombre", "coruna", "description");
+		final Long userId = userService.signUp(user);
+		final Long userId2 = userService.signUp(user2);
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("a coruna");
+		cityList.add("madrid");
+		cityList.add("vigo");
+
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList, 5);
+
+		matchRepository.save(new MatchImpl(new MatchId(userId, userId2), LocalDateTime.now()));
+		userService.rateUser(2, userId2, userId);
+
+		assertThrows(InvalidRateException.class, () -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+
+		criteria.setMinRate(0);
+		assertThrows(InvalidRateException.class, () -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+
+		criteria.setMinRate(10);
+		assertThrows(InvalidRateException.class, () -> {
+			userService.setSearchCriteria(userId, criteria);
+		});
+	}
+
 	// ----- getSearchCriteria -----
 
 	@Test
 	public void testGetSearchCriteria()
-			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException,
+			InvalidRateException, NotRatedException {
 
 		final UserImpl user = createUser("userGetSearchCriteria", "passwordGetSearchCriteria", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "description");
@@ -292,10 +358,10 @@ public class ITUserService {
 		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList);
 
 		userService.setSearchCriteria(userId, criteria);
-		SearchCriteria userCriteria = userService.getSearchCriteria(userId);
+		final SearchCriteria userCriteria = userService.getSearchCriteria(userId);
 
-		SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
-				user.getCriteriaMaxAge(), cityList);
+		final SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
+				user.getCriteriaMaxAge(), cityList, 1);
 
 		assertEquals(searchCriteria, userCriteria);
 	}
@@ -339,6 +405,7 @@ public class ITUserService {
 		});
 	}
 
+	@Test
 	public void testUpdateProfileWithInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
 				"hombre", "coruna", "descripcion");
@@ -349,6 +416,140 @@ public class ITUserService {
 		assertThrows(InvalidDateException.class, () -> {
 			userService.updateProfile(user.getId(), newUser);
 		});
+	}
+
+	@Test
+	public void testRateUser() throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+
+		// test cuando varios usuarios distintos votan al mismo usuario
+		final UserImpl user1 = createUser("userRate1", "userRate1", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+		final UserImpl user2 = createUser("userRate2", "userRate2", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+		final UserImpl user3 = createUser("userRate3", "userRate3", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+		final UserImpl user4 = createUser("userRate4", "userRate4", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+
+		userRepository.save(user1);
+		userRepository.save(user2);
+		userRepository.save(user3);
+		userRepository.save(user4);
+
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user2.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user3.getId()), LocalDateTime.now()));
+		matchRepository.save(new MatchImpl(new MatchId(user1.getId(), user4.getId()), LocalDateTime.now()));
+
+		userService.rateUser(2, user2.getId(), user1.getId());
+		userService.rateUser(3, user3.getId(), user1.getId());
+		final double rating = userService.rateUser(5, user4.getId(), user1.getId());
+
+		assertEquals(rating, 3.333, 0.01);
+		assertEquals(rating, user1.getRating(),0.01);
+
+		// Hacemos que el usuario 4 cambie su puntuacion hacia el usuario 1
+		final double rating2 = userService.rateUser(1, user4.getId(), user1.getId());
+
+		assertEquals(rating2, 2.0, 0.01);
+		assertEquals(rating2, user1.getRating(), 0.01);
+
+		// Hacemos que el usuario 4 vuelva a votar los mismo por tanto la media se
+		// mantiene igual
+		final double rating3 = userService.rateUser(1, user4.getId(), user1.getId());
+
+		assertEquals(rating3, 2.0, 0.01);
+		assertEquals(rating3, user1.getRating(), 0.01);
+
+	}
+
+	@Test
+	public void testRateUserInstanceNotFound()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+
+		final UserImpl user1 = createUser("userRate1", "userRate1", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+
+		userRepository.save(user1);
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.rateUser(2, -1L, user1.getId());
+		});
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.rateUser(2, -1L, null);
+		});
+
+	}
+
+	@Test
+	public void testRateUserInvalidRateException()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+
+		final UserImpl user1 = createUser("userInvalidRate1", "userInvalidRate1", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion");
+
+		final UserImpl user2 = createUser("userInvalidRate2", "userInvalidRate2", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion");
+
+		userRepository.save(user1);
+		userRepository.save(user2);
+
+		assertThrows(InvalidRateException.class, () -> {
+			userService.rateUser(-100, user1.getId(), user2.getId());
+		});
+
+		assertThrows(InvalidRateException.class, () -> {
+			userService.rateUser(222, user1.getId(), user2.getId());
+		});
+
+	}
+
+	@Test
+	public void testRateUserNotYourFriendException()
+			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+
+		final UserImpl user1 = createUser("userInvalidRate1", "userInvalidRate1", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion");
+
+		final UserImpl user2 = createUser("userInvalidRate2", "userInvalidRate2", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion");
+
+		userRepository.save(user1);
+		userRepository.save(user2);
+
+		assertThrows(ItsNotYourFriendException.class, () -> {
+			userService.rateUser(1, user1.getId(), user2.getId());
+		});
+
+
+
+	}
+
+	@Test
+	public void testUpdatePremium() throws InstanceNotFoundException {
+
+		final UserImpl user1 = createUser("userPremium", "userInvalidRate1", LocalDateTime.now(), "masculino", "coruña",
+				"descripcion");
+		userRepository.save(user1);
+
+		assertEquals(false, user1.isPremium()); // Comprobamos que no es premium
+		userService.updatePremium(user1.getId(), false);
+
+		assertEquals(false, user1.isPremium()); // Comprobamos que sigue sin ser premium
+
+		userService.updatePremium(user1.getId(), true);
+
+		assertEquals(true, user1.isPremium()); // Comprobamos que es premium
+
+	}
+
+	@Test
+	public void testUpdatePremiumInstanceNotFound() throws InstanceNotFoundException {
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			userService.updatePremium(-1L, true);
+		});
+
 	}
 
 }

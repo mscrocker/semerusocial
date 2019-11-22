@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 
-<html class="" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head >
+ <div th:replace="fragments/header :: header"></div>
 <link rel="stylesheet" type="text/css"
 	th:href="@{/resources/css/friendSuggestion.css}" media="all" />
-<div th:include="fragments/header :: header"></div>
+<title>Friend Suggestions</title>   
 </head>
 
 
@@ -31,7 +32,7 @@
 					<div id="noImagesSection" class="hidden">
 						<div class="carousel-item">
 							<img class="d-block mx-auto"
-								th:src="@{/resources/images/noimages.png}" />
+								th:src="@{/resources/images/noimages.png}"  alt="User has no images to show"/>
 						</div>
 						<div id="noImageMessage" class="carousel-caption ">
 							<h3>"This user doesn't have any image"</h3>
@@ -66,7 +67,8 @@
 		</div>
 
 	</div>
-	<div id="criteriaModal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div id="criteriaModal" class="modal" tabindex="-1" role="dialog"
+		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -77,13 +79,17 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>With your established criteria we coudn't find any user that matches it :'( <br>
-					Try changing your criteria to something different!</p>
+					<p>
+						With your established criteria we coudn't find any user that
+						matches it :'( <br> Try changing your criteria to something
+						different!
+					</p>
 				</div>
 				<div class="modal-footer">
 					<button id="cancelButton" type="button" class="btn btn-secondary"
 						data-dismiss="modal">Back</button>
-					<button id="criteriaButton" type="button" class="btn btn-primary">Change Criteria</button>
+					<button id="criteriaButton" type="button" class="btn btn-primary">Change
+						Criteria</button>
 				</div>
 			</div>
 		</div>

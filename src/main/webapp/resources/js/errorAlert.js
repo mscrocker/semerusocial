@@ -19,13 +19,13 @@ const customAlert = {
     
 
             if (message.globalError) {
-                globalError = message.globalError;
+                let globalError = message.globalError;
                 text.innerText = globalError;
             } else if (message.fieldErrors) {
                 text.innerText = "";
 
 
-                fieldErrors = [];
+                let fieldErrors = [];
                 message.fieldErrors.forEach(e => {
                     let fieldName = e.fieldName;
                     fieldErrors.push(`${fieldName}: ${e.message}`);
@@ -35,7 +35,7 @@ const customAlert = {
                 ul.style.flexGrow = 100;
                 errorAlert.insertBefore(ul,errorAlert.childNodes[2]);
 
-                fieldErrors.map((fieldError, index) => {
+                fieldErrors.forEach((fieldError, index) => {
                     let li = document.createElement("li");
                     li.setAttribute("id", index);
                     li.appendChild(document.createTextNode(fieldError));

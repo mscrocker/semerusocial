@@ -1,7 +1,5 @@
 package es.udc.fi.dc.fd.service;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,20 +20,11 @@ import es.udc.fi.dc.fd.repository.ImageRepository;
 @Transactional
 public class ImageServiceImpl implements ImageService {
 
-	private final ImageRepository imageRepository;
-
-	private final PermissionChecker permissionChecker;
-
 	@Autowired
-	public ImageServiceImpl(final ImageRepository imageRepository, final PermissionChecker permissionChecker) {
-		super();
+	private ImageRepository imageRepository;
+	@Autowired
+	private PermissionChecker permissionChecker;
 
-		this.imageRepository = checkNotNull(imageRepository,
-				"Received a null pointer as imageRepository in ImageServiceImpl");
-
-		this.permissionChecker = checkNotNull(permissionChecker,
-				"Received a null pointer as permissionChecker in ImageServiceImpl");
-	}
 
 	@Override
 	public ImageImpl addImage(ImageImpl image, Long userId) throws InstanceNotFoundException {

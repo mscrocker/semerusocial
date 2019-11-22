@@ -63,6 +63,10 @@
         <filter-name>JwtFilter</filter-name>
         <url-pattern>/backend/friends/*</url-pattern>
     </filter-mapping>
+	<filter-mapping>
+        <filter-name>JwtFilter</filter-name>
+        <url-pattern>/backend/chat/*</url-pattern>
+    </filter-mapping>
 
 
 </web-app>

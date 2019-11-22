@@ -2,6 +2,8 @@ package es.udc.fi.dc.fd.dtos;
 
 public class GetFriendListOutDto {
 
+	private Long id;
+
 	private String userName;
 
 	private int age;
@@ -10,12 +12,28 @@ public class GetFriendListOutDto {
 
 	private String city;
 
-	public GetFriendListOutDto(String userName, int age, String sex, String city) {
+	private int myRating;
+
+	public GetFriendListOutDto() {
 		super();
+	}
+
+	public GetFriendListOutDto(Long id, String userName, int age, String sex, String city, int myRating) {
+		super();
+		this.id = id;
 		this.userName = userName;
 		this.age = age;
 		this.sex = sex;
 		this.city = city;
+		this.myRating = myRating;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getUserName() {
@@ -50,12 +68,22 @@ public class GetFriendListOutDto {
 		this.city = city;
 	}
 
+	public int getMyRating() {
+		return myRating;
+	}
+
+	public void setMyRating(int myRating) {
+		this.myRating = myRating;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + age;
 		result = prime * result + (city == null ? 0 : city.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
+		result = prime * result + myRating;
 		result = prime * result + (sex == null ? 0 : sex.hashCode());
 		result = prime * result + (userName == null ? 0 : userName.hashCode());
 		return result;
@@ -83,6 +111,16 @@ public class GetFriendListOutDto {
 		} else if (!city.equals(other.city)) {
 			return false;
 		}
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (myRating != other.myRating) {
+			return false;
+		}
 		if (sex == null) {
 			if (other.sex != null) {
 				return false;
@@ -102,7 +140,8 @@ public class GetFriendListOutDto {
 
 	@Override
 	public String toString() {
-		return "GetFriendListOutDto [userName=" + userName + ", age=" + age + ", sex=" + sex + ", city=" + city + "]";
+		return "GetFriendListOutDto [id=" + id + ", userName=" + userName + ", age=" + age + ", sex=" + sex + ", city="
+				+ city + ", myRating=" + myRating + "]";
 	}
 
 }

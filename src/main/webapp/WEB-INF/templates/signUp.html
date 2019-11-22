@@ -5,31 +5,25 @@
 <title>Registration Form</title>
 
 
-<link
-	th:href="@{/resources/vendor/mdi-font/css/material-design-iconic-font.min.css}"
-	rel="stylesheet" media="all">
-<link
-	th:href="@{/resources/vendor/font-awesome-4.7/css/font-awesome.min.css}"
-	rel="stylesheet" media="all">
 <!-- Font special for pages-->
 <link
 	href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
 	rel="stylesheet">
 
-<!-- Vendor CSS-->
-<link th:href="@{/resources/vendor/select2/select2.min.css}"
-	rel="stylesheet" media="all">
-<link th:href="@{/resources/vendor/datepicker/daterangepicker.css}"
-	rel="stylesheet" media="all">
 
-<!-- Main CSS-->
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
 <link rel="stylesheet" type="text/css"
 	th:href="@{/resources/css/signup.css}" media="all" />
 <link rel="stylesheet" type="text/css"
 	th:href="@{/resources/css/utils.css}" media="all" />
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css"
+	rel="stylesheet" />
 
-<!-- <link href="css/main.css" rel="stylesheet" media="all">
-	 -->
+
 </head>
 <body>
 
@@ -51,12 +45,13 @@
 						</div>
 						<div class="input-group">
 							<input class="input--style-3" type="password"
-								placeholder="Password" name="password" id="password" maxlength="20" required>
+								placeholder="Password" name="password" id="password"
+								maxlength="20" required>
 						</div>
 						<div class="input-group">
 							<input class="input--style-3 js-datepicker" type="text"
 								placeholder="Birthdate" name="birthday" id="birthday" required>
-							<i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+							<em class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></em>
 						</div>
 						<div class="input-group">
 							<div class="rs-select2 js-select-simple select--no-search">
@@ -75,9 +70,10 @@
 								placeholder="City" name="city" maxlength="30" required>
 						</div>
 						<div class="input-group">
-                            <input class="input--style-3" type="text" id="description"
-                                placeholder="Description" name="description" maxlength="60" required>
-                        </div>
+							<input class="input--style-3" type="text" id="description"
+								placeholder="Description" name="description" maxlength="60"
+								required>
+						</div>
 						<div class="form-login">
 							<button class="signup" type="submit">Sign up</button>
 							<p>
@@ -90,18 +86,22 @@
 		</div>
 	</div>
 	<!-- Jquery JS-->
-	<script th:src="@{/resources/vendor/jquery/jquery.min.js}"></script>
 	<!-- Vendor JS-->
-	<script th:src="@{/resources/vendor/select2/select2.min.js}"></script>
-	<script th:src="@{/resources/vendor/datepicker/moment.min.js}"></script>
-	<script th:src="@{/resources/vendor/datepicker/daterangepicker.js}"></script>
-
-	<!-- Main JS-->
-	<script th:src="@{resources/js/signupBeauty.js}"></script>
 
 	<footer>
-		<!-- 		<div th:include="fragments/scripts :: general" />
- -->
+
+		<div th:include="fragments/scripts :: general"></div>
+		<script
+			src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+		<script type="text/javascript"
+			src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+		<script type="text/javascript"
+			src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+		<!-- Main JS-->
+		<script th:src="@{resources/js/signupBeauty.js}"></script>
+
+
 		<div th:include="fragments/scripts :: register"></div>
 
 

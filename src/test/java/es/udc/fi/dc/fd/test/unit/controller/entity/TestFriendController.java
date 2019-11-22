@@ -42,13 +42,16 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import es.udc.fi.dc.fd.controller.entity.FriendController;
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
+import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
+import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
+import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
@@ -154,10 +157,10 @@ public class TestFriendController {
 			throws InstanceNotFoundException, RequestParamException, Exception {
 
 		final UserImpl friend1 = CreateUser(USERID_FRIEND1);
-		final List<UserImpl> listFriends = new ArrayList<>();
-		listFriends.add(friend1);
+		final List<FriendListOut> listFriends = new ArrayList<>();
+		listFriends.add(new FriendListOut(friend1, 2));
 
-		final BlockFriendList<UserImpl> block = new BlockFriendList<>(listFriends, false);
+		final BlockFriendList<FriendListOut> block = new BlockFriendList<>(listFriends, false);
 		when(friendServiceMock.getFriendList(USERID_OK, 0, 10)).thenReturn(block);
 
 		// @formatter:off
@@ -620,11 +623,103 @@ public class TestFriendController {
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
-		// otros
+		// otrosURL_FRIEND_SUGGESTION_GET
 		verify(friendServiceMock, times(1)).suggestFriend(userIdCaptor.capture());
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_NM));
+	}
+
+	@Test
+	public void TestFriendController_BlockUser()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		final IdDto idDto = new IdDto(2);
+
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.content(Utils.convertObjectToJsonBytes(idDto)))
+		.andExpect(status().isNoContent());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> friendIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).blockUser(userIdCaptor.capture(), friendIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(friendIdCaptor.getValue(), is(2L));
+	}
+
+	@Test
+	public void TestFriendController_BlockUser_InstanceNotFoundException()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		final IdDto idDto = new IdDto(2);
+
+		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
+		.blockUser(USERID_NOTFOUND, 2L);
+
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_NOTFOUND)
+				.content(Utils.convertObjectToJsonBytes(idDto)))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> friendIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).blockUser(userIdCaptor.capture(), friendIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_NOTFOUND));
+		assertThat(friendIdCaptor.getValue(), is(2L));
+	}
+
+	@Test
+	public void TestFriendController_BlockUser_AlreadyBlockedException()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		final IdDto idDto = new IdDto(2);
+
+		doThrow(new AlreadyBlockedException("Already blocked")).when(friendServiceMock).blockUser(USERID_OK,
+				2L);
+
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK)
+				.content(Utils.convertObjectToJsonBytes(idDto)))
+		.andExpect(status().isForbidden());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> friendIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).blockUser(userIdCaptor.capture(), friendIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+		assertThat(friendIdCaptor.getValue(), is(2L));
+	}
+
+	@Test
+	public void TestFriendController_BlockUser_ItsNotYourFriendException()
+			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		final IdDto idDto = new IdDto(2);
+
+		doThrow(new ItsNotYourFriendException("It's not your friend")).when(friendServiceMock).blockUser(USERID_OK, 2L);
+
+		// @formatter:off
+		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK)
+				.content(Utils.convertObjectToJsonBytes(idDto)))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Long> friendIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).blockUser(userIdCaptor.capture(), friendIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+		assertThat(friendIdCaptor.getValue(), is(2L));
 	}
 
 }

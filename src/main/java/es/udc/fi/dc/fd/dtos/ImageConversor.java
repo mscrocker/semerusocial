@@ -17,7 +17,7 @@ public class ImageConversor {
 
 	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
 		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ImageCreationDto(encoded);
+		return new ImageCreationDto(encoded, image.getType());
 	}
 
 	public final static ImageCreatedDto toImageCreatedDto(ImageImpl image) {
@@ -47,12 +47,12 @@ public class ImageConversor {
 	}
 
 	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images) {
-		final List<ImageImpl> imagesIn = images.getImages();
+		final List<ImageImpl> imagesIn = images.getElements();
 
 		final List<ReturnedImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImageDto(e))
 				.collect(Collectors.toList());
 
-		return new BlockDto<>(imagesOut, images.getExistMoreImages());
+		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
 	public final static BlockImageByUserIdDto<ReturnedImageDto> toReturnedImageDto(
@@ -70,12 +70,12 @@ public class ImageConversor {
 	}
 
 	public final static BlockDto<ReturnedImagesDto> toReturnedImagesDto(Block<ImageImpl> images) {
-		final List<ImageImpl> imagesIn = images.getImages();
+		final List<ImageImpl> imagesIn = images.getElements();
 
 		final List<ReturnedImagesDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
 				.collect(Collectors.toList());
 
-		return new BlockDto<>(imagesOut, images.getExistMoreImages());
+		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
 	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {

@@ -27,6 +27,14 @@ public interface User extends Serializable {
 
 	public String getDescription();
 
+	public double getRating();
+
+	public int getMinRateCriteria();
+
+	public long getRatingVotes();
+
+	public boolean isPremium();
+
 	public void setId(final Long userId);
 
 	public void setUserName(final String userName);
@@ -48,5 +56,13 @@ public interface User extends Serializable {
 	public void setCriteriaMaxAge(final int maxAge);
 
 	public void setDescription(final String description);
+
+	public void setRating(double rating);
+
+	public void setMinRateCriteria(int minRateCriteria);
+
+	public void setRatingVotes(long ratingVotes);
+
+	public void setPremium(boolean premium);
 
 }

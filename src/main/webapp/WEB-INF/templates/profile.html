@@ -4,8 +4,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:include="fragments/header :: header">
-<link th:href="@{/resources/vendor/datepicker/daterangepicker.css}"
-	rel="stylesheet" media="all">
+
+<title>Your Profile</title>
 </head>
 <body>
 	<header class="header" th:include="fragments/menu :: menu"></header>
@@ -15,10 +15,22 @@
 		<h1 class="" style="text-align: center;">User Data</h1>
 		<form class="form">
 			<div class="">
-				<div class="form-group">
-					<input class="js-datepicker form-control" type="text"
-						name="birthday" id="birthday" required> <i
-						class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+				<div class="row">
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateDayField">Day</label> <input
+							class="form-control" type="text" name="birthDateDayField"
+							id="birthDateDayField" required>
+					</div>
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateMonthField">Month</label> <input
+							class="form-control" type="text" name="birthDateMonthField"
+							id="birthDateMonthField" required>
+					</div>
+					<div class="form-group ml-auto mr-auto">
+						<label for="birthDateYearField">Year</label> <input
+							class="form-control" type="text" name="birthDateYearField"
+							id="birthDateYearField" required>
+					</div>
 				</div>
 				<div class="form-group">
 					<label for="sexField">Sex: </label> <select id="sexField"
@@ -40,11 +52,17 @@
 				</div>
 				<div class="form-group">
 					<label for="descriptionField">Description: </label> <input
-						id="descriptionField" class="form-control"  value="loading"
+						id="descriptionField" class="form-control" value="loading"
 						maxlength="60" required>
 					<div class="invalid-feedback">
 						<p id="descriptionFieldFeedback"></p>
 					</div>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input m-4 text-primary" type="checkbox"
+						id="premiumField" style="width: 20px; height: 20px;"> <label
+						class="form-check-label m-4 text-primary" for="premiumField"
+						style="font-weight: bolder; font-size: 18px;"> PREMIUM </label>
 				</div>
 				<div class="row ml-4">
 					<button id="profileButton" class="btn btn-primary mb-3" disabled
@@ -62,100 +80,102 @@
 				</div>
 			</div>
 		</form>
-		</div>
+	</div>
 
-		<div id="criteriaForm"
-			class="container bg-light border border-primary mt-5 hidden">
-			<h1 class="" style="text-align: center;">Search Criteria</h1>
-			<form class="form">
-				<div class="">
-					<div class="form-group">
-						<label for="minAgeCriteriaField">Minimum age: </label> <input
-							id="minAgeCriteriaField" class="form-control" value="10"
-							type="number" required>
-						<div class="invalid-feedback">
-							<p id="minAgeCriteriaFieldFeedback"></p>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="maxAgeCriteriaField">Maximum age: </label> <input
-							id="maxAgeCriteriaField" class="form-control" value="10"
-							type="number" required>
-						<div class="invalid-feedback">
-							<p id="maxAgeCriteriaFieldFeedback"></p>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="sexCriteriaField">Sex: </label> <select
-							id="sexCriteriaField" class="custom-select">
-							<option>MALE</option>
-							<option>FEMALE</option>
-							<option>OTHER</option>
-							<option>ANY</option>
-						</select>
-						<div class="invalid-feedback">
-							<p id="sexCriteriaFieldFeedback"></p>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="cityCriteriaField">Cities: </label>
-						<div class="col-6">
-							<table class="table table-vcenter" id="citiesTable1">
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-						<div class="col-6">
-							<table class="table table-vcenter" id="citiesTable2">
-								<tbody>
-								</tbody>
-							</table>
-						</div>
-
-						<button type="button" class="btn btn-success mt-3 mb-3"
-							id="addCityButton">
-							<span class="glyphicon glyphicon-plus ">Add</span>
-						</button>
-
-					</div>
-					<div class="row ml-4">
-						<button id="criteriaButton" class="btn btn-primary mb-3" disabled
-							type="button">Update</button>
-						<div class="ml-2 spinner-border text-primary" role="status"
-							id="criteriaLoading">
-							<span class="sr-only">Loading...</span>
-						</div>
-						<div class="ml-2 text-primary" id="criteriaFinished">
-							<h3 class="glyphicon glyphicon-ok"></h3>
-						</div>
-						<div class="ml-2 text-danger" id="criteriaError">
-							<h3 class="glyphicon glyphicon-remove"></h3>
-						</div>
+	<div id="criteriaForm"
+		class="container bg-light border border-primary mt-5 hidden">
+		<h1 class="" style="text-align: center;">Search Criteria</h1>
+		<form class="form">
+			<div class="">
+				<div class="form-group">
+					<label for="minAgeCriteriaField">Minimum age: </label> <input
+						id="minAgeCriteriaField" class="form-control" value="10"
+						type="number" required>
+					<div class="invalid-feedback">
+						<p id="minAgeCriteriaFieldFeedback"></p>
 					</div>
 				</div>
-			</form>
-		</div>
-		<div id="loadingIcon" class="container text-center mt-5">
-			<div class="spinner-border text-primary" role="status"
-				style="min-width: 100px; min-height: 100px;">
-				<span class="sr-only">Loading...</span>
+				<div class="form-group">
+					<label for="maxAgeCriteriaField">Maximum age: </label> <input
+						id="maxAgeCriteriaField" class="form-control" value="10"
+						type="number" required>
+					<div class="invalid-feedback">
+						<p id="maxAgeCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sexCriteriaField">Sex: </label> <select
+						id="sexCriteriaField" class="custom-select">
+						<option>MALE</option>
+						<option>FEMALE</option>
+						<option>OTHER</option>
+						<option>ANY</option>
+					</select>
+					<div class="invalid-feedback">
+						<p id="sexCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="minRatingCriteriaField">Minimum rating: </label> <input
+						id="minRatingCriteriaField" class="form-control" value="1"
+						type="number" required min="1" max="5" step="1">
+					<div class="invalid-feedback">
+						<p id="minRatingCriteriaFieldFeedback"></p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label id="cityCriteriaLabel" for="cityCriteriaField">Cities:
+					</label>
+					<div class="col-6">
+						<table class="table table-vcenter" id="citiesTable"
+							aria-describedby="cityCriteriaLabel">
+							<th id="citiesTableHeader"></th>
+							<tbody id="citiesTableBody">
+
+							</tbody>
+						</table>
+					</div>
+
+
+					<button type="button" class="btn btn-success mt-3 mb-3"
+						id="addCityButton">
+						<span class="glyphicon glyphicon-plus ">Add</span>
+					</button>
+
+				</div>
+				<div class="row ml-4">
+					<button id="criteriaButton" class="btn btn-primary mb-3" disabled
+						type="button">Update</button>
+					<div class="ml-2 spinner-border text-primary" role="status"
+						id="criteriaLoading">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="ml-2 text-primary" id="criteriaFinished">
+						<h3 class="glyphicon glyphicon-ok"></h3>
+					</div>
+					<div class="ml-2 text-danger" id="criteriaError">
+						<h3 class="glyphicon glyphicon-remove"></h3>
+					</div>
+				</div>
 			</div>
+		</form>
+	</div>
+	<div id="loadingIcon" class="container text-center mt-5">
+		<div class="spinner-border text-primary" role="status"
+			style="min-width: 100px; min-height: 100px;">
+			<span class="sr-only">Loading...</span>
 		</div>
-		<footer>
-			<div th:include="fragments/scripts :: general" ></div>
-			<div th:include="fragments/scripts :: profile" ></div>
-			<div th:include="fragments/scripts :: validation" ></div>
-		</footer>
+	</div>
+	<footer>
+		<div th:include="fragments/scripts :: general"></div>
+		<div th:include="fragments/scripts :: profile"></div>
+		<div th:include="fragments/scripts :: validation"></div>
+	</footer>
 
 
 
-		<!-- Vendor JS-->
-		<script th:src="@{/static/vendor/select2/select2.min.js}"></script>
-		<script th:src="@{/static/vendor/datepicker/moment.min.js}"></script>
-		<script th:src="@{/static/vendor/datepicker/daterangepicker.js}"></script>
-		<script th:src="@{/static/js/signupBeauty.js}"></script>
-
-		<script>
+	<!-- Main JS-->
+	<script>
 	window.addEventListener("load", () => {
 		profile.initProfile("[[@{'/'}]]");
 		criteriaSettings.init("[[@{'/'}]]");

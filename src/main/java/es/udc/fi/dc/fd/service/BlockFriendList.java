@@ -7,6 +7,10 @@ public class BlockFriendList<T> {
 	private List<T> friends;
 	private boolean existMoreFriends;
 
+	public BlockFriendList() {
+		super();
+	}
+
 	public BlockFriendList(List<T> friends, boolean existMoreFriends) {
 		super();
 		this.friends = friends;
