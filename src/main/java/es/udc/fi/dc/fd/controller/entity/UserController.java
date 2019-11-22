@@ -228,8 +228,8 @@ public class UserController {
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
-		return new UserDataDto(user.getDate(), period.getYears(), user.getSex(), user.getCity(), user.getDescription(),
-				user.getRating());
+		return new UserDataDto(user.getDate(), user.getSex(), user.getCity(), user.getDescription(),
+				user.getRating(), user.isPremium());
 	}
 
 	@PutMapping("/updateProfile")

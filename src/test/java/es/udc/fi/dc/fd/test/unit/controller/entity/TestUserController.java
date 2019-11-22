@@ -285,7 +285,7 @@ public final class TestUserController {
 
 		mockMvc.perform(
 				get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
-		.andExpect(status().isOk()).andExpect(jsonPath("$.age").value(age.getYears()))
+		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.sex").value("mujer")).andExpect(jsonPath("$.city").value("coruna"));
 
 		final ArgumentCaptor<Long> dtoCaptor = ArgumentCaptor.forClass(Long.class);
