@@ -69,7 +69,6 @@ public class ChatController {
 		this.messageSource = checkNotNull(messageSource, "Received a null pointer as messageSource in ChatController");
 	}
 
-
 	@ExceptionHandler(InstanceNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ResponseBody
@@ -120,6 +119,7 @@ public class ChatController {
 
 		try {
 			final UserImpl receiver = userService.loginFromUserId(chatMessage.getReceiverId());
+			chatMessage.setSenderId(ownerUser.getUserId());
 			chatService.sendMessage(ownerUser.getUserId(), chatMessage.getReceiverId(), chatMessage.getContent());
 			messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/reply", chatMessage);
 
@@ -128,6 +128,7 @@ public class ChatController {
 			System.out.println("other logger");
 			final ChatMessage chatMessage2 = new ChatMessage();
 			chatMessage2.setType(MessageType.ERROR);
+			chatMessage2.setSenderId(ownerUser.getUserId());
 			chatMessage2.setContent("Tried to send a message to an invalid person");
 			messagingTemplate.convertAndSendToUser(ownerUser.getName(), "/queue/reply", chatMessage2);
 			return;
@@ -146,10 +147,9 @@ public class ChatController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Block<MessageDetailsDto> getConversation(@RequestAttribute Long userId,
-			@RequestParam @Min(1) @NotNull Long friendId,
-			@RequestParam(defaultValue = "0") @Min(0) int page,
+			@RequestParam @Min(1) @NotNull Long friendId, @RequestParam(defaultValue = "0") @Min(0) int page,
 			@RequestParam(defaultValue = "10") @Min(1) int size)
-					throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		// @formatter:on
 
 		return chatService.getConversation(userId, friendId, page, size);

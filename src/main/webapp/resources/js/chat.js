@@ -1,6 +1,7 @@
 
 const chat = {
-	conversation: null, // element where messages are visible
+	conversation: null,
+	stompClient: null,// element where messages are visible
 	baseURL: null, // To make petitions to backend
 	scrollableDiv: null, // Scroll elemennt on chat
 	buttonCollapse: null, // Button to collapse sidebar
@@ -50,6 +51,7 @@ const chat = {
 
 		// init page
 		chat.initScreen();
+		sockets.connect();
 
 	},
 	// Collapse Sidebar Function
@@ -66,20 +68,6 @@ const chat = {
 	initScreen: () => {
 
 		apis.loadFriendList();
-		let id = window.location.pathname.split("/").pop();
-		if (!isNaN(parseFloat(id)) && !isNaN(id - 0)) {
-			chat.activeFriend = id;
-		} else {
-			chat.activeFriend = chat.friendList.firstElementChild.getAttribute("data-id");
-		}
-
-		chat.chatMessage[chat.activeFriend] = {
-			messages: [],
-			scroll: 0,
-			needMoreLoading: true,
-			lastActivePage: 0
-		};
-		apis.fetchFriendMessages(chat.activeFriend);
 	},
 	formatDate: (date) => {
 		let now = moment();
@@ -124,16 +112,10 @@ let friends = {
 
 		message.innerText = lastMessage;
 
-		if (count && count !== 0) {
-			notis.innerText = count;
-
-		} else {
-			notis.classList.add("hidden");
-		}
-
+	
 
 		titleSpan.innerText = name;
-		userDate.innerText = chat.formatDate(date);
+		userDate.innerText =  date === null ? "Never" : chat.formatDate(date);
 
 
 		li.appendChild(a);
@@ -170,18 +152,24 @@ let friends = {
 		div2.setAttribute('class', "line2");
 		userDate.setAttribute('class', "user-date");
 		notis.setAttribute('class', "notis user-circle");
+	if (count >= 0) {
+			notis.innerText = count;
+		} else {
+			notis.classList.add("hidden");
+		}
 
 		imgSpan.setAttribute('class', 'user-img');
 		titleSpan.setAttribute('class', 'user-title');
 		li.setAttribute('data-id', id);
-		li.setAttribute('data-date', date.toISOString());
+		 date = date === null ? 0 : date.toISOString();
+		li.setAttribute('data-date',date);
 
-
+		
 		message.setAttribute('class', 'user-desc');
 		let liCount = chat.friendList.childElementCount;
-		for (i = 0; i < liCount; i++) {
+		for (var i = 0; i < liCount; i++) {
 			let elemDate = chat.friendList.children[i].getAttribute("data-date");
-			if (date.toISOString() > elemDate) {
+			if (date> elemDate) {
 				chat.friendList.insertBefore(li, chat.friendList.children[i]);
 				break;
 			}
@@ -216,7 +204,7 @@ let friends = {
 				needMoreLoading: false,
 				lastActivePage: 0
 			};
-			apis.mockUpChats();
+			apis.fetchFriendMessages(friendId);
 		} else {
 			messages.loadExistingMessages(newMap.messages);
 		}
@@ -299,6 +287,7 @@ let messages = {
 			list.messages.push(message);
 			chat.conversation.appendChild(message);
 			chat.scrollableDiv.scrollTop = chat.scrollableDiv.scrollHeight;
+			sockets.sendMessage(input.value);
 		}
 		input.value = '';
 		e.preventDefault();
@@ -306,158 +295,168 @@ let messages = {
 };
 let apis = {
 
-	mockUpFriends: () => {
-		for (i = 0; i < 4; i++) {
-			friends.addFriendToList({
-				id: i,
-				lastMessage: "x",
-				name: i,
-				count: Math.floor(Math.random() * 100),
-				date: moment()
-			});
-		}
-	},
-	mockUpChats: () => {
-		for (i = 0; i < 4; i++) {
-			let rand = Math.random()
-				.toString(36)
-				.replace(/[^a-z]+/g, '')
-				.substr(0, 5);
-			messages.addMessage({
-				text: rand,
-				date: chat.formatDate(moment()),
-				sendByMe: i % 2
-			});
-		}
-	},
 
 	fetchFriendMessages: (friendId) => {
 
-		/*
-		 * user.authFetch(chat.baseUrl + "conversationMessage", {
-		 * method: 'GET' }, (response) => { if (response.status == 400) {
-		 * console.log("error"); } else if (response.status !== 200) {
-		 * console.log("error"); } else { response.json().then((body) => { //
-		 * if (body.hasMore){ chat.currentMessagePage++;
-		 * chat.loadPrevious = true; }
-		 * 
-		 * body.items.forEach(message => { let responseMessage =
-		 * chat.buildMessage(responseMessage .text,responseMessage
-		 * .time);
-		 * chat.conversation.insertAdjacentElement('afterbegin',responseMessage ); //
-		 * chat.animateMessage(message); }); let list =
-		 * chat.chatMessage['${friend.id}'];
-		 * list.messages.push(body.items);
-		 * 
-		 * }); }
-		 * 
-		 * });
-		 */
-		apis.mockUpChats();
+	    user.authFetch(chat.baseURL + `backend/chat/conversation?friendId=${friendId}&page=${chat.currentMessagePage}&size=20`, {
+	            method: "GET",
+	            headers: {
+	                "Content-Type": "application/json"
+	            }
+	        },(response) => {
+	            if (response.status !== 200){
+			console.log("ERROR!");
+			return;
+	            }
+			response.json().then((body) => {
+			    
+			    chat.loadPrevious = body.existMoreElements;
+			    chat.currentMessagePage++;
+			    body.elements.forEach(mes => {
+				messages.addMessage({
+					text: mes.messageContent,
+					date: chat.formatDate(apis.toMoment(mes.date)),
+					sendByMe: friendId == mes.receiver 
+				    
+			    });
+			
+			});
+		});
+		
+	        
+	        });
+
 	},
 	loadFriendList: () => {
 		if (chat.loadMoreFriends) {
-			/*
-			 * user.authFetch(chat.baseUrl + "getFriends", { method:
-			 * 'GET' }, (response) => { if (response.status == 400) {
-			 * console.log("error"); } else if (response.status !==
-			 * 200) { console.log("error"); } else {
-			 * response.json().then((body) => { // if
-			 * (body.hasMore){ chat.friendListPage++;
-			 * chat.loadPrevious = true; }
-			 * 
-			 * body.items.forEach(friend => {
-			 * chat.addFriendToList(friend); });
-			 * 
-			 * }); } });
-			 */
-			apis.mockUpFriends();
+			
+		    user.authFetch(chat.baseURL + "backend/chat/friendHeaders?page=" + chat.friendListPage, {
+		            method: "GET",
+		            headers: {
+		                "Content-Type": "application/json"
+		            }
+		        },(response) => {	
+				if (response.status !== 200){
+					console.log("ERROR!");
+					return;
+				}
+				
+				response.json().then((body) => {
+				    
+			
+				body.elements.forEach( header => {
+				    
+				friends.addFriendToList({id: header.friendId,lastMessage: header.content ,
+				    name: header.friendName,count: -1 , date: header.date === null ? null : apis.toMoment(header.date)}
+				    );
+			});
+				
+				let id = window.location.pathname.split("/").pop();
+				if (!isNaN(parseFloat(id)) && !isNaN(id - 0)) {
+					chat.activeFriend = id;
+				} else {
+				    if (chat.friendList.firstElementChild){
+					chat.activeFriend = chat.friendList.firstElementChild.getAttribute("data-id");
+					}
+				  }
+				document.querySelector(`[data-id="${chat.activeFriend}"]`).firstElementChild.classList.add("clicked");
+				
+				chat.chatMessage[chat.activeFriend] = {
+					messages: [],
+					scroll: 0,
+					needMoreLoading: true,
+					lastActivePage: 0
+				};
+				apis.fetchFriendMessages(chat.activeFriend);
+				});
+		        });
 		}
+	},
+	toMoment:(date) => {
+		return moment({year: date.year ,month: date.monthValue -1 , day: date.dayOfMonth,hours: date.hour,minutes: date.minute,seconds: date.second});
 	}
 };
 let sockets = {
     connect: () => {
-        chat.usernamePage.classList.add('hidden');
-        chat.chatPage.classList.remove('hidden');
 
         var socket = new SockJS(chat.baseURL + '/ws');
         chat.stompClient = Stomp.over(socket);
 
         chat.stompClient.connect({
             'X-Authorization': localStorage.user_jwt
-        }, chat.onConnected, chat.onError);
+        }, sockets.onConnected, sockets.onError);
     },
 
 
 
     onConnected: () => {
         // / / Subscribe to the Public Topic
-        chat.stompClient.subscribe("/user/queue/reply", chat.onMessageReceived, {
+        chat.stompClient.subscribe("/user/queue/reply", sockets.onMessageReceived, {
             'X-Authorization': localStorage.user_jwt
         });
-        chat.connectingElement.classList.add('hidden');
     },
 
 
     onError: (error) => {
-        chat.connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-        chat.connectingElement.style.color = 'red';
+       
     },
 
 
-    sendMessage: (event) => {
-        var messageContent = chat.messageInput.value.trim();
-        if (messageContent && chat.stompClient) {
+    sendMessage: (text) => {
+        if (text && chat.stompClient) {
             var chatMessage = {
-                sender: chat.username,
-                content: chat.messageInput.value,
+                sender: localStorage.user_name,
+                senderId: 0,
+                content: text,
                 receiver: window.location.pathname.split("/").pop(),
-                receiverId: window.location.pathname.split("/").pop(),
+                receiverId: chat.activeFriend,
                 type: 'CHAT'
             };
             chat.stompClient.send('/app/chat.sendMessage', {
                 'X-Authorization': localStorage.user_jwt
             }, JSON.stringify(chatMessage));
-            chat.messageInput.value = '';
         }
-        event.preventDefault();
     },
 
 
     onMessageReceived: (payload) => {
-        var message = JSON.parse(payload.body);
-
-        var messageElement = document.createElement('li');
-
-        if (message.type === 'JOIN') {
-            messageElement.classList.add('event-message');
-            message.content = message.sender + ' joined!';
-        } else if (message.type === 'LEAVE') {
-            messageElement.classList.add('event-message');
-            message.content = message.sender + ' left!';
-        } else {
-            messageElement.classList.add('chat-message');
-
-            var avatarElement = document.createElement('i');
-            var avatarText = document.createTextNode(message.sender);
-            avatarElement.appendChild(avatarText);
-
-            messageElement.appendChild(avatarElement);
-
-            var usernameElement = document.createElement('span');
-            var usernameText = document.createTextNode(message.sender);
-            usernameElement.appendChild(usernameText);
-            messageElement.appendChild(usernameElement);
-        }
-
-        var textElement = document.createElement('p');
-        var messageText = document.createTextNode(message.content);
-        textElement.appendChild(messageText);
-
-        messageElement.appendChild(textElement);
-
-        chat.messageArea.appendChild(messageElement);
-        chat.messageArea.scrollTop = chat.messageArea.scrollHeight;
+        var messageReceived = JSON.parse(payload.body);
+        var message = messages.buildMessage({
+		text: messageReceived.content,
+		date: moment().format("HH:mm"),
+		sendByMe: false
+	});
+        
+	let list = chat.chatMessage[chat.activeFriend];
+	if (!list ){
+	    list = chat.chatMessage[messageReceived.senderId] = {
+			messages: [],
+			scroll: 0,
+			needMoreLoading: true,
+			lastActivePage: 0
+		};
+	    friends.addFriendToList({
+		lastMessage:messageReceived.content,
+		name:messageReceived.sender,
+		id:messageReceived.senderId,
+		count:1,
+		date: moment().format("HH:mm"),
+	});
+	    
+	}
+	list.messages.push(message);
+	if (chat.activeFriend == messageReceived.senderId){
+		let prevScroll = chat.scrollableDiv.scrollHeight;
+		chat.conversation.insertAdjacentElement('beforeend', message);  
+		chat.scrollableDiv.scrollTop += (chat.scrollableDiv.scrollHeight - prevScroll);
+	}
+	else {
+	let circle = document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .notis`);
+	circle.innerText = 1;
+	circle.classList.remove("hidden");
+	}
+	document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .user-desc`).innerText =messageReceived.content;
+	
     }
 
 

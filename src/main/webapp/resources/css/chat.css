@@ -151,8 +151,8 @@ a[data-toggle="collapse"] {
 }
 
 .dropdown-toggle::after {
-    text-cente: center;
-    /* display: block; */
+/*     text-cente: center;
+ */    /* display: block; */
     /* position: absolute; */
     /* top: 50%; */
     /* right: 20px; */
@@ -594,8 +594,8 @@ html, body {
     box-shadow: none!important;
     text-shadow: none;
     outline: 0;
-    box-shadow: none;
-}
+
+	}
 
 #holder {
     position: relative;

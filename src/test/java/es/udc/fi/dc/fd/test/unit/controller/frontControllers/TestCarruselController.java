@@ -36,15 +36,22 @@ public class TestCarruselController {
 		mockMvc = MockMvcBuilders.standaloneSetup(getController()).setViewResolvers(viewResolver).build();
 	}
 
-	/***************TESTS**************************************/
-
+	/*************** TESTS **************************************/
 
 	@Test
 	public void TestChatScreen() throws Exception {
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_CHATSCREEN, 1))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_CHATSCREEN, 1)).andExpect(status().isOk());
+		// @formatter:on
+
+	}
+
+	@Test
+	public void TestChatScreen1() throws Exception {
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_CHATSCREEN_1)).andExpect(status().isOk());
 		// @formatter:on
 
 	}
@@ -53,8 +60,7 @@ public class TestCarruselController {
 	public void TestDisplayFriendFinder() throws Exception {
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_FRIENDFINDER))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_FRIENDFINDER)).andExpect(status().isOk());
 		// @formatter:on
 
 	}
@@ -63,8 +69,7 @@ public class TestCarruselController {
 	public void TestDisplayUserData() throws Exception {
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYUSERDATA))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYUSERDATA)).andExpect(status().isOk());
 		// @formatter:on
 
 	}
@@ -73,8 +78,7 @@ public class TestCarruselController {
 	public void TestDisplayAddImage() throws Exception {
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYADDIMAGE))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYADDIMAGE)).andExpect(status().isOk());
 		// @formatter:on
 
 	}
@@ -83,8 +87,7 @@ public class TestCarruselController {
 	public void TestDisplayLogin() throws Exception {
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYLOGIN, 1))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.FRONT_CARROUSEL_DISPLAYLOGIN, 1)).andExpect(status().isOk());
 		// @formatter:on
 
 	}
