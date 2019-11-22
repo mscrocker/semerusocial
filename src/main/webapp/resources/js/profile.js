@@ -40,20 +40,44 @@ let profile = null;
 		document.getElementById(name).classList.remove("is-invalid");
 	},
 	
+	parseDate: () => {
+		return Date.UTC(
+				document.getElementById("birthDateYearField").value,
+				document.getElementById("birthDateMonthField").value,
+				document.getElementById("birthDateDayField").value
+		);
+	},
 
 	validation: {
 		clearAllFields: () => {
-			validation.clearField(document.getElementById("birthday"));
+			validation.clearField(document.getElementById("birthDateYearField"));
+			validation.clearField(document.getElementById("birthDateMonthField"));
+			validation.clearField(document.getElementById("birthDateDayField"));
 			validation.clearField(document.getElementById("sexField"));
 			validation.clearField(document.getElementById("cityField"));
 			validation.clearField(document.getElementById("descriptionField"));
 		},
 		
 		validateBirthDate: (updateField) => {
-			let age = new Date(new Date() - new Date(document.getElementById("birthday").value)).getFullYear() - 1970;
-			let result = (age >= 18);
+			let date = new Date(profile.parseDate());
+			let result = false;
+			if (
+					(document.getElementById("birthDateYearField").value == date.getUTCFullYear()) &&
+					(document.getElementById("birthDateMonthField").value == date.getUTCMonth()) &&
+					(document.getElementById("birthDateDayField").value == date.getUTCDate())
+			){
+				let age = 
+					new Date(
+							Date.now() -
+							profile.parseDate()
+					).getYear() - 70;
+				result = (age >= 18);
+			}
+			
 			if (updateField === true){
-				validation.updateField(document.getElementById("birthday"), result);
+				validation.updateField(document.getElementById("birthDateYearField"), result);
+				validation.updateField(document.getElementById("birthDateMonthField"), result);
+				validation.updateField(document.getElementById("birthDateDayField"), result);
 			}
 			return result;
 		},
@@ -90,7 +114,7 @@ let profile = null;
 	updateCriteria: () => {
 		document.getElementById("profileButton").disabled = true;
 		profile.clearStatusIcons();
-		let date = new Date(document.getElementById("birthday").value);
+		let date = new Date(profile.parseDate());
 		let profileData = {
 			day: date.getUTCDate(),
 			month: date.getUTCMonth(),
@@ -127,10 +151,12 @@ let profile = null;
 		const url = baseURL + "backend/users/data" ;
 		if (user.checkLoggedIn()){
 			
-			document.getElementById("birthday").onchange = () => profile.notifyChange("birthDate");
-			document.getElementById("descriptionField").onchange = () => profile.notifyChange("description");
+			document.getElementById("birthDateDayField").onkeyup = () => profile.notifyChange("birthDate");
+			document.getElementById("birthDateMonthField").onkeyup = () => profile.notifyChange("birthDate");
+			document.getElementById("birthDateYearField").onkeyup = () => profile.notifyChange("birthDate");
+			document.getElementById("descriptionField").onkeyup = () => profile.notifyChange("description");
 			document.getElementById("sexField").onclick = () => profile.notifyChange("sex");
-			document.getElementById("cityField").onclick = () => profile.notifyChange("city");
+			document.getElementById("cityField").onkeyup = () => profile.notifyChange("city");
 			
 			document.getElementById("profileButton").onclick = () => profile.updateCriteria();
 			
@@ -149,7 +175,9 @@ let profile = null;
 					profile.UserData.city = body.city;
 					profile.UserData.description = body.description;
 					
-					document.getElementById("birthday").value = profile.UserData.birthDate.toLocaleDateString();
+					document.getElementById("birthDateDayField").value = profile.UserData.birthDate.getUTCDate();
+					document.getElementById("birthDateMonthField").value = profile.UserData.birthDate.getUTCMonth() + 1;
+					document.getElementById("birthDateYearField").value = profile.UserData.birthDate.getUTCFullYear();
 					document.getElementById("cityField").value = ""+body.city;
 					document.getElementById("sexField").value = ""+body.sex;
 					document.getElementById("descriptionField").value = ""+body.description;
