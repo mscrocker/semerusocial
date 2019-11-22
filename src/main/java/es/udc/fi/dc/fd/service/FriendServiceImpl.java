@@ -36,6 +36,7 @@ import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
+import es.udc.fi.dc.fd.repository.RateRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -49,6 +50,9 @@ public class FriendServiceImpl implements FriendService {
 
 	@Autowired
 	private RejectedRepository rejectedRepository;
+
+	@Autowired
+	private RateRepository rateRepository;
 
 	@Autowired
 	private MatchRepository matchRepository;
@@ -212,7 +216,7 @@ public class FriendServiceImpl implements FriendService {
 		return userRepository.findByCriteria(searchCriteria, userId);
 	}
 
-	
+
 
 	@Override
 	public void blockUser(Long userId, Long friendId)
