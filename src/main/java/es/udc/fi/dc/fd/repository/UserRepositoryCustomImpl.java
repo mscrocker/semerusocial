@@ -25,7 +25,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		String queryString = "SELECT p FROM User p ";
 
-		queryString += "WHERE p.date <= :maxDate ";
+		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
 		if (criteria.getSex() == SexCriteriaEnum.OTHER) {
 			queryString += "AND LOWER(p.sex) NOT LIKE 'female' ";
@@ -34,15 +34,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += "AND LOWER(p.sex) LIKE LOWER(:sex) ";
 		}
 
-		// Que el rating que tiene sea como minimo mi minRateCriteria o que no hayas
-		// sido votado
 		queryString += "AND (p.ratingVotes = 0 OR p.rating >= :minRate) ";
 
-		// Que no te sugiera a ti mismo
-		queryString += "AND p.id != :userId ";
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
 			queryString += "AND LOWER(p.city) in (:cities) ";
 		}
+
+		// Que no te sugiera a ti mismo
+		queryString += ") AND p.id != :userId ";
 
 		//		if (!criteria.getCity().isEmpty()) {
 		//			queryString += "AND p.city IN :cities ";

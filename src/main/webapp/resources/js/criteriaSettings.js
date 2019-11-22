@@ -128,7 +128,7 @@ const criteriaSettings = {
 	citiesList : {
 		parseTable: () => {
 			let result = [];
-			let table1 = document.getElementById("citiesTable1");
+			let table1 = document.getElementById("citiesTableBody");
 			for (let i = 0; i < table1.rows.length; i++){
 				let field = table1.rows[i].cells[0].childNodes[1];
 				result.push(""+field.value);
@@ -138,9 +138,9 @@ const criteriaSettings = {
 		},
 		
 		clearTable: () => {
-			let rowNum = document.getElementById("citiesTable1").rows.length;
+			let rowNum = document.getElementById("citiesTableBody").rows.length;
 			for (let i = 0; i < rowNum; i++){
-				document.getElementById("citiesTable1").deleteRow(0);
+				document.getElementById("citiesTableBody").deleteRow(0);
 			}
 			
 		},
@@ -160,14 +160,14 @@ const criteriaSettings = {
 			
 			if (data.length <= 5){
 				// ONE ROW DISPLAY
-				let table = document.getElementById("citiesTable1Body");
+				let table = document.getElementById("citiesTableBody");
 				for (let i = data.length - 1; i >= 0; i--){
 					let row = table.insertRow(0);
 					let cell2 = row.insertCell(0);
 					let cell1 = row.insertCell(0);
 					
 					cell1.innerHTML = [
-						`	<input id="cityInputField${i}" class="form-control" type="text" maxlength="30" required value="${data[i].	replace(/"/g, '&quot;')}" onchange="criteriaSettings.notifyChange('city')" />`,
+						`	<input id="cityInputField${i}" class="form-control" type="text" maxlength="30" required value="${data[i].	replace(/"/g, '&quot;')}" onkeyup="criteriaSettings.notifyChange('city')" />`,
 						`	<div class="invalid-feedback">`,
 						`		<p id="cityInputFieldFeedback${i}"></p>`,
 						`	</div>`

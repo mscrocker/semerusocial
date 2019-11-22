@@ -123,17 +123,26 @@ public class UserServiceImpl implements UserService {
 
 		}
 
-		if (user.getRatingVotes() > 0) { // Comprobamos que este usuario tiene votos
-			// Comprobamos que el minRate esta entre los valores correctos minimosy maximos
-			if (criteria.getMinRate() <= user.getRating() + 1 && criteria.getMinRate() >= 1
-					&& criteria.getMinRate() <= 5) {
+
+		// Cumplimos las condiciones para establecer minRateCriteria
+		if (user.getRatingVotes() > 0 || user.isPremium()) {
+
+			// Validamos criteriaMinRate
+			if (criteria.getMinRate() < 1 || criteria.getMinRate() > 5) {
+				throw new InvalidRateException(
+						"Your minRating must be between 1 and 5");
+			}
+
+			// Si es premium puede poner el minRate que quiera
+			// Y si no lo es tiene que ser minRate válido (<userRate+1)
+			if (user.isPremium() || criteria.getMinRate() <= user.getRating() + 1) {
 				user.setMinRateCriteria(criteria.getMinRate());
 			} else {
 				throw new InvalidRateException(
 						"Your minRating must be lower than : " + user.getRating() + 1 + " and higher than 1");
 			}
-		}
 
+		}
 
 		user.setCriteriaSex(criteria.getSex());
 		user.setCriteriaMaxAge(criteria.getMaxAge());
@@ -178,8 +187,8 @@ public class UserServiceImpl implements UserService {
 
 		final List<String> cityList = getCityCriteriaRepository().findCitiesByUserId(userId);
 
-		return new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
-				user.getCriteriaMaxAge(), cityList, user.getMinRateCriteria());
+		return new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(), user.getCriteriaMaxAge(), cityList,
+				user.getMinRateCriteria());
 
 	}
 
@@ -201,7 +210,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		final Optional<UserImpl> userOptional = userRepository.findById(userObject);
-		if (userOptional.isPresent()) {//Si el usuario al que se vota existe
+		if (userOptional.isPresent()) {// Si el usuario al que se vota existe
 
 			final UserImpl user = userOptional.get();
 			final double userRate = user.getRating();
@@ -243,6 +252,16 @@ public class UserServiceImpl implements UserService {
 			throw new InstanceNotFoundException("Not found userId :", userObject);
 		}
 
+	}
+
+	@Override
+	public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException {
+		final UserImpl user = permissionChecker.checkUserByUserId(userId);
+
+		if (user.isPremium() != premium) {
+			user.setPremium(premium);
+			userRepository.save(user);
+		}
 
 	}
 

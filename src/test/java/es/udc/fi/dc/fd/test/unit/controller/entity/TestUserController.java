@@ -285,7 +285,7 @@ public final class TestUserController {
 
 		mockMvc.perform(
 				get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
-		.andExpect(status().isOk()).andExpect(jsonPath("$.age").value(age.getYears()))
+		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.sex").value("mujer")).andExpect(jsonPath("$.city").value("coruna"));
 
 		final ArgumentCaptor<Long> dtoCaptor = ArgumentCaptor.forClass(Long.class);
@@ -655,6 +655,50 @@ public final class TestUserController {
 		assertThat(rateCaptor.getValue(), is(1));
 		assertThat(subjectCaptor.getValue(), is(1L));
 		assertThat(objectCaptor.getValue(), is(2L));
+
+	}
+
+	@Test
+	public void TestUserController_UpdatePremium() throws InstanceNotFoundException, Exception {
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.requestAttr("premium", false))
+		.andExpect(status().isNoContent());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Boolean> premiumCaptor = ArgumentCaptor.forClass(Boolean.class);
+		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(premiumCaptor.getValue(), is(false));
+
+	}
+
+	@Test
+	public void TestUserController_UpdatePremium_InstanceNotFound()
+			throws InstanceNotFoundException, Exception {
+
+		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updatePremium(any(Long.class),
+				any(Boolean.class));
+
+		// @formatter:off
+		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", 1L)
+				.requestAttr("premium", false))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<Boolean> premiumCaptor = ArgumentCaptor.forClass(Boolean.class);
+		verify(userServiceMock, times(1)).updatePremium(userIdCaptor.capture(), premiumCaptor.capture().booleanValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(premiumCaptor.getValue(), is(false));
 
 	}
 
