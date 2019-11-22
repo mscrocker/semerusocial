@@ -69,6 +69,21 @@ public final class UrlConfig {
 
 	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
 
+	public static final String URL_CHAT_GETCONVERSATION_GET = "/backend/chat/conversation";
+
+	public static final String URL_CHAT_FRIENDHEADERS_GET = "/backend/chat/friendHeaders";
+
+	public static final String URL_CHAT_SENDMENSSAGE = "/chat.sendMessage";
+
+	/********
+	 * FRONT CONTROLLERS URLS
+	 **************/
+	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chatting/{userId}";
+	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
+	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
+	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
+	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel/**";
+
 	/**
 	 * Default constructor to avoid initialization.
 	 */

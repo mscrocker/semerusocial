@@ -49,6 +49,7 @@ import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
+import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -83,7 +84,11 @@ public class ITFriendService {
 	private MatchRepository matchRepository;
 
 	@Autowired
+	private MessageRepository messageRepository;
+
+	@Autowired
 	private BlockedRepository blockedRepository;
+
 
 	@Autowired
 	public ITFriendService() {
@@ -132,12 +137,19 @@ public class ITFriendService {
 		}
 	}
 
+	private Optional<UserImpl> createUser(String userName) {
+		final UserImpl user1 = createUser(userName, "pass", getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+		userRepository.save(user1);
+		return userRepository.findByUserName(userName);
+	}
+
+	
+
 	// -----addImage-----
 
 	@Test
-	public void testDefaultCriteriaRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testDefaultCriteriaRequest() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo3", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo4", "pass2", 23, "Female", "Catalunya");
 		friendService.acceptRecommendation(user1.getId(), user2.getId());
@@ -180,9 +192,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testReject()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testReject() throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+	AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo7", "pass", 22, "Male", "Catalunya");
 		final UserImpl user2 = signUp("manolo8", "pass2", 23, "Female", "Catalunya");
 		friendService.rejectRecommendation(user1.getId(), user2.getId());
@@ -195,9 +206,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testRejectAlreadyRejected()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void testRejectAlreadyRejected() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException {
 		final UserImpl user1 = signUp("manolo9", "pass", 22, "Male", "Catalunya");
 		userRepository.save(user1);
 
@@ -231,6 +241,7 @@ public class ITFriendService {
 	public void testInvalidCriteriaReject()
 			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
 			AlreadyAceptedException, InvalidRateException, NotRatedException {
+
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
 		setSearchCriteria(user1.getId(), "Female", 18, 99, "Catalunya");
@@ -309,6 +320,7 @@ public class ITFriendService {
 	 * @throws InvalidRateException
 	 *************************************/
 	@Test
+
 
 	//	@Sql(scripts = "/initialData.sql")
 	public void TestSuggestFriend() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
@@ -517,6 +529,8 @@ public class ITFriendService {
 			friendService.getFriendList(user.getId(), 0, 0);
 		});
 	}
+
+	/******* SEND MESSAGE TESTS ****************************/
 
 	@Test
 	public void testBlockUser() throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException,

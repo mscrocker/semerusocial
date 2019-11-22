@@ -33,7 +33,6 @@ import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
-import es.udc.fi.dc.fd.repository.RateRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
@@ -56,9 +55,6 @@ public class FriendServiceImpl implements FriendService {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private RateRepository rateRepository;
 
 	@Autowired
 	private UserService userService;
@@ -99,9 +95,8 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	@Override
-	public void acceptRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void acceptRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 
@@ -128,9 +123,8 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	@Override
-	public void rejectRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	public void rejectRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 
 		validateRecommendation(subject, object);
 		// TODO WE can safely delete the invert request if it were to exist because it
@@ -139,9 +133,8 @@ public class FriendServiceImpl implements FriendService {
 
 	}
 
-	private void validateRecommendation(Long subject, Long object)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+	private void validateRecommendation(Long subject, Long object) throws InstanceNotFoundException,
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException {
 		final Optional<UserImpl> subjectUserOpt = userRepository.findById(subject);
 
 		if (subjectUserOpt.isEmpty()) {
@@ -208,6 +201,7 @@ public class FriendServiceImpl implements FriendService {
 		return userRepository.findByCriteria(searchCriteria, userId);
 	}
 
+	
 
 	@Override
 	public void blockUser(Long userId, Long friendId)
