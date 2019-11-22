@@ -180,6 +180,9 @@ let profile = null;
 					profile.UserData.city = body.city;
 					profile.UserData.description = body.description;
 					
+					window.minRateCriteria = Number(body.rating) + 1;
+					document.getElementById("minRatingCriteriaField").max = window.minRateCriteria;
+					
 					document.getElementById("birthDateDayField").value = profile.UserData.birthDate.getUTCDate();
 					document.getElementById("birthDateMonthField").value = profile.UserData.birthDate.getUTCMonth() + 1;
 					document.getElementById("birthDateYearField").value = profile.UserData.birthDate.getUTCFullYear();
