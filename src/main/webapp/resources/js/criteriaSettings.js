@@ -3,7 +3,8 @@ const criteriaSettings = {
 		minAge: null,
 		maxAge: null,
 		city: null,
-		sex: null
+		sex: null,
+		minRate: null
 	},
 	
 	baseURL: null,
@@ -13,15 +14,17 @@ const criteriaSettings = {
 		document.getElementById("maxAgeCriteriaField").value = ""+criteriaSettings.criteria.maxAge;
 		criteriaSettings.citiesList.generateTable(criteriaSettings.criteria.city);
 		document.getElementById("sexCriteriaField").value = ""+criteriaSettings.criteria.sex;
+		document.getElementById("minRatingCriteriaField").value = criteriaSettings.criteria.minRate;
 	},
 	
 	init: (baseURL) => {
 		criteriaSettings.clearStatusIcons();
 		criteriaSettings.baseURL = baseURL;
 		document.getElementById("addCityButton").onclick = criteriaSettings.citiesList.addElem;
-		document.getElementById("minAgeCriteriaField").onchange = () => criteriaSettings.notifyChange("minAge");
-		document.getElementById("maxAgeCriteriaField").onchange = () => criteriaSettings.notifyChange("maxAge");
-		document.getElementById("sexCriteriaField").onchange = () => criteriaSettings.notifyChange("sex");
+		document.getElementById("minAgeCriteriaField").onkeyup = () => criteriaSettings.notifyChange("minAge");
+		document.getElementById("maxAgeCriteriaField").onkeyup = () => criteriaSettings.notifyChange("maxAge");
+		document.getElementById("sexCriteriaField").onkeyup = () => criteriaSettings.notifyChange("sex");
+		document.getElementById("minRatingCriteriaField").onkeyup=  () => criteriaSettings.notifyChange("minRate");
 		
 		document.getElementById("criteriaButton").onclick = criteriaSettings.updateCriteria;
 		
@@ -60,6 +63,9 @@ const criteriaSettings = {
 			case "city":
 				result = criteriaSettings.validation.validateCities(true);
 				break;
+			case "minRate":
+				result = criteriaSettings.validation.validateMinCriteria(true);
+				break;
 		}
 
 		document.getElementById("criteriaButton").disabled = !result;
@@ -73,6 +79,7 @@ const criteriaSettings = {
 			validation.clearField(document.getElementById("minAgeCriteriaField"));
 			validation.clearField(document.getElementById("maxAgeCriteriaField"));
 			validation.clearField(document.getElementById("sexCriteriaField"));
+			validation.clearField(document.getElementById("minRatingCriteriaField"));
 			let numCities = criteriaSettings.citiesList.parseTable().length;
 			for (let i = 0; i < numCities; i++){
 				validation.clearField(document.getElementById(`cityInputField${i}`));
@@ -104,6 +111,15 @@ const criteriaSettings = {
 			let result = ["MALE", "FEMALE", "ANY", "OTHER"].includes(sex);
 			if (updateField === true){
 				validation.updateField(document.getElementById("sexCriteriaField"), result);
+			}
+			return result;
+		},
+		
+		validateMinCriteria: (updateField) => {
+			let minRating = Number(document.getElementById("minRatingCriteriaField").value);
+			let result = (parseInt(minRating) === parseFloat(minRating)) && (minRating <= 5) && (minRating >= 1) && (minRating <= (window.minRateCriteria !== undefined ? window.minRateCriteria : 0));
+			if (updateField === true){
+				validation.updateField(document.getElementById("minRatingCriteriaField"), result);
 			}
 			return result;
 		},
@@ -222,7 +238,8 @@ const criteriaSettings = {
 			minAge: Number(document.getElementById("minAgeCriteriaField").value),
 			maxAge: Number(document.getElementById("maxAgeCriteriaField").value),
 			city: criteriaSettings.citiesList.parseTable(),
-			sex: document.getElementById("sexCriteriaField").value
+			sex: document.getElementById("sexCriteriaField").value,
+			minRate: document.getElementById("minRatingCriteriaField").value
 		};
 		
 		let url = criteriaSettings.baseURL + "backend/users/searchCriteria";

@@ -14,6 +14,25 @@ let profile = null;
 		document.getElementById("profileError").classList.add("hidden");
 	},
 	
+	handlePremiumChange: () => {
+		let url = criteriaSettings.baseURL + "backend/users/premium";
+		let params = {
+				method: 'PUT',
+				body: JSON.stringify({
+					premium: document.getElementById("premiumField").checked
+				}),
+				headers: { "Content-Type": "application/json" }
+		};
+		user.authFetch(url, params, (response) => {
+			if (response.status !== 204){
+				customAlert.showAlertFromResponse(response);
+			}
+		}, (errors) => {
+			customAlert.showAlert(errors);
+		});
+	},
+
+	
 	notifyChange: (name) => {
 		profile.clearStatusIcons();
 		let result = false;
@@ -29,6 +48,9 @@ let profile = null;
 				break;
 			case "city":
 				result = profile.validation.validateCity(true);
+				break;
+			case "premium":
+				profile.handlePremiumChange();
 				break;
 		}
 
@@ -144,6 +166,14 @@ let profile = null;
 		}, (errors) => {
 			customAlert.showAlert(errors);
 		});
+		
+		
+		
+		
+	},
+	
+	finishUpdate: (url, params) => {
+		
 	},
 
 	initProfile: (baseURL) => {
@@ -157,6 +187,7 @@ let profile = null;
 			document.getElementById("descriptionField").onkeyup = () => profile.notifyChange("description");
 			document.getElementById("sexField").onclick = () => profile.notifyChange("sex");
 			document.getElementById("cityField").onkeyup = () => profile.notifyChange("city");
+			document.getElementById("premiumField").onclick = () => profile.notifyChange("premium");
 			
 			document.getElementById("profileButton").onclick = () => profile.updateCriteria();
 			
@@ -175,12 +206,16 @@ let profile = null;
 					profile.UserData.city = body.city;
 					profile.UserData.description = body.description;
 					
+					window.minRateCriteria = Number(body.rating) + 1;
+					document.getElementById("minRatingCriteriaField").max = window.minRateCriteria;
+					
 					document.getElementById("birthDateDayField").value = profile.UserData.birthDate.getUTCDate();
 					document.getElementById("birthDateMonthField").value = profile.UserData.birthDate.getUTCMonth() + 1;
 					document.getElementById("birthDateYearField").value = profile.UserData.birthDate.getUTCFullYear();
 					document.getElementById("cityField").value = ""+body.city;
 					document.getElementById("sexField").value = ""+body.sex;
 					document.getElementById("descriptionField").value = ""+body.description;
+					document.getElementById("premiumField").checked = body.premium;
 				}
 				);
 			});
