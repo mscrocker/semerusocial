@@ -1,8 +1,11 @@
+
+
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment="header">
+<th:block th:fragment="header">
+
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta charset='utf-8'>
@@ -20,34 +23,30 @@
 <meta name="author" th:content="${pageAuthor}">
 
 <!-- Facebook OpenGraph -->
-<meta property="og:type" content="website"/>
-<meta property="og:site_name" content="#{application.title}"/>
-<meta property="og:title" content="#{application.title}"/>
-<meta property="og:description" content="${pageDescription}"/>
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="#{application.title}" />
+<meta property="og:title" content="#{application.title}" />
+<meta property="og:description" content="${pageDescription}" />
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:creator" content="${pageTwitter}"/>
-<meta name="twitter:title" content="#{application.title}"/>
-<meta name="twitter:description" content="${pageDescription}"/>
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="${pageTwitter}" />
+<meta name="twitter:title" content="#{application.title}" />
+<meta name="twitter:description" content="${pageDescription}" />
 
 <!-- CSS -->
 <link rel="stylesheet"
-   th:href="@{/static/bootswatch-readable/css/bootstrap.min.css}">
+    th:href="@{/static/bootswatch-readable/css/bootstrap.min.css}">
+
+<link rel="stylesheet" th:href="@{/static/bootstrap/css/bootstrap.css}">
+<link rel="stylesheet"
+    th:href="@{/static/bootstrap/css/bootstrap.min.css}">
 
 <link rel="stylesheet"
-   th:href="@{/static/bootstrap/css/bootstrap.css}">
-<link rel="stylesheet"
-   th:href="@{/static/bootstrap/css/bootstrap.min.css}">
-   
-<link rel="stylesheet"
-   th:href="@{/static/font-awesome/css/font-awesome.min.css}">
+    th:href="@{/static/font-awesome/css/font-awesome.min.css}">
 
-<!-- Custom style -->
-<link rel="stylesheet" th:href="@{/static/css/style.min.css}">
 
-<!-- HTML5 Shiv. For IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-    <script th:src="@{/webjars/html5shiv/html5shiv.min.js}"></script>
-    <![endif]-->
+</th:block>
+
+
 </head>

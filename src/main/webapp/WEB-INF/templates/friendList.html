@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="fragments/header :: header" >
+    <title id="friendListTitle">Your Friend List</title>
+</head>
+<body>
+	<header class="header" th:include="fragments/menu :: menu" ></header>
+	<div th:include="fragments/errorAlert"></div>
+	<table class="text-center table table-striped table-bordered col-9 mx-auto" aria-describedby="friendListTitle" aria-labelled-by="friendListTitle">
+		<colgroup span="6"></colgroup>
+		<thead class="thead-dark">
+			<tr>
+				<th scope="colgroup" colspan="6" class="text-center">FRIEND
+					LIST</th>
+			</tr>
+			<tr>
+				<th scope="col">Name</th>
+				<th scope="col">Age</th>
+				<th scope="col">City</th>
+				<th scope="col">Sex</th>
+				<th scope="col">Rating</th>
+				<th scope="col">Options</th>
+			</tr>
+		</thead>
+		<tbody id="friendsTable">
+			<tr>
+				<td colspan="6">
+					<div class="clearfix text-center">
+					  <div class="spinner-border" role="status">
+					    <span class="sr-only">Loading...</span>
+					  </div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="row mx-auto" style="min-width: 60%; max-width: 60%;">
+		<div class="ml-0 mr-auto">
+			<button id="previousButton"
+				class="btn" style="border-radius: 13px;" >
+
+				<img th:src="@{/static/images/back_arrow.png}"
+					style="max-width: 10px;"  alt="Button for previous image"/>
+			</button>
+		</div>
+		<div class="mr-0 ml-auto">
+			<button id="nextButton"
+						class="btn" style="border-radius: 13px;">
+
+				<img th:src="@{/static/images/next_arrow.png}" alt="Button for next image"
+					style="max-width: 10px;" />
+			</button>
+		</div>
+	</div>
+	
+	<footer>
+		<div th:include="fragments/scripts :: general" ></div>
+		<div th:include="fragments/scripts :: friendList" ></div>
+	</footer>
+	<script>
+	window.addEventListener('load', () => {
+		friendList.init("[[@{'/'}]]");
+	});
+	</script>
+</body>
+
+</html>

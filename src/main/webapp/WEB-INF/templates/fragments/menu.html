@@ -1,8 +1,10 @@
 <header th:fragment="menu">
-	<nav id="navbar-main" class="navbar navbar-main navbar-default">
-		<div class="row" style="font-size: 16px;">
+	<nav id="navbar-main"
+		class="navbar navbar-expand-md navbar-main navbar-default w-100">
+		<div 
+			style="display: flex; align-items: center; justify-content: center; font-size: 16px; width: 100%;">
 			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed"
+				<button type="button" class="navbar-toggle collapsed m-auto"
 					data-toggle="collapse" data-target="#navbar-main-body"
 					aria-expanded="false" aria-controls="navbar-main">
 					<span class="sr-only">Toggle navigation</span> <span
@@ -12,34 +14,64 @@
 
 
 			</div>
-			<div id="navbar-main-body" class="collapse navbar-collapse">
-				<div id="loggedInOptions" class="col-6 dropdown nav-link ">
+			<div id="navbar-main-body" class="navbar-collapse collapse w-100"
+				style="width: 100%;text-align: center;justify-content: center;">
+				<div id="loggedInOptions" class="dropdown nav-link">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown"
 						role="button" aria-haspopup="true" aria-expanded="false">Options
 						<span aria-hidden="true"></span>
 					</a>
-					<ul  class="dropdown-menu" role="menu">
-						<li><a th:href="@{/}">My photos</a></li>
-						<li onclick="logOut()"><a th:href="@{/login}">LogOut</a></li>
+					<ul class="dropdown-menu" role="menu">
+						<li><a th:href="@{/findFriend}">Find friends</a></li>
+						<li><a th:href="@{/users/friends}">My friends</a></li>
+						<li id="myPhotos"><a>My photos</a></li>
 						<li><a th:href="@{/addImage}">Add new Image</a></li>
+						<li id="logOut"><a th:href="@{/login}">LogOut</a></li>
+
 					</ul>
 				</div>
-				<form id="col-6 loginForm" class="nav-link">
+				<form id=" loginForm" class="nav-link">
 					<button id="loginButton" th:formaction="@{/login}"
 						class="btn btn-primary" style="margin: 12px; appearance: button;">Login</button>
 				</form>
 			</div>
 		</div>
 	</nav>
-	<div th:include="fragments/scripts :: user" />
-	<div th:include="fragments/scripts :: welcome" />
+	<div th:include="fragments/scripts :: user"></div>
+	<div th:include="fragments/scripts :: welcome"></div>
 	<script>
-		window.addEventListener('load', updateLoggedIn("loginButton",
-				"[[@{'/users/profile'}]]"), false);
 		
 		window.addEventListener("load", () => {
-			if (!checkLoggedIn()){
+			user.updateLoggedIn("loginButton","[[@{'/users/profile'}]]");
+			if (!user.checkLoggedIn()){
+				
 				document.getElementById("loggedInOptions").classList.add("hidden");
+			}
+			else {
+				
+			    document.getElementById("logOut").onclick = user.logOut
+			    
+			    document.getElementById("myPhotos").onclick = () => {
+					let url = "[[@{'/backend/images/first'}]]";
+					let params = {
+						method: "GET"
+					};
+					
+				    user.authFetch(url, params, (result) => {
+						result.json().then((body) => {
+							if (body.imageId){
+								window.location.href = "[[@{'/carrusel/'}]]" + body.imageId;
+							} else {
+								window.location.href = "[[@{'/addImage'}]]";
+							}
+							
+						}).catch((error) => {
+							console.log("ERROR");
+						});
+					}, (errors) => {
+						console.log("ERROR");
+					});
+				}
 			}
 		});
 		

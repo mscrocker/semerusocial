@@ -8,6 +8,10 @@ public class BlockImageByUserId<T> {
 	Long prevId;
 	Long nextId;
     
+	public BlockImageByUserId() {
+		super();
+	}
+	
     public BlockImageByUserId(ImageImpl image, Long prevId, Long nextId) {
         setImage(image);
         setPrevId(prevId);

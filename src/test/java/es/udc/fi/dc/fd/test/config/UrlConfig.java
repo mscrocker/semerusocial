@@ -26,36 +26,71 @@ package es.udc.fi.dc.fd.test.config;
 
 /**
  * Contains configuration information for the controller URLs.
- * 
+ *
  * @author Bernardo Mart&iacute;nez Garrido
  */
 public final class UrlConfig {
 
+	public static final String URL_USER_REGISTER_POST = "/backend/users/signUp";
 
-    
-    public static final String URL_USER_REGISTER_POST = "/users/signUp";
+	public static final String URL_USER_LOGIN_POST = "/backend/users/login";
 
-    public static final String URL_USER_LOGIN_POST = "/users/login";
-    
-    public static final String URL_USER_GET_USER_DATA = "/users/data";
-    
-    public static final String URL_IMAGE_ADD_POST = "/images/add";
-    
-    public static final String URL_IMAGE_EDIT_PUT = "/images/edit/{imageId}";
-  
-    public static final String URL_IMAGE_REMOVE_DELETE = "/images/remove/{imageId}";
-    
-    public static final String URL_IMAGE_GETIMAGESBYID_GET = "/images/carrusel";
-    
-    public static final String URL_IMAGE_GETIMAGEBYID_GET = "/images/carrusel/{imageId}";
-    
-    public static final String URL_IMAGE_GETFIRST_GET = "/images/first";
-    
-    /**
-     * Default constructor to avoid initialization.
-     */
-    private UrlConfig() {
-        super();
-    }
+	public static final String URL_USER_GET_USER_DATA = "/backend/users/data";
+
+	public static final String URL_USER_CRITERIA_GET = "/backend/users/searchCriteria";
+
+	public static final String URL_USER_CRITERIA_PUT = "/backend/users/searchCriteria";
+
+	public static final String URL_USER_UPDATEPROFILE_PUT = "/backend/users/updateProfile";
+
+	public static final String URL_USER_RATE_POST = "/backend/users/rate";
+
+	public static final String URL_USER_PREMIUM_PUT = "/backend/users/premium";
+
+	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
+
+	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
+
+	public static final String URL_IMAGE_REMOVE_DELETE = "/backend/images/remove/{imageId}";
+
+	public static final String URL_IMAGE_GETIMAGESBYID_GET = "/backend/images/carrusel";
+
+	public static final String URL_IMAGE_GETIMAGEBYID_GET = "/backend/images/carrusel/{imageId}";
+
+	public static final String URL_IMAGE_GETFIRST_GET = "/backend/images/first";
+
+	public static final String URL_FRIEND_ACCEPT_POST = "/backend/friends/accept";
+
+	public static final String URL_FRIEND_REJECT_POST = "/backend/friends/reject";
+
+	public static final String URL_FRIEND_SUGGESTION_GET = "/backend/friends/suggestion";
+
+	public static final String URL_FRIEND_FRIENDLIST_GET = "/backend/friends/friendList";
+
+	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
+
+	public static final String URL_CHAT_GETCONVERSATION_GET = "/backend/chat/conversation";
+
+	public static final String URL_CHAT_FRIENDHEADERS_GET = "/backend/chat/friendHeaders";
+
+	public static final String URL_CHAT_SENDMENSSAGE = "/chat.sendMessage";
+
+	/********
+	 * FRONT CONTROLLERS URLS
+	 **************/
+	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chat/{userId}";
+	public static final String FRONT_CARROUSEL_CHATSCREEN_1 = "/chat";
+
+	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
+	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
+	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
+	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel/**";
+
+	/**
+	 * Default constructor to avoid initialization.
+	 */
+	private UrlConfig() {
+		super();
+	}
 
 }

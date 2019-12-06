@@ -16,8 +16,8 @@ public class ImageConversor {
 	}
 
 	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ImageCreationDto(encoded, image.getDescription());
+		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
+		return new ImageCreationDto(encoded, image.getType());
 	}
 
 	public final static ImageCreatedDto toImageCreatedDto(ImageImpl image) {
@@ -25,63 +25,61 @@ public class ImageConversor {
 	}
 
 	public final static ImageImpl toImageImpl(ImageCreationDto image) throws InvalidImageFormatException {
-		String dataString = image.getData();
-		if (dataString.indexOf(',') == -1)
+		final String dataString = image.getData();
+		if (dataString.indexOf(',') == -1) {
 			throw new InvalidImageFormatException("Base64 lacking metadata");
+		}
 
-		String[] splitted = dataString.split(",");
-		String metadata = splitted[0];
-		int index = metadata.indexOf(':');
-		int index2 = metadata.indexOf(';');
-		int index3 = metadata.indexOf('/');
+		final String[] splitted = dataString.split(",");
+		final String metadata = splitted[0];
+		final int index = metadata.indexOf(':');
+		final int index2 = metadata.indexOf(';');
+		final int index3 = metadata.indexOf('/');
 
-		if (index == -1 || index2 == -1 || index3 == -1)
+		if (index == -1 || index2 == -1 || index3 == -1) {
 			throw new InvalidImageFormatException("Base64 lacking metadata");
+		}
 
-		String type = metadata.substring(index, index2).split("/")[1];
-		byte[] decodString = Base64.getMimeDecoder().decode(splitted[1]);
+		final String type = metadata.substring(index, index2).split("/")[1];
+		final byte[] decodString = Base64.getMimeDecoder().decode(splitted[1]);
 
-		return new ImageImpl(decodString, image.getDescription(), type);
-	}
-
-	public final static ImageImpl toImageImpl(ImageEditionDto image) {
-		return new ImageImpl(image.getDescription());
+		return new ImageImpl(decodString, type);
 	}
 
 	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images) {
-		List<ImageImpl> imagesIn = images.getImages();
+		final List<ImageImpl> imagesIn = images.getElements();
 
-		List<ReturnedImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImageDto(e))
+		final List<ReturnedImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImageDto(e))
 				.collect(Collectors.toList());
 
-		return new BlockDto<>(imagesOut, images.getExistMoreImages());
+		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
 	public final static BlockImageByUserIdDto<ReturnedImageDto> toReturnedImageDto(
 			BlockImageByUserId<ImageImpl> image) {
-		ImageImpl imageIn = image.getImage();
+		final ImageImpl imageIn = image.getImage();
 
-		ReturnedImageDto imageOut = toReturnedImageDto(imageIn);
+		final ReturnedImageDto imageOut = toReturnedImageDto(imageIn);
 
 		return new BlockImageByUserIdDto<>(imageOut, image.getPrevId(), image.getNextId());
 	}
 
 	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ReturnedImageDto(encoded, image.getDescription(), image.getType());
+		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
+		return new ReturnedImageDto(encoded, image.getType());
 	}
 
 	public final static BlockDto<ReturnedImagesDto> toReturnedImagesDto(Block<ImageImpl> images) {
-		List<ImageImpl> imagesIn = images.getImages();
+		final List<ImageImpl> imagesIn = images.getElements();
 
-		List<ReturnedImagesDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
+		final List<ReturnedImagesDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
 				.collect(Collectors.toList());
 
-		return new BlockDto<>(imagesOut, images.getExistMoreImages());
+		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
 	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {
-		String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
+		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 
 		return new ReturnedImagesDto(image.getImageId(), encoded);
 	}
