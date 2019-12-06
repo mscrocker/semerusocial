@@ -19,6 +19,7 @@ const chat = {
 	// Called on paged load;
 	init: (baseURL) => {
 		// Module variables initialization
+	    
 		chat.baseURL = baseURL;
 		chat.buttonCollapse = document.getElementById("backArrow");
 		chat.conversation = document.querySelector('.conversation-container');
@@ -34,15 +35,11 @@ const chat = {
 			}
 		});
 
-		// Automatically collapses the sidebar on resize;
-		$(window).resize(function () {
-			if (document.documentElement.clientWidth <= 761) {
-				if (!$('#sidebar, #content')
-					.hasClass("active")) {
-					chat.buttonPressed();
-				}
-			}
-		});
+		chat.screenSmall();// Automatically collapses the sidebar on
+				// resize;
+		$(window).resize(chat.screenSmall);
+			
+		
 		$('#sidebarCollapse')
 			.on('click', chat.buttonPressed);
 
@@ -53,6 +50,14 @@ const chat = {
 		chat.initScreen();
 		sockets.connect();
 
+	},
+	screenSmall: () => {
+	    if (document.documentElement.clientWidth <= 761) {
+		if (!$('#sidebar, #content')
+			.hasClass("active")) {
+			chat.buttonPressed();
+		}
+	    }	
 	},
 	// Collapse Sidebar Function
 	buttonPressed: () => {
@@ -288,6 +293,10 @@ let messages = {
 			chat.conversation.appendChild(message);
 			chat.scrollableDiv.scrollTop = chat.scrollableDiv.scrollHeight;
 			sockets.sendMessage(input.value);
+			messages.animateMessage(message);
+			document.querySelector(`li[data-id="${chat.activeFriend}"] .line2 .user-desc`).innerText=  "You: " + input.value;
+			document.querySelector(`li[data-id="${chat.activeFriend}"] .line1 .user-date`).innerText=  chat.formatDate(moment());
+
 		}
 		input.value = '';
 		e.preventDefault();
@@ -310,6 +319,7 @@ let apis = {
 	            }
 			response.json().then((body) => {
 			    
+			    let prevScroll  = chat.scrollableDiv.scrollHeight;
 			    chat.loadPrevious = body.existMoreElements;
 			    chat.currentMessagePage++;
 			    body.elements.forEach(mes => {
@@ -317,8 +327,11 @@ let apis = {
 					text: mes.messageContent,
 					date: chat.formatDate(apis.toMoment(mes.date)),
 					sendByMe: friendId == mes.receiver 
-				    
 			    });
+				let scrollDiff = chat.scrollableDiv.scrollHeight - prevScroll;
+
+				chat.scrollableDiv.scrollTop = scrollDiff;
+				
 			
 			});
 		});
@@ -352,23 +365,28 @@ let apis = {
 			});
 				
 				let id = window.location.pathname.split("/").pop();
-				if (!isNaN(parseFloat(id)) && !isNaN(id - 0)) {
+				if ((!isNaN(parseFloat(id)) && !isNaN(id - 0)) && (document.querySelector(`[data-id="${chat.activeFriend}"]`))){
 					chat.activeFriend = id;
 				} else {
 				    if (chat.friendList.firstElementChild){
 					chat.activeFriend = chat.friendList.firstElementChild.getAttribute("data-id");
 					}
-				  }
-				document.querySelector(`[data-id="${chat.activeFriend}"]`).firstElementChild.classList.add("clicked");
+				}
+				let possibleFriend = document.querySelector(`[data-id="${chat.activeFriend}"]`);
+				if (possibleFriend){
+				possibleFriend.firstElementChild.classList.add("clicked");
 				
 				chat.chatMessage[chat.activeFriend] = {
 					messages: [],
 					scroll: 0,
 					needMoreLoading: true,
 					lastActivePage: 0
-				};
+					};
 				apis.fetchFriendMessages(chat.activeFriend);
+				}
 				});
+				
+		
 		        });
 		}
 	},
@@ -452,11 +470,11 @@ let sockets = {
 	}
 	else {
 	let circle = document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .notis`);
-	circle.innerText = 1;
+	circle.innerText = +circle.innerText+1;
 	circle.classList.remove("hidden");
 	}
 	document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .user-desc`).innerText =messageReceived.content;
-	
+	document.querySelector(`li[data-id="${messageReceived.senderId}"] .line1 .user-date`).innerText=  chat.formatDate(moment());
     }
 
 

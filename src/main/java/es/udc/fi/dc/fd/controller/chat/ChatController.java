@@ -114,7 +114,6 @@ public class ChatController {
 
 	@MessageMapping("/chat.sendMessage")
 	public void sendMessage(@Payload ChatMessage chatMessage, Principal user) {
-		// TODO While we dont have the areWeFriends Method, a little hack
 		final JwtInfo ownerUser = ((JwtInfo) user);
 
 		try {
@@ -125,7 +124,6 @@ public class ChatController {
 
 		} catch (InstanceNotFoundException | ItsNotYourFriendException | ValidationException e) {
 			logger.info("Illegal access to chat");
-			System.out.println("other logger");
 			final ChatMessage chatMessage2 = new ChatMessage();
 			chatMessage2.setType(MessageType.ERROR);
 			chatMessage2.setSenderId(ownerUser.getUserId());

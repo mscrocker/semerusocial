@@ -13,13 +13,8 @@ public class MessageConversor {
 	}
 
 	public static final FriendHeaderDto toFriendHeaderDto(FriendChatTitle title) {
-		return new FriendHeaderDto(
-				title.getFriendId(),
-				title.getFriendName(),
-				title.getContent(),
-				title.getSentByYou(),
-				title.getDate()
-				);
+		return new FriendHeaderDto(title.getFriendId(), title.getFriendName(), title.getContent(), title.getSentByYou(),
+				title.getDate());
 	}
 
 	public static final BlockDto<FriendHeaderDto> toFriendHeadersDto(Block<FriendChatTitle> messages) {
@@ -30,13 +25,12 @@ public class MessageConversor {
 
 	public static final MessageDetailsDto messageToMessageDetailsDto(MessageImpl msg) {
 		Long receiver;
-		if ( msg.getUser1().equals(msg.getTransmitter())) {
-			receiver= msg.getUser1().getId();
-		} else {
+		if (msg.getUser1().equals(msg.getTransmitter())) {
 			receiver = msg.getUser2().getId();
+		} else {
+			receiver = msg.getUser1().getId();
 		}
-		return new MessageDetailsDto(msg.getMessageContent(), msg.getDate(),
-				msg.getTransmitter().getId(), receiver);
+		return new MessageDetailsDto(msg.getMessageContent(), msg.getDate(), msg.getTransmitter().getId(), receiver);
 	}
 
 }
