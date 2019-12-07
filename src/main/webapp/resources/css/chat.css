@@ -171,7 +171,7 @@ a[data-toggle="collapse"] {
     /* margin: auto; */
     overflow-y: auto;
     /* max-width: 66vw; */
-    height: 89%;
+    height: 96%;
     background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
     /* max-height: 79vh; */
     width: 70vw;
@@ -303,14 +303,16 @@ a[data-toggle="collapse"] {
 
 /* Compose */
 .conversation-compose {
+    height: 100%;
     display: flex;
     /* position: relative; */
     /* top: 15px; */
+    margin: auto;
     flex-direction: row;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
-    height: 50px;
+    height: 4vh;
     width: 100%;
     z-index: 2;
 }
@@ -336,7 +338,8 @@ a[data-toggle="collapse"] {
     border: 0;
     flex: 1 1 auto;
     font-size: 16px;
-    margin: 0;
+    /* margin: 0; */
+    margin-left: 1%;
     outline: none;
     /* min-width: 50px; */
     border-radius: 25px 0 0 25px;
@@ -389,6 +392,7 @@ a[data-toggle="collapse"] {
     /* margin: auto; */
     padding: 0;
     position: relative;
+    z-index: 10000;
     outline: none;
 }
 
@@ -396,10 +400,10 @@ a[data-toggle="collapse"] {
     background: #008a7c;
     border-radius: 50%;
     color: #fff;
-    position: relative;
-    width: 48px;
+    /* position: relative; */
+    width: 4vh;
     /* max-width: 10%; */
-    height: 48px;
+    height: 4vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -609,7 +613,7 @@ html, body {
     color: #c4faf4;
 }
 .circle .fa {
-	font-size: 2em;
+	font-size: 2vh;
     position: relative;
     left: -3px;
 }

@@ -4,6 +4,7 @@ const chat = {
 	stompClient: null,// element where messages are visible
 	baseURL: null, // To make petitions to backend
 	scrollableDiv: null, // Scroll elemennt on chat
+	scrollableFriends: null,
 	buttonCollapse: null, // Button to collapse sidebar
 	friendScroll: null, // Scroll element on friendList
 	loadPrevious: true, // Whether we know there are previous messages or
@@ -25,6 +26,7 @@ const chat = {
 		chat.conversation = document.querySelector('.conversation-container');
 		chat.friendList = document.getElementById("friendHolder");
 		chat.scrollableDiv = document.getElementById("content");
+		chat.scrollableFriends = document.getElementById("friendHolder");
 		// When we get to the top of the chat scroll we fetch previous
 		// pages if needed
 		chat.scrollableDiv.addEventListener('scroll', () => {
@@ -34,6 +36,15 @@ const chat = {
 				apis.fetchFriendMessages(chat.activeFriend);
 			}
 		});
+		
+		chat.scrollableFriends.addEventListener('scroll', () => {
+			// We need to fetch previous message
+		    if(chat.scrollableFriends.scrollTop + chat.scrollableFriends.scrollHeight > chat.scrollableFriends.scrollHeight - 100){ 
+				console.log("chat scroll");
+				apis.loadFriendList();
+			}
+		});
+		
 
 		chat.screenSmall();// Automatically collapses the sidebar on
 				// resize;
@@ -96,7 +107,7 @@ let friends = {
 		name,
 		id,
 		count,
-		date
+		date,sentByMe
 	}) => {
 		// Friend already on list
 		if (document.querySelector(`li[data-id="${id}"]`)) {
@@ -114,8 +125,8 @@ let friends = {
 		let userDate = document.createElement('div');
 		let notis = document.createElement('span');
 		let message = document.createElement('p');
-
-		message.innerText = lastMessage;
+		let text = sentByMe ? "You: " + lastMessage : lastMessage;
+		message.innerText = text;
 
 	
 
@@ -283,6 +294,9 @@ let messages = {
 	newMessage: (e) => {
 		var input = e.target.input;
 		if (input.value) {
+		    
+
+		    
 			var message = messages.buildMessage({
 				text: input.value,
 				date: moment().format("HH:mm"),
@@ -356,14 +370,15 @@ let apis = {
 				
 				response.json().then((body) => {
 				    
-			
+				chat.loadMoreFriends = body.existMoreElements;
+				chat.friendListPage++;
 				body.elements.forEach( header => {
 				    
 				friends.addFriendToList({id: header.friendId,lastMessage: header.content ,
-				    name: header.friendName,count: -1 , date: header.date === null ? null : apis.toMoment(header.date)}
+				    name: header.friendName,count: -1 , date: header.date === null ? null : apis.toMoment(header.date), sentByMe: header.sentByYou}
 				    );
 			});
-				
+				if (chat.friendListPage == 1 ){
 				let id = window.location.pathname.split("/").pop();
 				if ((!isNaN(parseFloat(id)) && !isNaN(id - 0)) && (document.querySelector(`[data-id="${chat.activeFriend}"]`))){
 					chat.activeFriend = id;
@@ -383,6 +398,10 @@ let apis = {
 					lastActivePage: 0
 					};
 				apis.fetchFriendMessages(chat.activeFriend);
+				}
+				}
+				else {
+				    
 				}
 				});
 				
@@ -445,7 +464,8 @@ let sockets = {
 		sendByMe: false
 	});
         
-	let list = chat.chatMessage[chat.activeFriend];
+        
+	let list = chat.chatMessage[messageReceived.senderId];
 	if (!list ){
 	    list = chat.chatMessage[messageReceived.senderId] = {
 			messages: [],
@@ -459,6 +479,7 @@ let sockets = {
 		id:messageReceived.senderId,
 		count:1,
 		date: moment().format("HH:mm"),
+		sentByMe: false,
 	});
 	    
 	}
@@ -469,7 +490,9 @@ let sockets = {
 		chat.scrollableDiv.scrollTop += (chat.scrollableDiv.scrollHeight - prevScroll);
 	}
 	else {
-	let circle = document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .notis`);
+	    let element = document.querySelector(`li[data-id="${messageReceived.senderId}"] `);
+	    element.parentElement.prepend(element);
+	   let circle = document.querySelector(`li[data-id="${messageReceived.senderId}"] .line2 .notis`);
 	circle.innerText = +circle.innerText+1;
 	circle.classList.remove("hidden");
 	}
