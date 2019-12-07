@@ -303,7 +303,6 @@ a[data-toggle="collapse"] {
 
 /* Compose */
 .conversation-compose {
-    height: 100%;
     display: flex;
     /* position: relative; */
     /* top: 15px; */

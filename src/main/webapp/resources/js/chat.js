@@ -400,9 +400,6 @@ let apis = {
 				apis.fetchFriendMessages(chat.activeFriend);
 				}
 				}
-				else {
-				    
-				}
 				});
 				
 		
