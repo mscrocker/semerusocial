@@ -235,7 +235,14 @@ let profile = null;
 					return;
 				}
 				response.json().then((body) => {
-					document.getElementById("birthday").innerText = ""+body.age;
+					document.getElementById("ageField").innerText = ""+new Date(
+							Date.now() -
+							Date.UTC(
+								body.date.year,
+								body.date.monthValue - 1,
+								body.date.dayOfMonth
+							)
+					).getYear() - 70;
 					document.getElementById("cityField").innerText = ""+body.city;
 					document.getElementById("sexField").innerText = ""+body.sex;
 					document.getElementById("descriptionField").innerText = ""+body.description;
