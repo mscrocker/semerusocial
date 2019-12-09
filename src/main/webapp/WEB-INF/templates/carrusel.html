@@ -58,7 +58,7 @@
 			<div class="col-12 bg-light" style="min-width: 200px;">
 				<div class="row">
 					<p>Age: </p>
-					<p id="birthday"></p>
+					<p id="ageField"></p>
 				</div>
 				<div class="row">
 					<p>Sex: </p>
@@ -110,9 +110,9 @@
    		
    		if (user.checkLoggedIn()){
    	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage("[[@{'/'}]]", carrusel.getImageId())
-   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'}
-   			carrusel.loadImage("[[@{'/'}]]");
+   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'};
    			profile.initProfileDisplay("[[@{'/'}]]");
+   			carrusel.loadImage("[[@{'/'}]]");
    		} else {
    			window.location.href = "[[@{'/login'}]]";
    		}
