@@ -28,7 +28,6 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidImageFormatException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
-import es.udc.fi.dc.fd.dtos.BlockImageByUserIdDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
 import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
@@ -37,7 +36,6 @@ import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
-import es.udc.fi.dc.fd.service.BlockImageByUserId;
 import es.udc.fi.dc.fd.service.ImageService;
 
 @RestController
@@ -119,21 +117,6 @@ public class ImageController {
 		final Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 
 		return ImageConversor.toReturnedImagesDto(image);
-	}
-
-	@GetMapping("/carrusel/{imageId}")
-	public BlockImageByUserIdDto<ReturnedImageDto> getImageById(@PathVariable Long imageId,
-			@RequestAttribute Long userId) throws InstanceNotFoundException, ItsNotYourImageException {
-		final BlockImageByUserId<ImageImpl> image = imageService.getImageByUserId(imageId, userId);
-
-		return ImageConversor.toReturnedImageDto(image);
-	}
-
-	@GetMapping("/first")
-	public ImageCreatedDto getFirstImageIdByUserId(@RequestAttribute Long userId) throws InstanceNotFoundException {
-		final Long imageId = imageService.getFirstImageIdByUserId(userId);
-
-		return new ImageCreatedDto(imageId);
 	}
 
 	@GetMapping("/carrusel/user/{userId}")

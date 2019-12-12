@@ -22,6 +22,14 @@ public final class LoginParamsDto implements Serializable {
 	public LoginParamsDto() {
 		super();
 	}
+	
+	public LoginParamsDto(String userName, String password) {
+		super();
+		this.userName = userName;
+		this.password = password;
+	}
+
+
 
 	public final String getUserName() {
 		return userName;

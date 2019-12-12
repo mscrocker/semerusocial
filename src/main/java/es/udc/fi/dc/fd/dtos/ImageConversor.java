@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import es.udc.fi.dc.fd.controller.exception.InvalidImageFormatException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
-import es.udc.fi.dc.fd.service.BlockImageByUserId;
 
 public class ImageConversor {
 
@@ -53,15 +52,6 @@ public class ImageConversor {
 				.collect(Collectors.toList());
 
 		return new BlockDto<>(imagesOut, images.isExistMoreElements());
-	}
-
-	public final static BlockImageByUserIdDto<ReturnedImageDto> toReturnedImageDto(
-			BlockImageByUserId<ImageImpl> image) {
-		final ImageImpl imageIn = image.getImage();
-
-		final ReturnedImageDto imageOut = toReturnedImageDto(imageIn);
-
-		return new BlockImageByUserIdDto<>(imageOut, image.getPrevId(), image.getNextId());
 	}
 
 	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {

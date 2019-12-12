@@ -44,7 +44,7 @@ import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
-import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
+import es.udc.fi.dc.fd.dtos.ProfileDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
@@ -234,7 +234,7 @@ public class UserController {
 	@PutMapping("/updateProfile")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
-			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
+			@Validated @RequestBody ProfileDto updateProfileInDto)
 					throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}

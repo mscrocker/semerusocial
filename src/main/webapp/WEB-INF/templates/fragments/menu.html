@@ -52,25 +52,7 @@
 			    document.getElementById("logOut").onclick = user.logOut
 			    
 			    document.getElementById("myPhotos").onclick = () => {
-					let url = "[[@{'/backend/images/first'}]]";
-					let params = {
-						method: "GET"
-					};
-					
-				    user.authFetch(url, params, (result) => {
-						result.json().then((body) => {
-							if (body.imageId){
-								window.location.href = "[[@{'/carrusel/'}]]" + body.imageId;
-							} else {
-								window.location.href = "[[@{'/addImage'}]]";
-							}
-							
-						}).catch((error) => {
-							console.log("ERROR");
-						});
-					}, (errors) => {
-						console.log("ERROR");
-					});
+			    	window.location.href = "[[@{'/carrusel'}]]";
 				}
 			}
 		});

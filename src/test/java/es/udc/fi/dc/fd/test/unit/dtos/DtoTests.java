@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import es.udc.fi.dc.fd.controller.chat.ChatMessage;
 import es.udc.fi.dc.fd.dtos.BlockDto;
-import es.udc.fi.dc.fd.dtos.BlockGetFriendListDto;
-import es.udc.fi.dc.fd.dtos.BlockImageByUserIdDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.FriendDto;
@@ -22,7 +20,7 @@ import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
 import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
-import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
+import es.udc.fi.dc.fd.dtos.ProfileDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserDataDto;
 import es.udc.fi.dc.fd.test.utils.EntityTestUtils;
@@ -32,16 +30,6 @@ class DtoTests {
 	@Test
 	void testBlockDto() {
 		EntityTestUtils.testEntity(BlockDto.class);
-	}
-
-	@Test
-	void testBlockGetFriendListDto() {
-		EntityTestUtils.testEntity(BlockGetFriendListDto.class);
-	}
-
-	@Test
-	void testBlockImageByUserIdDto() {
-		EntityTestUtils.testEntity(BlockImageByUserIdDto.class);
 	}
 
 	@Test
@@ -111,7 +99,7 @@ class DtoTests {
 
 	@Test
 	void testUpdateProfileInDto() {
-		EntityTestUtils.testEntity(UpdateProfileInDto.class);
+		EntityTestUtils.testEntity(ProfileDto.class);
 	}
 
 	@Test

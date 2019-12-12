@@ -15,7 +15,7 @@
 			<div class="col-2 align-self-center">
 				<div class="card-block">
 					<button id="previousButton"
-						onclick="if (carrusel.previousLink !== null) {window.location.href=carrusel.previousLink;};"
+						onclick="carrusel.previousImage()"
 						class="btn" style="border-radius: 13px;">
 
 						<img th:src="@{/static/images/back_arrow.png}"
@@ -45,7 +45,7 @@
 			<div class="col-2 align-self-center">
 				<div class="card-block">
 					<button id="nextButton"
-						onclick="if (carrusel.nextLink !== null) {window.location.href=carrusel.nextLink;};"
+						onclick="carrusel.nextImage()"
 						class="btn" style="border-radius: 13px;">
 
 						<img th:src="@{/static/images/next_arrow.png}"
@@ -109,10 +109,10 @@
    	  window.addEventListener('load', () => {
    		
    		if (user.checkLoggedIn()){
-   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage("[[@{'/'}]]", carrusel.getImageId())
-   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/'}]]" + 'addImage'};
+   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage()
+   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/addImage'}]]"};
    			profile.initProfileDisplay("[[@{'/'}]]");
-   			carrusel.loadImage("[[@{'/'}]]");
+   			carrusel.init("[[@{'/'}]]");
    		} else {
    			window.location.href = "[[@{'/login'}]]";
    		}

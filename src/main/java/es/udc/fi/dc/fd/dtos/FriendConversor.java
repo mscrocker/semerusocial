@@ -7,18 +7,18 @@ import java.util.stream.Collectors;
 
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
-import es.udc.fi.dc.fd.service.BlockFriendList;
+import es.udc.fi.dc.fd.service.Block;
 
 public class FriendConversor {
 
-	public final static BlockGetFriendListDto<GetFriendListOutDto> toGetFriendListOutDto(
-			BlockFriendList<FriendListOut> friends) {
-		final List<FriendListOut> friendsIn = friends.getFriends();
+	public final static BlockDto<GetFriendListOutDto> toGetFriendListOutDto(
+			Block<FriendListOut> friends) {
+		final List<FriendListOut> friendsIn = friends.getElements();
 
 		final List<GetFriendListOutDto> friendsOut = friendsIn.stream().map(e -> toGetFriendListOutDto(e))
 				.collect(Collectors.toList());
 
-		return new BlockGetFriendListDto<>(friendsOut, friends.getExistMoreFriends());
+		return new BlockDto<>(friendsOut, friends.isExistMoreElements());
 	}
 
 	public final static GetFriendListOutDto toGetFriendListOutDto(FriendListOut out) {

@@ -30,7 +30,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
-import es.udc.fi.dc.fd.dtos.BlockGetFriendListDto;
+import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FriendConversor;
 import es.udc.fi.dc.fd.dtos.FriendDto;
@@ -38,7 +38,7 @@ import es.udc.fi.dc.fd.dtos.GetFriendListOutDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
-import es.udc.fi.dc.fd.service.BlockFriendList;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.FriendService;
 
 @RestController
@@ -199,11 +199,11 @@ public class FriendController {
 	}
 
 	@GetMapping("/friendList")
-	public BlockGetFriendListDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
+	public BlockDto<GetFriendListOutDto> getFriendList(@RequestAttribute Long userId,
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
 					throws InstanceNotFoundException, RequestParamException {
-		final BlockFriendList<FriendListOut> friends = friendService.getFriendList(userId, page, size);
-
+		final Block<FriendListOut> friends = friendService.getFriendList(userId, page, size);
+		
 		return FriendConversor.toGetFriendListOutDto(friends);
 	}
 

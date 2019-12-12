@@ -47,7 +47,7 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
-import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
+import es.udc.fi.dc.fd.dtos.ProfileDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
@@ -69,6 +69,11 @@ public final class TestUserController {
 
 	private UserService userServiceMock;
 
+	private RegisterParamsDto getValidRegisterParams() {
+		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new ProfileDto( 1, 2, 2000, "mujer", "coruna",
+				"descripcion"));
+	}
+	
 	/**
 	 * Default constructor.
 	 */
@@ -189,8 +194,7 @@ public final class TestUserController {
 	public void TestUserController_SignUp()
 			throws IOException, InvalidDateException, DuplicateInstanceException, Exception {
 
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 2000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		when(userServiceMock.signUp(any(UserImpl.class))).thenReturn(1L);
 
@@ -216,8 +220,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_SignUp_DuplicateInstanceException()
 			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 2000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
 		doThrow(new DuplicateInstanceException(" ", UserConversor.fromRegisterDto(params))).when(userServiceMock)
@@ -244,8 +247,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_SignUp_InvalidDateException()
 			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 1000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
 		doThrow(new InvalidDateException(" ")).when(userServiceMock).signUp(any(UserImpl.class));
@@ -478,7 +480,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdateProfile() throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
 				"descripción");
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
@@ -502,7 +504,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InstanceNotFoundException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
 				"descripción");
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
@@ -529,7 +531,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InvalidDateException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
+		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
 				"descripción");
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
