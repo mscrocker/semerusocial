@@ -3,6 +3,8 @@ package es.udc.fi.dc.fd.test.unit.dtos;
 import org.junit.jupiter.api.Test;
 
 import es.udc.fi.dc.fd.controller.chat.ChatMessage;
+import es.udc.fi.dc.fd.dtos.AgeUserProfileDto;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
@@ -24,6 +26,16 @@ import es.udc.fi.dc.fd.test.utils.EntityTestUtils;
 
 class DtoTests {
 
+	@Test
+	void testAgelessUserProfileDto() {
+		EntityTestUtils.testEntity(AgelessUserProfileDto.class);
+	}
+	
+	@Test
+	void testAgeUserProfileDto() {
+		EntityTestUtils.testEntity(AgeUserProfileDto.class);
+	}
+	
 	@Test
 	void testRatedFriendDto() {
 		EntityTestUtils.testEntity(RatedFriendDto.class);
