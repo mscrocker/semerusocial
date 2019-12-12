@@ -47,7 +47,8 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
-import es.udc.fi.dc.fd.dtos.ProfileDto;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
@@ -70,8 +71,13 @@ public final class TestUserController {
 	private UserService userServiceMock;
 
 	private RegisterParamsDto getValidRegisterParams() {
-		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new ProfileDto( 1, 2, 2000, "mujer", "coruna",
-				"descripcion"));
+		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new DateUserProfileDto( 1, 2, 2000, new AgelessUserProfileDto("mujer", "coruna",
+				"descripcion")));
+	}
+	
+	private DateUserProfileDto getValidUserProfileDto() {
+		return new DateUserProfileDto( 1, 1, 2000, new AgelessUserProfileDto("Patata", "Patatolandia",
+				"descripción"));
 	}
 	
 	/**
@@ -480,8 +486,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdateProfile() throws InstanceNotFoundException, InvalidDateException, Exception {
-		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		// @formatter:off
@@ -504,8 +509,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InstanceNotFoundException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updateProfile(any(Long.class),
@@ -522,6 +526,7 @@ public final class TestUserController {
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
+		
 		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
@@ -531,8 +536,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InvalidDateException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final ProfileDto newProfile = new ProfileDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		doThrow(new InvalidDateException("")).when(userServiceMock).updateProfile(any(Long.class), any(UserImpl.class));

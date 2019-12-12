@@ -8,7 +8,7 @@ public class RegisterParamsDto {
 	LoginParamsDto loginParams;
 
 	@JsonUnwrapped
-	ProfileDto profileData;
+	DateUserProfileDto profileData;
 
 	
 	
@@ -16,7 +16,7 @@ public class RegisterParamsDto {
 		super();
 	}
 
-	public RegisterParamsDto(LoginParamsDto loginParams, ProfileDto profileData) {
+	public RegisterParamsDto(LoginParamsDto loginParams, DateUserProfileDto profileData) {
 		super();
 		this.loginParams = loginParams;
 		this.profileData = profileData;
@@ -30,11 +30,11 @@ public class RegisterParamsDto {
 		this.loginParams = loginParams;
 	}
 
-	public ProfileDto getProfileData() {
+	public DateUserProfileDto getProfileData() {
 		return profileData;
 	}
 
-	public void setProfileData(ProfileDto profileData) {
+	public void setProfileData(DateUserProfileDto profileData) {
 		this.profileData = profileData;
 	}
 

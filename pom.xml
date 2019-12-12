@@ -824,9 +824,6 @@
 					<groupId>com.cj.jshintmojo</groupId>
 					<artifactId>jshint-maven-plugin</artifactId>
 					<version>${plugin.jshint.version}</version>
-					<configuration>
-						<jshintVersion>2.10.3</jshintVersion>
-					</configuration>
 				</plugin>
 
 

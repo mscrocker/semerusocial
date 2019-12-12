@@ -44,10 +44,11 @@ import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
-import es.udc.fi.dc.fd.dtos.ProfileDto;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
-import es.udc.fi.dc.fd.dtos.UserDataDto;
+import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
@@ -222,19 +223,30 @@ public class UserController {
 	}
 
 	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+	public FullUserProfileDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
 		final UserImpl user = userService.loginFromUserId(userId);
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
-		return new UserDataDto(user.getDate(), user.getSex(), user.getCity(), user.getDescription(),
-				user.getRating(), user.isPremium());
+		return new FullUserProfileDto(
+				user.getRating(), user.isPremium(),
+				new DateUserProfileDto(
+						user.getDate().getDayOfMonth(),
+						user.getDate().getMonthValue(),
+						user.getDate().getYear(),
+						new AgelessUserProfileDto(
+								user.getSex(), 
+								user.getCity(),
+								user.getDescription()
+						)
+				)
+		);
 	}
 
 	@PutMapping("/updateProfile")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
-			@Validated @RequestBody ProfileDto updateProfileInDto)
+			@Validated @RequestBody DateUserProfileDto updateProfileInDto)
 					throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}

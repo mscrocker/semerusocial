@@ -29,11 +29,10 @@ import es.udc.fi.dc.fd.controller.exception.InvalidImageFormatException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
+import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.dtos.ImageConversor;
-import es.udc.fi.dc.fd.dtos.ImageCreatedDto;
-import es.udc.fi.dc.fd.dtos.ImageCreationDto;
-import es.udc.fi.dc.fd.dtos.ReturnedImageDto;
-import es.udc.fi.dc.fd.dtos.ReturnedImagesDto;
+import es.udc.fi.dc.fd.dtos.ImageDataDto;
+import es.udc.fi.dc.fd.dtos.ImageDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.ImageService;
@@ -92,11 +91,11 @@ public class ImageController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<ImageCreatedDto> addImage(@Validated @RequestBody ImageCreationDto image,
+	public ResponseEntity<IdDto> addImage(@Validated @RequestBody ImageDataDto image,
 			@RequestAttribute Long userId) throws InstanceNotFoundException, InvalidImageFormatException {
 		final ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 
-		final ImageCreatedDto imageResultDto = new ImageCreatedDto(imageResult.getImageId());
+		final IdDto imageResultDto = new IdDto(imageResult.getImageId());
 
 		final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{imageId}")
 				.buildAndExpand(imageResult.getImageId()).toUri();
@@ -112,7 +111,7 @@ public class ImageController {
 	}
 
 	@GetMapping("/carrusel")
-	public BlockDto<ReturnedImagesDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page)
+	public BlockDto<ImageDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page)
 			throws InstanceNotFoundException {
 		final Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 
@@ -120,10 +119,10 @@ public class ImageController {
 	}
 
 	@GetMapping("/carrusel/user/{userId}")
-	public BlockDto<ReturnedImageDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
+	public BlockDto<ImageDataDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
 			throws InstanceNotFoundException {
 		Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
-		BlockDto<ReturnedImageDto> blockDto = ImageConversor.toReturnedImageDto(images);
+		BlockDto<ImageDataDto> blockDto = ImageConversor.toImageDataDtos(images);
 
 		return blockDto;
 	}

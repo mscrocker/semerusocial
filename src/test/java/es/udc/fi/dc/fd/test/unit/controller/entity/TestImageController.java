@@ -38,7 +38,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import es.udc.fi.dc.fd.controller.entity.ImageController;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
-import es.udc.fi.dc.fd.dtos.ImageCreationDto;
+import es.udc.fi.dc.fd.dtos.ImageDataDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
@@ -134,7 +134,7 @@ public class TestImageController {
 		user.setId(1L);
 
 		// Imagen de entrada al controller
-		final ImageCreationDto imageDto = new ImageCreationDto();
+		final ImageDataDto imageDto = new ImageDataDto();
 		imageDto.setData(image);
 
 		// Imagen que devuelve el servicio
@@ -167,7 +167,7 @@ public class TestImageController {
 		final byte[] converted = getBytes();
 
 		// Imagen de entrada al controller
-		final ImageCreationDto imageDto = new ImageCreationDto();
+		final ImageDataDto imageDto = new ImageDataDto();
 		imageDto.setData(image);
 
 		doThrow(new InstanceNotFoundException("User", 1L)).when(imageServiceMock).addImage(any(ImageImpl.class),

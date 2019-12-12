@@ -11,32 +11,32 @@ import es.udc.fi.dc.fd.service.Block;
 
 public class FriendConversor {
 
-	public final static BlockDto<GetFriendListOutDto> toGetFriendListOutDto(
+	public final static BlockDto<RatedFriendDto> toGetFriendListOutDto(
 			Block<FriendListOut> friends) {
 		final List<FriendListOut> friendsIn = friends.getElements();
 
-		final List<GetFriendListOutDto> friendsOut = friendsIn.stream().map(e -> toGetFriendListOutDto(e))
+		final List<RatedFriendDto> friendsOut = friendsIn.stream().map(e -> toGetFriendListOutDto(e))
 				.collect(Collectors.toList());
 
 		return new BlockDto<>(friendsOut, friends.isExistMoreElements());
 	}
 
-	public final static GetFriendListOutDto toGetFriendListOutDto(FriendListOut out) {
+	public final static RatedFriendDto toGetFriendListOutDto(FriendListOut out) {
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(out.getUser().getDate().toLocalDate(), today.toLocalDate());
 
-		return new GetFriendListOutDto(out.getUser().getId(), out.getUser().getUserName(), period.getYears(),
-				out.getUser().getSex(), out.getUser().getCity(), out.getMyRating());
+		return new RatedFriendDto(new UnratedFriendDto(out.getUser().getId(), out.getUser().getUserName(),new AgeUserProfileDto( period.getYears(),
+				new AgelessUserProfileDto(out.getUser().getSex(), out.getUser().getCity(), out.getUser().getDescription()))), out.getMyRating());
 	}
 
-	public final static FriendDto fromUserImpl(UserImpl userImpl) {
+	public final static UnratedFriendDto fromUserImpl(UserImpl userImpl) {
 
 		final LocalDateTime today = LocalDateTime.now();
 
 		final Period period = Period.between(userImpl.getDate().toLocalDate(), today.toLocalDate());
 
-		final FriendDto friendDto = new FriendDto(userImpl.getId(), userImpl.getUserName(), period.getYears(),
-				userImpl.getSex(), userImpl.getCity(), userImpl.getDescription());
+		final UnratedFriendDto friendDto = new UnratedFriendDto(userImpl.getId(), userImpl.getUserName(), new AgeUserProfileDto(period.getYears(),
+				new AgelessUserProfileDto(userImpl.getSex(), userImpl.getCity(), userImpl.getDescription())));
 		return friendDto;
 	}
 
