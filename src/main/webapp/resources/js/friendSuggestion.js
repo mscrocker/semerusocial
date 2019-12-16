@@ -93,8 +93,8 @@ const friendSuggestion = {
             response.json().then((body) => {
 
 
-                let images = body.images;
-                let exists = body.existMoreImages;
+                let images = body.elements;
+                let exists = body.existMoreElements;
                 // If we dont have more images we make sure we dont make
                 // more petitions
                 if (!exists)

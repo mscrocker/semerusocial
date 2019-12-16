@@ -61,7 +61,7 @@ public class MessageConversorTest {
 		assertEquals(dto.getDate(), date);
 		assertEquals(dto.getMessageContent(), messageContent);
 		assertEquals(dto.getOwner(), user.getId());
-		assertEquals(dto.getReceiver(), user.getId());
+		assertEquals(dto.getReceiver(), user2.getId());
 
 		msg.setTransmitter(user2);
 		final MessageDetailsDto dto2 = MessageConversor.messageToMessageDetailsDto(msg);
