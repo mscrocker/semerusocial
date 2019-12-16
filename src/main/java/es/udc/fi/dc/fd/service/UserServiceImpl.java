@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -262,6 +264,14 @@ public class UserServiceImpl implements UserService {
 			user.setPremium(premium);
 			userRepository.save(user);
 		}
+
+	}
+
+	@Override
+	public Block<UserImpl> getTopUsers(String city, int page, int size) {
+
+		final Slice<UserImpl> users = userRepository.findByCityOrderByRatingDesc(city, PageRequest.of(page, size));
+		return new Block<>(users.getContent(), users.hasNext());
 
 	}
 

@@ -552,4 +552,32 @@ public class ITUserService {
 
 	}
 
+	@Test
+	public void testGetTopUsers() {
+
+		final UserImpl user1 = new UserImpl("testGetTopUsers", "testGetTopUsers", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion", 2, 3);
+		final UserImpl user2 = new UserImpl("testGetTopUsers2", "testGetTopUsers", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion", 4, 3);
+		final UserImpl user3 = new UserImpl("testGetTopUsers3", "testGetTopUsers", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion", 3, 3);
+		final UserImpl user4 = new UserImpl("testGetTopUsers4", "testGetTopUsers", LocalDateTime.now(), "masculino",
+				"coruña", "descripcion", 5, 3);
+		userRepository.save(user1);
+		userRepository.save(user2);
+		userRepository.save(user3);
+		userRepository.save(user4);
+
+		final List<UserImpl> expectedList = new ArrayList<>();
+		expectedList.add(user4);
+		expectedList.add(user2);
+		expectedList.add(user3);
+		expectedList.add(user1);
+
+		assertEquals(expectedList, userService.getTopUsers("coruña", 0, 10).getElements());
+
+		assertEquals(0, userService.getTopUsers("no existe", 0, 10).getElements().size());
+
+	}
+
 }
