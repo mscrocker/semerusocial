@@ -9,10 +9,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 
 
-public interface ImageRepository extends PagingAndSortingRepository<ImageImpl, Long> {
+public interface ImageRepository extends PagingAndSortingRepository<ImageImpl, Long>, ImageRepositoryCustom {
 
 	Slice<ImageImpl> findByUserId(Long userId, Pageable pageable);
-	
+
 	List<ImageImpl> findByUserId(Long userId);
-	
+
 }

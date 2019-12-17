@@ -33,6 +33,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import es.udc.fi.dc.fd.controller.entity.ImageController;
@@ -314,5 +316,34 @@ public class TestImageController {
 
 	}
 
-	
+	/***** TESTS GET ANONYMOUS CARRUSEL **************************/
+
+	@Test
+	public void TestImageController_getAnonymousCarrusel() throws Exception {
+		final String city = "coruña";
+		final int page = 0;
+
+		final List<ImageImpl> images = new ArrayList<>();
+		images.add(new ImageImpl(new byte[] { 1, 2, 3 }, "png"));
+
+		final Block<ImageImpl> block = new Block<>(images, false);
+
+		when(imageServiceMock.getAnonymousCarrusel(city, page)).thenReturn(block);
+
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		params.add("city", city);
+		params.add("page", String.valueOf(page));
+
+		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETANONYMOUS_GET).contentType(APPLICATION_JSON_UTF8).params(params))
+		.andExpect(status().isOk());
+
+		final ArgumentCaptor<String> cityCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
+
+		verify(imageServiceMock, times(1)).getAnonymousCarrusel(cityCaptor.capture(), pageCaptor.capture());
+		verifyNoMoreInteractions(imageServiceMock);
+		assertThat(cityCaptor.getValue(), is(city));
+		assertThat(pageCaptor.getValue(), is(page));
+	}
 }
