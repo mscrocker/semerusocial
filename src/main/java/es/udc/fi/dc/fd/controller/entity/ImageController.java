@@ -5,6 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Locale;
 
+import javax.validation.constraints.Min;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -139,10 +142,19 @@ public class ImageController {
 	@GetMapping("/carrusel/user/{userId}")
 	public BlockDto<ReturnedImageDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
 			throws InstanceNotFoundException {
-		Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
-		BlockDto<ReturnedImageDto> blockDto = ImageConversor.toReturnedImageDto(images);
+		final Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
+		final BlockDto<ReturnedImageDto> blockDto = ImageConversor.toReturnedImageDto(images);
 
 		return blockDto;
+	}
+
+	@GetMapping("/anonymousCarrusel")
+	public BlockDto<ReturnedImageDto> getAnonymousCarrusel(@RequestParam @NotEmpty String city,
+			@RequestParam @Min(0) int page)
+			throws InstanceNotFoundException {
+		final Block<ImageImpl> images = imageService.getAnonymousCarrusel(city, page);
+
+		return ImageConversor.toReturnedImageDto(images);
 	}
 
 }

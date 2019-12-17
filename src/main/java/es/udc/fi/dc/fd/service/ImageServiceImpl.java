@@ -115,6 +115,14 @@ public class ImageServiceImpl implements ImageService {
 		return images.get(0).getImageId();
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Block<ImageImpl> getAnonymousCarrusel(String city, int page) {
+		final Slice<ImageImpl> images = getImageRepository().findAnonymousCarrusel(city, page, 10);
+
+		return new Block<>(images.getContent(), images.hasNext());
+	}
+
 	public ImageRepository getImageRepository() {
 		return imageRepository;
 	}

@@ -59,6 +59,8 @@ public final class UrlConfig {
 
 	public static final String URL_IMAGE_GETFIRST_GET = "/backend/images/first";
 
+	public static final String URL_IMAGE_GETANONYMOUS_GET = "/backend/images/anonymousCarrusel";
+
 	public static final String URL_FRIEND_ACCEPT_POST = "/backend/friends/accept";
 
 	public static final String URL_FRIEND_REJECT_POST = "/backend/friends/reject";

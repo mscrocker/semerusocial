@@ -15,6 +15,8 @@ public interface ImageService {
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page)
 			throws InstanceNotFoundException;
 
+	public Block<ImageImpl> getAnonymousCarrusel(String city, int page);
+
 	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId)
 			throws InstanceNotFoundException, ItsNotYourImageException;
 
