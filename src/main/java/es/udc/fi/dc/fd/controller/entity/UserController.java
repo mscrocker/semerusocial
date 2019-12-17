@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +39,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NotRatedException;
+import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
@@ -44,15 +48,17 @@ import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
-import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
-import es.udc.fi.dc.fd.dtos.UserDataDto;
+import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.UserService;
 
 @RestController
@@ -222,19 +228,30 @@ public class UserController {
 	}
 
 	@GetMapping("/data")
-	public UserDataDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
+	public FullUserProfileDto getUserData(@RequestAttribute Long userId) throws InstanceNotFoundException {
 		final UserImpl user = userService.loginFromUserId(userId);
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(user.getDate().toLocalDate(), today.toLocalDate());
 
-		return new UserDataDto(user.getDate(), user.getSex(), user.getCity(), user.getDescription(),
-				user.getRating(), user.isPremium());
+		return new FullUserProfileDto(
+				user.getRating(), user.isPremium(),
+				new DateUserProfileDto(
+						user.getDate().getDayOfMonth(),
+						user.getDate().getMonthValue(),
+						user.getDate().getYear(),
+						new AgelessUserProfileDto(
+								user.getSex(), 
+								user.getCity(),
+								user.getDescription()
+						)
+				)
+		);
 	}
 
 	@PutMapping("/updateProfile")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
-			@Validated @RequestBody UpdateProfileInDto updateProfileInDto)
+			@Validated @RequestBody DateUserProfileDto updateProfileInDto)
 					throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
@@ -254,6 +271,15 @@ public class UserController {
 
 		userService.updatePremium(userId, premiumDto.isPremium());
 
+	}
+
+	@GetMapping("/topUsers")
+	@ResponseStatus(value = HttpStatus.OK)
+	public BlockDto<FullUserProfileDto> getTopUsers(@RequestParam String city,
+			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
+		System.out.println("a");
+		final Block<UserImpl> users = userService.getTopUsers(city, page, size);
+		return UserConversor.toReturnedUserBlockDto(users);
 	}
 
 }

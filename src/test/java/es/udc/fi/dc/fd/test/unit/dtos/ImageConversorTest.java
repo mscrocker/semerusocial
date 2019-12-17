@@ -24,7 +24,7 @@ class ImageConversorTest {
 		UserImpl user = new UserImpl();
 		ImageImpl image = new ImageImpl(user, new byte[] {10,12,13}, "png");
 		image.setImageId(2L);
-		ImageCreationDto dto = ImageConversor.toImageCreationDto(image);
+		ImageDataDto dto = ImageConversor.toImageDataDto(image);
 		assertEquals(dto.getData(), new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8")));
 		assertEquals(dto.getType(), image.getType());
 	}
@@ -40,10 +40,10 @@ class ImageConversorTest {
 		}));
 		images.setExistMoreElements(false);
 		
-		BlockDto<ReturnedImageDto> dto = ImageConversor.toReturnedImageDto(images);
+		BlockDto<ImageDataDto> dto = ImageConversor.toImageDataDtos(images);
 		assertEquals(dto.isExistMoreElements(), images.isExistMoreElements());
 		assertEquals(dto.getElements(), images.getElements().stream().map(
-				(ImageImpl e) -> ImageConversor.toReturnedImageDto(e)
+				(ImageImpl e) -> ImageConversor.toImageDataDto(e)
 		).collect(Collectors.toList()));
 		
 	}

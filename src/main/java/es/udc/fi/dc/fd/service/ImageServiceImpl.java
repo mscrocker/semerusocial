@@ -64,46 +64,6 @@ public class ImageServiceImpl implements ImageService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public BlockImageByUserId<ImageImpl> getImageByUserId(Long imageId, Long userId)
-			throws InstanceNotFoundException, ItsNotYourImageException {
-		permissionChecker.checkUserExists(userId);
-
-		final Optional<ImageImpl> image = getImageRepository().findById(imageId);
-
-		if (!image.isPresent()) {
-			throw new InstanceNotFoundException("Image with imageId=" + imageId + " doesn't exist", image);
-		}
-
-		if (!image.get().getUser().getId().equals(userId)) {
-			throw new ItsNotYourImageException("You can't access to image that doesn't belong to you.");
-		}
-		final List<ImageImpl> images = getImageRepository().findByUserId(userId);
-
-		final List<Long> ids = new ArrayList<>();
-		for (final ImageImpl image2 : images) {
-			ids.add(image2.getImageId());
-		}
-
-		Long prevId;
-		Long nextId;
-		final int position = ids.indexOf(imageId);
-
-		try {
-			prevId = ids.get(position - 1);
-		} catch (final IndexOutOfBoundsException e) {
-			prevId = null;
-		}
-		try {
-			nextId = ids.get(position + 1);
-		} catch (final IndexOutOfBoundsException e) {
-			nextId = null;
-		}
-
-		return new BlockImageByUserId<>(image.get(), prevId, nextId);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Long getFirstImageIdByUserId(Long userId) throws InstanceNotFoundException {
 		permissionChecker.checkUserExists(userId);
 

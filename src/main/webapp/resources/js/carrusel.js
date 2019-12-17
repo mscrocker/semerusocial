@@ -1,140 +1,148 @@
 const carrusel = {
-	previousLink: null,
-	nextLink: null,
-
-	getImageId: () => {
-		return window.location.pathname.substring(
-				window.location.pathname.lastIndexOf("/") + 1,
-				window.location.pathname.length
-		);
+	PAGE_SIZE: 10,
+	
+	cachedImages: null,	
+	hasNextImages: null,
+	currentCachedPage: null,
+	currentImageIndex: null,
+	baseURL: null,
+	
+	nextEnabled: false,
+	previousEnabled: false,
+	
+	loadingImageURL: null,
+	
+	init:  function (baseURL) {
+		this.baseURL = baseURL;
+		this.loadingImageURL = document.getElementById("imgField").src;
+		this.currentImageIndex = 0;
+		this.queryPage(0);
 	},
-
-	getImageIdUrl: () => {
-		let baseURL = "[[@{'/'}]]";
-		let url = baseURL + "backend/images/first";
-		let params = {
-			method: "GET"
-		};
+	
+	updateButtons: function(){
+		this.previousEnabled = (this.currentCachedPage > 0) || (this.currentImageIndex > 0);
+		this.nextEnabled = this.hasNextImages || (this.currentImageIndex < (this.cachedImages.length - 1));
 		
-		if (user.checkLoggedIn()){
-			user.authFetch(url, params, (result) => {
-				result.json().then((body) => {
-					if (body.imageId){
-						window.location.href = baseURL + "carrusel/" + body.imageId;
-					} else {
-						window.location.href = baseURL + "addImage";
-					}
-					
-				}).catch((error) => {
-					console.log("ERROR");
-				});
-			}, (errors) => {
-				console.log("ERROR");
-			});
+		if (this.nextEnabled){
+			document.getElementById("nextButton").classList.remove("btn-disabled");
+			document.getElementById("nextButton").classList.add("btn-primary");
 		} else {
-			window.location.href = baseURL + "login";
+			document.getElementById("nextButton").classList.remove("btn-primary");
+			document.getElementById("nextButton").classList.add("btn-disabled");
+		}
+		if (this.previousEnabled){
+			document.getElementById("previousButton").classList.remove("btn-disabled");
+			document.getElementById("previousButton").classList.add("btn-primary");
+		} else {
+			document.getElementById("previousButton").classList.remove("btn-primary");
+			document.getElementById("previousButton").classList.add("btn-disabled");
 		}
 	},
-
-	loadImage: (baseURL) => {
-		const imageId = carrusel.getImageId();
-		const url = baseURL + "backend/images/carrusel/" + imageId;
+	
+	queryPage: function(pageNumber){
+		document.getElementById("imgField").src = this.loadingImageURL;
+		this.currentCachedPage = pageNumber;
+		
+		const url = this.baseURL + "backend/images/carrusel?page=" + pageNumber;
 		user.authFetch(url, {
 			method: 'GET'
 		}, (response) => {
 			
 			if (response.status !== 200){
 				customAlert.showAlertFromResponse(response);
-					return;
+				return;
 			}
 			response.json().then((body) => {
 				
 				
-				// data + type -> string
-				
-				let metadata  = "data:image/" +body.image.type +   ";base64, ";
-				document.getElementById("imgField").src = metadata + body.image.data;
-				
-				let baseLink = baseURL + "carrusel/";
-				if (body.nextId){
-					carrusel.nextLink = baseLink + body.nextId;
-					document.getElementById("nextButton").classList.add("btn-primary");
-				} else {
-					document.getElementById("nextButton").classList.add("btn-disabled");
-				}
-				if (body.prevId){
-					carrusel.previousLink = baseLink + body.prevId;
-					document.getElementById("previousButton").classList.add("btn-primary");
-				} else {
-					document.getElementById("previousButton").classList.add("btn-disabled");
+				if (body.elements.length === 0){
+					if (pageNumber === 0){
+						window.location.href = this.baseURL + "/addImage";
+					} else {
+						customAlert.showAlert({globalError: "Error: no image available"});
+					}
+					return;
 				}
 				
-				
+				this.cachedImages = body.elements;
+				this.hasNextImages = body.existMoreElements;
+				this.displayCachedImage(this.currentImageIndex);
+				this.updateButtons();
+			}).catch((errors) => {
+				customAlert.showAlert("Internal server error");
 			});
-			
 		}, (errors) => {
-			console.log("ERROR!");
+			customAlert.showAlert("Internal server error");
 		});
-	},
-
-	getNextLink: (baseURL) => {
-		if (carrusel.previousLink !== null){
-			return carrusel.previousLink;
-		}
-		if (carrusel.nextLink !== null){
-			return carrusel.nextLink;
-		}
 		
-		return baseURL + "addImage";
+		
 		
 	},
-
-	deleteImage: (baseURL, imageID) => {
-		let url = baseURL + "backend/images/remove/" + imageID;
+	
+	displayCachedImage: function(index){
+		this.currentImageIndex = index;
+		
+		// TODO: add format handling to images
+		let metadata  = "data:image/jpeg" + this.cachedImages[this.currentImageIndex].type +   ";base64, ";
+		
+		//let metadata  = "data:image/jpeg" +  ";base64, ";
+		document.getElementById("imgField").src = metadata + this.cachedImages[this.currentImageIndex].data;
+	},
+	
+	nextImage: function(){
+		if (!this.nextEnabled){
+			return;
+		}
+		this.currentImageIndex++;
+		if (this.currentImageIndex === this.cachedImages.length){
+			// QUERY MORE IMAGES
+			this.currentImageIndex = 0;
+			this.queryPage(this.currentCachedPage + 1);
+			
+		} else {
+			// MOVE TO THE NEXT IMAGE
+			this.displayCachedImage(this.currentImageIndex);
+		}
+		this.updateButtons();
+	},
+	
+	previousImage: function(){
+		if (!this.previousEnabled){
+			return;
+		}
+		this.currentImageIndex--;
+		if (this.currentImageIndex < 0){
+			// QUERY MORE IMAGES
+			this.currentImageIndex = this.PAGE_SIZE - 1;
+			this.queryPage(this.currentCachedPage - 1);
+			
+		} else {
+			// MOVE TO THE PREVIOUS IMAGE
+			this.displayCachedImage(this.currentImageIndex);
+		}
+		this.updateButtons();
+	},
+	
+	
+	deleteImage: function () {
+		let imageID = this.cachedImages[this.currentImageIndex].imageId;
+		
+		
+		let url = this.baseURL + "backend/images/remove/" + imageID;
 		let params = {
 				method: "DELETE"
 		};
 		user.authFetch(url, params, (resp) => {
 			$("deleteModal").modal("hide");
 			if (resp.status === 204){
-				console.log("SUCCESS!");
-				window.location.href = carrusel.getNextLink(baseURL);
+				window.location.reload(false);
 			} else {
-			    	customAlert.showAlertFromResponse(resp);
-				console.log("ERROR");
-				
+			    customAlert.showAlertFromResponse(resp);
 			}
 		}, (errors) => {
-			console.log("ERROR");
+			customAlert.showAlert("Internal server error");
 		});
-	},
-
-	finishEditImage: (result) => {
-		if (result.status !== 204){
-			customAlert.showAlertFromResponse(response);
-			return;
 	}
-},
-
-	finishEditWithErrors: (errors) => {
-		customAlert.showAlert(errors);
-	},
-
-	editImage: (baseURL, imageID, description) => {
-		$("#editModal").modal("hide");
-		if ((description === undefined) || (description === null) || (description === "")){
-			customAlert.showAlert("Error: description is mandatory.");
-			return;
-		}
-		let url = baseURL + "backend/images/edit/" + imageID;
-		user.authFetch(url, {
-			method: "PUT",
-			body: JSON.stringify({
-				description: description
-			}),
-			headers: { "Content-Type": "application/json" }
-		}, finishEditImage, finishEditWithErrors);
-		document.getElementById('descriptionField').innerText=description;
-	}
-
+	
+	
 };

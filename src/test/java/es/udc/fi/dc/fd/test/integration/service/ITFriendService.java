@@ -56,7 +56,7 @@ import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
-import es.udc.fi.dc.fd.service.BlockFriendList;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -511,17 +511,14 @@ public class ITFriendService {
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
 		final UserImpl user1 = initialFriendList().get(0);
 
-		BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 2);
-		assertEquals(user1Result.getFriends().size(), 2);
-		assertEquals(user1Result.getExistMoreFriends(), true);
+		Block<FriendListOut> user1Result;
+		for (int i = 0; i < 3; i++) {
+			user1Result = friendService.getFriendList(user1.getId(), i, 2);
+			assertEquals(user1Result.getElements().size(), i == 2 ? 0 : 2);
+			assertEquals(user1Result.isExistMoreElements(), i == 0);
+		}
+		
 
-		user1Result = friendService.getFriendList(user1.getId(), 1, 2);
-		assertEquals(user1Result.getFriends().size(), 2);
-		assertEquals(user1Result.getExistMoreFriends(), false);
-
-		user1Result = friendService.getFriendList(user1.getId(), 2, 2);
-		assertEquals(user1Result.getFriends().size(), 0);
-		assertEquals(user1Result.getExistMoreFriends(), false);
 	}
 
 	@Test
@@ -529,13 +526,13 @@ public class ITFriendService {
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
 		final UserImpl user5 = initialFriendList().get(4);
 
-		BlockFriendList<FriendListOut> user5Result = friendService.getFriendList(user5.getId(), 0, 2);
-		assertEquals(user5Result.getFriends().size(), 1);
-		assertEquals(user5Result.getExistMoreFriends(), false);
-
-		user5Result = friendService.getFriendList(user5.getId(), 1, 2);
-		assertEquals(user5Result.getFriends().size(), 0);
-		assertEquals(user5Result.getExistMoreFriends(), false);
+		
+		Block<FriendListOut> user5Result;
+		for (int i = 0; i < 2; i++) {
+			user5Result = friendService.getFriendList(user5.getId(), i, 2);
+			assertEquals(user5Result.getElements().size(), i == 0 ? 1 : 0);
+			assertEquals(user5Result.isExistMoreElements(), false);
+		}
 	}
 
 	@Test
@@ -549,9 +546,9 @@ public class ITFriendService {
 		user5.setRating(4);
 		userRepository.save(user5);
 
-		final BlockFriendList<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 10);
-		assertEquals(4, user1Result.getFriends().size());
-		assertEquals(false, user1Result.getExistMoreFriends());
+		final Block<FriendListOut> user1Result = friendService.getFriendList(user1.getId(), 0, 10);
+		assertEquals(4, user1Result.getElements().size());
+		assertEquals(false, user1Result.isExistMoreElements());
 
 	}
 

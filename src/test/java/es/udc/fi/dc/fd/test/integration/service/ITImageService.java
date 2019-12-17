@@ -31,7 +31,6 @@ import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
-import es.udc.fi.dc.fd.service.BlockImageByUserId;
 import es.udc.fi.dc.fd.service.ImageService;
 import es.udc.fi.dc.fd.service.UserService;
 
@@ -244,102 +243,6 @@ public class ITImageService {
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			imageService.getImagesByUserId(-1L, 0);
-		});
-	}
-
-	// ----- getImageById -----
-
-	@Test
-	public void testGetImageById() throws InstanceNotFoundException, ItsNotYourImageException {
-		final UserImpl user = signUp("userTestGetImage", "userTestGetImage", 2, "hombre", "coruna");
-
-		final ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 });
-
-		final ImageImpl imageCreated1 = imageService.addImage(i1, user.getId());
-		final ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
-		final ImageImpl imageCreated3 = imageService.addImage(i3, user.getId());
-
-		final BlockImageByUserId<ImageImpl> imageResult1 = imageService.getImageByUserId(imageCreated1.getImageId(),
-				user.getId());
-		final BlockImageByUserId<ImageImpl> imageResult2 = imageService.getImageByUserId(imageCreated2.getImageId(),
-				user.getId());
-		final BlockImageByUserId<ImageImpl> imageResult3 = imageService.getImageByUserId(imageCreated3.getImageId(),
-				user.getId());
-
-		assertEquals(imageCreated1, imageResult1.getImage());
-		assertEquals(imageCreated2, imageResult2.getImage());
-		assertEquals(imageCreated3, imageResult3.getImage());
-		assertEquals(imageCreated1.getImageId(), imageResult2.getPrevId());
-		assertEquals(imageCreated3.getImageId(), imageResult2.getNextId());
-	}
-
-	@Test
-	public void testGetImageByIdWithInstanceNotFoundException() throws InstanceNotFoundException {
-		final UserImpl user = signUp("userTestGetImageINFE", "userTestGetImageINFE", 2, "hombre", "coruna");
-
-		final ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 });
-
-		imageService.addImage(i1, user.getId());
-
-		// imageResult.setImageId(-1L);
-
-		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.getImageByUserId(-1L, user.getId());
-		});
-	}
-
-	@Test
-	public void testGetImageByIdItsNotYourImageException() throws InstanceNotFoundException {
-		final UserImpl user1 = signUp("userTestGetImageINYI1", "userTestGetImageINYI1", 2, "hombre", "coruna");
-		final UserImpl user2 = signUp("userTestGetImageINYI2", "userTestGetImageINYI2", 2, "hombre", "coruna");
-
-		final ImageImpl i1 = createImage(user1, new byte[] { 1, 2, 3 });
-
-		final ImageImpl imageResult = imageService.addImage(i1, user1.getId());
-
-		assertThrows(ItsNotYourImageException.class, () -> {
-			imageService.getImageByUserId(imageResult.getImageId(), user2.getId());
-		});
-	}
-
-	// ----- getFirstImageIdByUserId -----
-
-	@Test
-	public void testGetFirstImageIdByUserId() throws InstanceNotFoundException {
-		final UserImpl user1 = signUp("userGetFirstImageId1", "passGetFirstImageId1", 2, "hombre", "coruna");
-		final UserImpl user2 = signUp("userGetFirstImageId2", "passGetFirstImageId2", 2, "hombre", "coruna");
-
-		final ImageImpl i1 = createImage(user1, new byte[] { 1, 2, 3 });
-		final ImageImpl i2 = createImage(user1, new byte[] { 1, 2, 3 });
-		final ImageImpl i3 = createImage(user1, new byte[] { 1, 2, 3 });
-
-		assertTrue(imageService.getFirstImageIdByUserId(user1.getId()) == null);
-
-		final ImageImpl imageCreated1 = imageService.addImage(i1, user1.getId());
-		imageService.addImage(i2, user1.getId());
-		imageService.addImage(i3, user1.getId());
-
-		final Long idResult1 = imageService.getFirstImageIdByUserId(user1.getId());
-
-		assertEquals(idResult1, imageCreated1.getImageId());
-
-		final ImageImpl i4 = createImage(user2, new byte[] { 1, 2, 3 });
-
-		assertTrue(imageService.getFirstImageIdByUserId(user2.getId()) == null);
-
-		final ImageImpl imageCreated4 = imageService.addImage(i4, user2.getId());
-
-		final Long idResult2 = imageService.getFirstImageIdByUserId(user2.getId());
-
-		assertEquals(idResult2, imageCreated4.getImageId());
-	}
-
-	@Test
-	public void testGetFirstImageIdByUserIdWithInstanceNotFoundException() {
-		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.getFirstImageIdByUserId(-1L);
 		});
 	}
 

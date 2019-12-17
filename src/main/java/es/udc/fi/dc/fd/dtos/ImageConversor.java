@@ -8,23 +8,27 @@ import java.util.stream.Collectors;
 import es.udc.fi.dc.fd.controller.exception.InvalidImageFormatException;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.service.Block;
-import es.udc.fi.dc.fd.service.BlockImageByUserId;
 
 public class ImageConversor {
 
 	private ImageConversor() {
 	}
 
-	public final static ImageCreationDto toImageCreationDto(ImageImpl image) {
+	public final static ImageDataDto toImageDataDto(ImageImpl image) {
 		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ImageCreationDto(encoded, image.getType());
+		return new ImageDataDto(encoded, image.getType());
+	}
+	
+	public final static BlockDto<ImageDataDto> toImageDataDtos(Block<ImageImpl> images) {
+		final List<ImageImpl> imagesIn = images.getElements();
+
+		final List<ImageDataDto> imagesOut = imagesIn.stream().map(e -> toImageDataDto(e))
+				.collect(Collectors.toList());
+
+		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
-	public final static ImageCreatedDto toImageCreatedDto(ImageImpl image) {
-		return new ImageCreatedDto(image.getImageId());
-	}
-
-	public final static ImageImpl toImageImpl(ImageCreationDto image) throws InvalidImageFormatException {
+	public final static ImageImpl toImageImpl(ImageDataDto image) throws InvalidImageFormatException {
 		final String dataString = image.getData();
 		if (dataString.indexOf(',') == -1) {
 			throw new InvalidImageFormatException("Base64 lacking metadata");
@@ -46,42 +50,19 @@ public class ImageConversor {
 		return new ImageImpl(decodString, type);
 	}
 
-	public final static BlockDto<ReturnedImageDto> toReturnedImageDto(Block<ImageImpl> images) {
+	public final static BlockDto<ImageDto> toReturnedImagesDto(Block<ImageImpl> images) {
 		final List<ImageImpl> imagesIn = images.getElements();
 
-		final List<ReturnedImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImageDto(e))
+		final List<ImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
 				.collect(Collectors.toList());
 
 		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
 
-	public final static BlockImageByUserIdDto<ReturnedImageDto> toReturnedImageDto(
-			BlockImageByUserId<ImageImpl> image) {
-		final ImageImpl imageIn = image.getImage();
-
-		final ReturnedImageDto imageOut = toReturnedImageDto(imageIn);
-
-		return new BlockImageByUserIdDto<>(imageOut, image.getPrevId(), image.getNextId());
-	}
-
-	public final static ReturnedImageDto toReturnedImageDto(ImageImpl image) {
-		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
-		return new ReturnedImageDto(encoded, image.getType());
-	}
-
-	public final static BlockDto<ReturnedImagesDto> toReturnedImagesDto(Block<ImageImpl> images) {
-		final List<ImageImpl> imagesIn = images.getElements();
-
-		final List<ReturnedImagesDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
-				.collect(Collectors.toList());
-
-		return new BlockDto<>(imagesOut, images.isExistMoreElements());
-	}
-
-	public final static ReturnedImagesDto toReturnedImagesDto(ImageImpl image) {
+	public final static ImageDto toReturnedImagesDto(ImageImpl image) {
 		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 
-		return new ReturnedImagesDto(image.getImageId(), encoded);
+		return new ImageDto(image.getImageId(), new ImageDataDto(encoded, image.getType()));
 	}
 
 }
