@@ -25,11 +25,25 @@ public class UserConversor {
 				updateProfileInDto.getAgelessFields().getDescription());
 	}
 
-	public final static BlockDto<UserDataDto> toReturnedUserBlockDto(Block<UserImpl> users) {
+	public final static BlockDto<FullUserProfileDto> toReturnedUserBlockDto(Block<UserImpl> users) {
 		final List<UserImpl> usersIn = users.getElements();
 
-		final List<UserDataDto> usersOut = usersIn.stream().map(u -> new UserDataDto(u.getDate(), u.getSex(),
-				u.getCity(), u.getDescription(), u.getRating(), u.isPremium())).collect(Collectors.toList());
+		final List<FullUserProfileDto> usersOut = usersIn.stream().map(
+				u -> 
+				new FullUserProfileDto(
+					u.getRating(),
+					u.isPremium(),
+					new DateUserProfileDto(
+						u.getDate().getYear(),
+						u.getDate().getMonthValue(),
+						u.getDate().getDayOfMonth(),
+						new AgelessUserProfileDto(
+							u.getSex(),
+							u.getCity(),
+							u.getDescription()
+						)
+					)
+				)).collect(Collectors.toList());
 
 		return new BlockDto<>(usersOut, users.isExistMoreElements());
 	}

@@ -275,7 +275,7 @@ public class UserController {
 
 	@GetMapping("/topUsers")
 	@ResponseStatus(value = HttpStatus.OK)
-	public BlockDto<UserDataDto> getTopUsers(@RequestParam String city,
+	public BlockDto<FullUserProfileDto> getTopUsers(@RequestParam String city,
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
 		System.out.println("a");
 		final Block<UserImpl> users = userService.getTopUsers(city, page, size);
