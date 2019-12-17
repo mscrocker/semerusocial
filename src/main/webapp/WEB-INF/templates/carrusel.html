@@ -107,15 +107,24 @@
 	</footer>
 	<script>
    	  window.addEventListener('load', () => {
+ 			if (user.checkLoggedIn()){
+ 	   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage()
+ 	   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/addImage'}]]"};
+ 	   			profile.initProfileDisplay("[[@{'/'}]]");
+ 	   			carrusel.authenticatedInit("[[@{'/'}]]");
+ 	   		} else if (window.location.href === "[[@{'/'}]]") {
+ 	   			$.ajax({url: "https://geolocation-db.com/jsonp",
+		   	   	  	jsonpCallback: "callback",
+		   	   	  	dataType: "jsonp",
+		   	   	  	success: function(location) {
+		   	   	  		carrusel.anonymousInit("[[@{'/'}]]", location.city);
+		   	   		}
+ 	   			});
+ 	   		} else {
+ 	   			window.location.href = "[[@{'/'}]]";
+ 	   		}
    		
-   		if (user.checkLoggedIn()){
-   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage()
-   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/addImage'}]]"};
-   			profile.initProfileDisplay("[[@{'/'}]]");
-   			carrusel.init("[[@{'/'}]]");
-   		} else {
-   			window.location.href = "[[@{'/login'}]]";
-   		}
+   		
    		
    		
    	  });

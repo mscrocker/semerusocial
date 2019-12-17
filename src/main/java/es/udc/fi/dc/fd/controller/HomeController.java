@@ -41,7 +41,7 @@ public class HomeController {
     /**
      * Name for the welcome view.
      */
-    private static final String VIEW_WELCOME = "welcome";
+    private static final String VIEW_WELCOME = "carrusel";
 
     /**
      * Default constructor.
