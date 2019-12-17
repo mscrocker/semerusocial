@@ -31,4 +31,6 @@ public interface UserService {
 			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
 
 	public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException;
+
+	public Block<UserImpl> getTopUsers(String city, int page, int size);
 }

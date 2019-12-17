@@ -32,7 +32,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import es.udc.fi.dc.fd.controller.entity.UserController;
@@ -53,6 +56,7 @@ import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.UserService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -708,6 +712,38 @@ public final class TestUserController {
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
 		assertThat(premiumCaptor.getValue(), is(true));
+
+	}
+
+	@Test
+	public void TestUserController_getTopUsers() throws Exception {
+		final UserImpl user = createUser("name",  "pass",  LocalDateTime.now(), "Patat", "Coruña", "desc");
+		final List<UserImpl> items = new ArrayList<>();
+		items.add(user);
+		final Block<UserImpl> blockRet = new Block<>(items, false);
+
+		when(userServiceMock.getTopUsers("Coruña", 0, 10)).thenReturn(blockRet);
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("page", "0");
+		params.add("city", "Coruña");
+		params.add("size", "10");
+
+		// @formatter:off
+		final ResultActions a = mockMvc.perform(get(UrlConfig.URL_USER_TOPUSERS_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.params(params));
+		a.andExpect(status().isOk());
+		// @formatter:on
+
+		final ArgumentCaptor<String> cityCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(userServiceMock, times(1)).getTopUsers(cityCaptor.capture(), pageCaptor.capture().intValue(),
+				sizeCaptor.capture().intValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(cityCaptor.getValue(), is("Coruña"));
+		assertThat(pageCaptor.getValue(), is(0));
+		assertThat(sizeCaptor.getValue(), is(10));
 
 	}
 
