@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class CarruselController {
 
-	@GetMapping(path = "/carrusel/**")
+	@GetMapping(path = "/carrusel")
 	public final String displayLogin() {
 		return UserViewConstants.CARRUSEL_FORM;
 	}

@@ -66,11 +66,11 @@ const friendList = {
 				if (page > 0){
 					friendList.enableButton("previousButton", baseURL, page);
 				}
-				if (body.existMoreFriends === true){
+				if (body.existMoreElements === true){
 					friendList.enableButton("nextButton", baseURL, page);
 				}
 				
-				let friends = body.friends;
+				let friends = body.elements;
 				let aux = "";
 				for (let i = 0; i < friends.length; i++){
 					aux += friendList.generateHTML(friends[i], baseURL);

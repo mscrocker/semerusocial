@@ -14,7 +14,7 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface FriendService {
 
-	public BlockFriendList<FriendListOut> getFriendList(Long userId, int page, int size)
+	public Block<FriendListOut> getFriendList(Long userId, int page, int size)
 			throws InstanceNotFoundException, RequestParamException;
 
 	public void acceptRecommendation(Long subject, Long object) throws InstanceNotFoundException,

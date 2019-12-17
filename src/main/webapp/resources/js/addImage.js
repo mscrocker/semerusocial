@@ -47,7 +47,7 @@ const addImage = {
 			
 			document.getElementById("uploadButton").disabled = false;
 			customAlert.hideAlert();
-			window.location.href = baseURL + "carrusel/" + body.imageId;
+			window.location.href = baseURL + "carrusel";
 		}).catch((errors) => {
 			showAlert("Error uploading image");
 		});

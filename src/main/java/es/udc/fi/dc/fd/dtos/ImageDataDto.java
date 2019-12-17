@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public final class ImageCreationDto implements Serializable {
+public final class ImageDataDto implements Serializable {
 
 	private static final long serialVersionUID = 1328776989450853492L;
 
@@ -14,11 +14,11 @@ public final class ImageCreationDto implements Serializable {
 
 	private String type;
 
-	public ImageCreationDto() {
+	public ImageDataDto() {
 		super();
 	}
 
-	public ImageCreationDto(String data, String type) {
+	public ImageDataDto(String data, String type) {
 		super();
 		setData(data);
 		setType(type);
@@ -61,7 +61,7 @@ public final class ImageCreationDto implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final ImageCreationDto other = (ImageCreationDto) obj;
+		final ImageDataDto other = (ImageDataDto) obj;
 		return Objects.equals(data, other.data) && Objects.equals(type, other.type);
 	}
 

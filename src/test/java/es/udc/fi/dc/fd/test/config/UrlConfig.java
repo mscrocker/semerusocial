@@ -86,7 +86,7 @@ public final class UrlConfig {
 	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
 	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
 	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
-	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel/**";
+	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel";
 
 	/**
 	 * Default constructor to avoid initialization.
