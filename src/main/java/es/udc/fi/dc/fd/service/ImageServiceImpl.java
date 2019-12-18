@@ -1,7 +1,5 @@
 package es.udc.fi.dc.fd.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +62,10 @@ public class ImageServiceImpl implements ImageService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Long getFirstImageIdByUserId(Long userId) throws InstanceNotFoundException {
-		permissionChecker.checkUserExists(userId);
+	public Block<ImageImpl> getAnonymousCarrusel(String city, int page) {
+		final Slice<ImageImpl> images = getImageRepository().findAnonymousCarrusel(city, page, 10);
 
-		final List<ImageImpl> images = getImageRepository().findByUserId(userId);
-
-		if (images.size() == 0) {
-			return null;
-		}
-		return images.get(0).getImageId();
+		return new Block<>(images.getContent(), images.hasNext());
 	}
 
 	public ImageRepository getImageRepository() {

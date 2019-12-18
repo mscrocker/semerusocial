@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +39,7 @@ import es.udc.fi.dc.fd.service.UserService;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-		"classpath:context/application-context.xml" })
+"classpath:context/application-context.xml" })
 @TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
 @Rollback
 @Transactional
@@ -100,7 +101,7 @@ public class ITImageService {
 		final UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException",
 				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
-//		user.setId(-1L);
+		//		user.setId(-1L);
 
 		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
 
@@ -245,43 +246,125 @@ public class ITImageService {
 		});
 	}
 
-	// ----- getFirstImageIdByUserId -----
+	// getAnonymousCarrusel
 
 	@Test
-	public void testGetFirstImageIdByUserId() throws InstanceNotFoundException {
-		final UserImpl user1 = signUp("userGetFirstImageId1", "passGetFirstImageId1", 2, "hombre", "coruna");
-		final UserImpl user2 = signUp("userGetFirstImageId2", "passGetFirstImageId2", 2, "hombre", "coruna");
+	public void testgetAnonymousCarrusel()
+			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException {
+		final UserImpl user1 = createUser("userAnon1", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user2 = createUser("userAnon2", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user3 = createUser("userAnon3", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user4 = createUser("userAnon4", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user5 = createUser("userAnon5", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user6 = createUser("userAnon6", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user7 = createUser("userAnon7", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user8 = createUser("userAnon8", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user9 = createUser("userAnon9", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user10 = createUser("userAnon10", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user11 = createUser("userAnon11", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"coruña",
+				"descripcion");
+		final UserImpl user12 = createUser("userAnon12", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
+				"lugo", "descripcion");
 
-		final ImageImpl i1 = createImage(user1, new byte[] { 1, 2, 3 });
-		final ImageImpl i2 = createImage(user1, new byte[] { 1, 2, 3 });
-		final ImageImpl i3 = createImage(user1, new byte[] { 1, 2, 3 });
+		user1.setRating(1.0);
+		user2.setRating(1.5);
+		user3.setRating(2.0);
+		user4.setRating(2.5);
+		user5.setRating(3.0);
+		user6.setRating(3.5);
+		user7.setRating(4.0);
+		user8.setRating(4.1);
+		user9.setRating(4.2);
+		user10.setRating(4.3);
+		user11.setRating(4.4);
+		user11.setRating(5.0);
 
-		assertTrue(imageService.getFirstImageIdByUserId(user1.getId()) == null);
+		userService.signUp(user1);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+		userService.signUp(user5);
+		userService.signUp(user6);
+		userService.signUp(user7);
+		userService.signUp(user8);
+		userService.signUp(user9);
+		userService.signUp(user10);
+		userService.signUp(user11);
+		userService.signUp(user12);
 
-		final ImageImpl imageCreated1 = imageService.addImage(i1, user1.getId());
-		imageService.addImage(i2, user1.getId());
-		imageService.addImage(i3, user1.getId());
+		final ImageImpl imagen1 = createImage(user1, new byte[] { 1, 2, 3 });
+		final ImageImpl imagen2 = createImage(user2, new byte[] { 2, 3, 4 });
+		final ImageImpl imagen3 = createImage(user3, new byte[] { 3, 4, 5 });
+		final ImageImpl imagen4 = createImage(user4, new byte[] { 4, 5, 6 });
+		final ImageImpl imagen5 = createImage(user5, new byte[] { 5, 6, 7 });
+		final ImageImpl imagen6 = createImage(user6, new byte[] { 6, 7, 8 });
+		final ImageImpl imagen7 = createImage(user7, new byte[] { 7, 8, 9 });
+		final ImageImpl imagen8 = createImage(user8, new byte[] { 8, 9, 10 });
+		final ImageImpl imagen9 = createImage(user9, new byte[] { 9, 10, 11 });
+		final ImageImpl imagen10 = createImage(user10, new byte[] { 10, 11, 12 });
+		final ImageImpl imagen11 = createImage(user11, new byte[] { 11, 12, 13 });
+		final ImageImpl imagen112 = createImage(user11, new byte[] { 11, 13, 14 });
 
-		final Long idResult1 = imageService.getFirstImageIdByUserId(user1.getId());
+		imageService.addImage(imagen1, user1.getId());
+		imageService.addImage(imagen2, user2.getId());
+		imageService.addImage(imagen3, user3.getId());
+		imageService.addImage(imagen4, user4.getId());
+		imageService.addImage(imagen5, user5.getId());
+		imageService.addImage(imagen6, user6.getId());
+		imageService.addImage(imagen7, user7.getId());
+		imageService.addImage(imagen8, user8.getId());
+		imageService.addImage(imagen9, user9.getId());
+		imageService.addImage(imagen10, user10.getId());
+		imageService.addImage(imagen11, user11.getId());
+		imageService.addImage(imagen112, user11.getId());
 
-		assertEquals(idResult1, imageCreated1.getImageId());
+		final List<ImageImpl> expected1 = new ArrayList<>();
+		expected1.add(imagen2);
+		expected1.add(imagen3);
+		expected1.add(imagen4);
+		expected1.add(imagen5);
+		expected1.add(imagen6);
+		expected1.add(imagen7);
+		expected1.add(imagen8);
+		expected1.add(imagen9);
+		expected1.add(imagen10);
+		expected1.add(imagen11);
 
-		final ImageImpl i4 = createImage(user2, new byte[] { 1, 2, 3 });
+		final Block<ImageImpl> result1 = imageService.getAnonymousCarrusel("coruña", 0);
 
-		assertTrue(imageService.getFirstImageIdByUserId(user2.getId()) == null);
+		assertEquals(expected1, result1.getElements());
+		assertEquals(expected1.size(), result1.getElements().size());
+		assertTrue(result1.isExistMoreElements());
 
-		final ImageImpl imageCreated4 = imageService.addImage(i4, user2.getId());
+		final List<ImageImpl> expected2 = new ArrayList<>();
+		expected2.add(imagen112);
 
-		final Long idResult2 = imageService.getFirstImageIdByUserId(user2.getId());
+		final Block<ImageImpl> result2 = imageService.getAnonymousCarrusel("coruña", 1);
 
-		assertEquals(idResult2, imageCreated4.getImageId());
-	}
-
-	@Test
-	public void testGetFirstImageIdByUserIdWithInstanceNotFoundException() {
-		assertThrows(InstanceNotFoundException.class, () -> {
-			imageService.getFirstImageIdByUserId(-1L);
-		});
+		assertEquals(expected2, result2.getElements());
+		assertEquals(expected2.size(), result2.getElements().size());
+		assertFalse(result2.isExistMoreElements());
 	}
 
 }
