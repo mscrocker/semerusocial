@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
+import es.udc.fi.dc.fd.controller.exception.CantFindMoreFriendsException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
@@ -37,6 +38,7 @@ import es.udc.fi.dc.fd.dtos.FriendDto;
 import es.udc.fi.dc.fd.dtos.GetFriendListOutDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
+import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
@@ -54,6 +56,7 @@ public class FriendController {
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
 	private static final String ALREADY_BLOCKED_CODE = "project.exceptions.AlreadyBlockedException";
+	private static final String CANT_FIND_MORE_CODE = "project.exceptions.CantFindMoreFriendsException";
 
 	@Autowired
 	private final MessageSource messageSource;
@@ -165,6 +168,15 @@ public class FriendController {
 		return new ErrorsDto(errorMessage);
 	}
 
+	@ExceptionHandler(CantFindMoreFriendsException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public ErrorsDto handleCantFindMoreFriendsException(CantFindMoreFriendsException exception, Locale locale) {
+		final String errorMessage = messageSource.getMessage(CANT_FIND_MORE_CODE, null, CANT_FIND_MORE_CODE, locale);
+
+		return new ErrorsDto(errorMessage);
+	}
+
 	@ResponseStatus(value = HttpStatus.OK)
 	@PostMapping("/accept")
 	public void acceptRequest(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
@@ -212,6 +224,13 @@ public class FriendController {
 	public void blockUser(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
 			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
 		friendService.blockUser(userId, params.getId());
+	}
+
+	@ResponseStatus(value = HttpStatus.OK)
+	@GetMapping("/suggestNewCriteria")
+	public SuggestedSearchCriteria suggestNewCriteria(@RequestAttribute Long userId)
+			throws InstanceNotFoundException, CantFindMoreFriendsException {
+		return friendService.suggestNewCriteria(userId);
 	}
 
 }

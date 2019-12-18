@@ -44,6 +44,7 @@ import es.udc.fi.dc.fd.controller.entity.FriendController;
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
+import es.udc.fi.dc.fd.controller.exception.CantFindMoreFriendsException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
@@ -52,6 +53,7 @@ import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
+import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.BlockFriendList;
 import es.udc.fi.dc.fd.service.FriendService;
@@ -720,6 +722,65 @@ public class TestFriendController {
 		verifyNoMoreInteractions(friendServiceMock);
 		assertThat(userIdCaptor.getValue(), is(USERID_OK));
 		assertThat(friendIdCaptor.getValue(), is(2L));
+	}
+
+	@Test
+	public void TestFriendController_SuggestNewCriteria() throws Exception {
+		final Long userId = USERID_OK;
+		final SuggestedSearchCriteria suggestion = new SuggestedSearchCriteria(0, 1, 0, 1);
+		when(friendServiceMock.suggestNewCriteria(userId)).thenReturn(suggestion);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK))
+		.andExpect(status().isOk());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).suggestNewCriteria(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+
+	}
+
+	@Test
+	public void TestFriendController_SuggestNewCriteriaINF() throws Exception {
+		final Long userId = USERID_OK;
+		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
+		.suggestNewCriteria(USERID_NOTFOUND);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_NOTFOUND))
+		.andExpect(status().isNotFound());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).suggestNewCriteria(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_NOTFOUND));
+
+	}
+
+	@Test
+	public void TestFriendController_SuggestNewCriteriaCFMF() throws Exception {
+		final Long userId = USERID_OK;
+		doThrow(new CantFindMoreFriendsException("NO MORE FRIENDS")).when(friendServiceMock).suggestNewCriteria(userId);
+
+		// @formatter:off
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
+				.contentType(APPLICATION_JSON_UTF8)
+				.requestAttr("userId", USERID_OK))
+		.andExpect(status().isForbidden());
+		// @formatter:on
+
+		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+		verify(friendServiceMock, times(1)).suggestNewCriteria(userIdCaptor.capture());
+		verifyNoMoreInteractions(friendServiceMock);
+		assertThat(userIdCaptor.getValue(), is(USERID_OK));
+
 	}
 
 }

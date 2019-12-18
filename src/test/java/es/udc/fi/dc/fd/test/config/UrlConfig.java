@@ -69,6 +69,8 @@ public final class UrlConfig {
 
 	public static final String URL_FRIEND_BLOCK_POST = "/backend/friends/block";
 
+	public static final String URL_FRIEND_SUGGESTCRITERIA_GET = "/backend/friends/suggestNewCriteria";
+
 	public static final String URL_CHAT_GETCONVERSATION_GET = "/backend/chat/conversation";
 
 	public static final String URL_CHAT_FRIENDHEADERS_GET = "/backend/chat/friendHeaders";

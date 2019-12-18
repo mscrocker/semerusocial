@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
+import es.udc.fi.dc.fd.controller.exception.CantFindMoreFriendsException;
 import es.udc.fi.dc.fd.controller.exception.DuplicateInstanceException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
@@ -49,6 +50,7 @@ import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
+import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
@@ -114,6 +116,10 @@ public class ITFriendService {
 
 	}
 
+	private SearchCriteria createCriteria(String sex, int minAge, int maxAge, List<String> CityList, int minRate) {
+		return new SearchCriteria(SexCriteriaEnum.fromCode(sex), minAge, maxAge, CityList, minRate);
+	}
+
 	private UserImpl signUp(String userName, String password, int age, String sex, String city) {
 
 		final UserImpl user = createUser(userName, password, getDateTimeFromAge(age), sex, city, "descripcion");
@@ -146,7 +152,7 @@ public class ITFriendService {
 		return userRepository.findByUserName(userName);
 	}
 
-	
+
 
 	// -----addImage-----
 
@@ -503,7 +509,7 @@ public class ITFriendService {
 		list.add(user4);
 		list.add(user5);
 
-		return (list);
+		return list;
 	}
 
 	@Test
@@ -668,5 +674,172 @@ public class ITFriendService {
 		assertThrows(AlreadyBlockedException.class, () -> {
 			friendService.blockUser(user.getId(), user2.getId());
 		});
+	}
+
+	@Test
+	public void SuggestedSearchCriteria()
+			throws InstanceNotFoundException, CantFindMoreFriendsException,
+			DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
+			AlreadyAceptedException, InvalidRateException, ItsNotYourFriendException, InvalidAgeException,
+			NotRatedException {
+		final UserImpl user = createUser("UserSSC", "UserSSC", getDateTime(1, 1, 2000), "Male",
+				"coruna", "descripcion");
+		final UserImpl user2 = createUser("UserSSC2", "UserSSC", getDateTime(1, 1, 2000), "Male", "coruna",
+				"descripcion");
+		final UserImpl user3 = createUser("UserSSC3", "UserSSC", getDateTime(1, 1, 2000),
+				"Male", "coruna", "descripcion");
+
+
+		userService.signUp(user);
+		userService.signUp(user2);
+		userService.signUp(user3);
+
+
+		// they are friends now
+		friendService.acceptRecommendation(user.getId(), user2.getId());
+		friendService.acceptRecommendation(user2.getId(), user.getId());
+
+		// User2 rates with 3 points to user
+		userService.rateUser(3, user2.getId(), user.getId());
+
+		final List<String> cityList = new ArrayList<>();
+		cityList.add("coruna");
+		final SearchCriteria criteria = createCriteria("Male", 30, 60, cityList, 1);
+		userService.setSearchCriteria(user.getId(), criteria);
+
+		final SuggestedSearchCriteria suggestionCriteria = friendService.suggestNewCriteria(user.getId());
+
+		// user1 encontraria a user3
+		assertEquals(suggestionCriteria, new SuggestedSearchCriteria(-12, 0, 0, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user3.getId()), LocalDateTime.now()));
+
+		/////////////////////////////////////////////////////////////
+
+		final UserImpl user4 = createUser("UserSSC4", "UserSSC", getDateTime(1, 1, 1930), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user4);
+
+		// user1 encontraria a user4
+		final SuggestedSearchCriteria suggestionCriteria2 = friendService.suggestNewCriteria(user.getId());
+
+		// check if they are not friends now and if user blocked user2
+		assertEquals(suggestionCriteria2, new SuggestedSearchCriteria(0, 30, 0, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user4.getId()), LocalDateTime.now()));
+
+		////////////////////////////////////////////////////////////////
+
+		final UserImpl user5 = createUser("UserSSC5", "UserSSC", getDateTime(1, 1, 2000), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user5);
+
+		final SearchCriteria criteria2 = createCriteria("Male", 18, 60, cityList, 4);
+		userService.setSearchCriteria(user.getId(), criteria2);
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user5.getId()), LocalDateTime.now()));
+		userService.rateUser(1, user2.getId(), user5.getId());
+
+		// user1 encontraria a user5
+		final SuggestedSearchCriteria suggestionCriteria3 = friendService.suggestNewCriteria(user.getId());
+
+		assertEquals(suggestionCriteria3, new SuggestedSearchCriteria(0, 0, -3, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user5.getId()), LocalDateTime.now()));
+		////////////////////////////////////////////////////////////////
+
+		final UserImpl user6 = createUser("UserSSC6", "UserSSC", getDateTime(1, 1, 1930), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user6);
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user6.getId()), LocalDateTime.now()));
+		userService.rateUser(1, user2.getId(), user6.getId());
+
+		// user1 encontraria a user6
+		final SuggestedSearchCriteria suggestionCriteria4 = friendService.suggestNewCriteria(user.getId());
+
+		assertEquals(suggestionCriteria4, new SuggestedSearchCriteria(0, 30, -3, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user6.getId()), LocalDateTime.now()));
+
+		////////////////////////////////////////////////////////////////
+
+		final UserImpl user7 = createUser("UserSSC7", "UserSSC", getDateTime(1, 1, 1820), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user7);
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user7.getId()), LocalDateTime.now()));
+		userService.rateUser(5, user2.getId(), user7.getId());
+
+		final SearchCriteria criteria3 = createCriteria("Male", 18, 181, cityList, 4);
+		userService.setSearchCriteria(user.getId(), criteria3);
+
+		// user1 encontraria a user7
+		final SuggestedSearchCriteria suggestionCriteria5 = friendService.suggestNewCriteria(user.getId());
+
+		assertEquals(suggestionCriteria5, new SuggestedSearchCriteria(0, 19, 0, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user7.getId()), LocalDateTime.now()));
+
+		////////////////////////////////////////////////////////////////
+
+		final UserImpl user8 = createUser("UserSSC8", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user8);
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user8.getId()), LocalDateTime.now()));
+		userService.rateUser(5, user2.getId(), user8.getId());
+
+		final SearchCriteria criteria4 = createCriteria("Male", 28, 60, cityList, 4);
+		userService.setSearchCriteria(user.getId(), criteria4);
+
+		// user1 encontraria a user7
+		final SuggestedSearchCriteria suggestionCriteria6 = friendService.suggestNewCriteria(user.getId());
+
+		assertEquals(suggestionCriteria6, new SuggestedSearchCriteria(-10, 0, 0, 1));
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user8.getId()), LocalDateTime.now()));
+	}
+
+	@Test
+	public void SuggestedSearchCriteriaINF()
+			throws InstanceNotFoundException, CantFindMoreFriendsException, DuplicateInstanceException,
+			InvalidDateException, InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException,
+			InvalidRateException, ItsNotYourFriendException, InvalidAgeException, NotRatedException {
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.suggestNewCriteria(-1L);
+		});
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.suggestNewCriteria(null);
+		});
+
+	}
+
+	@Test
+	public void SuggestedSearchCriteriaCFMF()
+			throws InstanceNotFoundException, CantFindMoreFriendsException, DuplicateInstanceException,
+			InvalidDateException, InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException,
+			InvalidRateException, ItsNotYourFriendException, InvalidAgeException, NotRatedException {
+
+		final UserImpl user = createUser("UserSSCCFMF", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
+				"descripcion");
+		userService.signUp(user);
+
+		assertThrows(CantFindMoreFriendsException.class, () -> {
+			friendService.suggestNewCriteria(user.getId());
+		});
+
 	}
 }

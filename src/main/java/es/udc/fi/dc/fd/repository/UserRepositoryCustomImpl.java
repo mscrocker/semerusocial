@@ -3,7 +3,6 @@ package es.udc.fi.dc.fd.repository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -21,7 +20,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
+	public List<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
 
 		String queryString = "SELECT p FROM User p ";
 
@@ -80,13 +79,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
 
-		final List<UserImpl> users = query.getResultList();
-
-		Optional<UserImpl> user = Optional.empty();
-		if (!users.isEmpty()) {
-			user = Optional.of(users.get(0));
-		}
-
-		return user;
+		return query.getResultList();
 	}
 }
