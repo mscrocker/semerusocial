@@ -73,7 +73,7 @@ public class FriendServiceImpl implements FriendService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public BlockFriendList<FriendListOut> getFriendList(Long userId, int page, int size)
+	public Block<FriendListOut> getFriendList(Long userId, int page, int size)
 			throws InstanceNotFoundException, RequestParamException {
 
 		permissionChecker.checkUserExists(userId);
@@ -108,7 +108,7 @@ public class FriendServiceImpl implements FriendService {
 			friends.add(out);
 		}
 
-		return new BlockFriendList<>(friends, friendsResult.hasNext());
+		return new Block<>(friends, friendsResult.hasNext());
 	}
 
 	@Override

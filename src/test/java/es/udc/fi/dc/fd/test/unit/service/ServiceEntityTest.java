@@ -12,15 +12,5 @@ class ServiceEntityTest {
 	void testBlock() {
 		EntityTestUtils.testEntity(Block.class);
 	}
-	
-	@Test
-	void testBlockFriendList() {
-		EntityTestUtils.testEntity(BlockFriendList.class);
-	}
-	
-	@Test
-	void testBlockImageByUserId() {
-		EntityTestUtils.testEntity(BlockImageByUserId.class);
-	}
 
 }

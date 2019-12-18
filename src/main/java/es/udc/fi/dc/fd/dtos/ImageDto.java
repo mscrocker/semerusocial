@@ -4,23 +4,24 @@ import java.io.Serializable;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class ReturnedImagesDto implements Serializable {
-	private static final long serialVersionUID = 1328776989450853492L;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
+public class ImageDto implements Serializable {
+	private static final long serialVersionUID = 1328776989450853493L;
 
 	@NotEmpty
 	private Long imageId;
 	
-	@NotEmpty
-	private String data;
-
-
-	public ReturnedImagesDto(Long imageId, String data) {
-		super();
-		setImageId(imageId);
-		setData(data);
-	}
+	@JsonUnwrapped
+	private ImageDataDto imageData;
 	
-	public ReturnedImagesDto() {
+	public ImageDto(Long imageId, ImageDataDto imageData) {
+		super();
+		this.imageId = imageId;
+		this.imageData = imageData;
+	}
+
+	public ImageDto() {
 		super();
 	}
 	
@@ -32,19 +33,19 @@ public class ReturnedImagesDto implements Serializable {
 		this.imageId = imageId;
 	}
 
-	public String getData() {
-		return data;
+	public ImageDataDto getImageData() {
+		return imageData;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public void setImageData(ImageDataDto imageData) {
+		this.imageData = imageData;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((imageData == null) ? 0 : imageData.hashCode());
 		result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
 		return result;
 	}
@@ -57,11 +58,11 @@ public class ReturnedImagesDto implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ReturnedImagesDto other = (ReturnedImagesDto) obj;
-		if (data == null) {
-			if (other.data != null)
+		ImageDto other = (ImageDto) obj;
+		if (imageData == null) {
+			if (other.imageData != null)
 				return false;
-		} else if (!data.equals(other.data))
+		} else if (!imageData.equals(other.imageData))
 			return false;
 		if (imageId == null) {
 			if (other.imageId != null)
@@ -73,7 +74,8 @@ public class ReturnedImagesDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ReturnedImagesDto [imageId=" + imageId + ", data=" + data + "]";
+		return "ImageDto [imageId=" + imageId + ", imageData=" + imageData + "]";
 	}
 
+	
 }

@@ -55,7 +55,7 @@ import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
-import es.udc.fi.dc.fd.service.BlockFriendList;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.FriendService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -162,7 +162,7 @@ public class TestFriendController {
 		final List<FriendListOut> listFriends = new ArrayList<>();
 		listFriends.add(new FriendListOut(friend1, 2));
 
-		final BlockFriendList<FriendListOut> block = new BlockFriendList<>(listFriends, false);
+		final Block<FriendListOut> block = new Block<>(listFriends, false);
 		when(friendServiceMock.getFriendList(USERID_OK, 0, 10)).thenReturn(block);
 
 		// @formatter:off
@@ -173,8 +173,8 @@ public class TestFriendController {
 				.requestAttr("size", 0))
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.friends").isNotEmpty())
-		.andExpect(jsonPath("$.existMoreFriends").value(false));
+		.andExpect(jsonPath("$.elements").isNotEmpty())
+		.andExpect(jsonPath("$.existMoreElements").value(false));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -197,7 +197,7 @@ public class TestFriendController {
 			throws InstanceNotFoundException, RequestParamException, Exception {
 
 		final List<UserImpl> listFriends = new ArrayList<>();
-		final BlockFriendList<UserImpl> block = new BlockFriendList<>(listFriends, false);
+		final Block<UserImpl> block = new Block<>(listFriends, false);
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
 		.getFriendList(USERID_NOTFOUND, 1, 10);

@@ -32,7 +32,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import es.udc.fi.dc.fd.controller.entity.UserController;
@@ -47,11 +50,13 @@ import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
-import es.udc.fi.dc.fd.dtos.UpdateProfileInDto;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
+import es.udc.fi.dc.fd.service.Block;
 import es.udc.fi.dc.fd.service.UserService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -69,6 +74,16 @@ public final class TestUserController {
 
 	private UserService userServiceMock;
 
+	private RegisterParamsDto getValidRegisterParams() {
+		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new DateUserProfileDto( 1, 2, 2000, new AgelessUserProfileDto("mujer", "coruna",
+				"descripcion")));
+	}
+	
+	private DateUserProfileDto getValidUserProfileDto() {
+		return new DateUserProfileDto( 1, 1, 2000, new AgelessUserProfileDto("Patata", "Patatolandia",
+				"descripción"));
+	}
+	
 	/**
 	 * Default constructor.
 	 */
@@ -189,8 +204,7 @@ public final class TestUserController {
 	public void TestUserController_SignUp()
 			throws IOException, InvalidDateException, DuplicateInstanceException, Exception {
 
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 2000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		when(userServiceMock.signUp(any(UserImpl.class))).thenReturn(1L);
 
@@ -216,8 +230,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_SignUp_DuplicateInstanceException()
 			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 2000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
 		doThrow(new DuplicateInstanceException(" ", UserConversor.fromRegisterDto(params))).when(userServiceMock)
@@ -244,8 +257,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_SignUp_InvalidDateException()
 			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
-		final RegisterParamsDto params = new RegisterParamsDto(USER_NAME, PASSWORD, 1, 2, 1000, "mujer", "coruna",
-				"descripcion");
+		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
 		doThrow(new InvalidDateException(" ")).when(userServiceMock).signUp(any(UserImpl.class));
@@ -478,8 +490,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdateProfile() throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		// @formatter:off
@@ -502,8 +513,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InstanceNotFoundException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updateProfile(any(Long.class),
@@ -520,6 +530,7 @@ public final class TestUserController {
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
+		
 		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
@@ -529,8 +540,7 @@ public final class TestUserController {
 	@Test
 	public void TestUserController_UpdateProfile_InvalidDateException()
 			throws InstanceNotFoundException, InvalidDateException, Exception {
-		final UpdateProfileInDto newProfile = new UpdateProfileInDto(1, 1, 2000, "Patata", "Patatolandia",
-				"descripción");
+		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		doThrow(new InvalidDateException("")).when(userServiceMock).updateProfile(any(Long.class), any(UserImpl.class));
@@ -702,6 +712,38 @@ public final class TestUserController {
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));
 		assertThat(premiumCaptor.getValue(), is(true));
+
+	}
+
+	@Test
+	public void TestUserController_getTopUsers() throws Exception {
+		final UserImpl user = createUser("name",  "pass",  LocalDateTime.now(), "Patat", "Coruña", "desc");
+		final List<UserImpl> items = new ArrayList<>();
+		items.add(user);
+		final Block<UserImpl> blockRet = new Block<>(items, false);
+
+		when(userServiceMock.getTopUsers("Coruña", 0, 10)).thenReturn(blockRet);
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("page", "0");
+		params.add("city", "Coruña");
+		params.add("size", "10");
+
+		// @formatter:off
+		final ResultActions a = mockMvc.perform(get(UrlConfig.URL_USER_TOPUSERS_GET)
+				.contentType(APPLICATION_JSON_UTF8)
+				.params(params));
+		a.andExpect(status().isOk());
+		// @formatter:on
+
+		final ArgumentCaptor<String> cityCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(userServiceMock, times(1)).getTopUsers(cityCaptor.capture(), pageCaptor.capture().intValue(),
+				sizeCaptor.capture().intValue());
+		verifyNoMoreInteractions(userServiceMock);
+		assertThat(cityCaptor.getValue(), is("Coruña"));
+		assertThat(pageCaptor.getValue(), is(0));
+		assertThat(sizeCaptor.getValue(), is(10));
 
 	}
 

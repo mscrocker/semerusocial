@@ -47,6 +47,8 @@ public final class UrlConfig {
 
 	public static final String URL_USER_PREMIUM_PUT = "/backend/users/premium";
 
+	public static final String URL_USER_TOPUSERS_GET = "/backend/users/topUsers";
+
 	public static final String URL_IMAGE_ADD_POST = "/backend/images/add";
 
 	public static final String URL_IMAGE_EDIT_PUT = "/backend/images/edit/{imageId}";
@@ -58,6 +60,8 @@ public final class UrlConfig {
 	public static final String URL_IMAGE_GETIMAGEBYID_GET = "/backend/images/carrusel/{imageId}";
 
 	public static final String URL_IMAGE_GETFIRST_GET = "/backend/images/first";
+
+	public static final String URL_IMAGE_GETANONYMOUS_GET = "/backend/images/anonymousCarrusel";
 
 	public static final String URL_FRIEND_ACCEPT_POST = "/backend/friends/accept";
 
@@ -86,7 +90,7 @@ public final class UrlConfig {
 	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
 	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
 	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
-	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel/**";
+	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel";
 
 	/**
 	 * Default constructor to avoid initialization.

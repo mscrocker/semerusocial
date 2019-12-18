@@ -198,9 +198,9 @@ let profile = null;
 				}
 				response.json().then((body) => {
 					profile.UserData.birthDate = new Date();
-					profile.UserData.birthDate.setUTCFullYear(body.date.year);
-					profile.UserData.birthDate.setUTCMonth(body.date.monthValue - 1);
-					profile.UserData.birthDate.setUTCDate(body.date.dayOfMonth);
+					profile.UserData.birthDate.setUTCFullYear(body.year);
+					profile.UserData.birthDate.setUTCMonth(body.month);
+					profile.UserData.birthDate.setUTCDate(body.day);
 					
 					profile.UserData.sex = body.sex;
 					profile.UserData.city = body.city;
@@ -238,9 +238,9 @@ let profile = null;
 					document.getElementById("ageField").innerText = ""+new Date(
 							Date.now() -
 							Date.UTC(
-								body.date.year,
-								body.date.monthValue - 1,
-								body.date.dayOfMonth
+								body.year,
+								body.month,
+								body.day
 							)
 					).getYear() - 70;
 					document.getElementById("cityField").innerText = ""+body.city;

@@ -33,16 +33,17 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import es.udc.fi.dc.fd.controller.entity.ImageController;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourImageException;
-import es.udc.fi.dc.fd.dtos.ImageCreationDto;
+import es.udc.fi.dc.fd.dtos.ImageDataDto;
 import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
-import es.udc.fi.dc.fd.service.BlockImageByUserId;
 import es.udc.fi.dc.fd.service.ImageService;
 import es.udc.fi.dc.fd.test.config.UrlConfig;
 
@@ -135,7 +136,7 @@ public class TestImageController {
 		user.setId(1L);
 
 		// Imagen de entrada al controller
-		final ImageCreationDto imageDto = new ImageCreationDto();
+		final ImageDataDto imageDto = new ImageDataDto();
 		imageDto.setData(image);
 
 		// Imagen que devuelve el servicio
@@ -168,7 +169,7 @@ public class TestImageController {
 		final byte[] converted = getBytes();
 
 		// Imagen de entrada al controller
-		final ImageCreationDto imageDto = new ImageCreationDto();
+		final ImageDataDto imageDto = new ImageDataDto();
 		imageDto.setData(image);
 
 		doThrow(new InstanceNotFoundException("User", 1L)).when(imageServiceMock).addImage(any(ImageImpl.class),
@@ -315,124 +316,34 @@ public class TestImageController {
 
 	}
 
-	/**** TESTS GETIMAGEBYID *********************************************/
+	/***** TESTS GET ANONYMOUS CARRUSEL **************************/
 
 	@Test
-	public void TestImageController_getImageById()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
+	public void TestImageController_getAnonymousCarrusel() throws Exception {
+		final String city = "coruña";
+		final int page = 0;
 
-		final String image = getImage();
-		// resultList.add(image);
-		final byte[] converted = getBytes();
-		final ImageImpl imageImpl = new ImageImpl();
+		final List<ImageImpl> images = new ArrayList<>();
+		images.add(new ImageImpl(new byte[] { 1, 2, 3 }, "png"));
 
-		final UserImpl user = createUser(USER_NAME, PASSWORD, getDateTime(1, 2, 2000), "mujer", "coruna",
-				"descripcion");
-		user.setId(2L);
-		imageImpl.setData(converted);
-		imageImpl.setImageId(1L);
-		imageImpl.setUser(user);
+		final Block<ImageImpl> block = new Block<>(images, false);
 
-		final BlockImageByUserId<ImageImpl> blockImages = new BlockImageByUserId<>(imageImpl, null, 2L);
+		when(imageServiceMock.getAnonymousCarrusel(city, page)).thenReturn(block);
 
-		when(imageServiceMock.getImageByUserId(any(Long.class), any(Long.class))).thenReturn(blockImages);
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
-		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGEBYID_GET, "1").contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 2L)).andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.prevId").isEmpty())
-		.andExpect(jsonPath("$.nextId").value(2)).andExpect(jsonPath("$.image.data").value(image));
+		params.add("city", city);
+		params.add("page", String.valueOf(page));
 
-		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
-		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
+		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETANONYMOUS_GET).contentType(APPLICATION_JSON_UTF8).params(params))
+		.andExpect(status().isOk());
 
-		verify(imageServiceMock, times(1)).getImageByUserId(imageIdCaptor.capture(), userIdCaptor.capture());
+		final ArgumentCaptor<String> cityCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
+
+		verify(imageServiceMock, times(1)).getAnonymousCarrusel(cityCaptor.capture(), pageCaptor.capture());
 		verifyNoMoreInteractions(imageServiceMock);
-		assertThat(userIdCaptor.getValue(), is(2L));
-		assertThat(imageIdCaptor.getValue(), is(1L));
-
-	}
-
-	@Test
-	public void TestImageController_getImageById_InstanceNotFoundException()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
-
-		when(imageServiceMock.getImageByUserId(any(Long.class), any(Long.class)))
-		.thenThrow(new InstanceNotFoundException(null, 1L));
-
-		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGEBYID_GET, "1").contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 2L)).andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
-
-		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
-		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-		verify(imageServiceMock, times(1)).getImageByUserId(imageIdCaptor.capture(), userIdCaptor.capture());
-		verifyNoMoreInteractions(imageServiceMock);
-		assertThat(userIdCaptor.getValue(), is(2L));
-		assertThat(imageIdCaptor.getValue(), is(1L));
-
-	}
-
-	@Test
-	public void TestImageController_getImageById_ItsNotYourImageException()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
-
-		when(imageServiceMock.getImageByUserId(any(Long.class), any(Long.class)))
-		.thenThrow(new ItsNotYourImageException(" "));
-
-		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGEBYID_GET, "1").contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 2L)).andExpect(status().isForbidden())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.ItsNotYourImageException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
-
-		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
-		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-		verify(imageServiceMock, times(1)).getImageByUserId(imageIdCaptor.capture(), userIdCaptor.capture());
-		verifyNoMoreInteractions(imageServiceMock);
-		assertThat(userIdCaptor.getValue(), is(2L));
-		assertThat(imageIdCaptor.getValue(), is(1L));
-
-	}
-
-	/***** TESTS GET FIRST IMAGE BY USER ID **************************/
-
-	@Test
-	public void TestImageController_getFirstImageIdByUserId() throws InstanceNotFoundException, Exception {
-		final long userId = 44L;
-
-		when(imageServiceMock.getFirstImageIdByUserId(any(Long.class))).thenReturn(1L);
-
-		mockMvc.perform(
-				get(UrlConfig.URL_IMAGE_GETFIRST_GET).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", userId))
-		.andExpect(status().isOk()).andExpect(jsonPath("$.imageId").value(1L));
-
-		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-		verify(imageServiceMock, times(1)).getFirstImageIdByUserId(userIdCaptor.capture());
-		verifyNoMoreInteractions(imageServiceMock);
-		assertThat(userIdCaptor.getValue(), is(userId));
-
-	}
-
-	@Test
-	public void TestImageController_getFirstImageIdByUserId_InstanceNotFoundException()
-			throws InstanceNotFoundException, Exception {
-
-		when(imageServiceMock.getFirstImageIdByUserId(any(Long.class)))
-		.thenThrow(new InstanceNotFoundException(null, 1L));
-
-		mockMvc.perform(
-				get(UrlConfig.URL_IMAGE_GETFIRST_GET).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
-		.andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
-
-		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-		verify(imageServiceMock, times(1)).getFirstImageIdByUserId(userIdCaptor.capture());
-		verifyNoMoreInteractions(imageServiceMock);
-		assertThat(userIdCaptor.getValue(), is(1L));
+		assertThat(cityCaptor.getValue(), is(city));
+		assertThat(pageCaptor.getValue(), is(page));
 	}
 }
