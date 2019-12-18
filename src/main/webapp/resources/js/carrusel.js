@@ -22,11 +22,14 @@ const carrusel = {
 	
 	authenticatedInit: function(baseURL) {
 		this.baseInit(baseURL);
+		let elements = document.getElementsByClassName("only-auth-elements");
+		for (let i = 0; i < elements.length; i++){
+			elements[i].classList.remove("hidden");
+		}
 	},
 	
 	anonymousInit: function(baseURL, city){
 		this.city = city;
-		this.queryPage = this.queryAnonymousPage;
 		this.baseInit(baseURL);
 	},
 	
@@ -51,50 +54,16 @@ const carrusel = {
 		}
 	},
 	
-	
-	queryAnonymousPage: function(pageNumber){
-		document.getElementById("imgField").src = this.loadingImageURL;
-		this.currentCachedPage = pageNumber;
-		
-		const url = this.baseURL + "backend/images/anonymousCarrusel?page=" + pageNumber + "&city=" + encodeURIComponent(this.city);
-		fetch(url, {
-			method: 'GET'
-		}, (response) => {
-			
-			if (response.status !== 200){
-				customAlert.showAlertFromResponse(response);
-				return;
-			}
-			response.json().then((body) => {
-				
-				
-				if (body.elements.length === 0){
-					if (pageNumber === 0){
-						window.location.href = this.baseURL + "/addImage";
-					} else {
-						customAlert.showAlert({globalError: "Error: no image available"});
-					}
-					return;
-				}
-				
-				this.cachedImages = body.elements;
-				this.hasNextImages = body.existMoreElements;
-				this.displayCachedImage(this.currentImageIndex);
-				this.updateButtons();
-			}).catch((errors) => {
-				customAlert.showAlert("Internal server error");
-			});
-		}, (errors) => {
-			customAlert.showAlert("Internal server error");
-		});
-		
-	},
-	
 	queryPage: function(pageNumber){
 		document.getElementById("imgField").src = this.loadingImageURL;
 		this.currentCachedPage = pageNumber;
+		let url = null;
+		if (this.city === null){
+			url = this.baseURL + "backend/images/carrusel?page=" + pageNumber;
+		} else {
+			url = this.baseURL + "backend/images/anonymousCarrusel?page=" + pageNumber + "&city=" + encodeURIComponent(this.city);
+		}
 		
-		const url = this.baseURL + "backend/images/carrusel?page=" + pageNumber;
 		user.authFetch(url, {
 			method: 'GET'
 		}, (response) => {
@@ -108,7 +77,12 @@ const carrusel = {
 				
 				if (body.elements.length === 0){
 					if (pageNumber === 0){
-						window.location.href = this.baseURL + "/addImage";
+						if (this.city === null){
+							window.location.href = this.baseURL + "/addImage";
+						} else {
+							window.location.href = this.baseURL + "/login";
+						}
+						
 					} else {
 						customAlert.showAlert({globalError: "Error: no image available"});
 					}
