@@ -39,20 +39,20 @@ import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NotRatedException;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
 import es.udc.fi.dc.fd.dtos.BlockDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FieldErrorDto;
+import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaConversor;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
-import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
-import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserAuthenticatedDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
-import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.jwt.JwtGenerator;
 import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 import es.udc.fi.dc.fd.jwt.JwtInfo;
@@ -277,7 +277,6 @@ public class UserController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public BlockDto<FullUserProfileDto> getTopUsers(@RequestParam String city,
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
-		System.out.println("a");
 		final Block<UserImpl> users = userService.getTopUsers(city, page, size);
 		return UserConversor.toReturnedUserBlockDto(users);
 	}

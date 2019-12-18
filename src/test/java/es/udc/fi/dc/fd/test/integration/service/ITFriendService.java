@@ -39,6 +39,8 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
@@ -146,7 +148,7 @@ public class ITFriendService {
 		return userRepository.findByUserName(userName);
 	}
 
-	
+
 
 	// -----addImage-----
 
@@ -503,7 +505,7 @@ public class ITFriendService {
 		list.add(user4);
 		list.add(user5);
 
-		return (list);
+		return list;
 	}
 
 	@Test
@@ -517,7 +519,7 @@ public class ITFriendService {
 			assertEquals(user1Result.getElements().size(), i == 2 ? 0 : 2);
 			assertEquals(user1Result.isExistMoreElements(), i == 0);
 		}
-		
+
 
 	}
 
@@ -526,7 +528,7 @@ public class ITFriendService {
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
 		final UserImpl user5 = initialFriendList().get(4);
 
-		
+
 		Block<FriendListOut> user5Result;
 		for (int i = 0; i < 2; i++) {
 			user5Result = friendService.getFriendList(user5.getId(), i, 2);
@@ -665,5 +667,60 @@ public class ITFriendService {
 		assertThrows(AlreadyBlockedException.class, () -> {
 			friendService.blockUser(user.getId(), user2.getId());
 		});
+	}
+
+	// searchUsersByMetadataAndKeywords
+	@Test
+	public void testSearchUsersByMetadataAndKeywords() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioSearch", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra1");
+		final UserImpl user2 = createUser("usuarioSearch2", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra2");
+		final UserImpl user3 = createUser("usuarioSearch3", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra3");
+		final UserImpl user4 = createUser("usuarioSearch4", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"lugo", "palabra1");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+
+		final List<String> cities = Arrays.asList("coruna", "gotham");
+
+		final SearchCriteriaDto searchCriteriaDto = new SearchCriteriaDto("Male", 18, 22, cities, 1);
+
+		final SearchUsersDto searchUsersDto = new SearchUsersDto("palabra1 palabra2", searchCriteriaDto);
+
+		final Block<UserImpl> result1 = friendService
+				.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 10);
+
+		final List<UserImpl> expected1 = new ArrayList<>();
+		expected1.add(user);
+		expected1.add(user2);
+		expected1.add(user4);
+
+		assertEquals(expected1, result1.getElements());
+
+		final SearchUsersDto searchUsersDto2 = new SearchUsersDto("palabra4", null);
+
+		final Block<UserImpl> result2 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto2, 0, 10);
+
+		final List<UserImpl> expected2 = new ArrayList<>();
+
+		assertEquals(expected2, result2.getElements());
+
+		final List<String> cities3 = Arrays.asList("lugo");
+
+		final SearchCriteriaDto searchCriteriaDto3 = new SearchCriteriaDto("Female", 23, 28, cities3, 1);
+
+		final SearchUsersDto searchUsersDto3 = new SearchUsersDto(null, searchCriteriaDto3);
+
+		final Block<UserImpl> result3 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto3, 0, 10);
+
+		final List<UserImpl> expected3 = new ArrayList<>();
+		expected3.add(user4);
+
+		assertEquals(expected3, result3.getElements());
 	}
 }

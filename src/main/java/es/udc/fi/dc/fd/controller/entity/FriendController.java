@@ -33,9 +33,11 @@ import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FriendConversor;
-import es.udc.fi.dc.fd.dtos.UnratedFriendDto;
-import es.udc.fi.dc.fd.dtos.RatedFriendDto;
+import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
+import es.udc.fi.dc.fd.dtos.RatedFriendDto;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
+import es.udc.fi.dc.fd.dtos.UnratedFriendDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
@@ -203,7 +205,7 @@ public class FriendController {
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
 					throws InstanceNotFoundException, RequestParamException {
 		final Block<FriendListOut> friends = friendService.getFriendList(userId, page, size);
-		
+
 		return FriendConversor.toGetFriendListOutDto(friends);
 	}
 
@@ -212,6 +214,15 @@ public class FriendController {
 	public void blockUser(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
 			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
 		friendService.blockUser(userId, params.getId());
+	}
+
+	@GetMapping("/searchUsers")
+	public BlockDto<FullUserProfileDto> searchUsersByMetadataAndKeywords(@RequestBody @Validated SearchUsersDto params,
+			@RequestParam(defaultValue = "0") @Min(0) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size) {
+		final Block<UserImpl> users = friendService.searchUsersByMetadataAndKeywords(params, page, size);
+
+		return FriendConversor.toFullUserProfileDto(users);
 	}
 
 }

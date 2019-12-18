@@ -40,4 +40,20 @@ public class FriendConversor {
 		return friendDto;
 	}
 
+	public final static BlockDto<FullUserProfileDto> toFullUserProfileDto(Block<UserImpl> users) {
+		final List<UserImpl> usersIn = users.getElements();
+
+		final List<FullUserProfileDto> usersOut = usersIn.stream().map(e -> toFullUserProfileDto(e))
+				.collect(Collectors.toList());
+
+		return new BlockDto<>(usersOut, users.isExistMoreElements());
+	}
+
+	public final static FullUserProfileDto toFullUserProfileDto(UserImpl out) {
+		return new FullUserProfileDto(out.getRating(), out.isPremium(),
+				new DateUserProfileDto(out.getDate().getDayOfMonth(), out.getDate().getMonthValue(),
+						out.getDate().getYear(),
+						new AgelessUserProfileDto(out.getSex(), out.getCity(), out.getDescription())));
+	}
+
 }
