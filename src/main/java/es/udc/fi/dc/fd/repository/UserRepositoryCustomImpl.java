@@ -2,6 +2,7 @@ package es.udc.fi.dc.fd.repository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,6 +11,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -44,9 +50,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		// Que no te sugiera a ti mismo
 		queryString += ") AND p.id != :userId ";
 
-		//		if (!criteria.getCity().isEmpty()) {
-		//			queryString += "AND p.city IN :cities ";
-		//		}
+		// if (!criteria.getCity().isEmpty()) {
+		// queryString += "AND p.city IN :cities ";
+		// }
 
 		// Si esta bloqueado que no lo sugiera
 		queryString += "AND p.id NOT IN (SELECT b.blockedId.object FROM Blocked b WHERE b.blockedId.subject=:userId) ";
@@ -107,6 +113,75 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		return findByCriteriaQuery(criteria, userId, true).getResultList().size();
 
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Slice<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size) {
+		String queryString = "SELECT u FROM User u WHERE ";
+
+		if (params.keywords != null) {
+			final String[] keywords = params.keywords.split(" ");
+			final StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("( ");
+			for (int i = 0; i < keywords.length - 1; i++) {
+				stringBuilder.append("u.description LIKE ");
+				stringBuilder.append(":keyword" + i);
+				stringBuilder.append(" OR ");
+			}
+			stringBuilder.append("u.description LIKE ");
+			stringBuilder.append(":keyword" + (keywords.length - 1));
+			stringBuilder.append(" )");
+			queryString += stringBuilder.toString();
+		}
+
+		if (params.metadata != null && params.keywords != null) {
+			queryString += " AND ";
+		}
+
+		SexCriteriaEnum sex = null;
+		Integer minAge = null;
+		Integer maxAge = null;
+		List<String> cities = null;
+		Double minRate = null;
+		if (params.metadata != null) {
+			sex = params.metadata.getSex();
+			minAge = params.metadata.getMinAge();
+			maxAge = params.metadata.getMaxAge();
+			cities = params.metadata.getCity();
+			minRate = (double) params.metadata.getMinRate();
+
+			queryString += "( u.sex = :sex";
+			queryString += " OR (timestampdiff(year, u.date, curdate()) >= :minAge AND timestampdiff(year, u.date, curdate()) <= :maxAge )";
+			queryString += " OR u.city IN (:cities)";
+			queryString += " OR u.rating >= :minRate )";
+		}
+
+		final Query query = entityManager.createQuery(queryString).setFirstResult(page * size).setMaxResults(size + 1);
+
+		if (params.keywords != null) {
+			final String[] keywords = params.keywords.split(" ");
+			for (int i = 0; i < keywords.length; i++) {
+				query.setParameter("keyword" + i, keywords[i]);
+			}
+		}
+
+		if (params.metadata != null) {
+			query.setParameter("sex", sex.toString());
+			query.setParameter("minAge", minAge);
+			query.setParameter("maxAge", maxAge);
+			query.setParameter("cities", cities);
+			query.setParameter("minRate", minRate);
+		}
+
+		final ArrayList<UserImpl> result = (ArrayList<UserImpl>) query.getResultList();
+
+		final boolean hasNext = result.size() == size + 1;
+		if (hasNext) {
+			result.remove(result.size() - 1);
+		}
+		return new SliceImpl<>(result, PageRequest.of(page, size), hasNext);
 
 	}
 }

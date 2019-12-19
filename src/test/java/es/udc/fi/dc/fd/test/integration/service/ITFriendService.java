@@ -1,6 +1,7 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,6 +41,8 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NotRatedException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
@@ -93,7 +96,6 @@ public class ITFriendService {
 
 	@Autowired
 	private BlockedRepository blockedRepository;
-
 
 	@Autowired
 	public ITFriendService() {
@@ -152,8 +154,6 @@ public class ITFriendService {
 		return userRepository.findByUserName(userName);
 	}
 
-
-
 	// -----addImage-----
 
 	@Test
@@ -172,9 +172,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testInvalidCriteriaRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException, InvalidRateException, NotRatedException {
+	public void testInvalidCriteriaRequest() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException, InvalidRateException, NotRatedException {
 		final UserImpl user1 = signUp("manolo5", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(50);
 		setSearchCriteria(user1.getId(), "Female", 18, 50, "Catalunya");
@@ -247,9 +246,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void testInvalidCriteriaReject()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException, InvalidRateException, NotRatedException {
+	public void testInvalidCriteriaReject() throws InstanceNotFoundException, InvalidRecommendationException,
+	AlreadyRejectedException, AlreadyAceptedException, InvalidRateException, NotRatedException {
 
 		final UserImpl user1 = signUp("manolo11", "pass", 22, "Male", "Catalunya");
 		// user1.setCriteriaMaxAge(99);
@@ -330,8 +328,7 @@ public class ITFriendService {
 	 *************************************/
 	@Test
 
-
-	//	@Sql(scripts = "/initialData.sql")
+	// @Sql(scripts = "/initialData.sql")
 	public void TestSuggestFriend() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
 		/*
 		 * User id=1: CriteriaSex = Female CriteriaMinAge = "18" CriteriaMaxAge = "99"
@@ -410,9 +407,8 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void TestSuggestFriendMinRate()
-			throws InstanceNotFoundException, InvalidRateException, NotRatedException, ItsNotYourFriendException,
-			RequestParamException {
+	public void TestSuggestFriendMinRate() throws InstanceNotFoundException, InvalidRateException, NotRatedException,
+	ItsNotYourFriendException, RequestParamException {
 
 		final UserImpl user1 = signUp("testSuggestFriendMinRate", "pass", 22, "Male", "osaka");
 		final UserImpl user2 = signUp("testSuggestFriendMinRate2", "pass", 22, "Male", "osaka");
@@ -455,8 +451,7 @@ public class ITFriendService {
 	}
 
 	@Test
-	public void TestSuggestFriendPremium()
-			throws InstanceNotFoundException, InvalidRateException, NotRatedException {
+	public void TestSuggestFriendPremium() throws InstanceNotFoundException, InvalidRateException, NotRatedException {
 
 		final UserImpl user1 = signUp("testSuggestAAAA", "pass", 80, "Female", "pepe");
 		final UserImpl user2 = signUp("testSuggestBBBB", "pass", 22, "Male", "osaka");
@@ -469,7 +464,6 @@ public class ITFriendService {
 		assertTrue(userSuggested.isPresent());
 		assertEquals(userSuggested.get().getUserName(), user1.getUserName());
 	}
-
 
 	@Test
 	public void TestSuggestFriendInstanceNotFoundException() throws InstanceNotFoundException {
@@ -524,14 +518,12 @@ public class ITFriendService {
 			assertEquals(user1Result.isExistMoreElements(), i == 0);
 		}
 
-
 	}
 
 	@Test
 	public void testGetFriendListUser5()
 			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, RequestParamException {
 		final UserImpl user5 = initialFriendList().get(4);
-
 
 		Block<FriendListOut> user5Result;
 		for (int i = 0; i < 2; i++) {
@@ -590,8 +582,7 @@ public class ITFriendService {
 		final UserImpl user = createUser("usuarioBlockUser", "contraseñaBlockUser", getDateTime(1, 1, 2000), "hombre",
 				"coruna", "descripcion");
 		final UserImpl user2 = createUser("usuarioBlockUser2", "contraseñaBlockUser2", getDateTime(1, 1, 2000),
-				"hombre",
-				"coruna", "descripcion");
+				"hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 		userService.signUp(user2);
@@ -614,8 +605,7 @@ public class ITFriendService {
 	@Test
 	public void testBlockUserINFE() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("usuarioBlockUserINFE", "contraseñaBlockUserINFE", getDateTime(1, 1, 2000),
-				"hombre",
-				"coruna", "descripcion");
+				"hombre", "coruna", "descripcion");
 		userService.signUp(user);
 
 		// user2 does not exists
@@ -655,8 +645,8 @@ public class ITFriendService {
 	AlreadyAceptedException {
 		final UserImpl user = createUser("usuarioBlockABE", "contraseñaBlockABE", getDateTime(1, 1, 2000), "hombre",
 				"coruna", "descripcion");
-		final UserImpl user2 = createUser("usuarioBlock2ABE", "contraseñaBlock2ABE", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "descripcion");
+		final UserImpl user2 = createUser("usuarioBlock2ABE", "contraseñaBlock2ABE", getDateTime(1, 1, 2000), "hombre",
+				"coruna", "descripcion");
 
 		userService.signUp(user);
 		userService.signUp(user2);
@@ -675,22 +665,19 @@ public class ITFriendService {
 
 	@Test
 	public void SuggestedSearchCriteria()
-			throws InstanceNotFoundException, CantFindMoreFriendsException,
-			DuplicateInstanceException, InvalidDateException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException, InvalidRateException, ItsNotYourFriendException, InvalidAgeException,
-			NotRatedException {
-		final UserImpl user = createUser("UserSSC", "UserSSC", getDateTime(1, 1, 2000), "Male",
-				"coruna", "descripcion");
+			throws InstanceNotFoundException, CantFindMoreFriendsException, DuplicateInstanceException,
+			InvalidDateException, InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException,
+			InvalidRateException, ItsNotYourFriendException, InvalidAgeException, NotRatedException {
+		final UserImpl user = createUser("UserSSC", "UserSSC", getDateTime(1, 1, 2000), "Male", "coruna",
+				"descripcion");
 		final UserImpl user2 = createUser("UserSSC2", "UserSSC", getDateTime(1, 1, 2000), "Male", "coruna",
 				"descripcion");
-		final UserImpl user3 = createUser("UserSSC3", "UserSSC", getDateTime(1, 1, 2000),
-				"Male", "coruna", "descripcion");
-
+		final UserImpl user3 = createUser("UserSSC3", "UserSSC", getDateTime(1, 1, 2000), "Male", "coruna",
+				"descripcion");
 
 		userService.signUp(user);
 		userService.signUp(user2);
 		userService.signUp(user3);
-
 
 		// they are friends now
 		friendService.acceptRecommendation(user.getId(), user2.getId());
@@ -818,6 +805,81 @@ public class ITFriendService {
 		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user8.getId()), LocalDateTime.now()));
 	}
 
+	// searchUsersByMetadataAndKeywords
+	@Test
+	public void testSearchUsersByMetadataAndKeywords() throws DuplicateInstanceException, InvalidDateException {
+		final UserImpl user = createUser("usuarioSearch", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra1");
+		final UserImpl user2 = createUser("usuarioSearch2", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra2");
+		final UserImpl user3 = createUser("usuarioSearch3", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"coruna", "palabra3");
+		final UserImpl user4 = createUser("usuarioSearch4", "contraseñaBlockABE", getDateTime(1, 1, 2000), "Male",
+				"lugo", "palabra1");
+
+		userService.signUp(user);
+		userService.signUp(user2);
+		userService.signUp(user3);
+		userService.signUp(user4);
+
+		final List<String> cities = Arrays.asList("coruna", "gotham");
+
+		final SearchCriteriaDto searchCriteriaDto = new SearchCriteriaDto("Male", 18, 22, cities, 1);
+
+		final SearchUsersDto searchUsersDto = new SearchUsersDto("palabra1 palabra2", searchCriteriaDto);
+
+		final Block<UserImpl> result1 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 10);
+
+		final List<UserImpl> expected1 = new ArrayList<>();
+		expected1.add(user);
+		expected1.add(user2);
+		expected1.add(user4);
+
+		assertEquals(expected1, result1.getElements());
+		assertFalse(result1.isExistMoreElements());
+
+		final Block<UserImpl> result1v2 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 2);
+
+		final List<UserImpl> expected1v2 = new ArrayList<>();
+		expected1v2.add(user);
+		expected1v2.add(user2);
+
+		assertEquals(expected1v2, result1v2.getElements());
+		assertTrue(result1v2.isExistMoreElements());
+
+		final Block<UserImpl> result1v3 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto, 1, 2);
+
+		final List<UserImpl> expected1v3 = new ArrayList<>();
+		expected1v3.add(user4);
+
+		assertEquals(expected1v3, result1v3.getElements());
+		assertFalse(result1v3.isExistMoreElements());
+
+		final SearchUsersDto searchUsersDto2 = new SearchUsersDto("palabra4", null);
+
+		final Block<UserImpl> result2 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto2, 0, 10);
+
+		final List<UserImpl> expected2 = new ArrayList<>();
+
+		assertEquals(expected2, result2.getElements());
+		assertFalse(result2.isExistMoreElements());
+
+		final List<String> cities3 = Arrays.asList("lugo");
+
+		final SearchCriteriaDto searchCriteriaDto3 = new SearchCriteriaDto("Female", 23, 28, cities3, 1);
+
+		final SearchUsersDto searchUsersDto3 = new SearchUsersDto(null, searchCriteriaDto3);
+
+		final Block<UserImpl> result3 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto3, 0, 10);
+
+		final List<UserImpl> expected3 = new ArrayList<>();
+		expected3.add(user4);
+
+		assertEquals(expected3, result3.getElements());
+		assertFalse(result3.isExistMoreElements());
+
+	}
+
 	@Test
 	public void SuggestedSearchCriteriaINF()
 			throws InstanceNotFoundException, CantFindMoreFriendsException, DuplicateInstanceException,
@@ -847,6 +909,5 @@ public class ITFriendService {
 		assertThrows(CantFindMoreFriendsException.class, () -> {
 			friendService.suggestNewCriteria(user.getId());
 		});
-
 	}
 }

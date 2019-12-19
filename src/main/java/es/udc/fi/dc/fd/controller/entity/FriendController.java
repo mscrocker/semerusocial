@@ -34,8 +34,10 @@ import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FriendConversor;
+import es.udc.fi.dc.fd.dtos.FullUserProfileDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.dtos.RatedFriendDto;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.dtos.UnratedFriendDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
@@ -231,6 +233,14 @@ public class FriendController {
 	public SuggestedSearchCriteria suggestNewCriteria(@RequestAttribute Long userId)
 			throws InstanceNotFoundException, CantFindMoreFriendsException {
 		return friendService.suggestNewCriteria(userId);
+	}
+	@GetMapping("/searchUsers")
+	public BlockDto<FullUserProfileDto> searchUsersByMetadataAndKeywords(@RequestBody @Validated SearchUsersDto params,
+			@RequestParam(defaultValue = "0") @Min(0) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size) {
+		final Block<UserImpl> users = friendService.searchUsersByMetadataAndKeywords(params, page, size);
+
+		return FriendConversor.toFullUserProfileDto(users);
 	}
 
 }

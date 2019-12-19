@@ -21,6 +21,7 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
@@ -310,5 +311,11 @@ public class FriendServiceImpl implements FriendService {
 
 	}
 
+	@Override
+	public Block<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size) {
+		final Slice<UserImpl> users = userRepository.searchUsersByMetadataAndKeywords(params, page, size);
+
+		return new Block<>(users.getContent(), users.hasNext());
+	}
 
 }
