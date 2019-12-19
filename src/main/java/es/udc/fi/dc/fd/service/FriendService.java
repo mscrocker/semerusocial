@@ -9,6 +9,7 @@ import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
@@ -18,14 +19,16 @@ public interface FriendService {
 			throws InstanceNotFoundException, RequestParamException;
 
 	public void acceptRecommendation(Long subject, Long object) throws InstanceNotFoundException,
-			InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
 
 	public void rejectRecommendation(Long subject, Long object) throws InstanceNotFoundException,
-			InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
+	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
 
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
 
 	void blockUser(Long userId, Long friendId)
 			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
+
+	public Block<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size);
 
 }
