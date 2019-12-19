@@ -240,12 +240,12 @@
 							<dependency>
 								<groupId>org.ow2.asm</groupId>
 								<artifactId>asm</artifactId>
-								<version>7.1</version>
+								<version>7.2</version>
 							</dependency>
 							<dependency>
 								<groupId>org.ow2.asm</groupId>
 								<artifactId>asm-commons</artifactId>
-								<version>7.1</version>
+								<version>7.2</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -411,7 +411,7 @@
 		<junit.platform.version>1.5.2</junit.platform.version>
 		<junit.jupiter.version>5.5.2</junit.jupiter.version>
 		<plugin.changes.version>2.12.1</plugin.changes.version>
-		<plugin.jetty.version>9.4.8.v20171121</plugin.jetty.version>
+		<plugin.jetty.version>10.0.0.alpha1</plugin.jetty.version>
 		<plugin.jshint.version>1.6.0</plugin.jshint.version>
 		<plugin.minify.version>1.7.6</plugin.minify.version>
 		<plugin.tomcat7.version>2.2</plugin.tomcat7.version>
@@ -428,6 +428,18 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm</artifactId>
+				<version>7.2</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm-commons</artifactId>
+				<version>7.2</version>
+				<scope>test</scope>
+			</dependency>
 			<dependency>
 				<!-- Spring Framework BOM -->
 				<groupId>org.springframework</groupId>
