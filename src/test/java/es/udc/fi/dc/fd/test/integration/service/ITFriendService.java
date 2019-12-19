@@ -1,6 +1,7 @@
 package es.udc.fi.dc.fd.test.integration.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -701,6 +702,24 @@ public class ITFriendService {
 		expected1.add(user4);
 
 		assertEquals(expected1, result1.getElements());
+		assertFalse(result1.isExistMoreElements());
+
+		final Block<UserImpl> result1v2 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 2);
+
+		final List<UserImpl> expected1v2 = new ArrayList<>();
+		expected1v2.add(user);
+		expected1v2.add(user2);
+
+		assertEquals(expected1v2, result1v2.getElements());
+		assertTrue(result1v2.isExistMoreElements());
+
+		final Block<UserImpl> result1v3 = friendService.searchUsersByMetadataAndKeywords(searchUsersDto, 1, 2);
+
+		final List<UserImpl> expected1v3 = new ArrayList<>();
+		expected1v3.add(user4);
+
+		assertEquals(expected1v3, result1v3.getElements());
+		assertFalse(result1v3.isExistMoreElements());
 
 		final SearchUsersDto searchUsersDto2 = new SearchUsersDto("palabra4", null);
 
@@ -709,6 +728,7 @@ public class ITFriendService {
 		final List<UserImpl> expected2 = new ArrayList<>();
 
 		assertEquals(expected2, result2.getElements());
+		assertFalse(result2.isExistMoreElements());
 
 		final List<String> cities3 = Arrays.asList("lugo");
 
@@ -722,5 +742,6 @@ public class ITFriendService {
 		expected3.add(user4);
 
 		assertEquals(expected3, result3.getElements());
+		assertFalse(result3.isExistMoreElements());
 	}
 }

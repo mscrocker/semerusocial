@@ -70,9 +70,4 @@ public class SearchUsersDto {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "SearchUsersDto [keywords=" + keywords + ", metadata=" + metadata + "]";
-	}
-
 }

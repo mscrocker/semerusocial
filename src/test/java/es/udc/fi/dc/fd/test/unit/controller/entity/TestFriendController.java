@@ -50,6 +50,7 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.NoMoreSuggestionFound;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.FriendConversor;
 import es.udc.fi.dc.fd.dtos.IdDto;
 import es.udc.fi.dc.fd.dtos.SearchCriteriaDto;
 import es.udc.fi.dc.fd.dtos.SearchUsersDto;
@@ -732,6 +733,10 @@ public class TestFriendController {
 		final SearchUsersDto searchUsersDto = new SearchUsersDto("", new SearchCriteriaDto());
 
 		final List<UserImpl> users = new ArrayList<>();
+		users.add(CreateUser(1L));
+
+		final Block<UserImpl> usersBlock = new Block<>(users, false);
+		FriendConversor.toFullUserProfileDto(usersBlock);
 
 		when(friendServiceMock.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 10))
 		.thenReturn(new Block<>(users, false));
