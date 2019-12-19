@@ -23,7 +23,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		String queryString = "SELECT p FROM User p ";
 		if (count) {
-			queryString = "SELECT count(id) FROM User p ";
+			queryString = "SELECT p FROM User p ";
 		}
 
 		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
@@ -105,9 +105,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public int findByCriteriaMaxResults(SearchCriteria criteria, Long userId) {
 
-		final List<Long> numberUsers = findByCriteriaQuery(criteria, userId, true).getResultList();
+		return findByCriteriaQuery(criteria, userId, true).getResultList().size();
 
-		return numberUsers.get(0).intValue();
 
 	}
 }
