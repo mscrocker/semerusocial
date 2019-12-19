@@ -12,6 +12,8 @@ public interface UserRepositoryCustom {
 
 	Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId);
 
+	int findByCriteriaMaxResults(SearchCriteria criteria, Long userId);
+
 	Slice<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size);
 
 }

@@ -25,11 +25,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
+	public Query findByCriteriaQuery(SearchCriteria criteria, Long userId, Boolean count) {
 
 		String queryString = "SELECT p FROM User p ";
+		if (count) {
+			queryString = "SELECT p FROM User p ";
+		}
 
 		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
@@ -68,8 +69,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		queryString += "ORDER BY p.id";
 
-		final Query query = entityManager.createQuery(queryString).setMaxResults(1);
+		Query query = entityManager.createQuery(queryString).setMaxResults(1);
 
+		if (count) {
+			query = entityManager.createQuery(queryString);
+		}
 		final LocalDateTime dateMax = LocalDateTime.now().minus(criteria.getMinAge(), ChronoUnit.YEARS);
 		final LocalDateTime dateMin = LocalDateTime.now().minus(criteria.getMaxAge(), ChronoUnit.YEARS);
 		final Double minRate = Double.valueOf(criteria.getMinRate());
@@ -85,8 +89,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			query.setParameter("cities",
 					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
+		return query;
+	}
 
-		final List<UserImpl> users = query.getResultList();
+	@SuppressWarnings("unchecked")
+	@Override
+	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
+
+		final List<UserImpl> users = findByCriteriaQuery(criteria, userId, false).getResultList();
 
 		Optional<UserImpl> user = Optional.empty();
 		if (!users.isEmpty()) {
@@ -94,6 +104,16 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		}
 
 		return user;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public int findByCriteriaMaxResults(SearchCriteria criteria, Long userId) {
+
+		return findByCriteriaQuery(criteria, userId, true).getResultList().size();
+
+
 	}
 
 	@SuppressWarnings("unchecked")
