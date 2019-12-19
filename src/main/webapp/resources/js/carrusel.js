@@ -78,9 +78,9 @@ const carrusel = {
 				if (body.elements.length === 0){
 					if (pageNumber === 0){
 						if (this.city === null){
-							window.location.href = this.baseURL + "/addImage";
+							window.location.href = this.baseURL + "addImage";
 						} else {
-							window.location.href = this.baseURL + "/login";
+							window.location.href = this.baseURL + "login";
 						}
 						
 					} else {
