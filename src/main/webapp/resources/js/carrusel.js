@@ -11,13 +11,28 @@ const carrusel = {
 	previousEnabled: false,
 	
 	loadingImageURL: null,
+	city: null,
 	
-	init:  function (baseURL) {
+	baseInit:  function (baseURL) {
 		this.baseURL = baseURL;
 		this.loadingImageURL = document.getElementById("imgField").src;
 		this.currentImageIndex = 0;
 		this.queryPage(0);
 	},
+	
+	authenticatedInit: function(baseURL) {
+		this.baseInit(baseURL);
+		let elements = document.getElementsByClassName("only-auth-elements");
+		for (let i = 0; i < elements.length; i++){
+			elements[i].classList.remove("hidden");
+		}
+	},
+	
+	anonymousInit: function(baseURL, city){
+		this.city = city;
+		this.baseInit(baseURL);
+	},
+	
 	
 	updateButtons: function(){
 		this.previousEnabled = (this.currentCachedPage > 0) || (this.currentImageIndex > 0);
@@ -42,8 +57,13 @@ const carrusel = {
 	queryPage: function(pageNumber){
 		document.getElementById("imgField").src = this.loadingImageURL;
 		this.currentCachedPage = pageNumber;
+		let url = null;
+		if (this.city === null){
+			url = this.baseURL + "backend/images/carrusel?page=" + pageNumber;
+		} else {
+			url = this.baseURL + "backend/images/anonymousCarrusel?page=" + pageNumber + "&city=" + encodeURIComponent(this.city);
+		}
 		
-		const url = this.baseURL + "backend/images/carrusel?page=" + pageNumber;
 		user.authFetch(url, {
 			method: 'GET'
 		}, (response) => {
@@ -57,7 +77,12 @@ const carrusel = {
 				
 				if (body.elements.length === 0){
 					if (pageNumber === 0){
-						window.location.href = this.baseURL + "/addImage";
+						if (this.city === null){
+							window.location.href = this.baseURL + "addImage";
+						} else {
+							window.location.href = this.baseURL + "login";
+						}
+						
 					} else {
 						customAlert.showAlert({globalError: "Error: no image available"});
 					}
