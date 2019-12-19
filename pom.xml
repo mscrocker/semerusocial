@@ -130,6 +130,10 @@
 				<!-- Access data -->
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
+				<baseDataBaseUrl>jdbc:h2:mem:friendmatch</baseDataBaseUrl>
+				<database.url>${baseDataBaseUrl}</database.url>
+				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
+
 				<database.url>jdbc:h2:mem:friendmatch</database.url>
 				<database.username>sa</database.username>
 				<database.password></database.password>
@@ -153,7 +157,11 @@
 				<!-- Access data -->
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
-				<database.url>jdbc:mysql://localhost:3306/friendmatch?serverTimezone=UTC</database.url>
+				<baseDataBaseUrl>jdbc:mysql://localhost:3306/friendmatch</baseDataBaseUrl>
+				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
+				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
+
+
 				<database.username>root</database.username>
 				<database.password>root</database.password>
 				<!-- Spring context -->
@@ -177,7 +185,10 @@
 				<!-- Access data -->
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
-				<database.url>jdbc:postgresql://localhost:5432/friendmatch</database.url>
+				<baseDataBaseUrl>jdbc:postgresql://localhost:5432/friendmatch</baseDataBaseUrl>
+				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
+				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
+
 				<database.username>postgres</database.username>
 				<database.password></database.password>
 				<!-- Spring context -->
@@ -524,7 +535,7 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.0</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
 		</dependency>
@@ -827,6 +838,12 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
 		<pluginManagement>
 			<plugins>
 				<!-- Plugin versions and configurations are enforced here. -->
