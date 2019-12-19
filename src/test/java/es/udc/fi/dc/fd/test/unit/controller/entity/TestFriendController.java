@@ -773,7 +773,7 @@ public class TestFriendController {
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
 				.contentType(APPLICATION_JSON_UTF8)
 				.requestAttr("userId", USERID_OK))
-		.andExpect(status().isForbidden());
+		.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);

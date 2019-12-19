@@ -34,9 +34,9 @@ import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.BlockDto;
 import es.udc.fi.dc.fd.dtos.ErrorsDto;
 import es.udc.fi.dc.fd.dtos.FriendConversor;
-import es.udc.fi.dc.fd.dtos.UnratedFriendDto;
-import es.udc.fi.dc.fd.dtos.RatedFriendDto;
 import es.udc.fi.dc.fd.dtos.IdDto;
+import es.udc.fi.dc.fd.dtos.RatedFriendDto;
+import es.udc.fi.dc.fd.dtos.UnratedFriendDto;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
@@ -169,7 +169,7 @@ public class FriendController {
 	}
 
 	@ExceptionHandler(CantFindMoreFriendsException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorsDto handleCantFindMoreFriendsException(CantFindMoreFriendsException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(CANT_FIND_MORE_CODE, null, CANT_FIND_MORE_CODE, locale);
@@ -215,7 +215,7 @@ public class FriendController {
 			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
 					throws InstanceNotFoundException, RequestParamException {
 		final Block<FriendListOut> friends = friendService.getFriendList(userId, page, size);
-		
+
 		return FriendConversor.toGetFriendListOutDto(friends);
 	}
 

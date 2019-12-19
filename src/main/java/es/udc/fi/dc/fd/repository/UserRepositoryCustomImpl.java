@@ -3,6 +3,7 @@ package es.udc.fi.dc.fd.repository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -18,11 +19,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
+	public Query findByCriteriaQuery(SearchCriteria criteria, Long userId, Boolean count) {
 
 		String queryString = "SELECT p FROM User p ";
+		if (count) {
+			queryString = "SELECT count(id) FROM User p ";
+		}
 
 		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
@@ -61,8 +63,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		queryString += "ORDER BY p.id";
 
-		final Query query = entityManager.createQuery(queryString).setMaxResults(1);
+		Query query = entityManager.createQuery(queryString).setMaxResults(1);
 
+		if (count) {
+			query = entityManager.createQuery(queryString);
+		}
 		final LocalDateTime dateMax = LocalDateTime.now().minus(criteria.getMinAge(), ChronoUnit.YEARS);
 		final LocalDateTime dateMin = LocalDateTime.now().minus(criteria.getMaxAge(), ChronoUnit.YEARS);
 		final Double minRate = Double.valueOf(criteria.getMinRate());
@@ -78,7 +83,31 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			query.setParameter("cities",
 					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
+		return query;
+	}
 
-		return query.getResultList();
+	@SuppressWarnings("unchecked")
+	@Override
+	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
+
+		final List<UserImpl> users = findByCriteriaQuery(criteria, userId, false).getResultList();
+
+		Optional<UserImpl> user = Optional.empty();
+		if (!users.isEmpty()) {
+			user = Optional.of(users.get(0));
+		}
+
+		return user;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public int findByCriteriaMaxResults(SearchCriteria criteria, Long userId) {
+
+		final List<Long> numberUsers = findByCriteriaQuery(criteria, userId, true).getResultList();
+
+		return numberUsers.get(0).intValue();
+
 	}
 }

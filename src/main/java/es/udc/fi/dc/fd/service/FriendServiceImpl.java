@@ -214,11 +214,8 @@ public class FriendServiceImpl implements FriendService {
 		}
 
 		final SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
-		final List<UserImpl> users = userRepository.findByCriteria(searchCriteria, userId);
-		Optional<UserImpl> user = Optional.empty();
-		if (!users.isEmpty()) {
-			user = Optional.of(users.get(0));
-		}
+		final Optional<UserImpl> user = userRepository.findByCriteria(searchCriteria, userId);
+
 		return user;
 	}
 
@@ -267,48 +264,46 @@ public class FriendServiceImpl implements FriendService {
 		final int minPosibleAge = 18;
 		final int maxPosibleAge = 200;
 		final int minPosibleRate = 1;
-		List<UserImpl> newUsersSuggested;
-		List<UserImpl> newUsersSuggestedLimit;
+		int newUsersSuggested;
+		int newUsersSuggestedLimit;
 
 		for (int minRate = searchCriteria.getMinRate(); minRate >= minPosibleRate; minRate -= 1) {
 
 			SearchCriteria newCriteria = new SearchCriteria(searchCriteria.getSex(), searchCriteria.getMinAge(),
 					maxPosibleAge, searchCriteria.getCity(), minRate);
-			//MaxAge
-			newUsersSuggestedLimit = userRepository.findByCriteria(newCriteria, userId);
+			// MaxAge
+			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
 
-			if (newUsersSuggestedLimit.isEmpty() == false) {// Si maxAge=200 encuentra a alguien
+			if (newUsersSuggestedLimit > 0) {// Si maxAge=200 encuentra a alguien
 				for (int maxAge = searchCriteria.getMaxAge(); maxAge <= maxPosibleAge; maxAge += 5) {
-					newCriteria = new SearchCriteria(searchCriteria.getSex(),
-							searchCriteria.getMinAge(), maxAge, searchCriteria.getCity(),
-							minRate);
-					newUsersSuggested = userRepository.findByCriteria(newCriteria, userId);
-					if (newUsersSuggested.isEmpty() == false) {
-						return new SuggestedSearchCriteria(0,
-								newCriteria.getMaxAge() - searchCriteria.getMaxAge(),
-								minRate - searchCriteria.getMinRate(), newUsersSuggested.size());
+					newCriteria = new SearchCriteria(searchCriteria.getSex(), searchCriteria.getMinAge(), maxAge,
+							searchCriteria.getCity(), minRate);
+					newUsersSuggested = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+					if (newUsersSuggested > 0) {
+						return new SuggestedSearchCriteria(0, newCriteria.getMaxAge() - searchCriteria.getMaxAge(),
+								minRate - searchCriteria.getMinRate(), newUsersSuggested);
 					}
 				} // Para el caso del maximo
 				return new SuggestedSearchCriteria(0, maxPosibleAge - searchCriteria.getMaxAge(), 0,
-						newUsersSuggestedLimit.size());
+						newUsersSuggestedLimit);
 			}
-			//minAge
+			// minAge
 			newCriteria = new SearchCriteria(searchCriteria.getSex(), minPosibleAge, searchCriteria.getMaxAge(),
 					searchCriteria.getCity(), minRate);
-			newUsersSuggestedLimit = userRepository.findByCriteria(newCriteria, userId);
+			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
 
-			if (newUsersSuggestedLimit.isEmpty() == false) {// Si minAge = 18 encuentra a alguien
+			if (newUsersSuggestedLimit > 0) {// Si minAge = 18 encuentra a alguien
 				for (int minAge = searchCriteria.getMinAge(); minAge >= minPosibleAge; minAge -= 5) {
-					newCriteria = new SearchCriteria(searchCriteria.getSex(), minAge,
-							searchCriteria.getMaxAge(), searchCriteria.getCity(), minRate);
-					newUsersSuggested = userRepository.findByCriteria(newCriteria, userId);
-					if (newUsersSuggested.isEmpty() == false) {
-						return new SuggestedSearchCriteria(newCriteria.getMinAge() - searchCriteria.getMinAge(),
-								0, minRate - searchCriteria.getMinRate(), newUsersSuggested.size());
+					newCriteria = new SearchCriteria(searchCriteria.getSex(), minAge, searchCriteria.getMaxAge(),
+							searchCriteria.getCity(), minRate);
+					newUsersSuggested = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+					if (newUsersSuggested > 0) {
+						return new SuggestedSearchCriteria(newCriteria.getMinAge() - searchCriteria.getMinAge(), 0,
+								minRate - searchCriteria.getMinRate(), newUsersSuggested);
 					}
 				} // Para el caso del minimo
 				return new SuggestedSearchCriteria(minPosibleAge - searchCriteria.getMinAge(), 0, 0,
-						newUsersSuggestedLimit.size());
+						newUsersSuggestedLimit);
 			}
 		}
 		throw new CantFindMoreFriendsException("Even if you change your criteria you cant find more friends");
