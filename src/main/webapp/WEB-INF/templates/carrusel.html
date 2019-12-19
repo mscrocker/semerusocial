@@ -31,7 +31,7 @@
 				</div>
 
 
-				<div class="row">
+				<div class="row only-auth-elements hidden">
 					<button class="btn btn-success ml-1 mr-auto" id="addButton"
 						style="border-radius: 15px;">
 						<span class="glyphicon glyphicon-plus"></span>
@@ -54,7 +54,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="card mt-4 pt-3 center-block">
+		<div class="card mt-4 pt-3 center-block only-auth-elements hidden">
 			<div class="col-12 bg-light" style="min-width: 200px;">
 				<div class="row">
 					<p>Age: </p>
@@ -107,15 +107,22 @@
 	</footer>
 	<script>
    	  window.addEventListener('load', () => {
+ 			if (user.checkLoggedIn()){
+ 	   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage()
+ 	   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/addImage'}]]"};
+ 	   			profile.initProfileDisplay("[[@{'/'}]]");
+ 	   			carrusel.authenticatedInit("[[@{'/'}]]");
+ 	   		} else {
+ 	   			$.ajax({url: "https://geolocation-db.com/jsonp",
+		   	   	  	jsonpCallback: "callback",
+		   	   	  	dataType: "jsonp",
+		   	   	  	success: function(location) {
+		   	   	  		carrusel.anonymousInit("[[@{'/'}]]", location.city);
+		   	   		}
+	   			});
+ 	   		}
    		
-   		if (user.checkLoggedIn()){
-   	     	document.getElementById("deleteButton").onclick = () => carrusel.deleteImage()
-   	     	document.getElementById("addButton").onclick = () => {window.location.href = "[[@{'/addImage'}]]"};
-   			profile.initProfileDisplay("[[@{'/'}]]");
-   			carrusel.init("[[@{'/'}]]");
-   		} else {
-   			window.location.href = "[[@{'/login'}]]";
-   		}
+   		
    		
    		
    	  });
