@@ -413,7 +413,7 @@ let apis = {
 let sockets = {
     connect: () => {
 
-        var socket = new SockJS(chat.baseURL + '/ws');
+        var socket = new SockJS(chat.baseURL.replace("/semerusocial", "/semerusocial-backend") + '/ws');
         chat.stompClient = Stomp.over(socket);
 
         chat.stompClient.connect({
