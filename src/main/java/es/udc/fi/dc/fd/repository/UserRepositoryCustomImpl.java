@@ -24,8 +24,18 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	public Optional<UserImpl> findByCriteria(SearchCriteria criteria, Long userId) {
 
 		String queryString = "SELECT p FROM User p ";
-
-		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
+		queryString += "JOIN User self ON self.id = :userId ";
+		queryString += "WHERE (p.premium = true OR (";
+		// LOGICA SOBRE CRITERIA
+		queryString += " TIMESTAMPDIFF(year, self.date, curdate()) >= p.criteriaMinAge ";
+		queryString += " AND TIMESTAMPDIFF(year, self.date, curdate()) <= p.criteriaMaxAge ";
+		queryString += " AND self.city IN (SELECT aux.cityCriteriaId.city FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id) ";
+		queryString += " AND "
+				+ "((p.criteriaSex = 'ANY') OR "
+				+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
+				+ "(p.criteriaSex = 'MALE' AND self.sex = 'Male') OR "
+				+ "(p.criteriaSex = 'FEMALE' AND self.sex = 'Female')) ";
+		queryString += ") AND p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
 		if (criteria.getSex() == SexCriteriaEnum.OTHER) {
 			queryString += "AND LOWER(p.sex) NOT LIKE 'female' ";
@@ -33,19 +43,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		} else if (criteria.getSex() != SexCriteriaEnum.ANY) {
 			queryString += "AND LOWER(p.sex) LIKE LOWER(:sex) ";
 		}
-
 		queryString += "AND (p.ratingVotes = 0 OR p.rating >= :minRate) ";
-
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
 			queryString += "AND LOWER(p.city) in (:cities) ";
 		}
-
 		// Que no te sugiera a ti mismo
 		queryString += ") AND p.id != :userId ";
-
-		//		if (!criteria.getCity().isEmpty()) {
-		//			queryString += "AND p.city IN :cities ";
-		//		}
 
 		// Si esta bloqueado que no lo sugiera
 		queryString += "AND p.id NOT IN (SELECT b.blockedId.object FROM Blocked b WHERE b.blockedId.subject=:userId) ";
@@ -67,6 +70,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		final LocalDateTime dateMax = LocalDateTime.now().minus(criteria.getMinAge(), ChronoUnit.YEARS);
 		final LocalDateTime dateMin = LocalDateTime.now().minus(criteria.getMaxAge(), ChronoUnit.YEARS);
 		final Double minRate = Double.valueOf(criteria.getMinRate());
+		
 
 		query.setParameter("maxDate", dateMax);
 		query.setParameter("minDate", dateMin);

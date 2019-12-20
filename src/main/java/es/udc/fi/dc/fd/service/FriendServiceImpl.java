@@ -177,28 +177,53 @@ public class FriendServiceImpl implements FriendService {
 		if (optAcepted.isPresent()) {
 			throw new AlreadyAceptedException("Object user was already acepted", object);
 		}
+		
+		if ((!matchesCriteria(objectUser, subjectUser)) || (!matchesCriteria(subjectUser, objectUser))) {
+			throw new InvalidRecommendationException("Invalid recommendation", null);
+		}
 
-		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
+	}
+	
+	
+	private boolean matchesCriteria(UserImpl criteria, UserImpl user) throws InstanceNotFoundException {
+		final int objectAge = Period.between(user.getDate().toLocalDate(), LocalDate.now()).getYears();
 		// If object user age not in between the criteria -> exception
-		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
-			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+		if (objectAge < criteria.getCriteriaMinAge() || objectAge > criteria.getCriteriaMaxAge()) {
+			return false;
 		}
 
 		// If object user sex doesnt fit criteria -> exception
-		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex())) {
-				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+		if (!criteria.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
+			if (!criteria.getCriteriaSex().toString().equalsIgnoreCase(user.getSex())) {
+				return false;
 			}
+		}
+		
+		switch(criteria.getCriteriaSex()) {
+			case ANY: break;
+			case OTHER: if ((user.getSex() == "Male") || (user.getSex() == "Female")) {
+							return false;
+						};
+						break;
+			case FEMALE: if (user.getSex() != "Female") {
+							return false;
+						}
+						break;
+			case MALE: if (user.getSex() != "Male") {
+							return false;
+						}
+						break;
+				
 		}
 
 		// If object user city doesnt fit criteria -> exception
 		// If CityCriteria is blank means we accept all possible cities
-		final SearchCriteria searchCriteria = userService.getSearchCriteria(subject);
+		final SearchCriteria searchCriteria = userService.getSearchCriteria(criteria.getId());
 		if (searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()
-				&& searchCriteria.getCity().stream().noneMatch(objectUser.getCity()::equalsIgnoreCase)) {
-			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
+				&& searchCriteria.getCity().stream().noneMatch(user.getCity()::equalsIgnoreCase)) {
+			return false;
 		}
-
+		return true;
 	}
 
 	@Override

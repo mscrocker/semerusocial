@@ -175,6 +175,7 @@ public class ITFriendService {
 		// userRepository.save(user1);
 		final UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
 
+		
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
