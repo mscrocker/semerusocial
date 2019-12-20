@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
+import es.udc.fi.dc.fd.controller.exception.CantFindMoreFriendsException;
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
+import es.udc.fi.dc.fd.dtos.SearchUsersDto;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
@@ -33,6 +35,7 @@ import es.udc.fi.dc.fd.model.persistence.RejectedImpl;
 import es.udc.fi.dc.fd.model.persistence.RequestId;
 import es.udc.fi.dc.fd.model.persistence.RequestImpl;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
+import es.udc.fi.dc.fd.model.persistence.SuggestedSearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.BlockedRepository;
 import es.udc.fi.dc.fd.repository.MatchRepository;
@@ -178,11 +181,16 @@ public class FriendServiceImpl implements FriendService {
 			throw new AlreadyAceptedException("Object user was already acepted", object);
 		}
 
+		if (objectUser.isPremium()) {
+			return;
+		}
+
 		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
 		// If object user age not in between the criteria -> exception
 		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 		}
+
 
 		// If object user sex doesnt fit criteria -> exception
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
@@ -212,8 +220,9 @@ public class FriendServiceImpl implements FriendService {
 		}
 
 		final SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
+		final Optional<UserImpl> user = userRepository.findByCriteria(searchCriteria, userId);
 
-		return userRepository.findByCriteria(searchCriteria, userId);
+		return user;
 	}
 
 
@@ -243,5 +252,75 @@ public class FriendServiceImpl implements FriendService {
 		blockedRepository.save(block2);
 	}
 
+	/**
+	 * precondition: user dont find friends with her/his actual criteria
+	 */
+	@Override
+	public SuggestedSearchCriteria suggestNewCriteria(Long userId)
+			throws InstanceNotFoundException, CantFindMoreFriendsException {
+
+		if (userId == null) {
+			throw new InstanceNotFoundException("userId can not be null", userId);
+		}
+		if (!userRepository.existsById(userId)) {
+			throw new InstanceNotFoundException("User does not exists", userId);
+		}
+
+		final SearchCriteria searchCriteria = userService.getSearchCriteria(userId);
+		final int minPosibleAge = 18;
+		final int maxPosibleAge = 200;
+		final int minPosibleRate = 1;
+		int newUsersSuggested;
+		int newUsersSuggestedLimit;
+
+		for (int minRate = searchCriteria.getMinRate(); minRate >= minPosibleRate; minRate -= 1) {
+
+			SearchCriteria newCriteria = new SearchCriteria(searchCriteria.getSex(), searchCriteria.getMinAge(),
+					maxPosibleAge, searchCriteria.getCity(), minRate);
+			// MaxAge
+			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+
+			if (newUsersSuggestedLimit > 0) {// Si maxAge=200 encuentra a alguien
+				for (int maxAge = searchCriteria.getMaxAge(); maxAge <= maxPosibleAge; maxAge += 5) {
+					newCriteria = new SearchCriteria(searchCriteria.getSex(), searchCriteria.getMinAge(), maxAge,
+							searchCriteria.getCity(), minRate);
+					newUsersSuggested = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+					if (newUsersSuggested > 0) {
+						return new SuggestedSearchCriteria(0, newCriteria.getMaxAge() - searchCriteria.getMaxAge(),
+								minRate - searchCriteria.getMinRate(), newUsersSuggested);
+					}
+				} // Para el caso del maximo
+				return new SuggestedSearchCriteria(0, maxPosibleAge - searchCriteria.getMaxAge(), 0,
+						newUsersSuggestedLimit);
+			}
+			// minAge
+			newCriteria = new SearchCriteria(searchCriteria.getSex(), minPosibleAge, searchCriteria.getMaxAge(),
+					searchCriteria.getCity(), minRate);
+			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+
+			if (newUsersSuggestedLimit > 0) {// Si minAge = 18 encuentra a alguien
+				for (int minAge = searchCriteria.getMinAge(); minAge >= minPosibleAge; minAge -= 5) {
+					newCriteria = new SearchCriteria(searchCriteria.getSex(), minAge, searchCriteria.getMaxAge(),
+							searchCriteria.getCity(), minRate);
+					newUsersSuggested = userRepository.findByCriteriaMaxResults(newCriteria, userId);
+					if (newUsersSuggested > 0) {
+						return new SuggestedSearchCriteria(newCriteria.getMinAge() - searchCriteria.getMinAge(), 0,
+								minRate - searchCriteria.getMinRate(), newUsersSuggested);
+					}
+				} // Para el caso del minimo
+				return new SuggestedSearchCriteria(minPosibleAge - searchCriteria.getMinAge(), 0, 0,
+						newUsersSuggestedLimit);
+			}
+		}
+		throw new CantFindMoreFriendsException("Even if you change your criteria you cant find more friends");
+
+	}
+
+	@Override
+	public Block<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size) {
+		final Slice<UserImpl> users = userRepository.searchUsersByMetadataAndKeywords(params, page, size);
+
+		return new Block<>(users.getContent(), users.hasNext());
+	}
 
 }

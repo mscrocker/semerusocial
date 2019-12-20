@@ -53,9 +53,9 @@ public class UserServiceImpl implements UserService {
 			throw new DuplicateInstanceException("project.entities.user", user.getUserName());
 		}
 
-		if (user.getDate().isAfter(LocalDateTime.now().minusYears(3))) {
+		if (user.getDate().isAfter(LocalDateTime.now().minusYears(18))) {
 			throw new InvalidDateException(
-					"Fecha de nacimiento minima: " + LocalDateTime.now().minusYears(3).toString());
+					"Fecha de nacimiento minima: " + LocalDateTime.now().minusYears(18).toString());
 		}
 
 		final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

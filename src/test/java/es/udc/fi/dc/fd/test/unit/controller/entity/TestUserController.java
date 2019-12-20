@@ -46,12 +46,12 @@ import es.udc.fi.dc.fd.controller.exception.InvalidAgeException;
 import es.udc.fi.dc.fd.controller.exception.InvalidDateException;
 import es.udc.fi.dc.fd.controller.exception.InvalidRateException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
+import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
+import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.LoginParamsDto;
 import es.udc.fi.dc.fd.dtos.PremiumFormDto;
 import es.udc.fi.dc.fd.dtos.RateDto;
 import es.udc.fi.dc.fd.dtos.RegisterParamsDto;
-import es.udc.fi.dc.fd.dtos.AgelessUserProfileDto;
-import es.udc.fi.dc.fd.dtos.DateUserProfileDto;
 import es.udc.fi.dc.fd.dtos.UserConversor;
 import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
@@ -78,12 +78,12 @@ public final class TestUserController {
 		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new DateUserProfileDto( 1, 2, 2000, new AgelessUserProfileDto("mujer", "coruna",
 				"descripcion")));
 	}
-	
+
 	private DateUserProfileDto getValidUserProfileDto() {
 		return new DateUserProfileDto( 1, 1, 2000, new AgelessUserProfileDto("Patata", "Patatolandia",
 				"descripción"));
 	}
-	
+
 	/**
 	 * Default constructor.
 	 */
@@ -530,7 +530,7 @@ public final class TestUserController {
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<UserImpl> userCaptor = ArgumentCaptor.forClass(UserImpl.class);
-		
+
 		verify(userServiceMock, times(1)).updateProfile(userIdCaptor.capture(), userCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(userIdCaptor.getValue(), is(1L));

@@ -56,7 +56,7 @@ const friendList = {
 	init: (baseURL) => {
 		let page = friendList.getPage();
 		
-		let url = baseURL + "/backend/friends/friendList?page=" + page;
+		let url = baseURL + "backend/friends/friendList?page=" + page;
 		let params = {
 			METHOD: 'GET'
 		};
