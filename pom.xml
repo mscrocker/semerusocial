@@ -15,14 +15,21 @@
 		<version>1.2.2</version>
 	</parent>
 
+    <!-- ********************************************** -->
+    <!-- ****************** MODULES  ****************** -->
+    <!-- ********************************************** -->
+    <modules>
+        <module>backend</module>
+        <module>frontend</module>
+    </modules>
+
 	<!-- ********************************************** -->
 	<!-- **************** PROJECT INFO **************** -->
 	<!-- ********************************************** -->
-
 	<groupId>es.udc.fi.dc.fd</groupId>
 	<artifactId>friendmatch</artifactId>
 	<version>1.3-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 
 	<name>FD Spring MVC Friend Match App</name>
 	<description>Test project for FD 2019</description>
@@ -40,7 +47,6 @@
 	<!-- ********************************************** -->
 	<!-- ************ RESOURCES AND SERVICES ********** -->
 	<!-- ********************************************** -->
-
 	<scm>
 		<connection>scm:git:https://github.com/root/friendmatch.git</connection>
 		<developerConnection>scm:git:https://github.com/root/friendmatch.git</developerConnection>
@@ -77,7 +83,6 @@
 	<!-- ********************************************** -->
 	<!-- ****************** PROFILES ****************** -->
 	<!-- ********************************************** -->
-
 	<profiles>
 		<profile>
 			<!-- Profile for the Eclipse Maven plugin -->
@@ -115,94 +120,7 @@
 				</pluginManagement>
 			</build>
 		</profile>
-		<!-- ============================================== -->
-		<!-- ============= DATABASE PROFILES ============== -->
-		<!-- ============================================== -->
-		<profile>
-			<!-- H2 database profile -->
-			<!-- Prepares the project to make use of an H2 in-memory database -->
-			<id>h2</id>
-			<activation>
-				<!-- Active by default so it can be installed by CI -->
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<!-- Access data -->
-				<!-- Default values for testing and development -->
-				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:h2:mem:friendmatch</baseDataBaseUrl>
-				<database.url>${baseDataBaseUrl}</database.url>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
 
-				<database.url>jdbc:h2:mem:friendmatch</database.url>
-				<database.username>sa</database.username>
-				<database.password></database.password>
-				<!-- Spring context -->
-				<database.tag>h2</database.tag>
-			</properties>
-			<dependencies>
-				<dependency>
-					<!-- H2 database -->
-					<groupId>com.h2database</groupId>
-					<artifactId>h2</artifactId>
-					<version>${h2.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<!-- MySQL database profile -->
-			<!-- Prepares the project to make use of a MySQL database -->
-			<id>mysql</id>
-			<properties>
-				<!-- Access data -->
-				<!-- Default values for testing and development -->
-				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:mysql://localhost:3306/friendmatch</baseDataBaseUrl>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
-
-
-				<database.username>root</database.username>
-				<database.password>root</database.password>
-				<!-- Spring context -->
-				<database.tag>mysql</database.tag>
-			</properties>
-			<dependencies>
-				<dependency>
-					<!-- MySQL connector -->
-					<groupId>mysql</groupId>
-					<artifactId>mysql-connector-java</artifactId>
-					<version>${mysql.version}</version>
-
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<!-- Postgres database profile -->
-			<!-- Prepares the project to make use of a Postgres database -->
-			<id>postgres</id>
-			<properties>
-				<!-- Access data -->
-				<!-- Default values for testing and development -->
-				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:postgresql://localhost:5432/friendmatch</baseDataBaseUrl>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
-
-				<database.username>postgres</database.username>
-				<database.password></database.password>
-				<!-- Spring context -->
-				<database.tag>postgres</database.tag>
-			</properties>
-			<dependencies>
-				<dependency>
-					<!-- Postgres connector -->
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>${postgresql.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
 		<!-- ============================================== -->
 		<!-- ========= EMBEDDED SERVER PROFILES =========== -->
 		<!-- ============================================== -->
@@ -300,7 +218,8 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- ============================================== -->
+		
+        <!-- ============================================== -->
 		<!-- ============ DEPLOYMENT PROFILES ============= -->
 		<!-- ============================================== -->
 		<profile>
@@ -373,65 +292,50 @@
 	<!-- ********************************************** -->
 
 	<properties>
-		<!-- ============================================== -->
-		<!-- ================ JAVA VERSION ================ -->
-		<!-- ============================================== -->
-		<java.version>11</java.version>
-		<!-- ============================================== -->
-		<!-- =============== MANIFEST DATA ================ -->
-		<!-- ============================================== -->
-		<manifest.name>es/udc/fi/dc/fd</manifest.name>
-		<!-- ============================================== -->
-		<!-- =========== DEPENDENCIES VERSIONS ============ -->
-		<!-- ============================================== -->
-		<classmate.version>1.3.4</classmate.version>
-		<commons.logging.version>1.2</commons.logging.version>
-		<glassfish.el>2.2</glassfish.el>
-		<guava.version>24.1-jre</guava.version>
-		<h2.version>1.4.197</h2.version>
-		<hamcrest.version>2.0.0.0</hamcrest.version>
-		<hibernate.validator.version>5.4.1.Final</hibernate.validator.version>
-		<hibernate.version>5.2.17.Final</hibernate.version>
-		<hikari.version>2.7.8</hikari.version>
-		<jackson.version>2.9.5</jackson.version>
-		<javaee.api.version>2.2</javaee.api.version>
-		<jasperreports.version>6.4.1</jasperreports.version>
-		<jsonpath.version>2.4.0</jsonpath.version>
-		<liquibase.version>3.5.5</liquibase.version>
-		<log4j.version>2.9.1</log4j.version>
-		<mockito.version>2.18.3</mockito.version>
-		<mysql.version>8.0.12</mysql.version>
-		<postgresql.version>42.1.4</postgresql.version>
-		<servlet.version>4.0.0</servlet.version>
-		<slf4j.version>1.8.0-alpha2</slf4j.version>
-		<spring.data.version>2.0.7.RELEASE</spring.data.version>
-		<spring.version>5.0.6.RELEASE</spring.version>
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<webjars.bootstrap.version>4.3.1</webjars.bootstrap.version>
-		<webjars.bootswatch.version>3.3.7</webjars.bootswatch.version>
-		<webjars.fontAwesome.version>4.7.0</webjars.fontAwesome.version>
-		<webjars.datatables.version>1.10.16</webjars.datatables.version>
-		<webjars.html5shiv.version>3.7.3-1</webjars.html5shiv.version>
-		<webjars.jquery.version>3.3.1-1</webjars.jquery.version>
-		<webjars.locator.version>0.34</webjars.locator.version>
-		<plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
-		<plugin.jacoco.version>0.8.4</plugin.jacoco.version>
-		<!-- ============================================== -->
-		<!-- ============== PLUGINS VERSIONS ============== -->
-		<!-- ============================================== -->
-		<junit.platform.version>1.5.2</junit.platform.version>
-		<junit.jupiter.version>5.5.2</junit.jupiter.version>
-		<plugin.changes.version>2.12.1</plugin.changes.version>
-		<plugin.jetty.version>10.0.0.alpha1</plugin.jetty.version>
-		<plugin.jshint.version>1.6.0</plugin.jshint.version>
-		<plugin.minify.version>1.7.6</plugin.minify.version>
-		<plugin.tomcat7.version>2.2</plugin.tomcat7.version>
-		<plugin.war.version>3.2.0</plugin.war.version>
-		<!-- ============================================== -->
-		<!-- ================= MAVEN SITE ================= -->
-		<!-- ============================================== -->
-		<site.skin.version>1.3.1</site.skin.version>
-	</properties>
+        <!-- ============================================== -->
+        <!-- ================ JAVA VERSION ================ -->
+        <!-- ============================================== -->
+        <java.version>11</java.version>
+        <!-- ============================================== -->
+        <!-- =============== MANIFEST DATA ================ -->
+        <!-- ============================================== -->
+        <manifest.name>es/udc/fi/dc/fd</manifest.name>
+        <!-- ============================================== -->
+        <!-- =========== DEPENDENCIES VERSIONS ============ -->
+        <!-- ============================================== -->
+        <classmate.version>1.3.4</classmate.version>
+        <commons.logging.version>1.2</commons.logging.version>
+        <glassfish.el>2.2</glassfish.el>
+        <guava.version>24.1-jre</guava.version>
+        <javaee.api.version>2.2</javaee.api.version>
+        <jasperreports.version>6.4.1</jasperreports.version>
+        <hibernate.validator.version>5.4.1.Final</hibernate.validator.version>
+        <servlet.version>4.0.0</servlet.version>
+        <spring.version>5.0.6.RELEASE</spring.version>
+        <junit.platform.version>1.5.2</junit.platform.version>
+        <junit.jupiter.version>5.5.2</junit.jupiter.version>
+        <jackson.version>2.9.5</jackson.version>
+        
+        <!-- ============================================== -->
+        <!-- ============== PLUGINS VERSIONS ============== -->
+        <!-- ============================================== -->
+        <plugin.changes.version>2.12.1</plugin.changes.version>
+        <plugin.jetty.version>9.4.8.v20171121</plugin.jetty.version>
+        <plugin.tomcat7.version>2.2</plugin.tomcat7.version>
+        <plugin.war.version>3.2.0</plugin.war.version>
+        
+        <!-- ============================================== -->
+        <!-- ================= MAVEN SITE ================= -->
+        <!-- ============================================== -->
+        <site.skin.version>1.3.1</site.skin.version>
+
+        <!-- ============================================== -->
+        <!-- =========== VERSION ENFORCEMENT ============== -->
+        <!-- ============================================== --> 
+        <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
+        <plugin.jacoco.version>0.8.4</plugin.jacoco.version>
+        
+    </properties>
 
 	<!-- ********************************************** -->
 	<!-- *************** DEPENDENCIES ***************** -->
@@ -489,128 +393,22 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-		<dependency>
-			<!-- Spring Core -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Spring Data JPA -->
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring.data.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Spring JDBC -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Spring OXM -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Spring transactions -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Spring Web MVC -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Spring ORM -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-			<version>1.4.1.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-websocket</artifactId>
-		</dependency>
+        <dependency>
+            <!-- Spring Web MVC -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
-		<!-- ============================================== -->
-		<!-- ============== JPA DEPENDENCIES ============== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- JPA API -->
-			<groupId>javax.persistence</groupId>
-			<artifactId>javax.persistence-api</artifactId>
-			<version>${javaee.api.version}</version>
-		</dependency>
 		<!-- ============================================== -->
 		<!-- ================ HIBERNATE =================== -->
 		<!-- ============================================== -->
-		<dependency>
-			<!-- Hibernate Core -->
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Hibernate Ehcache -->
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
 		<dependency>
 			<!-- Hibernate validator -->
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
 		</dependency>
-		<dependency>
-			<!-- Hikari CP -->
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>${hikari.version}</version>
-		</dependency>
-		<!-- ============================================== -->
-		<!-- ================ LIQUIBASE =================== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- Liquibase -->
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>${liquibase.version}</version>
-		</dependency>
-		<!-- ============================================== -->
-		<!-- ================ THYMELEAF =================== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- Thymeleaf -->
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf</artifactId>
-			<version>${thymeleaf.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Thymeleaf for Spring 5 -->
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf-spring5</artifactId>
-			<version>${thymeleaf.version}</version>
-		</dependency>
+		
 		<!-- ============================================== -->
 		<!-- ============== JASPERREPORTS ================= -->
 		<!-- ============================================== -->
@@ -620,7 +418,8 @@
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
 		</dependency>
-		<!-- ============================================== -->
+		
+        <!-- ============================================== -->
 		<!-- ================ SERVLET ===================== -->
 		<!-- ============================================== -->
 		<dependency>
@@ -630,102 +429,7 @@
 			<version>${servlet.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- ============================================== -->
-		<!-- ================ WEBJARS ===================== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- Bootstrap -->
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>${webjars.bootstrap.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Bootswatch Readable -->
-			<groupId>org.webjars</groupId>
-			<artifactId>bootswatch-readable</artifactId>
-			<version>${webjars.bootswatch.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Datatables -->
-			<groupId>org.webjars</groupId>
-			<artifactId>datatables</artifactId>
-			<version>${webjars.datatables.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Font Awesome -->
-			<groupId>org.webjars</groupId>
-			<artifactId>font-awesome</artifactId>
-			<version>${webjars.fontAwesome.version}</version>
-		</dependency>
-		<dependency>
-			<!-- HTML5 Shiv -->
-			<groupId>org.webjars</groupId>
-			<artifactId>html5shiv</artifactId>
-			<version>${webjars.html5shiv.version}</version>
-		</dependency>
-		<dependency>
-			<!-- JQuery -->
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>${webjars.jquery.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Webjars Locator -->
-			<groupId>org.webjars</groupId>
-			<artifactId>webjars-locator</artifactId>
-			<version>${webjars.locator.version}</version>
-		</dependency>
-		<!-- ============================================== -->
-		<!-- ================== LOGGING =================== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- Log4j core -->
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Log4j Commons Logging Bridge -->
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-jcl</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Log4j SLF4J Bridge -->
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<!-- Log4j Web -->
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-		<dependency>
-			<!-- SL4J API -->
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<!-- ============================================== -->
-		<!-- ================= JACKSON ==================== -->
-		<!-- ============================================== -->
-		<dependency>
-			<!-- Jackson -->
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Jackson databinding -->
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Jackson annotations -->
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
+
 		<!-- ============================================== -->
 		<!-- ============ OTHER DEPENDENCIES ============== -->
 		<!-- ============================================== -->
@@ -735,13 +439,7 @@
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
 		</dependency>
-		<dependency>
-			<!-- Javax EL implementation -->
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>el-impl</artifactId>
-			<version>${glassfish.el}</version>
-			<scope>provided</scope>
-		</dependency>
+
 		<!-- ============================================== -->
 		<!-- =========== VERSION ENFORCEMENT ============== -->
 		<!-- ============================================== -->
@@ -757,214 +455,37 @@
 			<artifactId>commons-logging</artifactId>
 			<version>${commons.logging.version}</version>
 		</dependency>
+
 		<!-- ============================================== -->
 		<!-- ======= TEST ENVIRONMENT DEPENDENCIES ======== -->
 		<!-- ============================================== -->
 		<dependency>
-			<!-- Hamcrest -->
-			<groupId>org.hamcrest</groupId>
-			<artifactId>java-hamcrest</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- JSON Path -->
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<version>${jsonpath.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- JUnit Jupiter Engine -->
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- JUnit Jupiter Platform -->
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
-			<version>${junit.platform.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- Mockito -->
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- Spring Test -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.24.1-GA</version>
-		</dependency>
-
-
+            <!-- JUnit Jupiter Engine -->
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- JUnit Jupiter Platform -->
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Spring Test -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<!-- ********************************************** -->
 	<!-- ******************* BUILD ******************** -->
 	<!-- ********************************************** -->
-
 	<build>
-		<defaultGoal>clean package</defaultGoal>
-		<resources>
-			<resource>
-				<directory>src/main/resources/</directory>
-			</resource>
-			<resource>
-				<!-- Main resources -->
-				<directory>src/main/resources/</directory>
-				<includes>
-					<!-- Filter the application context -->
-					<include>context/application-context.xml</include>
-					<!-- Filter the persistence access properties -->
-					<include>config/persistence-access.properties</include>
-				</includes>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-			</testResource>
-		</testResources>
-		<pluginManagement>
-			<plugins>
-				<!-- Plugin versions and configurations are enforced here. -->
-				<plugin>
-					<!-- JSHint -->
-					<!-- Validates Javascript files. -->
-					<groupId>com.cj.jshintmojo</groupId>
-					<artifactId>jshint-maven-plugin</artifactId>
-					<version>${plugin.jshint.version}</version>
-				</plugin>
-
-
-				<plugin>
-					<!-- Minify -->
-					<!-- Minifies files. -->
-					<groupId>com.samaxes.maven</groupId>
-					<artifactId>minify-maven-plugin</artifactId>
-					<version>${plugin.minify.version}</version>
-				</plugin>
-
-
-				<!--integration -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<executions>
-						<execution>
-							<phase>test-compile</phase>
-							<goals>
-								<goal>testCompile</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.0.0-M3</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal>integration-test</goal>
-								<goal>verify</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
-
-
-			</plugins>
-
-
-		</pluginManagement>
 		<plugins>
-			<plugin>
-				<!-- Changes -->
-				<!-- Takes care of the changes log -->
-				<!-- It is set to also validate the changes log file -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<executions>
-					<!-- Changes plugin is bound to the pre-site phase -->
-					<execution>
-						<id>check-changes</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>changes-check</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>validate-changes</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>changes-validate</goal>
-						</goals>
-						<configuration>
-							<failOnError>true</failOnError>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- Enforcer -->
-				<!-- Stops the project from being built if it does not comply with a 
-					set of rules. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<!-- The enforce goal is bound to the validate phase -->
-					<execution>
-						<id>enforce-database</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<!-- A database should be set. -->
-								<requireProperty>
-									<property>database.tag</property>
-									<message><![CDATA[Give a Spring database profile.]]></message>
-								</requireProperty>
-								<requireProperty>
-									<property>database.url</property>
-									<message><![CDATA[Give a URL for the database.]]></message>
-								</requireProperty>
-								<requireProperty>
-									<property>database.username</property>
-									<message><![CDATA[Give a username for the database.]]></message>
-								</requireProperty>
-								<requireProperty>
-									<property>database.password</property>
-									<message><![CDATA[Give a password for the database.]]></message>
-								</requireProperty>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<!-- Site -->
 				<!-- Generates the Maven Site -->
@@ -979,104 +500,12 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<!-- Minify -->
-				<!-- Minifies files. -->
-				<groupId>com.samaxes.maven</groupId>
-				<artifactId>minify-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-minify</id>
-						<phase>package</phase>
-						<configuration>
-							<cssSourceDir>resources/css</cssSourceDir>
-							<cssSourceIncludes>
-								<cssSourceInclude>**</cssSourceInclude>
-							</cssSourceIncludes>
-							<cssFinalFile>style.css</cssFinalFile>
-						</configuration>
-						<goals>
-							<goal>minify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- WAR -->
-				<!-- Generates the WAR package. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<webResources>
-						<resource>
-							<!-- Persistence access data is filtered -->
-							<filtering>true</filtering>
-							<directory>${project.basedir}/src/main/resources/config</directory>
-							<targetPath>WEB-INF/classes/config</targetPath>
-							<includes>
-								<include>persistence-access.properties</include>
-							</includes>
-						</resource>
-						<resource>
-							<!-- Web resources -->
-							<directory>${project.basedir}/src/main/webapp/WEB-INF/templates/fragments/</directory>
-							<targetPath>WEB-INF/templates/fragments</targetPath>
-							<includes>
-								<!-- Filter the template footer -->
-								<include>**.html</include>
-							</includes>
-							<filtering>true</filtering>
-						</resource>
-					</webResources>
-					<!-- Variables to to override will be delimited with a @. -->
-					<!-- This avoids collisions with Spring variables. -->
-					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
-					<useDefaultDelimiters>true</useDefaultDelimiters>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- Resources -->
-				<!-- Handles the project resources. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<!-- Variables to to override will be delimited with a @. -->
-					<!-- This avoids collisions with Spring variables. -->
-					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
-					<useDefaultDelimiters>true</useDefaultDelimiters>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- JSHint -->
-				<!-- Validates Javascript files. -->
-				<groupId>com.cj.jshintmojo</groupId>
-				<artifactId>jshint-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>jshint</id>
-						<phase>test</phase>
-						<goals>
-							<goal>lint</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<options>maxdepth:3,latedef,jquery, esnext</options>
-					<directories>
-						<directory>src/main/webapp/resources/js</directory>
-					</directories>
-					<reporter>checkstyle</reporter>
-					<reportFile>target/jshint.xml</reportFile>
-					<failOnError>true</failOnError>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
 	<!-- ********************************************** -->
 	<!-- ****************** REPORTS ******************* -->
 	<!-- ********************************************** -->
-
 	<reporting>
 		<plugins>
 			<plugin>
