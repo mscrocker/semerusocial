@@ -112,6 +112,21 @@
 		<div th:include="fragments/scripts :: profile"></div>
 	</footer>
 	<script type="text/javascript">
+		let generateString = (body) =>  
+`\
+You can \
+${body.newMinAge ? "lower " : ""}\
+${body.newMaxAge ? "increase " : ""}\
+${(body.newMaxAge || body.newMinAge) ? "your " : ""}\
+${body.newMinAge ? "min " : ""}\
+${body.newMaxAge ? "max " : ""}\
+${(body.newMaxAge || body.newMinAge) ? "age by " : ""}\
+${body.newMaxAge? body.newMaxAge : (body.newMinAge ? (-body.newMinAge) : "")} \
+${((body.newMinAge || body.newMaxAge) && body.newMinRate) ? " and ": ""}\
+${body.newMinRate ? ("lower your min rate by " + body.newMinRate +  " points")  : ""}\
+ to find ${body.usersYouWouldFind} new people!\
+`;
+	
 		if (user.checkLoggedIn()){
 			 window.addEventListener('load', () => {
 			 document.getElementById("nextButton").onclick =   friendSuggestion.onNextPressed;
