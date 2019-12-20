@@ -148,6 +148,12 @@ public class ITFriendService {
 		}
 	}
 
+	private Optional<UserImpl> createUser(String userName) {
+		final UserImpl user1 = createUser(userName, "pass", getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+		userRepository.save(user1);
+		return userRepository.findByUserName(userName);
+	}
+
 	// -----addImage-----
 
 	@Test
@@ -174,6 +180,30 @@ public class ITFriendService {
 		// userRepository.save(user1);
 		final UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
 
+		final Object sexCriterias[][] = {
+				{"Male", "Female", 0},
+				{"Female", "Male", 1},
+				{"Other", "Male", 2},
+				{"Other", "Female", 3}
+		};
+		for (final Object sexCriteria[]: sexCriterias) {
+			setSearchCriteria(user1.getId(), (String)sexCriteria[0], 18, 50, "Catalunya");
+			assertThrows(InvalidRecommendationException.class, () -> {
+				friendService.acceptRecommendation(user1.getId(), signUp("manoloFor2-" + (int)sexCriteria[2], "pass2", 23, (String)sexCriteria[1], "Catalunya").getId());
+			});
+		}
+
+		final int ages[][] = {
+				{104, 108, 110, 0},
+				{20, 30, 100, 1}
+		};
+		for (final int age[]: ages) {
+			setSearchCriteria(user1.getId(), "Female", age[0], age[1], "Catalunya");
+			assertThrows(InvalidRecommendationException.class, () -> {
+				friendService.acceptRecommendation(user1.getId(), signUp("manoloFor1-" + age[3], "pass2", age[2], "Female", "Catalunya").getId());
+			});
+		}
+
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
@@ -185,12 +215,6 @@ public class ITFriendService {
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
-		user2.setCity("Catalunya");
-		userRepository.save(user2);
-
-		friendService.acceptRecommendation(user1.getId(), user2.getId());
-		// assertTrue(requestRepository.count() == 1);
-
 	}
 
 	@Test
@@ -311,6 +335,10 @@ public class ITFriendService {
 		});
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.acceptRecommendation(-1L, -1L);
+		});
+
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.suggestFriend(null);
 		});
 	}
 
@@ -898,7 +926,27 @@ public class ITFriendService {
 
 		final UserImpl user = createUser("UserSSCCFMF", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
 				"descripcion");
+		final UserImpl user2 = createUser("UserSSCCFMF2", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
+				"descripcion");
 		userService.signUp(user);
+
+		assertThrows(CantFindMoreFriendsException.class, () -> {
+			friendService.suggestNewCriteria(user.getId());
+		});
+
+		user.setPremium(true);
+		userRepository.save(user);
+
+		assertThrows(CantFindMoreFriendsException.class, () -> {
+			friendService.suggestNewCriteria(user.getId());
+		});
+
+		userService.signUp(user2);
+
+		// they are friends now
+		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user2.getId()), LocalDateTime.now()));
+		user2.setPremium(true);
+		userRepository.save(user2);
 
 		assertThrows(CantFindMoreFriendsException.class, () -> {
 			friendService.suggestNewCriteria(user.getId());

@@ -33,14 +33,36 @@ const friendSuggestion = {
 
 
     },
+    
+    
+    handleRecommendationInvalid: function(baseURL){
+    	user.authFetch(baseURL + "backend/friends/suggestNewCriteria", {
+    		method: 'GET'
+    	}, (response) => {
+    		if (response.status !== 200){
+    			throw 1;
+    		}
+    		response.json().then((body) => {
+    			let text = generateString(body);
+    			$('#criteriaModal').modal('show');
+                container.classList.add("hidden");
+                document.getElementById("peopleIncreaseText").innerText = "Tip: " + text;
+    		});
+    	}, (errors) => {
+    		$('#criteriaModal').modal('show');
+            container.classList.add("hidden");
+            document.getElementById("peopleIncreaseArea").classList.add("hidden");
+    	});
+    },
+    
     getRecommendation: () => {
 
         user.authFetch(friendSuggestion.baseUrl + "backend/friends/suggestion", {
             method: 'GET'
         }, (response) => {
             if (response.status == 400) {
-                $('#criteriaModal').modal('show');
-                container.classList.add("hidden");
+            	friendSuggestion.handleRecommendationInvalid(friendSuggestion.baseUrl);
+               
                 return;
             }
             if (response.status !== 200) {
