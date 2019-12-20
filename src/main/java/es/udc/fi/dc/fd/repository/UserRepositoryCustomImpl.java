@@ -29,7 +29,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		// LOGICA SOBRE CRITERIA
 		queryString += " TIMESTAMPDIFF(year, self.date, curdate()) >= p.criteriaMinAge ";
 		queryString += " AND TIMESTAMPDIFF(year, self.date, curdate()) <= p.criteriaMaxAge ";
-		queryString += " AND self.city IN (SELECT aux.cityCriteriaId.city FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id) ";
+		queryString += " AND (self.city IN (SELECT aux.cityCriteriaId.city FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id) ";
+		queryString += " OR (0 = (SELECT count(aux.cityCriteriaId.city )FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id))) ";
 		queryString += " AND "
 				+ "((p.criteriaSex = 'ANY') OR "
 				+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
