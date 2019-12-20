@@ -32,7 +32,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString = "SELECT p FROM User p ";
 		}
 
-		queryString += "WHERE p.premium = true OR (p.date <= :maxDate ";
+		queryString += "WHERE (p.premium = true OR (p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
 		if (criteria.getSex() == SexCriteriaEnum.OTHER) {
 			queryString += "AND LOWER(p.sex) NOT LIKE 'female' ";
@@ -48,7 +48,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		}
 
 		// Que no te sugiera a ti mismo
-		queryString += ") AND p.id != :userId ";
+		queryString += ")) AND p.id != :userId ";
 
 		// if (!criteria.getCity().isEmpty()) {
 		// queryString += "AND p.city IN :cities ";

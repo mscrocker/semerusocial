@@ -181,11 +181,16 @@ public class FriendServiceImpl implements FriendService {
 			throw new AlreadyAceptedException("Object user was already acepted", object);
 		}
 
+		if (objectUser.isPremium()) {
+			return;
+		}
+
 		final int objectAge = Period.between(objectUser.getDate().toLocalDate(), LocalDate.now()).getYears();
 		// If object user age not in between the criteria -> exception
 		if (objectAge < subjectUser.getCriteriaMinAge() || objectAge > subjectUser.getCriteriaMaxAge()) {
 			throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
 		}
+
 
 		// If object user sex doesnt fit criteria -> exception
 		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
