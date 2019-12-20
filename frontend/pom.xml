@@ -139,7 +139,7 @@
 	<!-- ********************************************** -->
 
 	<build>
-	    <finalName>friendmatch</finalName> 
+	    <finalName>semerusocial</finalName> 
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>

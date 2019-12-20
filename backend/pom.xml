@@ -353,7 +353,7 @@
 	<!-- ********************************************** -->
 
 	<build>
-	    <finalName>friendmatch-backend</finalName> 
+	    <finalName>semerusocial-backend</finalName> 
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>
