@@ -43,7 +43,7 @@
 				<!-- Access data -->
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:h2:mem:friendmatch</baseDataBaseUrl>
+				<baseDataBaseUrl>jdbc:h2:mem:semerusocial</baseDataBaseUrl>
 				<database.url>${baseDataBaseUrl}</database.url>
 				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
 

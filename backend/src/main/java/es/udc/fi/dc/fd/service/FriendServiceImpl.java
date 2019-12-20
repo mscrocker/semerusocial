@@ -181,21 +181,18 @@ public class FriendServiceImpl implements FriendService {
 			throw new AlreadyAceptedException("Object user was already acepted", object);
 		}
 
+		if (objectUser.isPremium()) {
+			return;
+		}
+		
 		if (!matchesCriteria(objectUser, subjectUser) || !matchesCriteria(subjectUser, objectUser)) {
 			throw new InvalidRecommendationException("Invalid recommendation", null);
 		}
 
 
-		if (objectUser.isPremium()) {
-			return;
-		}
 
-		// If object user sex doesnt fit criteria -> exception
-		if (!subjectUser.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!subjectUser.getCriteriaSex().toString().equalsIgnoreCase(objectUser.getSex())) {
-				throw new InvalidRecommendationException("ObjectUser doesn't fit subject requirements", objectUser);
-			}
-		}
+
+
 	}
 
 
@@ -207,18 +204,22 @@ public class FriendServiceImpl implements FriendService {
 		if (objectAge < criteria.getCriteriaMinAge() || objectAge > criteria.getCriteriaMaxAge()) {
 			return false;
 		}
+		
+		if ((user.getRatingVotes() > 0) && (criteria.getMinRateCriteria() > user.getRating())) {
+			return false;
+		}
 
 		switch(criteria.getCriteriaSex()) {
 		case ANY: break;
-		case OTHER: if (user.getSex() == "Male" || user.getSex() == "Female") {
+		case OTHER: if (user.getSex().equals("Male") || user.getSex().equals("Female")) {
 			return false;
 		}
 		break;
-		case FEMALE: if (user.getSex() != "Female") {
+		case FEMALE: if (!user.getSex().equals("Female")) {
 			return false;
 		}
 		break;
-		case MALE: if (user.getSex() != "Male") {
+		case MALE: if (!user.getSex().equals("Male")) {
 			return false;
 		}
 		break;
