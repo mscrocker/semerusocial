@@ -117,7 +117,7 @@
    			city: document.getElementById("city").value,
    			description: document.getElementById("description").value
    		}};
-   		document.getElementById("signUpForm").addEventListener('submit', (e) => handleRegister(e, params(), "[[@{'/'}]]"));
+   		document.getElementById("signUpForm").addEventListener('submit', (e) => handleRegister(e, params(), new URL("../semerusocial-backend/", document.documentURI).href));
    	});
    </script>
 </body>

@@ -12,7 +12,7 @@ const handleLogin = (e,params, baseUrl) => {
 			headers: { "Content-Type": "application/json" }
 	};
 
-	fetch(url, fetchParams).then((response) => {
+	fetch(url.replace("/semerusocial/backend","/semerusocial-backend"), fetchParams).then((response) => {
 		if (response.status !== 200){
 			customAlert.showAlertFromResponse(response);
 			return;

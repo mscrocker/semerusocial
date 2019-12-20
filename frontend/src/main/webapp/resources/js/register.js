@@ -2,7 +2,7 @@ const handleRegister = (e, params, baseUrl) => {
 	e.preventDefault();
 	customAlert.hideAlert();
 
-	const url = baseUrl + "backend/users/signUp";
+	const url = baseUrl + "users/signUp";
 	const date = new Date(params.date);
 	const userData = {
 			userName: params.username,
@@ -31,7 +31,7 @@ const handleRegister = (e, params, baseUrl) => {
 		    localStorage.setItem('user_jwt', body.jwt);
 		    localStorage.setItem('user_name', body.userName);
 			
-			window.location.href = baseUrl ;
+			window.location.href =  new URL("../semerusocial/login", document.documentURI).href;
 		});
 	}
 		

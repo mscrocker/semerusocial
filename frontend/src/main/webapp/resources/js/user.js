@@ -8,6 +8,7 @@ const user = {
 	},
 
 	authFetch: (url, params, onSuccess, onErrors) => {
+		url = url.replace("/semerusocial/backend","/semerusocial-backend");
 		if (localStorage.user_jwt !== undefined){
 			if (params.headers === undefined){
 				params.headers = {};
