@@ -353,6 +353,7 @@
 	<!-- ********************************************** -->
 
 	<build>
+	    <finalName>friendmatch-backend</finalName> 
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>

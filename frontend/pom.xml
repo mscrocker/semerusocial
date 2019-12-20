@@ -139,6 +139,7 @@
 	<!-- ********************************************** -->
 
 	<build>
+	    <finalName>friendmatch</finalName> 
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>
