@@ -192,12 +192,6 @@ public class FriendServiceImpl implements FriendService {
 			return false;
 		}
 
-		// If object user sex doesnt fit criteria -> exception
-		if (!criteria.getCriteriaSex().equals(SexCriteriaEnum.ANY)) {
-			if (!criteria.getCriteriaSex().toString().equalsIgnoreCase(user.getSex())) {
-				return false;
-			}
-		}
 		
 		switch(criteria.getCriteriaSex()) {
 			case ANY: break;

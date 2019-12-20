@@ -175,6 +175,29 @@ public class ITFriendService {
 		// userRepository.save(user1);
 		final UserImpl user2 = signUp("manolo6", "pass2", 102, "Female", "Catalunya");
 
+		Object sexCriterias[][] = {
+			{"Male", "Female", 0},
+			{"Female", "Male", 1},
+			{"Other", "Male", 2},
+			{"Other", "Female", 3}
+		};
+		for (Object sexCriteria[]: sexCriterias) {
+			setSearchCriteria(user1.getId(), (String)sexCriteria[0], 18, 50, "Catalunya");
+			assertThrows(InvalidRecommendationException.class, () -> {
+				friendService.acceptRecommendation(user1.getId(), signUp("manoloFor2-" + (int)sexCriteria[2], "pass2", 23, (String)sexCriteria[1], "Catalunya").getId());
+			});
+		}
+		
+		int ages[][] = {
+			{104, 108, 110, 0},
+			{20, 30, 100, 1}
+		};
+		for (int age[]: ages) {
+			setSearchCriteria(user1.getId(), "Female", age[0], age[1], "Catalunya");
+			assertThrows(InvalidRecommendationException.class, () -> {
+				friendService.acceptRecommendation(user1.getId(), signUp("manoloFor1-" + age[3], "pass2", age[2], "Female", "Catalunya").getId());
+			});
+		}
 		
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
@@ -187,12 +210,6 @@ public class ITFriendService {
 		assertThrows(InvalidRecommendationException.class, () -> {
 			friendService.acceptRecommendation(user1.getId(), user2.getId());
 		});
-		user2.setCity("Catalunya");
-		userRepository.save(user2);
-
-		friendService.acceptRecommendation(user1.getId(), user2.getId());
-		// assertTrue(requestRepository.count() == 1);
-
 	}
 
 	@Test
@@ -314,6 +331,10 @@ public class ITFriendService {
 		});
 		assertThrows(InstanceNotFoundException.class, () -> {
 			friendService.acceptRecommendation(-1L, -1L);
+		});
+		
+		assertThrows(InstanceNotFoundException.class, () -> {
+			friendService.suggestFriend(null);
 		});
 	}
 
