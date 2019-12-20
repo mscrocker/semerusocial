@@ -60,12 +60,6 @@
 		<!-- ================ THYMELEAF =================== -->
 		<!-- ============================================== -->
 		<dependency>
-			<!-- Thymeleaf -->
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf</artifactId>
-			<version>${thymeleaf.version}</version>
-		</dependency>
-		<dependency>
 			<!-- Thymeleaf for Spring 5 -->
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring5</artifactId>
