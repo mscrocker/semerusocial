@@ -460,7 +460,7 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<configuration>
 					<!-- Exclusion patterns -->
-					<excludeFilterFile>${project.basedir}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
+					<excludeFilterFile>${project.parent.relativePath}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -471,7 +471,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<!-- The customized rules file -->
-					<configLocation>${project.basedir}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
+					<configLocation>${project.parent.relativePath}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
 					<!-- Excludes generated code -->
 					<excludes>**/generated/**/*</excludes>
 				</configuration>
@@ -496,7 +496,7 @@
 				<configuration>
 					<rulesets>
 						<!-- The customized rules file -->
-						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
+						<ruleset>${project.parent.relativePath}/src/config/pmd/pmd-rules.xml</ruleset>
 					</rulesets>
 					<excludes>
 						<!-- Excludes generated code -->
