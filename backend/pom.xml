@@ -10,9 +10,9 @@
 	<!-- ********************************************** -->
 
 	<parent>
-        <groupId>es.udc.fi.dc.fd</groupId>
-        <artifactId>friendmatch</artifactId>
-        <version>1.3-SNAPSHOT</version>
+		<groupId>es.udc.fi.dc.fd</groupId>
+		<artifactId>semerusocial</artifactId>
+		<version>1.4-SNAPSHOT</version>
     </parent>
 
 	<!-- ********************************************** -->
@@ -160,12 +160,13 @@
 		<!-- ============================================== -->
 		<!-- ================== SPRING ==================== -->
 		<!-- ============================================== -->
-        <dependency>
+        
+		<dependency>
             <!-- Spring Data JPA -->
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>${spring.data.version}</version>
         </dependency>
+		
         <dependency>
             <!-- Spring OXM -->
             <groupId>org.springframework</groupId>
@@ -179,22 +180,23 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.boot.security.version}</version>
         </dependency>
-        <dependency>
+        
+		<dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>${jsonwebtoken.version}</version>
         </dependency>
         
         <!-- ============================================== -->
         <!-- ================= WEB SOCKET ================= -->
         <!-- ============================================== -->
-        <dependency>
+        
+		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
         </dependency>
-        <dependency>
+        
+		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
@@ -202,115 +204,250 @@
 		<!-- ============================================== -->
 		<!-- ================ HIBERNATE =================== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Hibernate Ehcache -->
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
-			<version>${hibernate.version}</version>
 		</dependency>
+		
 		<dependency>
 			<!-- Hikari CP -->
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
-			<version>${hikari.version}</version>
 		</dependency>
 
 		<!-- ============================================== -->
 		<!-- ================ LIQUIBASE =================== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Liquibase -->
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>${liquibase.version}</version>
 		</dependency>
 		
 		<!-- ============================================== -->
 		<!-- ================== LOGGING =================== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Log4j Commons Logging Bridge -->
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-jcl</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
+		
 		<dependency>
 			<!-- Log4j SLF4J Bridge -->
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
+		
 		<dependency>
 			<!-- Log4j Web -->
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
+		
 		<dependency>
 			<!-- SL4J API -->
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
 		</dependency>
 
 		<!-- ============================================== -->
 		<!-- ================= JACKSON ==================== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Jackson annotations -->
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>
+		
 		<!-- ============================================== -->
 		<!-- ============ OTHER DEPENDENCIES ============== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Javax EL implementation -->
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>el-impl</artifactId>
-			<version>${glassfish.el}</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
+        
+		<dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${javax.xml.version}</version>
         </dependency>
-        <dependency>
+        
+		<dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>${javassist.version}</version>
         </dependency>
-
-		<!-- ============================================== -->
-		<!-- =========== VERSION ENFORCEMENT ============== -->
-		<!-- ============================================== -->
 
 		<!-- ============================================== -->
 		<!-- ======= TEST ENVIRONMENT DEPENDENCIES ======== -->
 		<!-- ============================================== -->
+		
 		<dependency>
 			<!-- Hamcrest -->
 			<groupId>org.hamcrest</groupId>
 			<artifactId>java-hamcrest</artifactId>
-			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<!-- JSON Path -->
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
-			<version>${jsonpath.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<!-- Mockito -->
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
+	
 	</dependencies>
+	
+	<!-- ********************************************** -->
+	<!-- *********** DEPENDENCY MANAGEMENT ************ -->
+	<!-- ********************************************** -->
+	<dependencyManagement>
+		<dependencies>
+			<!-- ============================================== -->
+			<!-- ================== SPRING ==================== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Spring Data JPA -->
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-jpa</artifactId>
+				<version>${spring.data.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ============ FOR SPRING SECURITY ============= -->
+			<!-- ============================================== -->
+
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-security</artifactId>
+				<version>${spring.boot.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jsonwebtoken.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ================= WEB SOCKET ================= -->
+			<!-- ============================================== -->
+
+			<!-- ============================================== -->
+			<!-- ================ HIBERNATE =================== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Hibernate Ehcache -->
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-ehcache</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Hikari CP -->
+				<groupId>com.zaxxer</groupId>
+				<artifactId>HikariCP</artifactId>
+				<version>${hikari.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ================ LIQUIBASE =================== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Liquibase -->
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-core</artifactId>
+				<version>${liquibase.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ================== LOGGING =================== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Log4j Commons Logging Bridge -->
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-jcl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Log4j SLF4J Bridge -->
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Log4j Web -->
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-web</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<!-- SL4J API -->
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ================= JACKSON ==================== -->
+			<!-- ============================================== -->
+
+			<!-- ============================================== -->
+			<!-- ============ OTHER DEPENDENCIES ============== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Javax EL implementation -->
+				<groupId>org.glassfish.web</groupId>
+				<artifactId>el-impl</artifactId>
+				<version>${glassfish.el}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${javax.xml.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
+			</dependency>
+
+			<!-- ============================================== -->
+			<!-- ======= TEST ENVIRONMENT DEPENDENCIES ======== -->
+			<!-- ============================================== -->
+			<dependency>
+				<!-- Hamcrest -->
+				<groupId>org.hamcrest</groupId>
+				<artifactId>java-hamcrest</artifactId>
+				<version>${hamcrest.version}</version>
+			</dependency>
+			<dependency>
+				<!-- JSON Path -->
+				<groupId>com.jayway.jsonpath</groupId>
+				<artifactId>json-path</artifactId>
+				<version>${jsonpath.version}</version>
+			</dependency>
+			<dependency>
+				<!-- Mockito -->
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<!-- ********************************************** -->
 	<!-- ******************* BUILD ******************** -->
@@ -477,7 +614,4 @@
 		</plugins>
 	</build>
 
-	<!-- ********************************************** -->
-	<!-- ****************** REPORTS ******************* -->
-	<!-- ********************************************** -->
 </project>
