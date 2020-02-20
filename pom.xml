@@ -140,17 +140,6 @@
 							<stopKey>STOP</stopKey>
 							<stopPort>9999</stopPort>
 							<stopWait>5</stopWait>
-							<scanIntervalSeconds>10</scanIntervalSeconds>
-							<contextHandlers>
-								<contextHandler>
-									<war>${project.parent.basedir}/frontend/target/semerusocial.war</war>
-									<contextPath>/semerusocial</contextPath>
-								</contextHandler>
-								<contextHandler>
-									<war>${project.parent.basedir}/backend/target/semerusocial-backend.war</war>
-									<contextPath>/semerusocial-backend</contextPath>
-								</contextHandler>
-							</contextHandlers>
 						</configuration>
 						<executions>
 							<execution>
