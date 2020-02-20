@@ -62,8 +62,10 @@ The application is coded in Java, using Maven to manage the project.
 
 ### Prerequisites
 
-The project has been tested on the following Java versions:
-* JDK 8
+The project has been tested on the following versions:
+* JDK 11
+* Docker version 18
+* Maven 3
 
 All other dependencies are handled through Maven, and noted in the included POM file.
 

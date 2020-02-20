@@ -10,19 +10,54 @@
 	<!-- ********************************************** -->
 
 	<parent>
-        <groupId>es.udc.fi.dc.fd</groupId>
-        <artifactId>friendmatch</artifactId>
-        <version>1.3-SNAPSHOT</version>
-    </parent>
+		<groupId>es.udc.fi.dc.fd</groupId>
+		<artifactId>friendmatch</artifactId>
+		<version>1.3-SNAPSHOT</version>
+	</parent>
 
 	<!-- ********************************************** -->
 	<!-- **************** PROJECT INFO **************** -->
 	<!-- ********************************************** -->
 
 	<groupId>es.udc.fi.dc.fd</groupId>
-    <artifactId>backend</artifactId>
-    <packaging>war</packaging>
+	<artifactId>backend</artifactId>
+	<packaging>war</packaging>
 
+
+	<!-- ********************************************** -->
+	<!-- **************** PROPERTIES ****************** -->
+	<!-- ********************************************** -->
+	<properties>
+		<!-- ============================================== -->
+		<!-- =========== DEPENDENCIES VERSIONS ============ -->
+		<!-- ============================================== -->
+		<h2.version>1.4.197</h2.version>
+		<hamcrest.version>2.0.0.0</hamcrest.version>
+		<hibernate.version>5.2.17.Final</hibernate.version>
+		<hikari.version>2.7.8</hikari.version>
+		<jsonpath.version>2.4.0</jsonpath.version>
+		<liquibase.version>3.5.5</liquibase.version>
+		<log4j.version>2.9.1</log4j.version>
+		<mockito.version>2.18.3</mockito.version>
+		<mysql.version>8.0.12</mysql.version>
+		<postgresql.version>42.1.4</postgresql.version>
+		<slf4j.version>1.8.0-alpha2</slf4j.version>
+		<spring.data.version>2.0.7.RELEASE</spring.data.version>
+		<spring.version>5.0.6.RELEASE</spring.version>
+		<spring.boot.security.version>1.4.1.RELEASE</spring.boot.security.version>
+		<jsonwebtoken.version>0.9.0</jsonwebtoken.version>
+		<javax.xml.version>2.3.0</javax.xml.version>
+		<javassist.version>3.24.1-GA</javassist.version>
+		<failsafe.version>3.0.0-M3</failsafe.version>
+
+		<!-- ============================================== -->
+		<!-- ============== PLUGINS VERSIONS ============== -->
+		<!-- ============================================== -->
+		<plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
+		<plugin.jacoco.version>0.8.4</plugin.jacoco.version>
+		<plugin.docker.version>0.33.0</plugin.docker.version>
+
+	</properties>
 
 	<!-- ********************************************** -->
 	<!-- ****************** PROFILES ****************** -->
@@ -67,18 +102,27 @@
 			<!-- Prepares the project to make use of a MySQL database -->
 			<id>mysql</id>
 			<properties>
+
+				<database.port>3307</database.port>
+				<database.version>5.7.29</database.version>
+
+				<database.name>friendmatch</database.name>
+				<database.username>friendmatch</database.username>
+				<database.password>friendmatch</database.password>
+
+
 				<!-- Access data -->
 				<!-- Default values for testing and development -->
 				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:mysql://localhost:3306/friendmatch</baseDataBaseUrl>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
+				<database.url>jdbc:mysql://localhost:3306/${database.name}?serverTimezone=UTC</database.url>
+				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC</database.testUrl>
 
 
-				<database.username>root</database.username>
-				<database.password>root</database.password>
+
 				<!-- Spring context -->
 				<database.tag>mysql</database.tag>
+
+
 			</properties>
 			<dependencies>
 				<dependency>
@@ -89,6 +133,55 @@
 
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${plugin.docker.version}</version>
+						<executions>
+							<execution>
+								<id>prepare-it-database</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<images>
+										<image>
+											<name>mysql:${database.version}</name>
+											<alias>it-database</alias>
+											<run>
+												<ports>
+													<port>${database.port}:3306</port>
+												</ports>
+
+												<wait>
+													<log>(?s)ready for connections.*ready for connections</log>
+													<time>400000</time>
+												</wait>
+												<env>
+													<MYSQL_DATABASE>${database.name}</MYSQL_DATABASE>
+													<MYSQL_USER>${database.username}</MYSQL_USER>
+													<MYSQL_PASSWORD>${database.password}</MYSQL_PASSWORD>
+													<MYSQL_ALLOW_EMPTY_PASSWORD>yes</MYSQL_ALLOW_EMPTY_PASSWORD>
+												</env>
+											</run>
+										</image>
+									</images>
+								</configuration>
+							</execution>
+							<execution>
+								<id>remove-it-database</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<!-- Postgres database profile -->
@@ -118,40 +211,8 @@
 		</profile>
 	</profiles>
 
-	
-	<!-- ********************************************** -->
-	<!-- **************** PROPERTIES ****************** -->
-	<!-- ********************************************** -->
-	<properties>
-		<!-- ============================================== -->
-		<!-- =========== DEPENDENCIES VERSIONS ============ -->
-		<!-- ============================================== -->
-		<h2.version>1.4.197</h2.version>
-        <hamcrest.version>2.0.0.0</hamcrest.version>
-        <hibernate.version>5.2.17.Final</hibernate.version>
-        <hikari.version>2.7.8</hikari.version>
-        <jsonpath.version>2.4.0</jsonpath.version>
-        <liquibase.version>3.5.5</liquibase.version>
-        <log4j.version>2.9.1</log4j.version>
-        <mockito.version>2.18.3</mockito.version>
-        <mysql.version>8.0.12</mysql.version>
-        <postgresql.version>42.1.4</postgresql.version>
-        <slf4j.version>1.8.0-alpha2</slf4j.version>
-        <spring.data.version>2.0.7.RELEASE</spring.data.version>
-        <spring.version>5.0.6.RELEASE</spring.version>
-        <spring.boot.security.version>1.4.1.RELEASE</spring.boot.security.version>
-        <jsonwebtoken.version>0.9.0</jsonwebtoken.version>
-        <javax.xml.version>2.3.0</javax.xml.version>
-        <javassist.version>3.24.1-GA</javassist.version>
-        <failsafe.version>3.0.0-M3</failsafe.version>
-        
-		<!-- ============================================== -->
-		<!-- ============== PLUGINS VERSIONS ============== -->
-		<!-- ============================================== -->
-		<plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
-        <plugin.jacoco.version>0.8.4</plugin.jacoco.version>
-        
-	</properties>
+
+
 
 	<!-- ********************************************** -->
 	<!-- *************** DEPENDENCIES ***************** -->
@@ -160,44 +221,44 @@
 		<!-- ============================================== -->
 		<!-- ================== SPRING ==================== -->
 		<!-- ============================================== -->
-        <dependency>
-            <!-- Spring Data JPA -->
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${spring.data.version}</version>
-        </dependency>
-        <dependency>
-            <!-- Spring OXM -->
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-        </dependency>
-        
-        <!-- ============================================== -->
-        <!-- ============ FOR SPRING SECURITY ============= -->
-        <!-- ============================================== -->
+		<dependency>
+			<!-- Spring Data JPA -->
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring.data.version}</version>
+		</dependency>
+		<dependency>
+			<!-- Spring OXM -->
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring.boot.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jsonwebtoken.version}</version>
-        </dependency>
-        
-        <!-- ============================================== -->
-        <!-- ================= WEB SOCKET ================= -->
-        <!-- ============================================== -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-        </dependency>
+		<!-- ============================================== -->
+		<!-- ============ FOR SPRING SECURITY ============= -->
+		<!-- ============================================== -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>${spring.boot.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jsonwebtoken.version}</version>
+		</dependency>
+
+		<!-- ============================================== -->
+		<!-- ================= WEB SOCKET ================= -->
+		<!-- ============================================== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+		</dependency>
 
 		<!-- ============================================== -->
 		<!-- ================ HIBERNATE =================== -->
@@ -224,7 +285,7 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>${liquibase.version}</version>
 		</dependency>
-		
+
 		<!-- ============================================== -->
 		<!-- ================== LOGGING =================== -->
 		<!-- ============================================== -->
@@ -271,16 +332,16 @@
 			<version>${glassfish.el}</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${javax.xml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>${javassist.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${javax.xml.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist.version}</version>
+		</dependency>
 
 		<!-- ============================================== -->
 		<!-- =========== VERSION ENFORCEMENT ============== -->
@@ -317,7 +378,7 @@
 	<!-- ********************************************** -->
 
 	<build>
-	    <finalName>semerusocial-backend</finalName> 
+		<finalName>semerusocial-backend</finalName>
 		<defaultGoal>clean package</defaultGoal>
 		<resources>
 			<resource>
@@ -372,8 +433,8 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		
-        <plugins>
+
+		<plugins>
 			<plugin>
 				<!-- Changes -->
 				<!-- Takes care of the changes log -->
@@ -438,7 +499,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<!-- WAR -->
 				<!-- Generates the WAR package. -->
