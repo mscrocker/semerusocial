@@ -104,7 +104,7 @@
 			<properties>
 
 				<database.port>3307</database.port>
-				<database.version>5.7.29</database.version>
+				<database.version>8.0.19</database.version>
 
 				<database.name>friendmatch</database.name>
 				<database.username>friendmatch</database.username>
@@ -155,7 +155,7 @@
 												<ports>
 													<port>${database.port}:3306</port>
 												</ports>
-
+												<tmpfs>/var/lib/mysql</tmpfs>
 												<wait>
 													<log>(?s)ready for connections.*ready for connections</log>
 													<time>400000</time>
