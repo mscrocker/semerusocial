@@ -716,7 +716,7 @@ public class ITFriendService {
 		final SuggestedSearchCriteria suggestionCriteria = friendService.suggestNewCriteria(user.getId());
 
 		// user1 encontraria a user3
-		assertEquals(suggestionCriteria, new SuggestedSearchCriteria(-12, 0, 0, 1));
+		assertEquals(suggestionCriteria, new SuggestedSearchCriteria(-10, 0, 0, 1));
 
 		// they are friends now
 		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user3.getId()), LocalDateTime.now()));
@@ -731,7 +731,7 @@ public class ITFriendService {
 		final SuggestedSearchCriteria suggestionCriteria2 = friendService.suggestNewCriteria(user.getId());
 
 		// check if they are not friends now and if user blocked user2
-		assertEquals(suggestionCriteria2, new SuggestedSearchCriteria(0, 30, 0, 1));
+		assertEquals(suggestionCriteria2, new SuggestedSearchCriteria(0, 35, 0, 1));
 
 		// they are friends now
 		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user4.getId()), LocalDateTime.now()));
@@ -769,62 +769,7 @@ public class ITFriendService {
 		// user1 encontraria a user6
 		final SuggestedSearchCriteria suggestionCriteria4 = friendService.suggestNewCriteria(user.getId());
 
-		assertEquals(suggestionCriteria4, new SuggestedSearchCriteria(0, 30, -3, 1));
-
-		// they are friends now
-		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user6.getId()), LocalDateTime.now()));
-
-		////////////////////////////////////////////////////////////////
-
-		final UserImpl user7 = createUser("UserSSC7", "UserSSC", getDateTime(1, 1, 1820), "Male", "coruna",
-				"descripcion");
-		userService.signUp(user7);
-
-		// they are friends now
-		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user7.getId()), LocalDateTime.now()));
-		userService.rateUser(5, user2.getId(), user7.getId());
-
-		final SearchCriteria criteria3 = createCriteria("Male", 18, 181, cityList, 4);
-		userService.setSearchCriteria(user.getId(), criteria3);
-
-		// user1 encontraria a user7
-		final SuggestedSearchCriteria suggestionCriteria5 = friendService.suggestNewCriteria(user.getId());
-
-		assertEquals(suggestionCriteria5, new SuggestedSearchCriteria(0, 19, 0, 1));
-
-		// they are friends now
-		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user7.getId()), LocalDateTime.now()));
-
-		////////////////////////////////////////////////////////////////
-
-		final UserImpl user8 = createUser("UserSSC8", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
-				"descripcion");
-		userService.signUp(user8);
-		final UserImpl user9 = createUser("UserSSC9", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
-				"descripcion");
-		userService.signUp(user9);
-		final UserImpl user10 = createUser("UserSSC10", "UserSSC", getDateTime(1, 1, 2001), "Male", "coruna",
-				"descripcion");
-		userService.signUp(user10);
-
-		// they are friends now
-		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user8.getId()), LocalDateTime.now()));
-		userService.rateUser(5, user2.getId(), user8.getId());
-		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user9.getId()), LocalDateTime.now()));
-		userService.rateUser(5, user2.getId(), user9.getId());
-		matchRepository.save(new MatchImpl(new MatchId(user2.getId(), user10.getId()), LocalDateTime.now()));
-		userService.rateUser(5, user2.getId(), user10.getId());
-
-		final SearchCriteria criteria4 = createCriteria("Male", 28, 60, cityList, 4);
-		userService.setSearchCriteria(user.getId(), criteria4);
-
-		// user1 encontraria a user8,user9,user10
-		final SuggestedSearchCriteria suggestionCriteria6 = friendService.suggestNewCriteria(user.getId());
-
-		assertEquals(suggestionCriteria6, new SuggestedSearchCriteria(-10, 0, 0, 3));
-
-		// they are friends now
-		matchRepository.save(new MatchImpl(new MatchId(user.getId(), user8.getId()), LocalDateTime.now()));
+		assertEquals(suggestionCriteria4, new SuggestedSearchCriteria(0, 35, -3, 1));
 	}
 
 	// searchUsersByMetadataAndKeywords
