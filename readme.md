@@ -88,19 +88,14 @@ The project can be installed by creating the war file and deploying it into a se
 
 ### Running
 
-To run the project locally in an embedded server just use the following Maven command for deploying to Jetty with an H2 in-memory database:
+To run the project locally in an embedded server just use the following Maven command for deploying to Tomcat9 with an H2 in-memory database:
 
 ```
-mvn jetty:run-war -P h2,jetty
+mvn package -P h2,tomcat7
+mvn org.codehaus.cargo:cargo-maven2-plugin:run --projects frontend
 ```
 
-An embedded Tomcat can be used through this other profile:
-
-```
-mvn tomcat7:run-war -P h2,tomcat7
-```
-
-With this the project will be accessible at [http://localhost:8080/].
+With this the project will be accessible at [http://localhost:8080/semerusocial].
 
 ### Running the tests
 
