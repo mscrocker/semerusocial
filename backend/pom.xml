@@ -40,7 +40,6 @@
 		<log4j.version>2.9.1</log4j.version>
 		<mockito.version>2.18.3</mockito.version>
 		<mysql.version>8.0.12</mysql.version>
-		<postgresql.version>42.1.4</postgresql.version>
 		<slf4j.version>1.8.0-alpha2</slf4j.version>
 		<spring.data.version>2.0.7.RELEASE</spring.data.version>
 		<spring.version>5.0.6.RELEASE</spring.version>
@@ -185,32 +184,6 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
-		<profile>
-			<!-- Postgres database profile -->
-			<!-- Prepares the project to make use of a Postgres database -->
-			<id>postgres</id>
-			<properties>
-				<!-- Access data -->
-				<!-- Default values for testing and development -->
-				<!-- Override them for production -->
-				<baseDataBaseUrl>jdbc:postgresql://localhost:5432/friendmatch</baseDataBaseUrl>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
-
-				<database.username>postgres</database.username>
-				<database.password></database.password>
-				<!-- Spring context -->
-				<database.tag>postgres</database.tag>
-			</properties>
-			<dependencies>
-				<dependency>
-					<!-- Postgres connector -->
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>${postgresql.version}</version>
-				</dependency>
-			</dependencies>
 		</profile>
 	</profiles>
 
