@@ -150,8 +150,8 @@
 									<images>
 										<image>
 											<name>mysql:${database.version}</name>
-											<alias>it-database</alias>
 											<run>
+												<containerNamePattern>semerusocial-it-database</containerNamePattern>
 												<ports>
 													<port>${database.port}:3306</port>
 												</ports>
@@ -172,11 +172,14 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>remove-it-database</id>
+								<id>stop it database</id>
 								<phase>post-integration-test</phase>
 								<goals>
 									<goal>stop</goal>
 								</goals>
+								<configuration>
+									<containerNamePattern>semerusocial-it-database</containerNamePattern>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
