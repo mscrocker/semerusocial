@@ -11,5 +11,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Run maven
-        run: mvn clean verify -P h2
+      - name: Maven clean
+        run: mvn clean
+      - name: Verify with h2
+        run: mvn verify -P h2
+      - name: Verify with mysql
+        run: mvn verify -P mysql
