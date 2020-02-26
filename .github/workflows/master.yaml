@@ -2,7 +2,7 @@ name: Master-integration
 
 on: 
   push:
-    branch: master
+    branches: master
 jobs:
   build:
     runs-on: ubuntu-latest	
