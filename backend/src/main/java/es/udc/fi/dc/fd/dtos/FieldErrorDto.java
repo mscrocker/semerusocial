@@ -3,6 +3,7 @@ package es.udc.fi.dc.fd.dtos;
 public class FieldErrorDto {
 
 	private String fieldName;
+
 	private String message;
 
 	public FieldErrorDto() {

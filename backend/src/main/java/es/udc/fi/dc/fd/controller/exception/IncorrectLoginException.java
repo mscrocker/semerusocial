@@ -4,6 +4,7 @@ package es.udc.fi.dc.fd.controller.exception;
 public class IncorrectLoginException extends Exception {
 
 	private String userName;
+
 	private String password;
 
 	public IncorrectLoginException(String userName, String password) {

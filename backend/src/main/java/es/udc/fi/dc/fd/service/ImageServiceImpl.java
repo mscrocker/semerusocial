@@ -20,6 +20,7 @@ public class ImageServiceImpl implements ImageService {
 
 	@Autowired
 	private ImageRepository imageRepository;
+
 	@Autowired
 	private PermissionChecker permissionChecker;
 

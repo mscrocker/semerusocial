@@ -5,6 +5,7 @@ import java.util.List;
 public class Block<T> {
 
 	private List<T> elements;
+
 	private boolean existMoreElements;
 
 	public Block() {

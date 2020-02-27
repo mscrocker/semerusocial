@@ -8,9 +8,13 @@ import javax.persistence.Entity;
 public class FriendChatTitle {
 
 	private Long friendId;
+
 	private String friendName;
+
 	private String content;
+
 	private Boolean sentByYou;
+
 	private LocalDateTime date;
 
 

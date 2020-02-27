@@ -37,12 +37,16 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private PermissionChecker permissionChecker;
+
 	@Autowired
 	private CityCriteriaRepository cityCriteriaRepository;
+
 	@Autowired
 	private MatchRepository matchRepository;
+
 	@Autowired
 	private RateRepository rateRepository;
 
@@ -212,7 +216,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		final Optional<UserImpl> userOptional = userRepository.findById(userObject);
-		if (userOptional.isPresent()) {// Si el usuario al que se vota existe
+		if (userOptional.isPresent()) { // Si el usuario al que se vota existe
 
 			final UserImpl user = userOptional.get();
 			final double userRate = user.getRating();
@@ -222,7 +226,7 @@ public class UserServiceImpl implements UserService {
 
 			final Optional<RateImpl> rateOptional = rateRepository.findById(new RateId(userSubject, userObject));
 
-			if (!rateOptional.isPresent()) {// Si el usuario no habia votado añadimos una nueva fila
+			if (!rateOptional.isPresent()) { // Si el usuario no habia votado añadimos una nueva fila
 				newRateImpl = new RateImpl(new RateId(userSubject, userObject), rate);
 				rateRepository.save(newRateImpl);
 
@@ -230,15 +234,15 @@ public class UserServiceImpl implements UserService {
 				user.setRating(newRate);
 				user.setRatingVotes(userVotes + 1);
 
-			} else {// Si el usuario ya habia votado
-				newRateImpl = rateOptional.get();// Obtenemos la votacion del subject
+			} else { // Si el usuario ya habia votado
+				newRateImpl = rateOptional.get(); // Obtenemos la votacion del subject
 
-				if (newRateImpl.getPoints() == rate) {// Si hace la misma votacion la media se queda igual
+				if (newRateImpl.getPoints() == rate) { // Si hace la misma votacion la media se queda igual
 					return user.getRating();
 				} else { // Si no , modificamos la fila y calculamos la nueva media
 					final double totalVotes = user.getRating() * user.getRatingVotes();
 
-					newRate = (totalVotes - newRateImpl.getPoints() + rate) / userVotes;// Calculamos la nueva media
+					newRate = (totalVotes - newRateImpl.getPoints() + rate) / userVotes; // Calculamos la nueva media
 
 					user.setRating(newRate);
 
@@ -250,7 +254,7 @@ public class UserServiceImpl implements UserService {
 
 			return newRate;
 
-		} else {// Si el usuario al que se vota no existe
+		} else { // Si el usuario al que se vota no existe
 			throw new InstanceNotFoundException("Not found userId :", userObject);
 		}
 

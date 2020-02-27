@@ -63,22 +63,28 @@ import es.udc.fi.dc.fd.service.UserService;
 @RequestMapping("/users")
 public class UserController {
 
-	private final static String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
-	private final static String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
-	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
-	private final static String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
-	private final static String INVALID_AGE_EXCEPTION_CODE = "project.exceptions.InvalidAgeException";
-	private final static String INVALID_RATE_EXCEPTION_CODE = "project.exceptions.InvalidRateException";
-	private final static String INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE = "project.exceptions.ItsNotYourFriendException";
+	private static final String DUPLICATE_INSTANCE_EXCEPTION_CODE = "project.exceptions.DuplicateInstanceException";
 
-	private final JwtGenerator jwtGenerator = JwtGenerator();
+	private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
+
+	private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+
+	private static final String INVALID_DATE_EXCEPTION_CODE = "project.exceptions.InvalidDateException";
+
+	private static final String INVALID_AGE_EXCEPTION_CODE = "project.exceptions.InvalidAgeException";
+
+	private static final String INVALID_RATE_EXCEPTION_CODE = "project.exceptions.InvalidRateException";
+
+	private static final String INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE = "project.exceptions.ItsNotYourFriendException";
+
+	private final JwtGenerator jwtGenerator = jwtGenerator();
 
 	private final MessageSource messageSource;
 
 	private final UserService userService;
 
 	@Bean
-	JwtGenerator JwtGenerator() {
+	JwtGenerator jwtGenerator() {
 		return new JwtGeneratorImpl();
 	}
 

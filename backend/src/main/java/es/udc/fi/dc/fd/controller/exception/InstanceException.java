@@ -4,6 +4,7 @@ package es.udc.fi.dc.fd.controller.exception;
 public abstract class InstanceException extends Exception {
 
 	private String name;
+
 	private Object key;
 
 	protected InstanceException(String message) {

@@ -5,6 +5,7 @@ import java.util.List;
 public class ErrorsDto {
 
 	private String globalError;
+
 	private List<FieldErrorDto> fieldErrors;
 
 	public ErrorsDto() {

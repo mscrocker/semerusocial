@@ -9,9 +9,9 @@ import es.udc.fi.dc.fd.model.persistence.FriendListOut;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.service.Block;
 
-public class FriendConversor {
+public final class FriendConversor {
 
-	public final static BlockDto<RatedFriendDto> toGetFriendListOutDto(
+	public static final BlockDto<RatedFriendDto> toGetFriendListOutDto(
 		Block<FriendListOut> friends) {
 		final List<FriendListOut> friendsIn = friends.getElements();
 
@@ -21,7 +21,7 @@ public class FriendConversor {
 		return new BlockDto<>(friendsOut, friends.isExistMoreElements());
 	}
 
-	public final static RatedFriendDto toGetFriendListOutDto(FriendListOut out) {
+	public static final RatedFriendDto toGetFriendListOutDto(FriendListOut out) {
 		final LocalDateTime today = LocalDateTime.now();
 		final Period period = Period.between(out.getUser().getDate().toLocalDate(), today.toLocalDate());
 
@@ -29,7 +29,7 @@ public class FriendConversor {
 			new AgelessUserProfileDto(out.getUser().getSex(), out.getUser().getCity(), out.getUser().getDescription()))), out.getMyRating());
 	}
 
-	public final static UnratedFriendDto fromUserImpl(UserImpl userImpl) {
+	public static final UnratedFriendDto fromUserImpl(UserImpl userImpl) {
 
 		final LocalDateTime today = LocalDateTime.now();
 
@@ -40,7 +40,7 @@ public class FriendConversor {
 		return friendDto;
 	}
 
-	public final static BlockDto<FullUserProfileDto> toFullUserProfileDto(Block<UserImpl> users) {
+	public static final BlockDto<FullUserProfileDto> toFullUserProfileDto(Block<UserImpl> users) {
 		final List<UserImpl> usersIn = users.getElements();
 
 		final List<FullUserProfileDto> usersOut = usersIn.stream().map(e -> toFullUserProfileDto(e))
@@ -49,11 +49,14 @@ public class FriendConversor {
 		return new BlockDto<>(usersOut, users.isExistMoreElements());
 	}
 
-	public final static FullUserProfileDto toFullUserProfileDto(UserImpl out) {
+	public static final FullUserProfileDto toFullUserProfileDto(UserImpl out) {
 		return new FullUserProfileDto(out.getRating(), out.isPremium(),
 			new DateUserProfileDto(out.getDate().getDayOfMonth(), out.getDate().getMonthValue(),
 				out.getDate().getYear(),
 				new AgelessUserProfileDto(out.getSex(), out.getCity(), out.getDescription())));
 	}
 
+	private FriendConversor() {
+
+	}
 }

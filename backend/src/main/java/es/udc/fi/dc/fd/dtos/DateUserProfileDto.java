@@ -24,7 +24,7 @@ public class DateUserProfileDto {
 	private int year;
 
 	@JsonUnwrapped
-	AgelessUserProfileDto agelessFields;
+	private AgelessUserProfileDto agelessFields;
 
 	public DateUserProfileDto() {
 		super();
@@ -35,7 +35,7 @@ public class DateUserProfileDto {
 		this.day = day;
 		this.month = month;
 		this.year = year;
-		this.agelessFields = agelessFields;
+		this.setAgelessFields(agelessFields);
 	}
 
 	public int getDay() {
@@ -74,7 +74,7 @@ public class DateUserProfileDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((agelessFields == null) ? 0 : agelessFields.hashCode());
+		result = prime * result + ((getAgelessFields() == null) ? 0 : getAgelessFields().hashCode());
 		result = prime * result + day;
 		result = prime * result + month;
 		result = prime * result + year;
@@ -93,11 +93,11 @@ public class DateUserProfileDto {
 			return false;
 		}
 		DateUserProfileDto other = (DateUserProfileDto) obj;
-		if (agelessFields == null) {
-			if (other.agelessFields != null) {
+		if (getAgelessFields() == null) {
+			if (other.getAgelessFields() != null) {
 				return false;
 			}
-		} else if (!agelessFields.equals(other.agelessFields)) {
+		} else if (!getAgelessFields().equals(other.getAgelessFields())) {
 			return false;
 		}
 		if (day != other.day) {
@@ -115,7 +115,7 @@ public class DateUserProfileDto {
 	@Override
 	public String toString() {
 		return "DateUserProfileDto [day=" + day + ", month=" + month + ", year=" + year + ", agelessFields="
-			+ agelessFields + "]";
+			+ getAgelessFields() + "]";
 	}
 
 

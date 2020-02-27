@@ -32,6 +32,7 @@ import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 @Order(Ordered.HIGHEST_PRECEDENCE + 50)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	private DefaultSimpUserRegistry userRegistry = new DefaultSimpUserRegistry();
+
 	private DefaultUserDestinationResolver resolver = new DefaultUserDestinationResolver(userRegistry);
 
 	@Bean

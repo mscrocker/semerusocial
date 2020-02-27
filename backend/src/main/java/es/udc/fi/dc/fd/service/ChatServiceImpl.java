@@ -28,12 +28,16 @@ import java.util.Optional;
 public class ChatServiceImpl implements ChatService {
 
 	private static final int MAX_LENGTH_MESSAGE = 999;
+
 	@Autowired
 	private MessageRepository messageRepository;
+
 	@Autowired
 	private MatchRepository matchRepository;
+
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private PermissionChecker permissionChecker;
 

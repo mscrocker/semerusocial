@@ -10,8 +10,8 @@ import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 
 public class SearchCriteriaDto {
 	@NotNull
-
 	private SexCriteriaEnum sex;
+
 	@NotNull
 	@Min(18)
 	private int minAge;

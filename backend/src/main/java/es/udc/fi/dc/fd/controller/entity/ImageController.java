@@ -44,8 +44,10 @@ import es.udc.fi.dc.fd.service.ImageService;
 @RequestMapping("/images")
 public class ImageController {
 
-	private final static String ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE = "project.exceptions.ItsNotYourImageException";
-	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+	private static final String ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE = "project.exceptions.ItsNotYourImageException";
+
+	private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+
 	private static final String INVALID_IMAGE_FORMAT_EXCEPTION_CODE = "project.exceptions.InvalidImageFormatException";
 
 	private final MessageSource messageSource;

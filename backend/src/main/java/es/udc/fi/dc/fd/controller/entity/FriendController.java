@@ -50,14 +50,22 @@ import es.udc.fi.dc.fd.service.FriendService;
 
 public class FriendController {
 
-	private final static String ALREADY_REJECTED_EXCEPTION = "project.exceptions.AlreadyRejectedException";
-	private final static String ALREADY_ACEPTED_EXCEPTION = "project.exceptions.AlreadyAceptedException";
-	private final static String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
-	private final static String INVALID_RECOMMENDATION_EXCEPTION = "project.exceptions.InvalidRecommendationException";
-	private final static String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
+	private static final String ALREADY_REJECTED_EXCEPTION = "project.exceptions.AlreadyRejectedException";
+
+	private static final String ALREADY_ACEPTED_EXCEPTION = "project.exceptions.AlreadyAceptedException";
+
+	private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+
+	private static final String INVALID_RECOMMENDATION_EXCEPTION = "project.exceptions.InvalidRecommendationException";
+
+	private static final String NO_MORE_SUGGESTION_FOUND = "project.exceptions.NoMoreSuggestionFound";
+
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
+
 	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
+
 	private static final String ALREADY_BLOCKED_CODE = "project.exceptions.AlreadyBlockedException";
+
 	private static final String CANT_FIND_MORE_CODE = "project.exceptions.CantFindMoreFriendsException";
 
 	@Autowired

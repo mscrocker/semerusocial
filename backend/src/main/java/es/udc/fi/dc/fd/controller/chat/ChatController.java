@@ -41,11 +41,14 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @Controller
 public class ChatController {
-	private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
 
 	private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+
 	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
+
 	private static final String VALIDATION_EXCEPTION_CODE = "project.exceptions.ValidationException";
+
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 
 	@Autowired
@@ -123,7 +126,7 @@ public class ChatController {
 			messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/reply", chatMessage);
 
 		} catch (InstanceNotFoundException | ItsNotYourFriendException | ValidationException e) {
-			logger.info("Illegal access to chat");
+			LOGGER.info("Illegal access to chat");
 			final ChatMessage chatMessage2 = new ChatMessage();
 			chatMessage2.setType(MessageType.ERROR);
 			chatMessage2.setSenderId(ownerUser.getUserId());

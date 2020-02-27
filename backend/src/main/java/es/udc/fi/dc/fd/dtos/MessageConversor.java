@@ -6,7 +6,7 @@ import es.udc.fi.dc.fd.model.FriendChatTitle;
 import es.udc.fi.dc.fd.model.persistence.MessageImpl;
 import es.udc.fi.dc.fd.service.Block;
 
-public class MessageConversor {
+public final class MessageConversor {
 
 	private MessageConversor() {
 

@@ -1,18 +1,5 @@
 package es.udc.fi.dc.fd.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.udc.fi.dc.fd.controller.exception.AlreadyAceptedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyBlockedException;
 import es.udc.fi.dc.fd.controller.exception.AlreadyRejectedException;
@@ -42,6 +29,18 @@ import es.udc.fi.dc.fd.repository.RateRepository;
 import es.udc.fi.dc.fd.repository.RejectedRepository;
 import es.udc.fi.dc.fd.repository.RequestRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -132,9 +131,8 @@ public class FriendServiceImpl implements FriendService {
 			final MatchImpl match = new MatchImpl(new MatchId(firstId, secondId), LocalDateTime.now());
 			matchRepository.save(match);
 			requestRepository.delete(inverse.get());
-		}
-		// If it doesnt exist it means its the only existent request
-		else {
+		} else {
+			// If it doesnt exist it means its the only existent request
 			requestRepository.save(new RequestImpl(new RequestId(subject, object), LocalDateTime.now()));
 		}
 	}
@@ -206,8 +204,6 @@ public class FriendServiceImpl implements FriendService {
 		}
 
 		switch (criteria.getCriteriaSex()) {
-			case ANY:
-				break;
 			case OTHER:
 				if (user.getSex().equals("Male") || user.getSex().equals("Female")) {
 					return false;
@@ -223,17 +219,16 @@ public class FriendServiceImpl implements FriendService {
 					return false;
 				}
 				break;
+			default:
+				break;
 
 		}
 
 		// If object user city doesnt fit criteria -> exception
 		// If CityCriteria is blank means we accept all possible cities
 		final SearchCriteria searchCriteria = userService.getSearchCriteria(criteria.getId());
-		if (searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()
-			&& searchCriteria.getCity().stream().noneMatch(user.getCity()::equalsIgnoreCase)) {
-			return false;
-		}
-		return true;
+		return searchCriteria.getCity() == null || searchCriteria.getCity().isEmpty()
+			|| searchCriteria.getCity().stream().anyMatch(user.getCity()::equalsIgnoreCase);
 	}
 
 	@Override
@@ -279,7 +274,7 @@ public class FriendServiceImpl implements FriendService {
 	}
 
 	/**
-	 * precondition: user dont find friends with her/his actual criteria
+	 * precondition: user dont find friends with her/his actual criteria.
 	 */
 	@Override
 	public SuggestedSearchCriteria suggestNewCriteria(Long userId)
@@ -306,7 +301,7 @@ public class FriendServiceImpl implements FriendService {
 			// MaxAge
 			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
 
-			if (newUsersSuggestedLimit > 0) {// Si maxAge=200 encuentra a alguien
+			if (newUsersSuggestedLimit > 0) { // Si maxAge=200 encuentra a alguien
 				for (int maxAge = searchCriteria.getMaxAge(); maxAge <= maxPosibleAge; maxAge += 5) {
 					newCriteria = new SearchCriteria(searchCriteria.getSex(), searchCriteria.getMinAge(), maxAge,
 						searchCriteria.getCity(), minRate);
@@ -324,7 +319,7 @@ public class FriendServiceImpl implements FriendService {
 				searchCriteria.getCity(), minRate);
 			newUsersSuggestedLimit = userRepository.findByCriteriaMaxResults(newCriteria, userId);
 
-			if (newUsersSuggestedLimit > 0) {// Si minAge = 18 encuentra a alguien
+			if (newUsersSuggestedLimit > 0) { // Si minAge = 18 encuentra a alguien
 				for (int minAge = searchCriteria.getMinAge(); minAge >= minPosibleAge; minAge -= 5) {
 					newCriteria = new SearchCriteria(searchCriteria.getSex(), minAge, searchCriteria.getMaxAge(),
 						searchCriteria.getCity(), minRate);
