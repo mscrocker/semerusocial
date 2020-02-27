@@ -338,6 +338,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
 					<rulesets>
+						<ruleset>${project.parent.relativePath}/src/config/pmd/pmd-rules.xml</ruleset>
 						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
 					</rulesets>
 					<excludes>
