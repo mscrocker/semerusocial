@@ -154,7 +154,7 @@ public class ImageImpl implements Image {
 	@Override
 	public String toString() {
 		return "ImageImpl [imageId=" + imageId + ", user=" + user + ", data=" + Arrays.toString(data) + ", type=" + type
-				+ "]";
+			+ "]";
 	}
 
 }

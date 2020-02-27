@@ -44,11 +44,11 @@ import es.udc.fi.dc.fd.service.ChatService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
-@TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@ContextConfiguration(locations = {"classpath:context/service.xml", "classpath:context/persistence.xml",
+	"classpath:context/application-context.xml"})
+@TestPropertySource( {"classpath:config/persistence-access.properties", "classpath:config/service.properties"})
 @Rollback
 @Transactional
 public class ITChatService {
@@ -87,7 +87,7 @@ public class ITChatService {
 	}
 
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
-			String description) {
+								String description) {
 		return new UserImpl(userName, password, date, sex, city, description);
 	}
 
@@ -125,7 +125,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageFriendToUser()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -152,7 +152,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageInstanceNotFoundException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -166,7 +166,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageInstanceNotFoundExceptionUserNotFound()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -180,7 +180,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageItsNotYourFriendException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -195,7 +195,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionUserNull()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -209,7 +209,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionFriendNull()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -223,7 +223,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionMsgToYourself()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "mensaje";
 
 		// Creamos los usuarios
@@ -237,7 +237,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionContentNull()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = null;
 
 		// Creamos los usuarios
@@ -257,7 +257,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionContentBlank()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		final String content = "   ";
 
 		// Creamos los usuarios
@@ -277,7 +277,7 @@ public class ITChatService {
 
 	@Test
 	public void testSendMessageValidationExceptionContentTooLarge()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		final String content = StringUtils.repeat("a", 1000);
 
@@ -321,7 +321,7 @@ public class ITChatService {
 		// Probamos el servicio
 		final int size = msgCant - 2;
 		final Block<MessageDetailsDto> conversation = chatService.getConversation(user.get().getId(),
-				friend.get().getId(), 0, size);
+			friend.get().getId(), 0, size);
 
 		assertFalse(conversation.getElements().isEmpty());
 		assertTrue(conversation.isExistMoreElements());
@@ -331,7 +331,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationInstanceNotFoundExceptionUser()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Creamos un usuario
 		final Optional<UserImpl> friend = createUser("friend");
@@ -344,7 +344,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationInstanceNotFoundExceptionFriend()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Creamos un usuario
 		final Optional<UserImpl> user = createUser("user1");
@@ -357,7 +357,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationItsNotYourFriendException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		/*
 		 * 4. Usamos el servicio
 		 */
@@ -373,7 +373,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationValidationException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		// Intentamos obtener la conversación con nosotros mismos
 
 		// Creamos los usuarios
@@ -387,7 +387,7 @@ public class ITChatService {
 
 	@Test
 	public void testGetConversationFriendToUser()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		/*
 		 * 4. Usamos el servicio
 		 */
@@ -409,7 +409,7 @@ public class ITChatService {
 		// Probamos el servicio
 		final int size = msgCant - 2;
 		final Block<MessageDetailsDto> conversation = chatService.getConversation(friend.get().getId(),
-				user.get().getId(), 0, size);
+			user.get().getId(), 0, size);
 
 		assertFalse(conversation.getElements().isEmpty());
 		assertTrue(conversation.isExistMoreElements());

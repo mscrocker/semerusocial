@@ -13,34 +13,34 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.UserRepository;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class PermissionCheckerImpl implements PermissionChecker {
-	
+
 	private UserRepository userRepository;
-	
+
 	@Autowired
-	public PermissionCheckerImpl(UserRepository userRepository){
+	public PermissionCheckerImpl(UserRepository userRepository) {
 		super();
 
 		this.userRepository = checkNotNull(userRepository,
-                "Received a null pointer as userRepository in PermissionCheckerImpl");
+			"Received a null pointer as userRepository in PermissionCheckerImpl");
 	}
-	
+
 	@Override
 	public void checkUserExists(Long userId) throws InstanceNotFoundException {
-		
+
 		if (!userRepository.existsById(userId)) {
 			throw new InstanceNotFoundException("project.entities.user", userId);
 		}
-		
+
 	}
-	
+
 	@Override
 	public UserImpl checkUserByUserId(Long userId) throws InstanceNotFoundException {
 		checkUserExists(userId);
-		
+
 		Optional<UserImpl> user = userRepository.findById(userId);
-		if(!user.isPresent()) {
+		if (!user.isPresent()) {
 			throw new InstanceNotFoundException("user", userId);
 		}
 		return user.get();

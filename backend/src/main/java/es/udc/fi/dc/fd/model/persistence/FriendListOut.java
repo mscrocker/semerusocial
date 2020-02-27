@@ -9,6 +9,7 @@ public class FriendListOut {
 	public FriendListOut() {
 
 	}
+
 	public FriendListOut(UserImpl user, int myRating) {
 		super();
 		this.user = user;

@@ -20,6 +20,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ * <p>
+ * Persistence model.
+ * <p>
+ * Extension of the application model prepared for the persistence layer.
+ * <p>
+ * It should be used only to communicate with the persistence layer. Ideally instances of these
+ * objects would never be returned to the view.
  */
 /**
  * Persistence model.

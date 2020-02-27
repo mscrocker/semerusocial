@@ -12,7 +12,7 @@ public class FriendHeaderDto extends FriendChatTitle {
 
 	public FriendHeaderDto(Long friendId, String friendName, String content, Boolean sentByYou, LocalDateTime date) {
 		super(friendId, friendName, content, sentByYou, date);
-		
+
 	}
-	
+
 }

@@ -8,38 +8,38 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public final class UserAuthenticatedDto implements Serializable {
 
-    private static final long serialVersionUID = 1328776989450853492L;
+	private static final long serialVersionUID = 1328776989450853492L;
 
-    @NotEmpty
-    private String userName;
+	@NotEmpty
+	private String userName;
 
-    @NotEmpty
-    private String jwt;
+	@NotEmpty
+	private String jwt;
 
-    public UserAuthenticatedDto() {
-        super();
-    }
-    
-    public UserAuthenticatedDto(String userName, String jwt) {
-        super();
-        setUserName(userName);
-        setJwt(jwt);
-    }
+	public UserAuthenticatedDto() {
+		super();
+	}
+
+	public UserAuthenticatedDto(String userName, String jwt) {
+		super();
+		setUserName(userName);
+		setJwt(jwt);
+	}
 
 	public String getUserName() {
 		return userName;
 	}
-	
+
 	public String getJwt() {
 		return jwt;
 	}
 
 	public void setUserName(String userName) {
-   		this.userName = checkNotNull(userName, "Received a null pointer as userName in UserAuthenticatedDto");
+		this.userName = checkNotNull(userName, "Received a null pointer as userName in UserAuthenticatedDto");
 	}
-	
+
 	public void setJwt(String jwt) {
-   		this.jwt = checkNotNull(jwt, "Received a null pointer as jwt in UserAuthenticatedDto");
+		this.jwt = checkNotNull(jwt, "Received a null pointer as jwt in UserAuthenticatedDto");
 	}
 
 	@Override
@@ -53,23 +53,30 @@ public final class UserAuthenticatedDto implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		UserAuthenticatedDto other = (UserAuthenticatedDto) obj;
 		if (jwt == null) {
-			if (other.jwt != null)
+			if (other.jwt != null) {
 				return false;
-		} else if (!jwt.equals(other.jwt))
+			}
+		} else if (!jwt.equals(other.jwt)) {
 			return false;
+		}
 		if (userName == null) {
-			if (other.userName != null)
+			if (other.userName != null) {
 				return false;
-		} else if (!userName.equals(other.userName))
+			}
+		} else if (!userName.equals(other.userName)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -77,5 +84,5 @@ public final class UserAuthenticatedDto implements Serializable {
 	public String toString() {
 		return "UserAuthenticatedDto [userName=" + userName + ", jwt=" + jwt + "]";
 	}
-	
+
 }

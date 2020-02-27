@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- POM Relationships -->
 
@@ -339,6 +339,7 @@
 	<!-- Build Environment » Environment Information -->
 
 	<properties>
+		<checkstyle.config.location>${project.parent.basedir}/src/main/config/checkstyle/checkstyle-rules.xml</checkstyle.config.location>
 		<h2.version>1.4.197</h2.version>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<hibernate.version>5.2.17.Final</hibernate.version>
@@ -395,7 +396,8 @@
 				<database.password>friendmatch</database.password>
 				<database.port>3307</database.port>
 				<database.tag>mysql</database.tag>
-				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC</database.testUrl>
+				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC
+				</database.testUrl>
 				<database.url>jdbc:mysql://localhost:3306/${database.name}?serverTimezone=UTC</database.url>
 				<database.username>friendmatch</database.username>
 				<database.version>8.0.19</database.version>

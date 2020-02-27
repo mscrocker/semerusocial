@@ -20,6 +20,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ * <p>
+ * Repositories.
+ * <p>
+ * Similar to a DAO, a repository is a pattern which allows handling the
+ * persistence layer as if it was a collection, where entities are stored and
+ * read from.
  */
 /**
  * Repositories.

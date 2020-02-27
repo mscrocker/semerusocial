@@ -7,7 +7,7 @@ public class SearchCriteriaConversor {
 	public final static SearchCriteriaDto toSearchCriteriaDto(SearchCriteria criteria) {
 
 		return new SearchCriteriaDto(criteria.getSex().getCode(), criteria.getMinAge(),
-				criteria.getMaxAge(), criteria.getCity(), criteria.getMinRate());
+			criteria.getMaxAge(), criteria.getCity(), criteria.getMinRate());
 	}
 
 }

@@ -68,7 +68,7 @@ public class ImageController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -78,7 +78,7 @@ public class ImageController {
 	@ResponseBody
 	public ErrorsDto handleItsNotYourImageException(ItsNotYourImageException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, null,
-				ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, locale);
+			ITS_NOT_YOUR_IMAGE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -88,20 +88,20 @@ public class ImageController {
 	@ResponseBody
 	public ErrorsDto handleInvalidFormatException(InvalidImageFormatException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_IMAGE_FORMAT_EXCEPTION_CODE, null,
-				INVALID_IMAGE_FORMAT_EXCEPTION_CODE, locale);
+			INVALID_IMAGE_FORMAT_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
 
 	@PostMapping("/add")
 	public ResponseEntity<IdDto> addImage(@Validated @RequestBody ImageDataDto image,
-			@RequestAttribute Long userId) throws InstanceNotFoundException, InvalidImageFormatException {
+										  @RequestAttribute Long userId) throws InstanceNotFoundException, InvalidImageFormatException {
 		final ImageImpl imageResult = imageService.addImage(ImageConversor.toImageImpl(image), userId);
 
 		final IdDto imageResultDto = new IdDto(imageResult.getImageId());
 
 		final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{imageId}")
-				.buildAndExpand(imageResult.getImageId()).toUri();
+			.buildAndExpand(imageResult.getImageId()).toUri();
 
 		return ResponseEntity.created(location).body(imageResultDto);
 	}
@@ -109,13 +109,13 @@ public class ImageController {
 	@DeleteMapping("/remove/{imageId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void removeImage(@PathVariable Long imageId, @RequestAttribute Long userId)
-			throws InstanceNotFoundException, ItsNotYourImageException {
+		throws InstanceNotFoundException, ItsNotYourImageException {
 		imageService.removeImage(imageId, userId);
 	}
 
 	@GetMapping("/carrusel")
 	public BlockDto<ImageDto> getImagesById(@RequestAttribute Long userId, @RequestParam int page)
-			throws InstanceNotFoundException {
+		throws InstanceNotFoundException {
 		final Block<ImageImpl> image = imageService.getImagesByUserId(userId, page);
 
 		return ImageConversor.toReturnedImagesDto(image);
@@ -123,7 +123,7 @@ public class ImageController {
 
 	@GetMapping("/carrusel/user/{userId}")
 	public BlockDto<ImageDataDto> getCarruselOfUser(@PathVariable Long userId, @RequestParam int page)
-			throws InstanceNotFoundException {
+		throws InstanceNotFoundException {
 		final Block<ImageImpl> images = imageService.getImagesByUserId(userId, page);
 		final BlockDto<ImageDataDto> blockDto = ImageConversor.toImageDataDtos(images);
 
@@ -132,8 +132,8 @@ public class ImageController {
 
 	@GetMapping("/anonymousCarrusel")
 	public BlockDto<ImageDataDto> getAnonymousCarrusel(@RequestParam @NotEmpty String city,
-			@RequestParam @Min(0) int page)
-					throws InstanceNotFoundException {
+													   @RequestParam @Min(0) int page)
+		throws InstanceNotFoundException {
 		final Block<ImageImpl> images = imageService.getAnonymousCarrusel(city, page);
 
 		return ImageConversor.toImageDataDtos(images);

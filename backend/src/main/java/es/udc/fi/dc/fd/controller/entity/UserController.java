@@ -103,7 +103,7 @@ public class UserController {
 	public ErrorsDto handleDuplicateInstanceException(DuplicateInstanceException exception, Locale locale) {
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(DUPLICATE_INSTANCE_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, DUPLICATE_INSTANCE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -113,7 +113,7 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleIncorrectLoginException(IncorrectLoginException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
-				INCORRECT_LOGIN_EXCEPTION_CODE, locale);
+			INCORRECT_LOGIN_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -125,7 +125,7 @@ public class UserController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -137,8 +137,8 @@ public class UserController {
 	public ErrorsDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
 		final List<FieldErrorDto> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
-				.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
-				.collect(Collectors.toList());
+			.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
+			.collect(Collectors.toList());
 
 		return new ErrorsDto(fieldErrors);
 
@@ -149,7 +149,7 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleInvalidRateException(InvalidRateException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_RATE_EXCEPTION_CODE, null,
-				INVALID_RATE_EXCEPTION_CODE, locale);
+			INVALID_RATE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -159,7 +159,7 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE, null,
-				INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE, locale);
+			INVALID_ITS_NOT_YOUR_FRIEND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -169,7 +169,7 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleInvalidDateException(InvalidDateException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_DATE_EXCEPTION_CODE, null,
-				INVALID_DATE_EXCEPTION_CODE, locale);
+			INVALID_DATE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -179,23 +179,23 @@ public class UserController {
 	@ResponseBody
 	public ErrorsDto handleInvalidAgeException(InvalidAgeException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(INVALID_AGE_EXCEPTION_CODE, null,
-				INVALID_AGE_EXCEPTION_CODE, locale);
+			INVALID_AGE_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
 
 	@PostMapping("/signUp")
 	public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody RegisterParamsDto params)
-			throws DuplicateInstanceException, InvalidDateException {
+		throws DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
 		userService.signUp(user);
 
 		final UserAuthenticatedDto userAuthenticated = new UserAuthenticatedDto(user.getUserName(),
-				generateServiceToken(user));
+			generateServiceToken(user));
 
 		final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
-				.toUri();
+			.toUri();
 
 		return ResponseEntity.created(location).body(userAuthenticated);
 	}
@@ -203,15 +203,15 @@ public class UserController {
 	@PutMapping("/searchCriteria")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void setSearchCriteria(@RequestAttribute Long userId, @Validated @RequestBody SearchCriteriaDto criteria)
-			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException {
+		throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException {
 		final SearchCriteria searchCriteria = new SearchCriteria(criteria.getSex(), criteria.getMinAge(),
-				criteria.getMaxAge(), criteria.getCity(), criteria.getMinRate());
+			criteria.getMaxAge(), criteria.getCity(), criteria.getMinRate());
 		userService.setSearchCriteria(userId, searchCriteria);
 	}
 
 	@GetMapping("/searchCriteria")
 	public SearchCriteriaDto getSearchCriteria(@RequestAttribute Long userId)
-			throws InstanceNotFoundException {
+		throws InstanceNotFoundException {
 		final SearchCriteria criteria = userService.getSearchCriteria(userId);
 
 		return SearchCriteriaConversor.toSearchCriteriaDto(criteria);
@@ -230,31 +230,31 @@ public class UserController {
 		final UserImpl user = userService.loginFromUserId(userId);
 
 		return new FullUserProfileDto(
-				user.getRating(), user.isPremium(),
-				new DateUserProfileDto(
-						user.getDate().getDayOfMonth(),
-						user.getDate().getMonthValue(),
-						user.getDate().getYear(),
-						new AgelessUserProfileDto(
-								user.getSex(),
-								user.getCity(),
-								user.getDescription()
-								)
-						)
-				);
+			user.getRating(), user.isPremium(),
+			new DateUserProfileDto(
+				user.getDate().getDayOfMonth(),
+				user.getDate().getMonthValue(),
+				user.getDate().getYear(),
+				new AgelessUserProfileDto(
+					user.getSex(),
+					user.getCity(),
+					user.getDescription()
+				)
+			)
+		);
 	}
 
 	@PutMapping("/updateProfile")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateProfile(@RequestAttribute Long userId,
-			@Validated @RequestBody DateUserProfileDto updateProfileInDto)
-					throws InstanceNotFoundException, InvalidDateException {
+							  @Validated @RequestBody DateUserProfileDto updateProfileInDto)
+		throws InstanceNotFoundException, InvalidDateException {
 		userService.updateProfile(userId, UserConversor.toUserImpl(updateProfileInDto));
 	}
 
 	@PostMapping("/rate")
 	public double rate(@RequestAttribute Long userId, @Validated @RequestBody RateDto rateDto)
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 
 		return userService.rateUser(rateDto.getRate(), userId, rateDto.getUserObject());
 
@@ -263,7 +263,7 @@ public class UserController {
 	@PutMapping("/premium")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updatePremium(@RequestAttribute Long userId, @Validated @RequestBody PremiumFormDto premiumDto)
-			throws InstanceNotFoundException {
+		throws InstanceNotFoundException {
 
 		userService.updatePremium(userId, premiumDto.isPremium());
 
@@ -272,7 +272,7 @@ public class UserController {
 	@GetMapping("/topUsers")
 	@ResponseStatus(value = HttpStatus.OK)
 	public BlockDto<FullUserProfileDto> getTopUsers(@RequestParam String city,
-			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
+													@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
 		final Block<UserImpl> users = userService.getTopUsers(city, page, size);
 		return UserConversor.toReturnedUserBlockDto(users);
 	}

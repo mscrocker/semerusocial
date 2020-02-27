@@ -108,7 +108,7 @@ public class TestImageController {
 	}
 
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+		MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	public static final String PASSWORD = "pass";
 	public static final String USER_NAME = "name";
 
@@ -132,7 +132,7 @@ public class TestImageController {
 
 		// Usuario que hace la petición
 		final UserImpl user = createUser(USER_NAME, PASSWORD, getDateTime(1, 2, 2000), "mujer", "coruna",
-				"descripcion");
+			"descripcion");
 		user.setId(1L);
 
 		// Imagen de entrada al controller
@@ -150,7 +150,7 @@ public class TestImageController {
 		when(imageServiceMock.addImage(any(ImageImpl.class), any(Long.class))).thenReturn(imageImpl);
 
 		mockMvc.perform(post(UrlConfig.URL_IMAGE_ADD_POST).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(imageDto))).andExpect(status().isCreated());
+			.content(Utils.convertObjectToJsonBytes(imageDto))).andExpect(status().isCreated());
 
 		final ArgumentCaptor<ImageImpl> dtoCaptor = ArgumentCaptor.forClass(ImageImpl.class);
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -173,12 +173,12 @@ public class TestImageController {
 		imageDto.setData(image);
 
 		doThrow(new InstanceNotFoundException("User", 1L)).when(imageServiceMock).addImage(any(ImageImpl.class),
-				any(Long.class));
+			any(Long.class));
 
 		mockMvc.perform(post(UrlConfig.URL_IMAGE_ADD_POST).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(imageDto))).andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
+			.content(Utils.convertObjectToJsonBytes(imageDto))).andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 
 		final ArgumentCaptor<ImageImpl> dtoCaptor = ArgumentCaptor.forClass(ImageImpl.class);
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -200,10 +200,10 @@ public class TestImageController {
 
 	@Test
 	public void TestImageController_RemoveImage()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
+		throws InstanceNotFoundException, ItsNotYourImageException, Exception {
 
 		mockMvc.perform(delete(UrlConfig.URL_IMAGE_REMOVE_DELETE, 2).contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)).andExpect(status().isNoContent());
+			.requestAttr("userId", 1L)).andExpect(status().isNoContent());
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -216,12 +216,12 @@ public class TestImageController {
 
 	@Test
 	public void TestImageController_RemoveImage_InstanceNotFoundException()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
+		throws InstanceNotFoundException, ItsNotYourImageException, Exception {
 
 		doThrow(new InstanceNotFoundException("user", 1L)).when(imageServiceMock).removeImage(any(Long.class),
-				any(Long.class));
+			any(Long.class));
 		mockMvc.perform(delete(UrlConfig.URL_IMAGE_REMOVE_DELETE, 2).contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)).andExpect(status().isNotFound());
+			.requestAttr("userId", 1L)).andExpect(status().isNotFound());
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -234,11 +234,11 @@ public class TestImageController {
 
 	@Test
 	public void TestImageController_RemoveImage_ItsNotYourImageException()
-			throws InstanceNotFoundException, ItsNotYourImageException, Exception {
+		throws InstanceNotFoundException, ItsNotYourImageException, Exception {
 
 		doThrow(new ItsNotYourImageException(" ")).when(imageServiceMock).removeImage(any(Long.class), any(Long.class));
 		mockMvc.perform(delete(UrlConfig.URL_IMAGE_REMOVE_DELETE, 2).contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)).andExpect(status().isForbidden());
+			.requestAttr("userId", 1L)).andExpect(status().isForbidden());
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> imageIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -262,7 +262,7 @@ public class TestImageController {
 		final ImageImpl returnedImage2 = new ImageImpl();
 
 		final UserImpl user = createUser(USER_NAME, PASSWORD, getDateTime(1, 2, 2000), "mujer", "coruna",
-				"descripcion");
+			"descripcion");
 		user.setId(1L);
 		returnedImage1.setData(converted1);
 		returnedImage1.setImageId(1L);
@@ -280,9 +280,9 @@ public class TestImageController {
 		when(imageServiceMock.getImagesByUserId(any(Long.class), any(int.class))).thenReturn(blockImages);
 
 		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGESBYID_GET).contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L).param("page", "0")).andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.elements").isArray())
-		.andExpect(jsonPath("$.elements", hasSize(2))).andExpect(jsonPath("$.existMoreElements").value(false));
+			.requestAttr("userId", 1L).param("page", "0")).andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8)).andExpect(jsonPath("$.elements").isArray())
+			.andExpect(jsonPath("$.elements", hasSize(2))).andExpect(jsonPath("$.existMoreElements").value(false));
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
@@ -296,15 +296,15 @@ public class TestImageController {
 
 	@Test
 	public void TestImageController_getImagesById_InstanceNotFoundException()
-			throws InstanceNotFoundException, Exception {
+		throws InstanceNotFoundException, Exception {
 
 		when(imageServiceMock.getImagesByUserId(any(Long.class), any(int.class)))
-		.thenThrow(new InstanceNotFoundException(null, 1L));
+			.thenThrow(new InstanceNotFoundException(null, 1L));
 
 		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETIMAGESBYID_GET).contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L).param("page", "0")).andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
+			.requestAttr("userId", 1L).param("page", "0")).andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(int.class);
@@ -324,7 +324,7 @@ public class TestImageController {
 		final int page = 0;
 
 		final List<ImageImpl> images = new ArrayList<>();
-		images.add(new ImageImpl(new byte[] { 1, 2, 3 }, "png"));
+		images.add(new ImageImpl(new byte[] {1, 2, 3}, "png"));
 
 		final Block<ImageImpl> block = new Block<>(images, false);
 
@@ -336,7 +336,7 @@ public class TestImageController {
 		params.add("page", String.valueOf(page));
 
 		mockMvc.perform(get(UrlConfig.URL_IMAGE_GETANONYMOUS_GET).contentType(APPLICATION_JSON_UTF8).params(params))
-		.andExpect(status().isOk());
+			.andExpect(status().isOk());
 
 		final ArgumentCaptor<String> cityCaptor = ArgumentCaptor.forClass(String.class);
 		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);

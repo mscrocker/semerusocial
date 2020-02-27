@@ -83,34 +83,40 @@ public class DateUserProfileDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		DateUserProfileDto other = (DateUserProfileDto) obj;
 		if (agelessFields == null) {
-			if (other.agelessFields != null)
+			if (other.agelessFields != null) {
 				return false;
-		} else if (!agelessFields.equals(other.agelessFields))
+			}
+		} else if (!agelessFields.equals(other.agelessFields)) {
 			return false;
-		if (day != other.day)
+		}
+		if (day != other.day) {
 			return false;
-		if (month != other.month)
+		}
+		if (month != other.month) {
 			return false;
-		if (year != other.year)
+		}
+		if (year != other.year) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "DateUserProfileDto [day=" + day + ", month=" + month + ", year=" + year + ", agelessFields="
-				+ agelessFields + "]";
+			+ agelessFields + "]";
 	}
 
-	
 
-	
 }

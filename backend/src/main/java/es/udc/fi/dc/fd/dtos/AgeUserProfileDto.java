@@ -51,20 +51,26 @@ public class AgeUserProfileDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AgeUserProfileDto other = (AgeUserProfileDto) obj;
 		if (agelessFields == null) {
-			if (other.agelessFields != null)
+			if (other.agelessFields != null) {
 				return false;
-		} else if (!agelessFields.equals(other.agelessFields))
+			}
+		} else if (!agelessFields.equals(other.agelessFields)) {
 			return false;
-		if (age != other.age)
+		}
+		if (age != other.age) {
 			return false;
+		}
 		return true;
 	}
 

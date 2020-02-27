@@ -95,7 +95,7 @@ public class SuggestedSearchCriteria {
 	@Override
 	public String toString() {
 		return "SuggestedSearchCriteria [newMinAge=" + newMinAge + ", newMaxAge=" + newMaxAge + ", newMinRate="
-				+ newMinRate + ", usersYouWouldFind=" + usersYouWouldFind + "]";
+			+ newMinRate + ", usersYouWouldFind=" + usersYouWouldFind + "]";
 	}
 
 }

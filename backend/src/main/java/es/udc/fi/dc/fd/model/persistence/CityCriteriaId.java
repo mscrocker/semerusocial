@@ -12,9 +12,9 @@ public class CityCriteriaId implements Serializable {
 	private static final long serialVersionUID = 662827762820441L;
 
 	private Long userId;
-	
+
 	private String city;
-	
+
 
 	public CityCriteriaId(Long userId, String city) {
 		super();
@@ -57,23 +57,30 @@ public class CityCriteriaId implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		CityCriteriaId other = (CityCriteriaId) obj;
 		if (city == null) {
-			if (other.city != null)
+			if (other.city != null) {
 				return false;
-		} else if (!city.equals(other.city))
+			}
+		} else if (!city.equals(other.city)) {
 			return false;
+		}
 		if (userId == null) {
-			if (other.userId != null)
+			if (other.userId != null) {
 				return false;
-		} else if (!userId.equals(other.userId))
+			}
+		} else if (!userId.equals(other.userId)) {
 			return false;
+		}
 		return true;
 	}
 

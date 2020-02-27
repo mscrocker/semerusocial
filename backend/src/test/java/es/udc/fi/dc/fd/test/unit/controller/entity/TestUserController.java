@@ -63,7 +63,7 @@ import es.udc.fi.dc.fd.test.config.UrlConfig;
 public final class TestUserController {
 
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+		MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	public static final String PASSWORD = "pass";
 	public static final String USER_NAME = "name";
 
@@ -74,13 +74,13 @@ public final class TestUserController {
 	private UserService userServiceMock;
 
 	private RegisterParamsDto getValidRegisterParams() {
-		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD),new DateUserProfileDto( 1, 2, 2000, new AgelessUserProfileDto("mujer", "coruna",
-				"descripcion")));
+		return new RegisterParamsDto(new LoginParamsDto(USER_NAME, PASSWORD), new DateUserProfileDto(1, 2, 2000, new AgelessUserProfileDto("mujer", "coruna",
+			"descripcion")));
 	}
 
 	private DateUserProfileDto getValidUserProfileDto() {
-		return new DateUserProfileDto( 1, 1, 2000, new AgelessUserProfileDto("Patata", "Patatolandia",
-				"descripción"));
+		return new DateUserProfileDto(1, 1, 2000, new AgelessUserProfileDto("Patata", "Patatolandia",
+			"descripción"));
 	}
 
 	/**
@@ -126,7 +126,7 @@ public final class TestUserController {
 	}
 
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
-			String description) {
+								String description) {
 		return new UserImpl(userName, password, date, sex, city, description);
 	}
 
@@ -145,14 +145,14 @@ public final class TestUserController {
 		login.setPassword(PASSWORD);
 
 		final UserImpl user = createUser(USER_NAME, PASSWORD, getDateTime(1, 1, 2000), "mujer", "coruna",
-				"descripcion");
+			"descripcion");
 		when(userServiceMock.login(any(LoginParamsDto.class))).thenReturn(user);
 
 		// Comprueba lo devuelto por el Controlador
 		mockMvc.perform(post(UrlConfig.URL_USER_LOGIN_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(Utils.convertObjectToJsonBytes(login))).andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.userName").value(USER_NAME)).andExpect(jsonPath("$.jwt").isString());
+			.content(Utils.convertObjectToJsonBytes(login))).andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.userName").value(USER_NAME)).andExpect(jsonPath("$.jwt").isString());
 
 		final ArgumentCaptor<LoginParamsDto> dtoCaptor = ArgumentCaptor.forClass(LoginParamsDto.class);
 
@@ -169,18 +169,18 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_login_IncorrectLoginException()
-			throws IOException, IncorrectLoginException, Exception {
+		throws IOException, IncorrectLoginException, Exception {
 		final LoginParamsDto login = new LoginParamsDto();
 		login.setUserName(USER_NAME);
 		login.setPassword(PASSWORD);
 
 		doThrow(new IncorrectLoginException(USER_NAME, PASSWORD)).when(userServiceMock)
-		.login(any(LoginParamsDto.class));
+			.login(any(LoginParamsDto.class));
 
 		mockMvc.perform(post(UrlConfig.URL_USER_LOGIN_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(Utils.convertObjectToJsonBytes(login))).andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.IncorrectLoginException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
+			.content(Utils.convertObjectToJsonBytes(login))).andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.IncorrectLoginException"))
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 
 		final ArgumentCaptor<LoginParamsDto> dtoCaptor = ArgumentCaptor.forClass(LoginParamsDto.class);
 
@@ -201,7 +201,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SignUp()
-			throws IOException, InvalidDateException, DuplicateInstanceException, Exception {
+		throws IOException, InvalidDateException, DuplicateInstanceException, Exception {
 
 		final RegisterParamsDto params = getValidRegisterParams();
 
@@ -209,9 +209,9 @@ public final class TestUserController {
 
 		// Comprueba lo devuelto por el Controlador
 		mockMvc.perform(post(UrlConfig.URL_USER_REGISTER_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(Utils.convertObjectToJsonBytes(params))).andExpect(status().isCreated())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.userName").value(USER_NAME)).andExpect(jsonPath("$.jwt").isString());
+			.content(Utils.convertObjectToJsonBytes(params))).andExpect(status().isCreated())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.userName").value(USER_NAME)).andExpect(jsonPath("$.jwt").isString());
 
 		final ArgumentCaptor<UserImpl> dtoCaptor = ArgumentCaptor.forClass(UserImpl.class);
 
@@ -228,17 +228,17 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SignUp_DuplicateInstanceException()
-			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
+		throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
 		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
 		doThrow(new DuplicateInstanceException(" ", UserConversor.fromRegisterDto(params))).when(userServiceMock)
-		.signUp(any(UserImpl.class));
+			.signUp(any(UserImpl.class));
 
 		mockMvc.perform(post(UrlConfig.URL_USER_REGISTER_POST).contentType(APPLICATION_JSON_UTF8)
-				.content(Utils.convertObjectToJsonBytes(params))).andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.DuplicateInstanceException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
+			.content(Utils.convertObjectToJsonBytes(params))).andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.DuplicateInstanceException"))
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 
 		final ArgumentCaptor<UserImpl> dtoCaptor = ArgumentCaptor.forClass(UserImpl.class);
 
@@ -255,7 +255,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SignUp_InvalidDateException()
-			throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
+		throws IOException, DuplicateInstanceException, InvalidDateException, Exception {
 		final RegisterParamsDto params = getValidRegisterParams();
 
 		// Lanza un error cada vez que llamas a signUp
@@ -263,10 +263,10 @@ public final class TestUserController {
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_REGISTER_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.content(Utils.convertObjectToJsonBytes(params)))
-		.andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidDateException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.content(Utils.convertObjectToJsonBytes(params)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidDateException"));
 		// @formatter:on
 
 		final ArgumentCaptor<UserImpl> dtoCaptor = ArgumentCaptor.forClass(UserImpl.class);
@@ -295,9 +295,9 @@ public final class TestUserController {
 		when(userServiceMock.loginFromUserId(any(Long.class))).thenReturn(user);
 
 		mockMvc.perform(
-				get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.sex").value("mujer")).andExpect(jsonPath("$.city").value("coruna"));
+			get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sex").value("mujer")).andExpect(jsonPath("$.city").value("coruna"));
 
 		final ArgumentCaptor<Long> dtoCaptor = ArgumentCaptor.forClass(Long.class);
 
@@ -314,18 +314,18 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_GetUserData_InstanceNotFoundException()
-			throws InstanceNotFoundException, IOException, Exception {
+		throws InstanceNotFoundException, IOException, Exception {
 
 		final long userId = 1L;
 
 		doThrow(new InstanceNotFoundException(USER_NAME, userId)).when(userServiceMock)
-		.loginFromUserId(any(Long.class));
+			.loginFromUserId(any(Long.class));
 
 		mockMvc.perform(
-				get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
-		.andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
-		.andExpect(jsonPath("$.fieldErrors").isEmpty());
+			get(UrlConfig.URL_USER_GET_USER_DATA).contentType(APPLICATION_JSON_UTF8).requestAttr("userId", 1L))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"))
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 
 		final ArgumentCaptor<Long> dtoCaptor = ArgumentCaptor.forClass(Long.class);
 
@@ -352,13 +352,13 @@ public final class TestUserController {
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_USER_CRITERIA_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L))
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.sex").value("FEMALE"))
-		.andExpect(jsonPath("$.minAge").value(20))
-		.andExpect(jsonPath("$.maxAge").value(22))
-		.andExpect(jsonPath("$.city").isEmpty());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.sex").value("FEMALE"))
+			.andExpect(jsonPath("$.minAge").value(20))
+			.andExpect(jsonPath("$.maxAge").value(22))
+			.andExpect(jsonPath("$.city").isEmpty());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -374,15 +374,15 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_GetSearchCriteria_InstanceNotFoundException()
-			throws InstanceNotFoundException, Exception {
+		throws InstanceNotFoundException, Exception {
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).getSearchCriteria(any(Long.class));
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_USER_CRITERIA_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -398,17 +398,17 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SetSearchCriteria()
-			throws InstanceNotFoundException, InvalidAgeException, Exception {
+		throws InstanceNotFoundException, InvalidAgeException, Exception {
 
 		final List<String> cities = new ArrayList<>();
 		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(criteria)))
-		.andExpect(status().isNoContent());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(criteria)))
+			.andExpect(status().isNoContent());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -424,20 +424,20 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SetSearchCriteria_InstanceNotFoundException()
-			throws InstanceNotFoundException, InvalidAgeException, Exception {
+		throws InstanceNotFoundException, InvalidAgeException, Exception {
 		final List<String> cities = new ArrayList<>();
 		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).setSearchCriteria(any(Long.class),
-				any(SearchCriteria.class));
+			any(SearchCriteria.class));
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(criteria)))
-		.andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(criteria)))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -454,20 +454,20 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_SetSearchCriteria_InvalidAgeException()
-			throws InstanceNotFoundException, InvalidAgeException, Exception {
+		throws InstanceNotFoundException, InvalidAgeException, Exception {
 		final List<String> cities = new ArrayList<>();
 		final SearchCriteria criteria = new SearchCriteria(SexCriteriaEnum.FEMALE, 20, 22, cities, 1);
 
 		doThrow(new InvalidAgeException("")).when(userServiceMock).setSearchCriteria(any(Long.class),
-				any(SearchCriteria.class));
+			any(SearchCriteria.class));
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_CRITERIA_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(criteria)))
-		.andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidAgeException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(criteria)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidAgeException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -493,10 +493,10 @@ public final class TestUserController {
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(newProfile)))
-		.andExpect(status().isNoContent());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(newProfile)))
+			.andExpect(status().isNoContent());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -510,20 +510,20 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdateProfile_InstanceNotFoundException()
-			throws InstanceNotFoundException, InvalidDateException, Exception {
+		throws InstanceNotFoundException, InvalidDateException, Exception {
 		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updateProfile(any(Long.class),
-				any(UserImpl.class));
+			any(UserImpl.class));
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(newProfile)))
-		.andExpect(status().isNotFound())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(newProfile)))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -537,7 +537,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdateProfile_InvalidDateException()
-			throws InstanceNotFoundException, InvalidDateException, Exception {
+		throws InstanceNotFoundException, InvalidDateException, Exception {
 		final DateUserProfileDto newProfile = this.getValidUserProfileDto();
 		final UserImpl user = new UserImpl(getDateTime(1, 1, 2000), "Patata", "Patatolandia", "descripción");
 
@@ -545,11 +545,11 @@ public final class TestUserController {
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_UPDATEPROFILE_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(newProfile)))
-		.andExpect(status().isBadRequest())
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidDateException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(newProfile)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InvalidDateException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -563,22 +563,22 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_Rate()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
 		final RateDto rateDto = new RateDto(1, 2L);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(rateDto)))
-		.andExpect(status().isOk());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(rateDto)))
+			.andExpect(status().isOk());
 		// @formatter:on
 
 		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
 		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
-				objectCaptor.capture());
+			objectCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(rateCaptor.getValue(), is(1));
 		assertThat(subjectCaptor.getValue(), is(1L));
@@ -588,24 +588,24 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_Rate_InstanceNotFound()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
 		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).rateUser(any(Integer.class),
-				any(Long.class), any(Long.class));
+			any(Long.class), any(Long.class));
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(rateDto)))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(rateDto)))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
 		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
-				objectCaptor.capture());
+			objectCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(rateCaptor.getValue(), is(1));
 		assertThat(subjectCaptor.getValue(), is(1L));
@@ -615,24 +615,24 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_Rate_InvalidRateException()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
 		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new InvalidRateException("")).when(userServiceMock).rateUser(any(Integer.class),
-				any(Long.class), any(Long.class));
+			any(Long.class), any(Long.class));
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(rateDto)))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(rateDto)))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
 		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
-				objectCaptor.capture());
+			objectCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(rateCaptor.getValue(), is(1));
 		assertThat(subjectCaptor.getValue(), is(1L));
@@ -642,24 +642,24 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_Rate_ItsNotYourFriendException()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException, Exception {
 		final RateDto rateDto = new RateDto(1, 2L);
 
 		doThrow(new ItsNotYourFriendException("")).when(userServiceMock).rateUser(any(Integer.class),
-				any(Long.class), any(Long.class));
+			any(Long.class), any(Long.class));
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_USER_RATE_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(rateDto)))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(rateDto)))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Integer> rateCaptor = ArgumentCaptor.forClass(Integer.class);
 		final ArgumentCaptor<Long> subjectCaptor = ArgumentCaptor.forClass(Long.class);
 		final ArgumentCaptor<Long> objectCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(userServiceMock, times(1)).rateUser(rateCaptor.capture().intValue(), subjectCaptor.capture(),
-				objectCaptor.capture());
+			objectCaptor.capture());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(rateCaptor.getValue(), is(1));
 		assertThat(subjectCaptor.getValue(), is(1L));
@@ -673,10 +673,10 @@ public final class TestUserController {
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(premiumDto)))
-		.andExpect(status().isNoContent());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(premiumDto)))
+			.andExpect(status().isNoContent());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -690,18 +690,18 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_UpdatePremium_InstanceNotFound()
-			throws InstanceNotFoundException, Exception {
+		throws InstanceNotFoundException, Exception {
 		final PremiumFormDto premiumDto = new PremiumFormDto(true);
 
 		doThrow(new InstanceNotFoundException("", 1L)).when(userServiceMock).updatePremium(any(Long.class),
-				any(Boolean.class));
+			any(Boolean.class));
 
 		// @formatter:off
 		mockMvc.perform(put(UrlConfig.URL_USER_PREMIUM_PUT)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(premiumDto)))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(premiumDto)))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -715,7 +715,7 @@ public final class TestUserController {
 
 	@Test
 	public void TestUserController_getTopUsers() throws Exception {
-		final UserImpl user = createUser("name",  "pass",  LocalDateTime.now(), "Patat", "Coruña", "desc");
+		final UserImpl user = createUser("name", "pass", LocalDateTime.now(), "Patat", "Coruña", "desc");
 		final List<UserImpl> items = new ArrayList<>();
 		items.add(user);
 		final Block<UserImpl> blockRet = new Block<>(items, false);
@@ -728,8 +728,8 @@ public final class TestUserController {
 
 		// @formatter:off
 		final ResultActions a = mockMvc.perform(get(UrlConfig.URL_USER_TOPUSERS_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.params(params));
+			.contentType(APPLICATION_JSON_UTF8)
+			.params(params));
 		a.andExpect(status().isOk());
 		// @formatter:on
 
@@ -737,7 +737,7 @@ public final class TestUserController {
 		final ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
 		final ArgumentCaptor<Integer> sizeCaptor = ArgumentCaptor.forClass(Integer.class);
 		verify(userServiceMock, times(1)).getTopUsers(cityCaptor.capture(), pageCaptor.capture().intValue(),
-				sizeCaptor.capture().intValue());
+			sizeCaptor.capture().intValue());
 		verifyNoMoreInteractions(userServiceMock);
 		assertThat(cityCaptor.getValue(), is("Coruña"));
 		assertThat(pageCaptor.getValue(), is(0));

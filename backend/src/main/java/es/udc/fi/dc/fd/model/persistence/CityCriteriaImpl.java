@@ -21,7 +21,7 @@ public class CityCriteriaImpl implements CityCriteria {
 		super();
 		this.cityCriteriaId = cityCriteriaId;
 	}
-	
+
 	public CityCriteriaImpl() {
 		super();
 	}
@@ -30,6 +30,7 @@ public class CityCriteriaImpl implements CityCriteria {
 	public CityCriteriaId getCityCriteriaId() {
 		return cityCriteriaId;
 	}
+
 	@Override
 	public void setCityCriteriaId(CityCriteriaId cityCriteriaId) {
 		this.cityCriteriaId = cityCriteriaId;
@@ -45,18 +46,23 @@ public class CityCriteriaImpl implements CityCriteria {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		CityCriteriaImpl other = (CityCriteriaImpl) obj;
 		if (cityCriteriaId == null) {
-			if (other.cityCriteriaId != null)
+			if (other.cityCriteriaId != null) {
 				return false;
-		} else if (!cityCriteriaId.equals(other.cityCriteriaId))
+			}
+		} else if (!cityCriteriaId.equals(other.cityCriteriaId)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -64,7 +70,6 @@ public class CityCriteriaImpl implements CityCriteria {
 	public String toString() {
 		return "CityCriteriaImpl [cityCriteriaId=" + cityCriteriaId + "]";
 	}
-	
-	
+
 
 }

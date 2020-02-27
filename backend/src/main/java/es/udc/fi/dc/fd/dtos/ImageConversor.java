@@ -18,12 +18,12 @@ public class ImageConversor {
 		final String encoded = new String(Base64.getMimeEncoder().encode(image.getData()), Charset.forName("utf8"));
 		return new ImageDataDto(encoded, image.getType());
 	}
-	
+
 	public final static BlockDto<ImageDataDto> toImageDataDtos(Block<ImageImpl> images) {
 		final List<ImageImpl> imagesIn = images.getElements();
 
 		final List<ImageDataDto> imagesOut = imagesIn.stream().map(e -> toImageDataDto(e))
-				.collect(Collectors.toList());
+			.collect(Collectors.toList());
 
 		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}
@@ -54,7 +54,7 @@ public class ImageConversor {
 		final List<ImageImpl> imagesIn = images.getElements();
 
 		final List<ImageDto> imagesOut = imagesIn.stream().map(e -> toReturnedImagesDto(e))
-				.collect(Collectors.toList());
+			.collect(Collectors.toList());
 
 		return new BlockDto<>(imagesOut, images.isExistMoreElements());
 	}

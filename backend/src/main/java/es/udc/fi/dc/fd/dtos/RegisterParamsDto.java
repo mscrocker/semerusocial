@@ -10,8 +10,7 @@ public class RegisterParamsDto {
 	@JsonUnwrapped
 	DateUserProfileDto profileData;
 
-	
-	
+
 	public RegisterParamsDto() {
 		super();
 	}
@@ -49,23 +48,30 @@ public class RegisterParamsDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		RegisterParamsDto other = (RegisterParamsDto) obj;
 		if (loginParams == null) {
-			if (other.loginParams != null)
+			if (other.loginParams != null) {
 				return false;
-		} else if (!loginParams.equals(other.loginParams))
+			}
+		} else if (!loginParams.equals(other.loginParams)) {
 			return false;
+		}
 		if (profileData == null) {
-			if (other.profileData != null)
+			if (other.profileData != null) {
 				return false;
-		} else if (!profileData.equals(other.profileData))
+			}
+		} else if (!profileData.equals(other.profileData)) {
 			return false;
+		}
 		return true;
 	}
 

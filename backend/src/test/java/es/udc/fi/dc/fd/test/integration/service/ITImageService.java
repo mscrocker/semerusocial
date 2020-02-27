@@ -36,11 +36,11 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
-@TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@ContextConfiguration(locations = {"classpath:context/service.xml", "classpath:context/persistence.xml",
+	"classpath:context/application-context.xml"})
+@TestPropertySource( {"classpath:config/persistence-access.properties", "classpath:config/service.properties"})
 @Rollback
 @Transactional
 public class ITImageService {
@@ -57,7 +57,7 @@ public class ITImageService {
 	}
 
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
-			String description) {
+								String description) {
 		return new UserImpl(userName, password, date, sex, city, description);
 	}
 
@@ -89,7 +89,7 @@ public class ITImageService {
 	public void testAddImage() throws InstanceNotFoundException, DuplicateInstanceException {
 		final UserImpl user = signUp("userAddImage", "passAddImage", 1, "hombre", "coruna");
 
-		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i = createImage(user, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
@@ -99,11 +99,11 @@ public class ITImageService {
 	@Test
 	public void testAddImageWithInstanceNotFoundException() {
 		final UserImpl user = createUser("userAddImgNotFoundException", "passAddImgNotFoundException",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		//		user.setId(-1L);
 
-		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i = createImage(user, new byte[] {1, 2, 3});
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			imageService.addImage(i, -1L);
@@ -116,7 +116,7 @@ public class ITImageService {
 	public void testRemoveImage() throws InstanceNotFoundException, ItsNotYourImageException {
 		final UserImpl user = signUp("userRemoveImage", "passRemoveImage", 1, "hombre", "coruna");
 
-		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i = createImage(user, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
@@ -132,7 +132,7 @@ public class ITImageService {
 	public void testRemoveImageWithInstanceNotFoundException() throws InstanceNotFoundException {
 		final UserImpl user = signUp("userRemoveImageINFE", "passRemoveImageINFE", 1, "hombre", "coruna");
 
-		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i = createImage(user, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
@@ -148,7 +148,7 @@ public class ITImageService {
 		final UserImpl user = signUp("userRemoveImageIIE", "passRemoveImageIIE", 1, "hombre", "coruna");
 		final UserImpl user2 = signUp("userRemoveImageIIE2", "passRemoveImageIIE2", 1, "hombre", "coruna");
 
-		final ImageImpl i = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i = createImage(user, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated = imageService.addImage(i, user.getId());
 
@@ -163,16 +163,16 @@ public class ITImageService {
 	public void testGetImagesById() throws InstanceNotFoundException, ItsNotYourImageException {
 		final UserImpl user = signUp("userTestGet", "userTestGet", 2, "hombre", "coruna");
 
-		final ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i2 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i3 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i4 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i5 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i6 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i7 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i8 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i9 = createImage(user, new byte[] { 1, 2, 3 });
-		final ImageImpl i10 = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i1 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i2 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i3 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i4 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i5 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i6 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i7 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i8 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i9 = createImage(user, new byte[] {1, 2, 3});
+		final ImageImpl i10 = createImage(user, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated1 = imageService.addImage(i1, user.getId());
 		final ImageImpl imageCreated2 = imageService.addImage(i2, user.getId());
@@ -201,7 +201,7 @@ public class ITImageService {
 
 		assertEquals(imageListResult.getElements(), imageList);
 
-		final ImageImpl i11 = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i11 = createImage(user, new byte[] {1, 2, 3});
 		final ImageImpl imageCreated11 = imageService.addImage(i11, user.getId());
 		imageList.add(imageCreated11);
 		imageListResult = imageService.getImagesByUserId(user.getId(), 0);
@@ -210,10 +210,10 @@ public class ITImageService {
 
 		final UserImpl user2 = signUp("userTestGet2", "userTestGet2", 12, "hombre", "coruna");
 
-		final ImageImpl i12 = createImage(user2, new byte[] { 1, 2, 3 });
-		final ImageImpl i13 = createImage(user2, new byte[] { 1, 2, 3 });
-		final ImageImpl i14 = createImage(user2, new byte[] { 1, 2, 3 });
-		final ImageImpl i15 = createImage(user2, new byte[] { 1, 2, 3 });
+		final ImageImpl i12 = createImage(user2, new byte[] {1, 2, 3});
+		final ImageImpl i13 = createImage(user2, new byte[] {1, 2, 3});
+		final ImageImpl i14 = createImage(user2, new byte[] {1, 2, 3});
+		final ImageImpl i15 = createImage(user2, new byte[] {1, 2, 3});
 
 		final ImageImpl imageCreated12 = imageService.addImage(i12, user2.getId());
 		final ImageImpl imageCreated13 = imageService.addImage(i13, user2.getId());
@@ -235,7 +235,7 @@ public class ITImageService {
 	public void testGetImagesByIdWithInstanceNotFoundException() throws InstanceNotFoundException {
 		final UserImpl user = signUp("userTestGetImagesINFE", "userTestGetGetImagesINFE", 2, "hombre", "coruna");
 
-		final ImageImpl i1 = createImage(user, new byte[] { 1, 2, 3 });
+		final ImageImpl i1 = createImage(user, new byte[] {1, 2, 3});
 
 		imageService.addImage(i1, user.getId());
 
@@ -250,42 +250,42 @@ public class ITImageService {
 
 	@Test
 	public void testgetAnonymousCarrusel()
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException {
+		throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException {
 		final UserImpl user1 = createUser("userAnon1", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user2 = createUser("userAnon2", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user3 = createUser("userAnon3", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user4 = createUser("userAnon4", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user5 = createUser("userAnon5", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user6 = createUser("userAnon6", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user7 = createUser("userAnon7", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user8 = createUser("userAnon8", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user9 = createUser("userAnon9", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user10 = createUser("userAnon10", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user11 = createUser("userAnon11", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"coruña",
-				"descripcion");
+			"coruña",
+			"descripcion");
 		final UserImpl user12 = createUser("userAnon12", "userInvalidRate1", getDateTime(1, 1, 2000), "masculino",
-				"lugo", "descripcion");
+			"lugo", "descripcion");
 
 		user1.setRating(1.0);
 		user2.setRating(1.5);
@@ -313,18 +313,18 @@ public class ITImageService {
 		userService.signUp(user11);
 		userService.signUp(user12);
 
-		final ImageImpl imagen1 = createImage(user1, new byte[] { 1, 2, 3 });
-		final ImageImpl imagen2 = createImage(user2, new byte[] { 2, 3, 4 });
-		final ImageImpl imagen3 = createImage(user3, new byte[] { 3, 4, 5 });
-		final ImageImpl imagen4 = createImage(user4, new byte[] { 4, 5, 6 });
-		final ImageImpl imagen5 = createImage(user5, new byte[] { 5, 6, 7 });
-		final ImageImpl imagen6 = createImage(user6, new byte[] { 6, 7, 8 });
-		final ImageImpl imagen7 = createImage(user7, new byte[] { 7, 8, 9 });
-		final ImageImpl imagen8 = createImage(user8, new byte[] { 8, 9, 10 });
-		final ImageImpl imagen9 = createImage(user9, new byte[] { 9, 10, 11 });
-		final ImageImpl imagen10 = createImage(user10, new byte[] { 10, 11, 12 });
-		final ImageImpl imagen11 = createImage(user11, new byte[] { 11, 12, 13 });
-		final ImageImpl imagen112 = createImage(user11, new byte[] { 11, 13, 14 });
+		final ImageImpl imagen1 = createImage(user1, new byte[] {1, 2, 3});
+		final ImageImpl imagen2 = createImage(user2, new byte[] {2, 3, 4});
+		final ImageImpl imagen3 = createImage(user3, new byte[] {3, 4, 5});
+		final ImageImpl imagen4 = createImage(user4, new byte[] {4, 5, 6});
+		final ImageImpl imagen5 = createImage(user5, new byte[] {5, 6, 7});
+		final ImageImpl imagen6 = createImage(user6, new byte[] {6, 7, 8});
+		final ImageImpl imagen7 = createImage(user7, new byte[] {7, 8, 9});
+		final ImageImpl imagen8 = createImage(user8, new byte[] {8, 9, 10});
+		final ImageImpl imagen9 = createImage(user9, new byte[] {9, 10, 11});
+		final ImageImpl imagen10 = createImage(user10, new byte[] {10, 11, 12});
+		final ImageImpl imagen11 = createImage(user11, new byte[] {11, 12, 13});
+		final ImageImpl imagen112 = createImage(user11, new byte[] {11, 13, 14});
 
 		imageService.addImage(imagen1, user1.getId());
 		imageService.addImage(imagen2, user2.getId());

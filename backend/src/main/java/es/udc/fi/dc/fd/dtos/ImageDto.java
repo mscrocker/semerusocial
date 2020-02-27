@@ -11,10 +11,10 @@ public class ImageDto implements Serializable {
 
 	@NotEmpty
 	private Long imageId;
-	
+
 	@JsonUnwrapped
 	private ImageDataDto imageData;
-	
+
 	public ImageDto(Long imageId, ImageDataDto imageData) {
 		super();
 		this.imageId = imageId;
@@ -24,7 +24,7 @@ public class ImageDto implements Serializable {
 	public ImageDto() {
 		super();
 	}
-	
+
 	public Long getImageId() {
 		return imageId;
 	}
@@ -52,23 +52,30 @@ public class ImageDto implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ImageDto other = (ImageDto) obj;
 		if (imageData == null) {
-			if (other.imageData != null)
+			if (other.imageData != null) {
 				return false;
-		} else if (!imageData.equals(other.imageData))
+			}
+		} else if (!imageData.equals(other.imageData)) {
 			return false;
+		}
 		if (imageId == null) {
-			if (other.imageId != null)
+			if (other.imageId != null) {
 				return false;
-		} else if (!imageId.equals(other.imageId))
+			}
+		} else if (!imageId.equals(other.imageId)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -77,5 +84,5 @@ public class ImageDto implements Serializable {
 		return "ImageDto [imageId=" + imageId + ", imageData=" + imageData + "]";
 	}
 
-	
+
 }

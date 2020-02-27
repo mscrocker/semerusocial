@@ -14,22 +14,22 @@ public class UserConversor {
 
 		final LocalDateTime date = LocalDateTime.of(params.getProfileData().getYear(), params.getProfileData().getMonth(), params.getProfileData().getDay(), 00, 01);
 		return new UserImpl(params.getLoginParams().getUserName(), params.getLoginParams().getPassword(), date, params.getProfileData().getAgelessFields().getSex(), params.getProfileData().getAgelessFields().getCity(),
-				params.getProfileData().getAgelessFields().getDescription());
+			params.getProfileData().getAgelessFields().getDescription());
 	}
 
 	public final static UserImpl toUserImpl(DateUserProfileDto updateProfileInDto) {
 
 		final LocalDateTime date = LocalDateTime.of(updateProfileInDto.getYear(), updateProfileInDto.getMonth(),
-				updateProfileInDto.getDay(), 00, 01);
+			updateProfileInDto.getDay(), 00, 01);
 		return new UserImpl(date, updateProfileInDto.getAgelessFields().getSex(), updateProfileInDto.getAgelessFields().getCity(),
-				updateProfileInDto.getAgelessFields().getDescription());
+			updateProfileInDto.getAgelessFields().getDescription());
 	}
 
 	public final static BlockDto<FullUserProfileDto> toReturnedUserBlockDto(Block<UserImpl> users) {
 		final List<UserImpl> usersIn = users.getElements();
 
 		final List<FullUserProfileDto> usersOut = usersIn.stream().map(
-				u -> 
+			u ->
 				new FullUserProfileDto(
 					u.getRating(),
 					u.isPremium(),
@@ -48,6 +48,7 @@ public class UserConversor {
 		return new BlockDto<>(usersOut, users.isExistMoreElements());
 	}
 
-	private UserConversor() {}
+	private UserConversor() {
+	}
 
 }

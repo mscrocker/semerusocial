@@ -37,10 +37,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		queryString += " AND (self.city IN (SELECT aux.cityCriteriaId.city FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id) ";
 		queryString += " OR (0 = (SELECT count(aux.cityCriteriaId.city )FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id))) ";
 		queryString += " AND "
-				+ "((p.criteriaSex = 'ANY') OR "
-				+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
-				+ "(p.criteriaSex = 'MALE' AND self.sex = 'Male') OR "
-				+ "(p.criteriaSex = 'FEMALE' AND self.sex = 'Female')) ";
+			+ "((p.criteriaSex = 'ANY') OR "
+			+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
+			+ "(p.criteriaSex = 'MALE' AND self.sex = 'Male') OR "
+			+ "(p.criteriaSex = 'FEMALE' AND self.sex = 'Female')) ";
 		queryString += " AND p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
 		if (criteria.getSex() == SexCriteriaEnum.OTHER) {
@@ -90,7 +90,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		}
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
 			query.setParameter("cities",
-					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
+				criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
 		return query;
 	}

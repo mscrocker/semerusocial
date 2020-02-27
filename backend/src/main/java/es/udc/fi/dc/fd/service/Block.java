@@ -3,13 +3,13 @@ package es.udc.fi.dc.fd.service;
 import java.util.List;
 
 public class Block<T> {
-	
-	private List<T> elements;
-    private boolean existMoreElements;
 
-    public Block() {
-    	super();
-    }
+	private List<T> elements;
+	private boolean existMoreElements;
+
+	public Block() {
+		super();
+	}
 
 	public List<T> getElements() {
 		return elements;
@@ -38,20 +38,26 @@ public class Block<T> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Block other = (Block) obj;
 		if (elements == null) {
-			if (other.elements != null)
+			if (other.elements != null) {
 				return false;
-		} else if (!elements.equals(other.elements))
+			}
+		} else if (!elements.equals(other.elements)) {
 			return false;
-		if (existMoreElements != other.existMoreElements)
+		}
+		if (existMoreElements != other.existMoreElements) {
 			return false;
+		}
 		return true;
 	}
 
@@ -65,6 +71,6 @@ public class Block<T> {
 		this.elements = elements;
 		this.existMoreElements = existMoreElements;
 	}
-    
-	
+
+
 }

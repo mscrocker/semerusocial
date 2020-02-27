@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaId;
 import es.udc.fi.dc.fd.model.persistence.CityCriteriaImpl;
 
-public interface CityCriteriaRepository extends JpaRepository<CityCriteriaImpl, CityCriteriaId>{
+public interface CityCriteriaRepository extends JpaRepository<CityCriteriaImpl, CityCriteriaId> {
 
 	@Query("SELECT c.cityCriteriaId.city FROM Cities c WHERE c.cityCriteriaId.userId = ?1")
 	List<String> findCitiesByUserId(Long userId);

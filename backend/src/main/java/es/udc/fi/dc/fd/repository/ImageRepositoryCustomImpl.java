@@ -37,7 +37,7 @@ public class ImageRepositoryCustomImpl implements ImageRepositoryCustom {
 		}
 
 		final Query query2 = entityManager.createQuery(queryString2).setFirstResult(page * size)
-				.setMaxResults(size + 1);
+			.setMaxResults(size + 1);
 
 		final ArrayList<ImageImpl> result = (ArrayList<ImageImpl>) query2.getResultList();
 

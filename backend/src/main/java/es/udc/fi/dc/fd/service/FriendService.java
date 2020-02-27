@@ -18,21 +18,21 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 public interface FriendService {
 
 	public Block<FriendListOut> getFriendList(Long userId, int page, int size)
-			throws InstanceNotFoundException, RequestParamException;
+		throws InstanceNotFoundException, RequestParamException;
 
 	public void acceptRecommendation(Long subject, Long object) throws InstanceNotFoundException,
-	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
+		InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
 
 	public void rejectRecommendation(Long subject, Long object) throws InstanceNotFoundException,
-	InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
+		InvalidRecommendationException, AlreadyRejectedException, AlreadyAceptedException;
 
 	public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException;
 
 	void blockUser(Long userId, Long friendId)
-			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
+		throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException;
 
 	public SuggestedSearchCriteria suggestNewCriteria(Long userId)
-			throws InstanceNotFoundException, CantFindMoreFriendsException;
+		throws InstanceNotFoundException, CantFindMoreFriendsException;
 
 	public Block<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size);
 

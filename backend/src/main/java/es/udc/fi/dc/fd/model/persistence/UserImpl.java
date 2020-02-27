@@ -92,7 +92,7 @@ public class UserImpl implements User {
 	}
 
 	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city, String description,
-			double rating, long ratingVotes) {
+					double rating, long ratingVotes) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -381,10 +381,10 @@ public class UserImpl implements User {
 	@Override
 	public String toString() {
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
-				+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
-				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
-				+ description + ", rating=" + rating + ", ratingVotes=" + ratingVotes + ", premium=" + premium
-				+ ", minRateCriteria=" + minRateCriteria + "]";
+			+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
+			+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
+			+ description + ", rating=" + rating + ", ratingVotes=" + ratingVotes + ", premium=" + premium
+			+ ", minRateCriteria=" + minRateCriteria + "]";
 	}
 
 }

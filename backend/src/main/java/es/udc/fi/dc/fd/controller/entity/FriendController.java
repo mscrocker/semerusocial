@@ -70,10 +70,10 @@ public class FriendController {
 		super();
 
 		this.friendService = checkNotNull(friendService,
-				"Received a null pointer as friendService in FriendController");
+			"Received a null pointer as friendService in FriendController");
 
 		this.messageSource = checkNotNull(messageSource,
-				"Received a null pointer as messageSource in FriendController");
+			"Received a null pointer as messageSource in FriendController");
 	}
 
 	@ExceptionHandler(RequestParamException.class)
@@ -81,7 +81,7 @@ public class FriendController {
 	@ResponseBody
 	public ErrorsDto handleRequestParamException(RequestParamException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(REQUEST_PARAM_EXCEPTION_CODE, null,
-				REQUEST_PARAM_EXCEPTION_CODE, locale);
+			REQUEST_PARAM_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -93,7 +93,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(INVALID_RECOMMENDATION_EXCEPTION,
-				new Object[] { nameMessage, exception.getKey().toString() }, INVALID_RECOMMENDATION_EXCEPTION, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, INVALID_RECOMMENDATION_EXCEPTION, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -106,7 +106,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -117,7 +117,7 @@ public class FriendController {
 	@ResponseBody
 	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_FRIEND_CODE, null, ITS_NOT_YOUR_FRIEND_CODE,
-				locale);
+			locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -129,7 +129,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(ALREADY_REJECTED_EXCEPTION,
-				new Object[] { nameMessage, exception.getKey().toString() }, ALREADY_REJECTED_EXCEPTION, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, ALREADY_REJECTED_EXCEPTION, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -142,7 +142,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(ALREADY_ACEPTED_EXCEPTION,
-				new Object[] { nameMessage, exception.getKey().toString() }, ALREADY_ACEPTED_EXCEPTION, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, ALREADY_ACEPTED_EXCEPTION, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -155,7 +155,7 @@ public class FriendController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(NO_MORE_SUGGESTION_FOUND,
-				new Object[] { nameMessage, exception.getKey().toString() }, NO_MORE_SUGGESTION_FOUND, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, NO_MORE_SUGGESTION_FOUND, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -182,8 +182,8 @@ public class FriendController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@PostMapping("/accept")
 	public void acceptRequest(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+		AlreadyAceptedException {
 
 		final long objectId = params.getId();
 		friendService.acceptRecommendation(userId, objectId);
@@ -192,8 +192,8 @@ public class FriendController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@PostMapping("/reject")
 	public void rejectRequest(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
-			AlreadyAceptedException {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException,
+		AlreadyAceptedException {
 
 		final long objectId = params.getId();
 		friendService.rejectRecommendation(userId, objectId);
@@ -202,7 +202,7 @@ public class FriendController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/suggestion")
 	public UnratedFriendDto suggestFriend(@RequestAttribute Long userId)
-			throws InstanceNotFoundException, NoMoreSuggestionFound {
+		throws InstanceNotFoundException, NoMoreSuggestionFound {
 
 		final Optional<UserImpl> friend = friendService.suggestFriend(userId);
 
@@ -214,8 +214,8 @@ public class FriendController {
 
 	@GetMapping("/friendList")
 	public BlockDto<RatedFriendDto> getFriendList(@RequestAttribute Long userId,
-			@RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
-					throws InstanceNotFoundException, RequestParamException {
+												  @RequestParam(defaultValue = "0") @Min(0) int page, @RequestParam(defaultValue = "10") @Min(1) int size)
+		throws InstanceNotFoundException, RequestParamException {
 		final Block<FriendListOut> friends = friendService.getFriendList(userId, page, size);
 
 		return FriendConversor.toGetFriendListOutDto(friends);
@@ -224,20 +224,21 @@ public class FriendController {
 	@PostMapping("/block")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void blockUser(@RequestAttribute Long userId, @Validated @RequestBody IdDto params)
-			throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, AlreadyBlockedException {
 		friendService.blockUser(userId, params.getId());
 	}
 
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/suggestNewCriteria")
 	public SuggestedSearchCriteria suggestNewCriteria(@RequestAttribute Long userId)
-			throws InstanceNotFoundException, CantFindMoreFriendsException {
+		throws InstanceNotFoundException, CantFindMoreFriendsException {
 		return friendService.suggestNewCriteria(userId);
 	}
+
 	@GetMapping("/searchUsers")
 	public BlockDto<FullUserProfileDto> searchUsersByMetadataAndKeywords(@RequestBody @Validated SearchUsersDto params,
-			@RequestParam(defaultValue = "0") @Min(0) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size) {
+																		 @RequestParam(defaultValue = "0") @Min(0) int page,
+																		 @RequestParam(defaultValue = "10") @Min(1) int size) {
 		final Block<UserImpl> users = friendService.searchUsersByMetadataAndKeywords(params, page, size);
 
 		return FriendConversor.toFullUserProfileDto(users);

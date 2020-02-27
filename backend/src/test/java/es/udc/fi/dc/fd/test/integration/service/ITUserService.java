@@ -44,11 +44,11 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
+@TestExecutionListeners( {DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:context/service.xml", "classpath:context/persistence.xml",
-"classpath:context/application-context.xml" })
-@TestPropertySource({ "classpath:config/persistence-access.properties", "classpath:config/service.properties" })
+@ContextConfiguration(locations = {"classpath:context/service.xml", "classpath:context/persistence.xml",
+	"classpath:context/application-context.xml"})
+@TestPropertySource( {"classpath:config/persistence-access.properties", "classpath:config/service.properties"})
 @Rollback
 @Transactional
 public class ITUserService {
@@ -71,7 +71,7 @@ public class ITUserService {
 	}
 
 	private UserImpl createUser(String userName, String password, LocalDateTime date, String sex, String city,
-			String description) {
+								String description) {
 		return new UserImpl(userName, password, date, sex, city, description, 0, 0);
 	}
 
@@ -91,10 +91,10 @@ public class ITUserService {
 
 	@Test
 	public void testSignUpAndLoginFromUserName()
-			throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+		throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
 
 		final UserImpl user = createUser("usuarioSignUpAndLoginFromId", "contraseñaSignUpAndLoginFromId",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
@@ -106,7 +106,7 @@ public class ITUserService {
 	public void testSignUpDuplicatedUserName() throws DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("usuarioSignUpDuplicated", "contraseñaSignUpDuplicated",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
@@ -119,7 +119,7 @@ public class ITUserService {
 	public void testSignUpInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("usuarioSignUpIDE", "contraseñaSignUpIDE", LocalDateTime.now(), "nombre",
-				"coruna", "descripcion");
+			"coruna", "descripcion");
 
 		assertThrows(InvalidDateException.class, () -> {
 			userService.signUp(user);
@@ -132,7 +132,7 @@ public class ITUserService {
 	public void testLogin() throws DuplicateInstanceException, IncorrectLoginException, InvalidDateException {
 
 		final UserImpl user = createUser("usuarioLogin", "contraseñaLogin", getDateTime(1, 1, 2000), "hombre", "coruna",
-				"descripcion");
+			"descripcion");
 
 		final String clearPassword = user.getPassword();
 
@@ -151,7 +151,7 @@ public class ITUserService {
 	public void testLoginWithIncorrectPassword() throws DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("usuarioLoginIncorrectPass", "contraseñaLoginIncorrectPass",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		final String clearPassword = user.getPassword();
 
@@ -170,10 +170,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginFromUserId()
-			throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
+		throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
 
 		final UserImpl user = createUser("userLoginFromUserId", "passwordLoginFromUserId", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "descripcion");
+			"hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
@@ -182,10 +182,10 @@ public class ITUserService {
 
 	@Test
 	public void testLoginFromUserIdWithInstanceNotFoundException()
-			throws DuplicateInstanceException, InvalidDateException {
+		throws DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("userLoginFromUserIdINFE", "passwordLoginFromUserIdINFE",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "descripcion");
 
 		userService.signUp(user);
 
@@ -200,14 +200,14 @@ public class ITUserService {
 
 	@Test
 	public void testSetSearchCriteria()
-			throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException,
-			InvalidRateException, NotRatedException, ItsNotYourFriendException {
+		throws DuplicateInstanceException, InvalidDateException, InstanceNotFoundException, InvalidAgeException,
+		InvalidRateException, NotRatedException, ItsNotYourFriendException {
 
 		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "description");
+			"hombre", "coruna", "description");
 		final UserImpl user2 = createUser("userSetSearchCriteria2S", "passwordSetSearchCriteria2",
-				getDateTime(1, 1, 2000),
-				"hombre", "coruna", "description");
+			getDateTime(1, 1, 2000),
+			"hombre", "coruna", "description");
 		final Long userId = userService.signUp(user);
 		final Long userId2 = userService.signUp(user2);
 
@@ -271,10 +271,10 @@ public class ITUserService {
 
 	@Test
 	public void testSetSearchCriteriaWithInvalidAgeException()
-			throws InstanceNotFoundException, DuplicateInstanceException, InvalidDateException {
+		throws InstanceNotFoundException, DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("CriteriaUserIAE", "CriteriaPassIAE", getDateTime(1, 1, 2000), "hombre",
-				"coruna", "description");
+			"coruna", "description");
 		final Long userId = userService.signUp(user);
 
 		user.setCriteriaSex(SexCriteriaEnum.MALE);
@@ -300,13 +300,13 @@ public class ITUserService {
 
 	@Test
 	public void testSetSearchCriteriaInvalidRateException()
-			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, ItsNotYourFriendException,
-			DuplicateInstanceException, InvalidDateException {
+		throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, ItsNotYourFriendException,
+		DuplicateInstanceException, InvalidDateException {
 
 		final UserImpl user = createUser("userSetSearchCriteria", "passwordSetSearchCriteria", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "description");
+			"hombre", "coruna", "description");
 		final UserImpl user2 = createUser("userSetSearchCriteria2S", "passwordSetSearchCriteria2",
-				getDateTime(1, 1, 2000), "hombre", "coruna", "description");
+			getDateTime(1, 1, 2000), "hombre", "coruna", "description");
 		final Long userId = userService.signUp(user);
 		final Long userId2 = userService.signUp(user2);
 
@@ -339,11 +339,11 @@ public class ITUserService {
 
 	@Test
 	public void testGetSearchCriteria()
-			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException,
-			InvalidRateException, NotRatedException {
+		throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException,
+		InvalidRateException, NotRatedException {
 
 		final UserImpl user = createUser("userGetSearchCriteria", "passwordGetSearchCriteria", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "description");
+			"hombre", "coruna", "description");
 
 		final Long userId = userService.signUp(user);
 
@@ -361,14 +361,14 @@ public class ITUserService {
 		final SearchCriteria userCriteria = userService.getSearchCriteria(userId);
 
 		final SearchCriteria searchCriteria = new SearchCriteria(user.getCriteriaSex(), user.getCriteriaMinAge(),
-				user.getCriteriaMaxAge(), cityList, 1);
+			user.getCriteriaMaxAge(), cityList, 1);
 
 		assertEquals(searchCriteria, userCriteria);
 	}
 
 	@Test
 	public void testGetSearchCriteriaInstaceNotFoundException()
-			throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
+		throws InstanceNotFoundException, InvalidAgeException, DuplicateInstanceException, InvalidDateException {
 
 		assertThrows(InstanceNotFoundException.class, () -> {
 			userService.getSearchCriteria(-1L);
@@ -381,7 +381,7 @@ public class ITUserService {
 	@Test
 	public void testUpdateProfile() throws DuplicateInstanceException, InstanceNotFoundException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfile", "passwordUpdateProfile", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "descripcion");
+			"hombre", "coruna", "descripcion");
 		final UserImpl newUser = new UserImpl(getDateTime(1, 1, 1999), "mujer", "lugo", "descripcion editada");
 
 		userService.signUp(user);
@@ -408,7 +408,7 @@ public class ITUserService {
 	@Test
 	public void testUpdateProfileWithInvalidDateException() throws DuplicateInstanceException, InvalidDateException {
 		final UserImpl user = createUser("userUpdateProfileIDE", "passwordUpdateProfileIDE", getDateTime(1, 1, 2000),
-				"hombre", "coruna", "descripcion");
+			"hombre", "coruna", "descripcion");
 		final UserImpl newUser = new UserImpl(LocalDateTime.now(), "mujer", "lugo", "descripcion editada");
 
 		userService.signUp(user);
@@ -423,13 +423,13 @@ public class ITUserService {
 
 		// test cuando varios usuarios distintos votan al mismo usuario
 		final UserImpl user1 = createUser("userRate1", "userRate1", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 		final UserImpl user2 = createUser("userRate2", "userRate2", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 		final UserImpl user3 = createUser("userRate3", "userRate3", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 		final UserImpl user4 = createUser("userRate4", "userRate4", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 
 		userRepository.save(user1);
 		userRepository.save(user2);
@@ -445,7 +445,7 @@ public class ITUserService {
 		final double rating = userService.rateUser(5, user4.getId(), user1.getId());
 
 		assertEquals(rating, 3.333, 0.01);
-		assertEquals(rating, user1.getRating(),0.01);
+		assertEquals(rating, user1.getRating(), 0.01);
 
 		// Hacemos que el usuario 4 cambie su puntuacion hacia el usuario 1
 		final double rating2 = userService.rateUser(1, user4.getId(), user1.getId());
@@ -464,10 +464,10 @@ public class ITUserService {
 
 	@Test
 	public void testRateUserInstanceNotFound()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 
 		final UserImpl user1 = createUser("userRate1", "userRate1", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 
 		userRepository.save(user1);
 
@@ -483,13 +483,13 @@ public class ITUserService {
 
 	@Test
 	public void testRateUserInvalidRateException()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 
 		final UserImpl user1 = createUser("userInvalidRate1", "userInvalidRate1", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion");
+			"coruña", "descripcion");
 
 		final UserImpl user2 = createUser("userInvalidRate2", "userInvalidRate2", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion");
+			"coruña", "descripcion");
 
 		userRepository.save(user1);
 		userRepository.save(user2);
@@ -506,13 +506,13 @@ public class ITUserService {
 
 	@Test
 	public void testRateUserNotYourFriendException()
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException {
 
 		final UserImpl user1 = createUser("userInvalidRate1", "userInvalidRate1", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion");
+			"coruña", "descripcion");
 
 		final UserImpl user2 = createUser("userInvalidRate2", "userInvalidRate2", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion");
+			"coruña", "descripcion");
 
 		userRepository.save(user1);
 		userRepository.save(user2);
@@ -522,14 +522,13 @@ public class ITUserService {
 		});
 
 
-
 	}
 
 	@Test
 	public void testUpdatePremium() throws InstanceNotFoundException {
 
 		final UserImpl user1 = createUser("userPremium", "userInvalidRate1", LocalDateTime.now(), "masculino", "coruña",
-				"descripcion");
+			"descripcion");
 		userRepository.save(user1);
 
 		assertEquals(false, user1.isPremium()); // Comprobamos que no es premium
@@ -556,13 +555,13 @@ public class ITUserService {
 	public void testGetTopUsers() {
 
 		final UserImpl user1 = new UserImpl("testGetTopUsers", "testGetTopUsers", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion", 2, 3);
+			"coruña", "descripcion", 2, 3);
 		final UserImpl user2 = new UserImpl("testGetTopUsers2", "testGetTopUsers", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion", 4, 3);
+			"coruña", "descripcion", 4, 3);
 		final UserImpl user3 = new UserImpl("testGetTopUsers3", "testGetTopUsers", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion", 3, 3);
+			"coruña", "descripcion", 3, 3);
 		final UserImpl user4 = new UserImpl("testGetTopUsers4", "testGetTopUsers", LocalDateTime.now(), "masculino",
-				"coruña", "descripcion", 5, 3);
+			"coruña", "descripcion", 5, 3);
 		userRepository.save(user1);
 		userRepository.save(user2);
 		userRepository.save(user3);

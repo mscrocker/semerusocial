@@ -20,6 +20,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ * <p>
+ * Services.
+ * <p>
+ * While in the MVC architecture all the logic seems to be contained inside the
+ * controllers, using an additional layer of services helps to isolate all the
+ * important logic in the application.
  */
 /**
  * Services.

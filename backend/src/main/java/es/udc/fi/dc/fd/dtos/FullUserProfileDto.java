@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 public class FullUserProfileDto {
 
 	private double rating;
-	
+
 	private boolean premium;
-	
+
 	@JsonUnwrapped
 	private DateUserProfileDto baseProfileData;
 
@@ -53,37 +53,43 @@ public class FullUserProfileDto {
 		int result = 1;
 		result = prime * result + ((baseProfileData == null) ? 0 : baseProfileData.hashCode());
 		result = prime * result + (premium ? 1231 : 1237);
-		result = prime * result + (int)rating;
+		result = prime * result + (int) rating;
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		FullUserProfileDto other = (FullUserProfileDto) obj;
 		if (baseProfileData == null) {
-			if (other.baseProfileData != null)
+			if (other.baseProfileData != null) {
 				return false;
-		} else if (!baseProfileData.equals(other.baseProfileData))
+			}
+		} else if (!baseProfileData.equals(other.baseProfileData)) {
 			return false;
-		if (premium != other.premium)
+		}
+		if (premium != other.premium) {
 			return false;
-		if (rating != other.rating)
+		}
+		if (rating != other.rating) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "FullUserProfileDto [rating=" + rating + ", premium=" + premium + ", baseProfileData=" + baseProfileData
-				+ "]";
+			+ "]";
 	}
-	
-	
+
 
 }

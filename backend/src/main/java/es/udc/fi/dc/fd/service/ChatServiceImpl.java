@@ -1,16 +1,5 @@
 package es.udc.fi.dc.fd.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.udc.fi.dc.fd.controller.exception.InstanceNotFoundException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
@@ -23,41 +12,47 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.repository.MatchRepository;
 import es.udc.fi.dc.fd.repository.MessageRepository;
 import es.udc.fi.dc.fd.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class ChatServiceImpl implements ChatService {
 
+	private static final int MAX_LENGTH_MESSAGE = 999;
 	@Autowired
 	private MessageRepository messageRepository;
-
 	@Autowired
 	private MatchRepository matchRepository;
-
 	@Autowired
 	private UserRepository userRepository;
-
 	@Autowired
 	private PermissionChecker permissionChecker;
 
-	private static final int MAX_LENGTH_MESSAGE = 999;
-
 	@Override
 	public void sendMessage(Long userId, Long friendId, String content)
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
 		// Comprobamos que los ids no son nulos
 		if (userId == null || friendId == null) {
 			throw new ValidationException("Ids can not be null");
 		}
 		//Comprobamos que el mensaje no es nulo
-		if (content==null) {
+		if (content == null) {
 			throw new ValidationException("Message content can not be null");
 		}
 		//Validamos que el mensaje no se pase del largo permitido
 		if (content.length() > MAX_LENGTH_MESSAGE || content.trim().length() == 0) {
 			throw new ValidationException(
-					"Message length too large or blank. It must be less than " + MAX_LENGTH_MESSAGE);
+				"Message length too large or blank. It must be less than " + MAX_LENGTH_MESSAGE);
 		}
 
 		// Comprobamos que no te estás intentando mandar un mensaje a ti mismo
@@ -76,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
 
 		//Comprobamos que sean amigos
 		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
-				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
+			&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
 			throw new ItsNotYourFriendException("User with id " + friendId + " is not your friend.");
 		}
 
@@ -98,7 +93,7 @@ public class ChatServiceImpl implements ChatService {
 
 	@Override
 	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		if (userId == null) {
 			throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
 		}
@@ -109,15 +104,15 @@ public class ChatServiceImpl implements ChatService {
 
 		// Comprobamos que sean amigos
 		if ((matchRepository.findMatch(userId, friendId)).isEmpty()
-				&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
+			&& (matchRepository.findMatch(friendId, userId)).isEmpty()) {
 			throw new ItsNotYourFriendException("User with id " + friendId + " is not your friend.");
 		}
 
 		// En BD estamos almacenando 1º el id más pequeño
 		Slice<MessageImpl> conversation;
-		if (userId<friendId) {
+		if (userId < friendId) {
 			conversation = messageRepository.findMessagesByUsersId(userId, friendId, PageRequest.of(page, size));
-		}else {
+		} else {
 			conversation = messageRepository.findMessagesByUsersId(friendId, userId, PageRequest.of(page, size));
 		}
 

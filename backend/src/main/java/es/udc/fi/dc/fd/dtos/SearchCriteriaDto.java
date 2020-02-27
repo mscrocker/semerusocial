@@ -29,6 +29,7 @@ public class SearchCriteriaDto {
 	public SearchCriteriaDto() {
 
 	}
+
 	public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city, int minRate) {
 		super();
 		this.sex = SexCriteriaEnum.fromCode(sex);
@@ -127,7 +128,7 @@ public class SearchCriteriaDto {
 	@Override
 	public String toString() {
 		return "SearchCriteriaDto [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city
-				+ ", minRate=" + minRate + "]";
+			+ ", minRate=" + minRate + "]";
 	}
 
 }

@@ -22,11 +22,11 @@ public class JwtGeneratorImpl implements JwtGenerator {
 		Claims claims = Jwts.claims();
 
 		claims.setSubject(info.getUserName())
-				.setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000));
+			.setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000));
 		claims.put("userId", info.getUserId());
 
 		return Jwts.builder().setClaims(claims)
-				.signWith(SignatureAlgorithm.HS512, signKey.getBytes(StandardCharsets.UTF_8)).compact();
+			.signWith(SignatureAlgorithm.HS512, signKey.getBytes(StandardCharsets.UTF_8)).compact();
 
 	}
 
@@ -34,7 +34,7 @@ public class JwtGeneratorImpl implements JwtGenerator {
 	public JwtInfo getInfo(String token) {
 
 		Claims claims = Jwts.parser().setSigningKey(signKey.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token)
-				.getBody();
+			.getBody();
 
 		return new JwtInfo(((Integer) claims.get("userId")).longValue(), claims.getSubject());
 

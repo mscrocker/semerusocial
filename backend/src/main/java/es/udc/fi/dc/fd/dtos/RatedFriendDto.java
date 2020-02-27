@@ -46,20 +46,26 @@ public class RatedFriendDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		RatedFriendDto other = (RatedFriendDto) obj;
 		if (friendData == null) {
-			if (other.friendData != null)
+			if (other.friendData != null) {
 				return false;
-		} else if (!friendData.equals(other.friendData))
+			}
+		} else if (!friendData.equals(other.friendData)) {
 			return false;
-		if (myRating != other.myRating)
+		}
+		if (myRating != other.myRating) {
 			return false;
+		}
 		return true;
 	}
 

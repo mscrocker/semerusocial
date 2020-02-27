@@ -49,7 +49,7 @@ public class MessageImpl implements Serializable {
 	}
 
 	public MessageImpl(Long messageId, UserImpl user1, UserImpl user2, UserImpl transmitter, String messageContent,
-			LocalDateTime date) {
+					   LocalDateTime date) {
 		super();
 		this.messageId = messageId;
 		this.user1 = user1;
@@ -180,7 +180,7 @@ public class MessageImpl implements Serializable {
 	@Override
 	public String toString() {
 		return "MessageImpl [messageId=" + messageId + ", user1=" + user1 + ", user2=" + user2 + ", transmitter="
-				+ transmitter + ", messageContent=" + messageContent + ", date=" + date + "]";
+			+ transmitter + ", messageContent=" + messageContent + ", date=" + date + "]";
 	}
 
 }

@@ -149,7 +149,7 @@ public class TestFriendController {
 	private static final String SUGGESTIONCITY = "Coruña";
 
 	private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+		MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	/****
 	 * GET FRIEND LIST TESTS
@@ -157,7 +157,7 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_GetFriendList()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 
 		final UserImpl friend1 = CreateUser(USERID_FRIEND1);
 		final List<FriendListOut> listFriends = new ArrayList<>();
@@ -168,14 +168,14 @@ public class TestFriendController {
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.requestAttr("page", 0)
-				.requestAttr("size", 0))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.elements").isNotEmpty())
-		.andExpect(jsonPath("$.existMoreElements").value(false));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.requestAttr("page", 0)
+			.requestAttr("size", 0))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.elements").isNotEmpty())
+			.andExpect(jsonPath("$.existMoreElements").value(false));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -185,7 +185,7 @@ public class TestFriendController {
 		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
 		// otros
 		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
-				sizeCaptor.capture());
+			sizeCaptor.capture());
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_OK));
@@ -195,20 +195,20 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_GetFriendList_InstanceNotFoundException()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.getFriendList(USERID_NOTFOUND, 1, 10);
+			.getFriendList(USERID_NOTFOUND, 1, 10);
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.param("page", "1")
-				.param("size", "10"))
-		.andExpect(status().isNotFound())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.param("page", "1")
+			.param("size", "10"))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.InstanceNotFoundException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -218,7 +218,7 @@ public class TestFriendController {
 		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
 		// otros
 		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
-				sizeCaptor.capture());
+			sizeCaptor.capture());
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_NOTFOUND));
@@ -232,14 +232,14 @@ public class TestFriendController {
 
 	@DisplayName("AceptRequest - ok (OK)")
 	public void TestFriendController_AceptRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
-		.andExpect(status().isOk());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
+			.andExpect(status().isOk());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -258,17 +258,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("AceptRequest - InstanceNotFoundException (NOT_FOUND)")
 	public void TestFriendController_AceptRequest_InstanceNotFoundException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.acceptRecommendation(USERID_NOTFOUND, OBJECT_OK);
+			.acceptRecommendation(USERID_NOTFOUND, OBJECT_OK);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -287,17 +287,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("AceptRequest - InvalidRecommendationException (NOT_FOUND)")
 	public void TestFriendController_AceptRequest_InvalidRecommendationException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND)).when(friendServiceMock)
-		.acceptRecommendation(USERID_OK, OBJECT_NOTFOUND);
+			.acceptRecommendation(USERID_OK, OBJECT_NOTFOUND);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_NOTFOUND))))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_NOTFOUND))))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -315,17 +315,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("AceptRequest - AlreadyRejectedException (BAD_REQUEST)")
 	public void TestFriendController_AceptRequest_AlreadyRejectedException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new AlreadyRejectedException("", OBJECT_REJECTED)).when(friendServiceMock)
-		.acceptRecommendation(USERID_OK, OBJECT_REJECTED);
+			.acceptRecommendation(USERID_OK, OBJECT_REJECTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -344,17 +344,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("AceptRequest - AlreadyAceptedException (BAD_REQUEST)")
 	public void TestFriendController_AceptRequest_AlreadyAceptedException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new AlreadyAceptedException("", OBJECT_ACCEPTED)).when(friendServiceMock)
-		.acceptRecommendation(USERID_OK, OBJECT_ACCEPTED);
+			.acceptRecommendation(USERID_OK, OBJECT_ACCEPTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_ACCEPT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -379,14 +379,14 @@ public class TestFriendController {
 	@Test
 	@DisplayName("RejectRequest - ok (OK)")
 	public void TestFriendController_RejectRequest()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
-		.andExpect(status().isOk());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
+			.andExpect(status().isOk());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -404,17 +404,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("RejectRequest - InstanceNotFoundException (NOT_FOUND)")
 	public void TestFriendController_RejectRequest_InstanceNotFoundException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.rejectRecommendation(USERID_NOTFOUND, OBJECT_OK);
+			.rejectRecommendation(USERID_NOTFOUND, OBJECT_OK);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_OK))))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -432,19 +432,19 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_GetFriendList_RequestParamException()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 
 		doThrow(new RequestParamException("")).when(friendServiceMock).getFriendList(USERID_OK, -1, 10);
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_FRIENDLIST_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("page", "-1")
-				.param("size", "10"))
-		.andExpect(status().isBadRequest())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.globalError").value("project.exceptions.RequestParamException"));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("page", "-1")
+			.param("size", "10"))
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.globalError").value("project.exceptions.RequestParamException"));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -454,7 +454,7 @@ public class TestFriendController {
 		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
 		// otros
 		verify(friendServiceMock, times(1)).getFriendList(userIdCaptor.capture(), pageCaptor.capture(),
-				sizeCaptor.capture());
+			sizeCaptor.capture());
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(userIdCaptor.getValue(), is(USERID_OK));
@@ -465,17 +465,17 @@ public class TestFriendController {
 
 	@DisplayName("RejectRequest - InvalidRecommendationException (BAD_REQUEST)")
 	public void TestFriendController_RejectRequest_InvalidRecommendationException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new InvalidRecommendationException("", OBJECT_NOTFOUND)).when(friendServiceMock)
-		.rejectRecommendation(USERID_OK, OBJECT_NOTFOUND);
+			.rejectRecommendation(USERID_OK, OBJECT_NOTFOUND);
 
 		// @formatter:off
-		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST )
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_NOTFOUND))))
-		.andExpect(status().isNotFound());
+		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_NOTFOUND))))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -493,17 +493,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("RejectRequest - AlreadyRejectedException (BAD_REQUEST)")
 	public void TestFriendController_RejectRequest_AlreadyRejectedException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new AlreadyRejectedException("", OBJECT_REJECTED)).when(friendServiceMock)
-		.rejectRecommendation(USERID_OK, OBJECT_REJECTED);
+			.rejectRecommendation(USERID_OK, OBJECT_REJECTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_REJECTED))))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -522,17 +522,17 @@ public class TestFriendController {
 	@Test
 	@DisplayName("RejectRequest - AlreadyAceptedException (BAD_REQUEST)")
 	public void TestFriendController_RejectRequest_AlreadyAceptedException()
-			throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
+		throws InstanceNotFoundException, InvalidRecommendationException, AlreadyRejectedException, Exception {
 
 		doThrow(new AlreadyAceptedException("", OBJECT_ACCEPTED)).when(friendServiceMock)
-		.rejectRecommendation(USERID_OK, OBJECT_ACCEPTED);
+			.rejectRecommendation(USERID_OK, OBJECT_ACCEPTED);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_REJECT_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(new IdDto(OBJECT_ACCEPTED))))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -554,23 +554,23 @@ public class TestFriendController {
 	 ****************************************************************/
 	@Test
 	public void TestFriendController_SuggestFriend()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 		final UserImpl suggestion = CreateUser(SUGGESTIONID);
 		when(friendServiceMock.suggestFriend(USERID_OK)).thenReturn(Optional.of(suggestion));
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				)
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.userName").value(SUGGESTIONNAME))
-		.andExpect(jsonPath("$.id").value(SUGGESTIONID))
-		.andExpect(jsonPath("$.age").value(SUGGESTIONAGE))
-		.andExpect(jsonPath("$.sex").value(SUGGESTIONSEX))
-		.andExpect(jsonPath("$.city").value(SUGGESTIONCITY))
-		.andExpect(jsonPath("$.description").value(SUGGESTIONDESCRIPTION));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+		)
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.userName").value(SUGGESTIONNAME))
+			.andExpect(jsonPath("$.id").value(SUGGESTIONID))
+			.andExpect(jsonPath("$.age").value(SUGGESTIONAGE))
+			.andExpect(jsonPath("$.sex").value(SUGGESTIONSEX))
+			.andExpect(jsonPath("$.city").value(SUGGESTIONCITY))
+			.andExpect(jsonPath("$.description").value(SUGGESTIONDESCRIPTION));
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -585,17 +585,17 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_SuggestFriend_InstanceNotFoundException()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.suggestFriend(USERID_NOTFOUND);
+			.suggestFriend(USERID_NOTFOUND);
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				)
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+		)
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -609,16 +609,16 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_SuggestFriend_NoMoreSuggestionFound()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 
 		when(friendServiceMock.suggestFriend(USERID_NM)).thenReturn(Optional.empty());
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NM)
-				)
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NM)
+		)
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -632,15 +632,15 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_BlockUser()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 		final IdDto idDto = new IdDto(2);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", 1L)
-				.content(Utils.convertObjectToJsonBytes(idDto)))
-		.andExpect(status().isNoContent());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", 1L)
+			.content(Utils.convertObjectToJsonBytes(idDto)))
+			.andExpect(status().isNoContent());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -653,18 +653,18 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_BlockUser_InstanceNotFoundException()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 		final IdDto idDto = new IdDto(2);
 
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.blockUser(USERID_NOTFOUND, 2L);
+			.blockUser(USERID_NOTFOUND, 2L);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.content(Utils.convertObjectToJsonBytes(idDto)))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.content(Utils.convertObjectToJsonBytes(idDto)))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -677,18 +677,18 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_BlockUser_AlreadyBlockedException()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 		final IdDto idDto = new IdDto(2);
 
 		doThrow(new AlreadyBlockedException("Already blocked")).when(friendServiceMock).blockUser(USERID_OK,
-				2L);
+			2L);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(idDto)))
-		.andExpect(status().isForbidden());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(idDto)))
+			.andExpect(status().isForbidden());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -701,17 +701,17 @@ public class TestFriendController {
 
 	@Test
 	public void TestFriendController_BlockUser_ItsNotYourFriendException()
-			throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
+		throws InstanceNotFoundException, NoMoreSuggestionFound, Exception {
 		final IdDto idDto = new IdDto(2);
 
 		doThrow(new ItsNotYourFriendException("It's not your friend")).when(friendServiceMock).blockUser(USERID_OK, 2L);
 
 		// @formatter:off
 		mockMvc.perform(post(UrlConfig.URL_FRIEND_BLOCK_POST)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.content(Utils.convertObjectToJsonBytes(idDto)))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.content(Utils.convertObjectToJsonBytes(idDto)))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -729,10 +729,10 @@ public class TestFriendController {
 		when(friendServiceMock.suggestNewCriteria(userId)).thenReturn(suggestion);
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK))
-		.andExpect(status().isOk());
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET, userId)
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK))
+			.andExpect(status().isOk());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -746,13 +746,13 @@ public class TestFriendController {
 	public void TestFriendController_SuggestNewCriteriaINF() throws Exception {
 		final Long userId = USERID_OK;
 		doThrow(new InstanceNotFoundException("", USERID_NOTFOUND)).when(friendServiceMock)
-		.suggestNewCriteria(USERID_NOTFOUND);
+			.suggestNewCriteria(USERID_NOTFOUND);
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND))
-		.andExpect(status().isNotFound());
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET, userId)
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -768,10 +768,10 @@ public class TestFriendController {
 		doThrow(new CantFindMoreFriendsException("NO MORE FRIENDS")).when(friendServiceMock).suggestNewCriteria(userId);
 
 		// @formatter:off
-		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET , userId)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK))
-		.andExpect(status().isBadRequest());
+		mockMvc.perform(get(UrlConfig.URL_FRIEND_SUGGESTCRITERIA_GET, userId)
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 
 		final ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -793,13 +793,13 @@ public class TestFriendController {
 		FriendConversor.toFullUserProfileDto(usersBlock);
 
 		when(friendServiceMock.searchUsersByMetadataAndKeywords(searchUsersDto, 0, 10))
-		.thenReturn(new Block<>(users, false));
+			.thenReturn(new Block<>(users, false));
 
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_FRIEND_SEARCH_USERS_GET)
-				.contentType(APPLICATION_JSON_UTF8).content(Utils.convertObjectToJsonBytes(searchUsersDto))
-				)
-		.andExpect(status().isOk());
+			.contentType(APPLICATION_JSON_UTF8).content(Utils.convertObjectToJsonBytes(searchUsersDto))
+		)
+			.andExpect(status().isOk());
 		// @formatter:on
 
 		final ArgumentCaptor<SearchUsersDto> searchUsersDtoCaptor = ArgumentCaptor.forClass(SearchUsersDto.class);
@@ -808,7 +808,7 @@ public class TestFriendController {
 		// Comprueba que final se llama 1 final única vez al servicio + no llama final a
 		// otros
 		verify(friendServiceMock, times(1)).searchUsersByMetadataAndKeywords(searchUsersDtoCaptor.capture(),
-				pageCaptor.capture().intValue(), sizeCaptor.capture().intValue());
+			pageCaptor.capture().intValue(), sizeCaptor.capture().intValue());
 		verifyNoMoreInteractions(friendServiceMock);
 
 		assertThat(searchUsersDtoCaptor.getValue(), is(searchUsersDto));
