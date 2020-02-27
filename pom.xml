@@ -258,12 +258,10 @@
 							<dependency>
 								<groupId>org.ow2.asm</groupId>
 								<artifactId>asm</artifactId>
-								<version>${asm.version}</version>
 							</dependency>
 							<dependency>
 								<groupId>org.ow2.asm</groupId>
 								<artifactId>asm-commons</artifactId>
-								<version>${asm.version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -306,9 +304,9 @@
 	</profiles>
 	
 	<!-- /////////////////// -->
-	
+
 	<!-- Reporting -->
-	
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -340,6 +338,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
 					<rulesets>
+						<ruleset>${project.parent.relativePath}/src/config/pmd/pmd-rules.xml</ruleset>
 						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
 					</rulesets>
 					<excludes>
