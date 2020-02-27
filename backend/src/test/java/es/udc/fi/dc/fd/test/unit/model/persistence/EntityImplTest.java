@@ -20,6 +20,8 @@ import es.udc.fi.dc.fd.model.persistence.SearchCriteria;
 import es.udc.fi.dc.fd.model.persistence.UserImpl;
 import es.udc.fi.dc.fd.test.utils.EntityTestUtils;
 
+import java.util.Arrays;
+
 class EntityImplTest {
 
 	@Test
@@ -64,7 +66,11 @@ class EntityImplTest {
 
 	@Test
 	void testImageImpl() {
-		EntityTestUtils.testEntity(ImageImpl.class);
+		EntityTestUtils.testEntity(ImageImpl.class,
+			Arrays.asList(new String[]{"data"}),
+			Arrays.asList(new String[]{"getData"}),
+			Arrays.asList(new String[]{"setData"}),
+			Arrays.asList(new String[]{"data"}));
 	}
 
 	@Test
