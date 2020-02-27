@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
-import es.udc.fi.dc.fd.controller.error.ErrorViewConstants;
 
 /**
  * Captures and handles exceptions for all the controllers.

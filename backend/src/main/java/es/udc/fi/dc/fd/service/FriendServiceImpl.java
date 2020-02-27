@@ -22,7 +22,6 @@ import es.udc.fi.dc.fd.controller.exception.InvalidRecommendationException;
 import es.udc.fi.dc.fd.controller.exception.ItsNotYourFriendException;
 import es.udc.fi.dc.fd.controller.exception.RequestParamException;
 import es.udc.fi.dc.fd.dtos.SearchUsersDto;
-import es.udc.fi.dc.fd.model.SexCriteriaEnum;
 import es.udc.fi.dc.fd.model.persistence.BlockedId;
 import es.udc.fi.dc.fd.model.persistence.BlockedImpl;
 import es.udc.fi.dc.fd.model.persistence.FriendListOut;
