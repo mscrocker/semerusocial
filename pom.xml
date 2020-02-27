@@ -313,14 +313,14 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<configuration>
-					<excludeFilterFile>${project.parent.relativePath}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
+					<excludeFilterFile>${project.basedir}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<configLocation>${project.parent.relativePath}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
+					<configLocation>${project.basedir}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
 					<excludes>**/generated/**/*</excludes>
 				</configuration>
 			</plugin>
@@ -339,6 +339,7 @@
 				<configuration>
 					<rulesets>
 						<ruleset>${project.parent.relativePath}/src/config/pmd/pmd-rules.xml</ruleset>
+						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
 					</rulesets>
 					<excludes>
 						<exclude>**/generated/**/*</exclude>
