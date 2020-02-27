@@ -3,7 +3,9 @@ package es.udc.fi.dc.fd.dtos;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class AgelessUserProfileDto {
+import java.io.Serializable;
+
+public class AgelessUserProfileDto implements Serializable {
 	@NotEmpty
 	private String sex;
 
@@ -87,13 +89,10 @@ public class AgelessUserProfileDto {
 			return false;
 		}
 		if (sex == null) {
-			if (other.sex != null) {
-				return false;
-			}
-		} else if (!sex.equals(other.sex)) {
-			return false;
+			return other.sex == null;
+		} else {
+			return sex.equals(other.sex);
 		}
-		return true;
 	}
 
 	@Override

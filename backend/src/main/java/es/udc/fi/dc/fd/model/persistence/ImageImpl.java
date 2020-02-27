@@ -73,7 +73,7 @@ public class ImageImpl implements Image {
 
 	@Override
 	public byte[] getData() {
-		return data;
+		return Arrays.copyOf(data, data.length);
 	}
 
 	@Override

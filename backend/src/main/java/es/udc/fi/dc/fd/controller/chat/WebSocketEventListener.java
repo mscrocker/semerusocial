@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Map;
+
 @Component
 public class WebSocketEventListener {
 
@@ -26,16 +28,30 @@ public class WebSocketEventListener {
 
 	@EventListener
 	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+
+		if (event == null) {
+			return;
+		}
+
+
+
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-		String username = (String) headerAccessor.getSessionAttributes().get("username");
-		if (username != null) {
-			LOGGER.info("User Disconnected : " + username);
+		if (headerAccessor != null) {
+			Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+			if (sessionAttributes == null) {
+				return;
+			}
+			String username = (String) sessionAttributes.get("username");
+			if (username != null) {
+				LOGGER.info("User Disconnected : " + username);
 
-			ChatMessage chatMessage = new ChatMessage();
-			chatMessage.setSender(username);
+				ChatMessage chatMessage = new ChatMessage();
+				chatMessage.setSender(username);
 
-			messagingTemplate.convertAndSend("/topic/public", chatMessage);
+				messagingTemplate.convertAndSend("/topic/public", chatMessage);
+			}
 		}
+
 	}
 }
