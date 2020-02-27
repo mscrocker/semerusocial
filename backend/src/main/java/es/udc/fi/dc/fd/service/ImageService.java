@@ -7,13 +7,13 @@ import es.udc.fi.dc.fd.model.persistence.ImageImpl;
 public interface ImageService {
 
 	public ImageImpl addImage(ImageImpl image, Long userId)
-			throws InstanceNotFoundException;
+		throws InstanceNotFoundException;
 
 	public void removeImage(Long imageId, Long userId)
-			throws InstanceNotFoundException, ItsNotYourImageException;
+		throws InstanceNotFoundException, ItsNotYourImageException;
 
 	public Block<ImageImpl> getImagesByUserId(Long userId, int page)
-			throws InstanceNotFoundException;
+		throws InstanceNotFoundException;
 
 	public Block<ImageImpl> getAnonymousCarrusel(String city, int page);
 

@@ -116,7 +116,7 @@ public class MessageDetailsDto implements Serializable {
 	@Override
 	public String toString() {
 		return "MessageDetailsDto [messageContent=" + messageContent + ", date=" + date + ", owner=" + owner
-				+ ", receiver=" + receiver + "]";
+			+ ", receiver=" + receiver + "]";
 	}
 
 }

@@ -62,28 +62,37 @@ public class AgelessUserProfileDto {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AgelessUserProfileDto other = (AgelessUserProfileDto) obj;
 		if (city == null) {
-			if (other.city != null)
+			if (other.city != null) {
 				return false;
-		} else if (!city.equals(other.city))
+			}
+		} else if (!city.equals(other.city)) {
 			return false;
+		}
 		if (description == null) {
-			if (other.description != null)
+			if (other.description != null) {
 				return false;
-		} else if (!description.equals(other.description))
+			}
+		} else if (!description.equals(other.description)) {
 			return false;
+		}
 		if (sex == null) {
-			if (other.sex != null)
+			if (other.sex != null) {
 				return false;
-		} else if (!sex.equals(other.sex))
+			}
+		} else if (!sex.equals(other.sex)) {
 			return false;
+		}
 		return true;
 	}
 

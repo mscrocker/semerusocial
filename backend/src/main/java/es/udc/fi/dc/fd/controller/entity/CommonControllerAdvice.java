@@ -24,8 +24,8 @@ public class CommonControllerAdvice {
 	public ErrorsDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
 		List<FieldErrorDto> fieldErrors = exception.getBindingResult().getFieldErrors().stream()
-				.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
-				.collect(Collectors.toList());
+			.map(error -> new FieldErrorDto(error.getField(), error.getDefaultMessage()))
+			.collect(Collectors.toList());
 
 		return new ErrorsDto(fieldErrors);
 

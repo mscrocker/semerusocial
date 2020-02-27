@@ -7,8 +7,8 @@ public enum SexCriteriaEnum {
 	private String code;
 
 	SexCriteriaEnum(String code) {
-        this.code = code;
-    }
+		this.code = code;
+	}
 
 	public String getCode() {
 		return code;

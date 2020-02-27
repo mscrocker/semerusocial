@@ -8,11 +8,15 @@ import javax.persistence.Entity;
 public class FriendChatTitle {
 
 	private Long friendId;
+
 	private String friendName;
+
 	private String content;
+
 	private Boolean sentByYou;
+
 	private LocalDateTime date;
-	
+
 
 	public Long getFriendId() {
 		return friendId;
@@ -62,8 +66,6 @@ public class FriendChatTitle {
 	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
-	
-	
 
 
 	public FriendChatTitle(Long friendId, String friendName, String content, Boolean sentByYou, LocalDateTime date) {
@@ -79,7 +81,7 @@ public class FriendChatTitle {
 	@Override
 	public String toString() {
 		return "FriendChatTitle [friendId=" + friendId + ", friendName=" + friendName + ", content=" + content
-				+ ", sentByYou=" + sentByYou + ", date=" + date + "]";
+			+ ", sentByYou=" + sentByYou + ", date=" + date + "]";
 	}
 
 

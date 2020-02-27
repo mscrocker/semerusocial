@@ -22,8 +22,11 @@ import es.udc.fi.dc.fd.model.User;
 public class UserImpl implements User {
 
 	private static final long DEFAULT_RATING_VOTES = 0;
+
 	private static final long DEFAULT_RATING = 0;
+
 	private static final int DEFAULT_MINRATE = 1;
+
 	private static final boolean DEFAULT_PREMIUM = false;
 
 	@Transient
@@ -92,7 +95,7 @@ public class UserImpl implements User {
 	}
 
 	public UserImpl(String userName, String password, LocalDateTime date, String sex, String city, String description,
-			double rating, long ratingVotes) {
+					double rating, long ratingVotes) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -381,10 +384,10 @@ public class UserImpl implements User {
 	@Override
 	public String toString() {
 		return "UserImpl [id=" + id + ", userName=" + userName + ", password=" + password + ", date=" + date + ", sex="
-				+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
-				+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
-				+ description + ", rating=" + rating + ", ratingVotes=" + ratingVotes + ", premium=" + premium
-				+ ", minRateCriteria=" + minRateCriteria + "]";
+			+ sex + ", city=" + city + ", suggestion=" + suggestion + ", criteriaSex=" + criteriaSex
+			+ ", criteriaMinAge=" + criteriaMinAge + ", criteriaMaxAge=" + criteriaMaxAge + ", description="
+			+ description + ", rating=" + rating + ", ratingVotes=" + ratingVotes + ", premium=" + premium
+			+ ", minRateCriteria=" + minRateCriteria + "]";
 	}
 
 }

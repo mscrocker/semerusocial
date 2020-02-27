@@ -32,6 +32,7 @@ import es.udc.fi.dc.fd.jwt.JwtGeneratorImpl;
 @Order(Ordered.HIGHEST_PRECEDENCE + 50)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	private DefaultSimpUserRegistry userRegistry = new DefaultSimpUserRegistry();
+
 	private DefaultUserDestinationResolver resolver = new DefaultUserDestinationResolver(userRegistry);
 
 	@Bean
@@ -67,12 +68,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 				List<String> tokenList = accessor.getNativeHeader("X-Authorization");
 				String token = null;
-				if (tokenList == null || tokenList.size() < 1)
+				if (tokenList == null || tokenList.size() < 1) {
 					return message;
-				else {
+				} else {
 					token = tokenList.get(0);
-					if (token == null)
+					if (token == null) {
 						return message;
+					}
 				}
 				JwtGeneratorImpl generatorImpl = new JwtGeneratorImpl();
 				// validate and convert to a Principal based on your own requirements e.g.
@@ -92,16 +94,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				 * accessor.sessionId, CloseStatus.NORMAL)); }
 				 */
 				if (StompCommand.CONNECT.equals(accessor.getCommand())
-						|| StompCommand.SUBSCRIBE.equals(accessor.getCommand())
-						|| StompCommand.SEND.equals(accessor.getCommand())) {
+					|| StompCommand.SUBSCRIBE.equals(accessor.getCommand())
+					|| StompCommand.SEND.equals(accessor.getCommand())) {
 
 					userRegistry
-							.onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, yourAuth));
+						.onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, yourAuth));
 					accessor.setUser(yourAuth);
 				} else {
 					accessor.setUser(yourAuth);
 					userRegistry
-							.onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, yourAuth));
+						.onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, yourAuth));
 
 				}
 

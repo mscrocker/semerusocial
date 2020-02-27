@@ -24,11 +24,11 @@ public class MessageConversorTest {
 	public void testToFriendHeadersDto() {
 
 		final BlockDto<FriendHeaderDto> result = MessageConversor
-				.toFriendHeadersDto(new Block<>(Arrays.asList(new FriendChatTitle[] {
-						new FriendChatTitle(1L, "testFriend", "hello", true, LocalDateTime.now().minusMinutes(1L)),
-						new FriendChatTitle(2L, "testFriend2", "goodbye", false,
-								LocalDateTime.now().minusMinutes(2L)) }),
-						false));
+			.toFriendHeadersDto(new Block<>(Arrays.asList(new FriendChatTitle[] {
+				new FriendChatTitle(1L, "testFriend", "hello", true, LocalDateTime.now().minusMinutes(1L)),
+				new FriendChatTitle(2L, "testFriend2", "goodbye", false,
+					LocalDateTime.now().minusMinutes(2L))}),
+				false));
 
 		assertFalse(result.isExistMoreElements());
 		assertTrue(result.getElements().size() == 2);

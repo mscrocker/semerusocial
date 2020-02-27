@@ -2,14 +2,14 @@ package es.udc.fi.dc.fd.dtos;
 
 public class SearchUsersDto {
 
-	public String keywords;
+	private String keywords;
 
-	public SearchCriteriaDto metadata;
+	private SearchCriteriaDto metadata;
 
 	public SearchUsersDto(String keywords, SearchCriteriaDto metadata) {
 		super();
-		this.keywords = keywords;
-		this.metadata = metadata;
+		this.setKeywords(keywords);
+		this.setMetadata(metadata);
 	}
 
 	public SearchUsersDto() {
@@ -36,8 +36,8 @@ public class SearchUsersDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (keywords == null ? 0 : keywords.hashCode());
-		result = prime * result + (metadata == null ? 0 : metadata.hashCode());
+		result = prime * result + (getKeywords() == null ? 0 : getKeywords().hashCode());
+		result = prime * result + (getMetadata() == null ? 0 : getMetadata().hashCode());
 		return result;
 	}
 
@@ -53,18 +53,18 @@ public class SearchUsersDto {
 			return false;
 		}
 		final SearchUsersDto other = (SearchUsersDto) obj;
-		if (keywords == null) {
-			if (other.keywords != null) {
+		if (getKeywords() == null) {
+			if (other.getKeywords() != null) {
 				return false;
 			}
-		} else if (!keywords.equals(other.keywords)) {
+		} else if (!getKeywords().equals(other.getKeywords())) {
 			return false;
 		}
-		if (metadata == null) {
-			if (other.metadata != null) {
+		if (getMetadata() == null) {
+			if (other.getMetadata() != null) {
 				return false;
 			}
-		} else if (!metadata.equals(other.metadata)) {
+		} else if (!getMetadata().equals(other.getMetadata())) {
 			return false;
 		}
 		return true;

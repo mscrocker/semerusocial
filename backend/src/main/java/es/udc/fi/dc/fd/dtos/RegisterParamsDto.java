@@ -5,21 +5,20 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 public class RegisterParamsDto {
 
 	@JsonUnwrapped
-	LoginParamsDto loginParams;
+	private LoginParamsDto loginParams;
 
 	@JsonUnwrapped
-	DateUserProfileDto profileData;
+	private DateUserProfileDto profileData;
 
-	
-	
+
 	public RegisterParamsDto() {
 		super();
 	}
 
 	public RegisterParamsDto(LoginParamsDto loginParams, DateUserProfileDto profileData) {
 		super();
-		this.loginParams = loginParams;
-		this.profileData = profileData;
+		this.setLoginParams(loginParams);
+		this.setProfileData(profileData);
 	}
 
 	public LoginParamsDto getLoginParams() {
@@ -42,36 +41,40 @@ public class RegisterParamsDto {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((loginParams == null) ? 0 : loginParams.hashCode());
-		result = prime * result + ((profileData == null) ? 0 : profileData.hashCode());
+		result = prime * result + ((getLoginParams() == null) ? 0 : getLoginParams().hashCode());
+		result = prime * result + ((getProfileData() == null) ? 0 : getProfileData().hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		RegisterParamsDto other = (RegisterParamsDto) obj;
-		if (loginParams == null) {
-			if (other.loginParams != null)
+		if (getLoginParams() == null) {
+			if (other.getLoginParams() != null) {
 				return false;
-		} else if (!loginParams.equals(other.loginParams))
+			}
+		} else if (!getLoginParams().equals(other.getLoginParams())) {
 			return false;
-		if (profileData == null) {
-			if (other.profileData != null)
-				return false;
-		} else if (!profileData.equals(other.profileData))
-			return false;
-		return true;
+		}
+		if (getProfileData() == null) {
+			return other.getProfileData() == null;
+		} else {
+			return getProfileData().equals(other.getProfileData());
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "RegisterParamsDto [loginParams=" + loginParams + ", profileData=" + profileData + "]";
+		return "RegisterParamsDto [loginParams=" + getLoginParams() + ", profileData=" + getProfileData() + "]";
 	}
 
 }

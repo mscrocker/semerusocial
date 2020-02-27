@@ -37,10 +37,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		queryString += " AND (self.city IN (SELECT aux.cityCriteriaId.city FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id) ";
 		queryString += " OR (0 = (SELECT count(aux.cityCriteriaId.city )FROM Cities aux WHERE aux.cityCriteriaId.userId = self.id))) ";
 		queryString += " AND "
-				+ "((p.criteriaSex = 'ANY') OR "
-				+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
-				+ "(p.criteriaSex = 'MALE' AND self.sex = 'Male') OR "
-				+ "(p.criteriaSex = 'FEMALE' AND self.sex = 'Female')) ";
+			+ "((p.criteriaSex = 'ANY') OR "
+			+ "(p.criteriaSex = 'OTHER' AND (self.sex <> 'Male') AND (self.sex <> 'Female')) OR "
+			+ "(p.criteriaSex = 'MALE' AND self.sex = 'Male') OR "
+			+ "(p.criteriaSex = 'FEMALE' AND self.sex = 'Female')) ";
 		queryString += " AND p.date <= :maxDate ";
 		queryString += "AND p.date >= :minDate ";
 		if (criteria.getSex() == SexCriteriaEnum.OTHER) {
@@ -90,7 +90,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		}
 		if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
 			query.setParameter("cities",
-					criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
+				criteria.getCity().stream().map(city -> city.toLowerCase()).collect(Collectors.toList()));
 		}
 		return query;
 	}
@@ -124,8 +124,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	public Slice<UserImpl> searchUsersByMetadataAndKeywords(SearchUsersDto params, int page, int size) {
 		String queryString = "SELECT u FROM User u WHERE ";
 
-		if (params.keywords != null) {
-			final String[] keywords = params.keywords.split(" ");
+		if (params.getKeywords() != null) {
+			final String[] keywords = params.getKeywords().split(" ");
 			final StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append("( ");
 			for (int i = 0; i < keywords.length - 1; i++) {
@@ -139,7 +139,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			queryString += stringBuilder.toString();
 		}
 
-		if (params.metadata != null && params.keywords != null) {
+		if (params.getMetadata() != null && params.getKeywords() != null) {
 			queryString += " AND ";
 		}
 
@@ -148,12 +148,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		Integer maxAge = null;
 		List<String> cities = null;
 		Double minRate = null;
-		if (params.metadata != null) {
-			sex = params.metadata.getSex();
-			minAge = params.metadata.getMinAge();
-			maxAge = params.metadata.getMaxAge();
-			cities = params.metadata.getCity();
-			minRate = (double) params.metadata.getMinRate();
+		if (params.getMetadata() != null) {
+			sex = params.getMetadata().getSex();
+			minAge = params.getMetadata().getMinAge();
+			maxAge = params.getMetadata().getMaxAge();
+			cities = params.getMetadata().getCity();
+			minRate = (double) params.getMetadata().getMinRate();
 
 			queryString += "( u.sex = :sex";
 			queryString += " OR (timestampdiff(year, u.date, curdate()) >= :minAge AND timestampdiff(year, u.date, curdate()) <= :maxAge )";
@@ -163,14 +163,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		final Query query = entityManager.createQuery(queryString).setFirstResult(page * size).setMaxResults(size + 1);
 
-		if (params.keywords != null) {
-			final String[] keywords = params.keywords.split(" ");
+		if (params.getKeywords() != null) {
+			final String[] keywords = params.getKeywords().split(" ");
 			for (int i = 0; i < keywords.length; i++) {
 				query.setParameter("keyword" + i, keywords[i]);
 			}
 		}
 
-		if (params.metadata != null) {
+		if (params.getMetadata() != null) {
 			query.setParameter("sex", sex.toString());
 			query.setParameter("minAge", minAge);
 			query.setParameter("maxAge", maxAge);

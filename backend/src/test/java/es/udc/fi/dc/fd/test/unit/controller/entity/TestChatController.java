@@ -65,7 +65,7 @@ public class TestChatController {
 	}
 
 	private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+		MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	/*************************************************************
 	 * FOR SETUP
@@ -107,7 +107,7 @@ public class TestChatController {
 
 		when(chatServiceMock.getUserConversations(USERID_OK, PAGE)).thenReturn(FRIENDCHAT_BLOCK);
 		when(chatServiceMock.getUserConversations(USERID_NOTFOUND, PAGE))
-		.thenThrow(new InstanceNotFoundException(null, USERID_NOTFOUND));
+			.thenThrow(new InstanceNotFoundException(null, USERID_NOTFOUND));
 		when(chatServiceMock.getUserConversations(USERID_OK, PAGE_INVALID)).thenThrow(new RequestParamException(""));
 
 
@@ -123,63 +123,63 @@ public class TestChatController {
 	 ***************************************/
 	@Test
 	public void testGetConversation()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_GETCONVERSATION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("friendId", Long.toString(FRIENDID_OK))
-				.param("page", Integer.toString(PAGE))
-				.param("size", Integer.toString(SIZE)))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.elements").isEmpty())
-		.andExpect(jsonPath("$.existMoreElements").value(false));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("friendId", Long.toString(FRIENDID_OK))
+			.param("page", Integer.toString(PAGE))
+			.param("size", Integer.toString(SIZE)))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.elements").isEmpty())
+			.andExpect(jsonPath("$.existMoreElements").value(false));
 		// @formatter:on
 	}
 
 	@Test
 	public void testGetConversationInstanceNotFoundException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_GETCONVERSATION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.param("friendId",  Long.toString(FRIENDID_OK))
-				.param("page", Integer.toString(PAGE))
-				.param("size", Integer.toString(SIZE)))
-		.andExpect(status().isNotFound())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.param("friendId", Long.toString(FRIENDID_OK))
+			.param("page", Integer.toString(PAGE))
+			.param("size", Integer.toString(SIZE)))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8));
 		// @formatter:on
 	}
 
 	@Test
 	public void testGetConversationValidationException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_GETCONVERSATION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("friendId",  Long.toString(USERID_OK))
-				.param("page", Integer.toString(PAGE))
-				.param("size", Integer.toString(SIZE)))
-		.andExpect(status().isBadRequest())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("friendId", Long.toString(USERID_OK))
+			.param("page", Integer.toString(PAGE))
+			.param("size", Integer.toString(SIZE)))
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8));
 		// @formatter:on
 	}
 
 	@Test
 	public void testGetConversationItsNotYourFriendException()
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_GETCONVERSATION_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("friendId",  Long.toString(USERID2_OK))
-				.param("page", Integer.toString(PAGE))
-				.param("size", Integer.toString(SIZE)))
-		.andExpect(status().isNotFound())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("friendId", Long.toString(USERID2_OK))
+			.param("page", Integer.toString(PAGE))
+			.param("size", Integer.toString(SIZE)))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8));
 		// @formatter:on
 	}
 
@@ -190,40 +190,40 @@ public class TestChatController {
 
 	@Test
 	public void testGetFriendHeaders()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_FRIENDHEADERS_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("page", Integer.toString(PAGE)))
-		.andExpect(status().isOk())
-		.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-		.andExpect(jsonPath("$.elements").isEmpty())
-		.andExpect(jsonPath("$.existMoreElements").value(false));
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("page", Integer.toString(PAGE)))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.elements").isEmpty())
+			.andExpect(jsonPath("$.existMoreElements").value(false));
 		// @formatter:on
 	}
 
 	@Test
 	public void testGetFriendHeadersInstanceNotFoundException()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_FRIENDHEADERS_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_NOTFOUND)
-				.param("page", Integer.toString(PAGE)))
-		.andExpect(status().isNotFound());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_NOTFOUND)
+			.param("page", Integer.toString(PAGE)))
+			.andExpect(status().isNotFound());
 		// @formatter:on
 	}
 
 	@Test
 	public void testGetFriendHeadersRequestParamException()
-			throws InstanceNotFoundException, RequestParamException, Exception {
+		throws InstanceNotFoundException, RequestParamException, Exception {
 		// @formatter:off
 		mockMvc.perform(get(UrlConfig.URL_CHAT_FRIENDHEADERS_GET)
-				.contentType(APPLICATION_JSON_UTF8)
-				.requestAttr("userId", USERID_OK)
-				.param("page", Integer.toString(PAGE_INVALID)))
-		.andExpect(status().isBadRequest());
+			.contentType(APPLICATION_JSON_UTF8)
+			.requestAttr("userId", USERID_OK)
+			.param("page", Integer.toString(PAGE_INVALID)))
+			.andExpect(status().isBadRequest());
 		// @formatter:on
 	}
 

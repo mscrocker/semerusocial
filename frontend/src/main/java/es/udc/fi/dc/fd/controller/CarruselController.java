@@ -27,7 +27,7 @@ public class CarruselController {
 	@GetMapping(path = "/findFriend")
 	public final String displayFriendFinder() {
 
-		return UserViewConstants.Friend_Finder;
+		return UserViewConstants.FRIEND_FINDER;
 	}
 
 	@GetMapping(path = { "/chat/{id}", "/chat" })

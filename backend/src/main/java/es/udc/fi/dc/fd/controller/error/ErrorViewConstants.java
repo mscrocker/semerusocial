@@ -26,21 +26,21 @@ package es.udc.fi.dc.fd.controller.error;
 
 /**
  * Constants for the error view controllers.
- * 
+ *
  * @author Bernardo Mart&iacute;nez Garrido
  */
 public final class ErrorViewConstants {
 
-    /**
-     * Name for the error view.
-     */
-    public static final String VIEW_ERROR   = "exception";
+	/**
+	 * Name for the error view.
+	 */
+	public static final String VIEW_ERROR = "exception";
 
-    /**
-     * Private constructor to avoid initialization.
-     */
-    private ErrorViewConstants() {
-        super();
-    }
+	/**
+	 * Private constructor to avoid initialization.
+	 */
+	private ErrorViewConstants() {
+		super();
+	}
 
 }

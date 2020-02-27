@@ -3,11 +3,13 @@ package es.udc.fi.dc.fd.dtos;
 import java.util.List;
 
 public class BlockDto<T> {
-	
+
 	private List<T> elements;
-    private boolean existMoreElements;
-    
-    public BlockDto() {}
+
+	private boolean existMoreElements;
+
+	public BlockDto() {
+	}
 
 	public List<T> getElements() {
 		return elements;
@@ -31,6 +33,5 @@ public class BlockDto<T> {
 		this.existMoreElements = existMoreElements;
 	}
 
-    
-    
+
 }

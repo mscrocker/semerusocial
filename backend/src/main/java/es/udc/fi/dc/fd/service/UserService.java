@@ -21,14 +21,14 @@ public interface UserService {
 	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException;
 
 	public void setSearchCriteria(Long userId, SearchCriteria criteria)
-			throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException;
+		throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException;
 
 	public SearchCriteria getSearchCriteria(Long userId) throws InstanceNotFoundException;
 
 	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
 
 	public double rateUser(int rate, Long userSubject, Long userObject)
-			throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
+		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
 
 	public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException;
 

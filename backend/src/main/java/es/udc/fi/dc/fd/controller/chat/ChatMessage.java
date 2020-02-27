@@ -7,10 +7,15 @@ public class ChatMessage {
 	}
 
 	private MessageType type;
+
 	private String content;
+
 	private String sender;
+
 	private String receiver;
+
 	private long receiverId;
+
 	private long senderId;
 
 	public long getReceiverId() {

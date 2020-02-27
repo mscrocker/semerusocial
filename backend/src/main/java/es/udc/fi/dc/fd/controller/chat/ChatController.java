@@ -41,11 +41,14 @@ import es.udc.fi.dc.fd.service.UserService;
 
 @Controller
 public class ChatController {
-	private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
 
 	private static final String INSTANCE_NOT_FOUND_EXCEPTION_CODE = "project.exceptions.InstanceNotFoundException";
+
 	private static final String ITS_NOT_YOUR_FRIEND_CODE = "project.exceptions.ItsNotYourFriendException";
+
 	private static final String VALIDATION_EXCEPTION_CODE = "project.exceptions.ValidationException";
+
 	private static final String REQUEST_PARAM_EXCEPTION_CODE = "project.exceptions.RequestParamException";
 
 	@Autowired
@@ -61,7 +64,7 @@ public class ChatController {
 	private final MessageSource messageSource;
 
 	public ChatController(final UserService userService, final ChatService chatService,
-			final MessageSource messageSource) {
+						  final MessageSource messageSource) {
 		super();
 
 		this.userService = checkNotNull(userService, "Received a null pointer as userService in ChatController");
@@ -76,7 +79,7 @@ public class ChatController {
 
 		final String nameMessage = messageSource.getMessage(exception.getName(), null, exception.getName(), locale);
 		final String errorMessage = messageSource.getMessage(INSTANCE_NOT_FOUND_EXCEPTION_CODE,
-				new Object[] { nameMessage, exception.getKey().toString() }, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
+			new Object[] {nameMessage, exception.getKey().toString()}, INSTANCE_NOT_FOUND_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 
@@ -87,7 +90,7 @@ public class ChatController {
 	@ResponseBody
 	public ErrorsDto handleItsNotYourFriendException(ItsNotYourFriendException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(ITS_NOT_YOUR_FRIEND_CODE, null, ITS_NOT_YOUR_FRIEND_CODE,
-				locale);
+			locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -97,7 +100,7 @@ public class ChatController {
 	@ResponseBody
 	public ErrorsDto handleItsNotYourFriendException(ValidationException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(VALIDATION_EXCEPTION_CODE, null, VALIDATION_EXCEPTION_CODE,
-				locale);
+			locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -107,7 +110,7 @@ public class ChatController {
 	@ResponseBody
 	public ErrorsDto handleRequestParamException(RequestParamException exception, Locale locale) {
 		final String errorMessage = messageSource.getMessage(REQUEST_PARAM_EXCEPTION_CODE, null,
-				REQUEST_PARAM_EXCEPTION_CODE, locale);
+			REQUEST_PARAM_EXCEPTION_CODE, locale);
 
 		return new ErrorsDto(errorMessage);
 	}
@@ -123,7 +126,7 @@ public class ChatController {
 			messagingTemplate.convertAndSendToUser(receiver.getUserName(), "/queue/reply", chatMessage);
 
 		} catch (InstanceNotFoundException | ItsNotYourFriendException | ValidationException e) {
-			logger.info("Illegal access to chat");
+			LOGGER.info("Illegal access to chat");
 			final ChatMessage chatMessage2 = new ChatMessage();
 			chatMessage2.setType(MessageType.ERROR);
 			chatMessage2.setSenderId(ownerUser.getUserId());
@@ -136,7 +139,7 @@ public class ChatController {
 	@GetMapping("/chat/friendHeaders")
 	@ResponseBody
 	public BlockDto<FriendHeaderDto> getFriendHeaders(@RequestAttribute Long userId, @RequestParam Integer page)
-			throws InstanceNotFoundException, RequestParamException {
+		throws InstanceNotFoundException, RequestParamException {
 		return MessageConversor.toFriendHeadersDto(chatService.getUserConversations(userId, page));
 	}
 
@@ -145,9 +148,9 @@ public class ChatController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Block<MessageDetailsDto> getConversation(@RequestAttribute Long userId,
-			@RequestParam @Min(1) @NotNull Long friendId, @RequestParam(defaultValue = "0") @Min(0) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size)
-					throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
+													@RequestParam @Min(1) @NotNull Long friendId, @RequestParam(defaultValue = "0") @Min(0) int page,
+													@RequestParam(defaultValue = "10") @Min(1) int size)
+		throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 		// @formatter:on
 
 		return chatService.getConversation(userId, friendId, page, size);

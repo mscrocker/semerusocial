@@ -62,28 +62,37 @@ public final class UnratedFriendDto implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		UnratedFriendDto other = (UnratedFriendDto) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		if (userData == null) {
-			if (other.userData != null)
+			if (other.userData != null) {
 				return false;
-		} else if (!userData.equals(other.userData))
+			}
+		} else if (!userData.equals(other.userData)) {
 			return false;
+		}
 		if (userName == null) {
-			if (other.userName != null)
+			if (other.userName != null) {
 				return false;
-		} else if (!userName.equals(other.userName))
+			}
+		} else if (!userName.equals(other.userName)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -91,7 +100,6 @@ public final class UnratedFriendDto implements Serializable {
 	public String toString() {
 		return "FriendDto [id=" + id + ", userName=" + userName + ", userData=" + userData + "]";
 	}
-	
-	
+
 
 }

@@ -32,26 +32,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Controller which generates a runtime exception.
  * <p>
  * This is used to verify that the exceptions are being handled correctly.
- * 
+ *
  * @author Bernardo Mart&iacute;nez Garrido
  */
 @Controller
 @RequestMapping("/exception")
 public class RuntimeExceptionController {
 
-    /**
-     * Constructs a controller.
-     */
-    public RuntimeExceptionController() {
-        super();
-    }
+	/**
+	 * Constructs a controller.
+	 */
+	public RuntimeExceptionController() {
+		super();
+	}
 
-    /**
-     * Throws a runtime exception.
-     */
-    @GetMapping(path = "/runtime")
-    public final void showEntityList() {
-        throw new RuntimeException("Some unspecified error has occurred");
-    }
+	/**
+	 * Throws a runtime exception.
+	 */
+	@GetMapping(path = "/runtime")
+	public final void showEntityList() {
+		throw new RuntimeException("Some unspecified error has occurred");
+	}
 
 }

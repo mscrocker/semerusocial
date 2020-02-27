@@ -5,6 +5,7 @@ import java.security.Principal;
 public class JwtInfo implements Principal {
 
 	private Long userId;
+
 	private String userName;
 
 	public JwtInfo(Long userId, String userName) {

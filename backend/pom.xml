@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- POM Relationships -->
 
@@ -241,6 +241,7 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -297,6 +298,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -337,6 +339,7 @@
 	<!-- Build Environment » Environment Information -->
 
 	<properties>
+		<checkstyle.config.location>${project.parent.basedir}/src/main/config/checkstyle/checkstyle-rules.xml</checkstyle.config.location>
 		<h2.version>1.4.197</h2.version>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<hibernate.version>5.2.17.Final</hibernate.version>
@@ -350,8 +353,9 @@
 		<log4j.version>2.9.1</log4j.version>
 		<mockito.version>2.18.3</mockito.version>
 		<mysql.version>8.0.12</mysql.version>
-		<plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
+		<plugin.docker.version>0.33.0</plugin.docker.version>
 		<plugin.jacoco.version>0.8.4</plugin.jacoco.version>
+		<plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
 		<postgresql.version>42.1.4</postgresql.version>
 		<slf4j.version>1.8.0-alpha2</slf4j.version>
 		<spring.data.version>2.0.7.RELEASE</spring.data.version>
@@ -388,12 +392,15 @@
 		<profile>
 			<id>mysql</id>
 			<properties>
-				<baseDataBaseUrl>jdbc:mysql://localhost:3306/friendmatch</baseDataBaseUrl>
-				<database.password>root</database.password>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
+				<database.name>friendmatch</database.name>
+				<database.password>friendmatch</database.password>
+				<database.port>3307</database.port>
 				<database.tag>mysql</database.tag>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.username>root</database.username>
+				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC
+				</database.testUrl>
+				<database.url>jdbc:mysql://localhost:3306/${database.name}?serverTimezone=UTC</database.url>
+				<database.username>friendmatch</database.username>
+				<database.version>8.0.19</database.version>
 			</properties>
 			<dependencies>
 				<dependency>
@@ -402,27 +409,61 @@
 					<version>${mysql.version}</version>
 				</dependency>
 			</dependencies>
-		</profile>
-		<profile>
-			<id>postgres</id>
-			<properties>
-				<baseDataBaseUrl>jdbc:postgresql://localhost:5432/friendmatch</baseDataBaseUrl>
-				<database.password></database.password>
-				<database.tag>postgres</database.tag>
-				<database.testUrl>${baseDataBaseUrl}_test?serverTimezone=UTC</database.testUrl>
-				<database.url>${baseDataBaseUrl}?serverTimezone=UTC</database.url>
-				<database.username>postgres</database.username>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>${postgresql.version}</version>
-				</dependency>
-			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${plugin.docker.version}</version>
+						<executions>
+							<execution>
+								<id>prepare-it-database</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<images>
+										<image>
+											<name>mysql:${database.version}</name>
+											<run>
+												<containerNamePattern>semerusocial-it-database</containerNamePattern>
+												<ports>
+													<port>${database.port}:3306</port>
+												</ports>
+												<tmpfs>/var/lib/mysql</tmpfs>
+												<wait>
+													<log>(?s)ready for connections.*ready for connections</log>
+													<time>400000</time>
+												</wait>
+												<env>
+													<MYSQL_DATABASE>${database.name}</MYSQL_DATABASE>
+													<MYSQL_USER>${database.username}</MYSQL_USER>
+													<MYSQL_PASSWORD>${database.password}</MYSQL_PASSWORD>
+													<MYSQL_ALLOW_EMPTY_PASSWORD>yes</MYSQL_ALLOW_EMPTY_PASSWORD>
+												</env>
+											</run>
+										</image>
+									</images>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop it database</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+								<configuration>
+									<containerNamePattern>semerusocial-it-database</containerNamePattern>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
-	
+
 	<!-- /////////////////// -->
-	
+
 </project>

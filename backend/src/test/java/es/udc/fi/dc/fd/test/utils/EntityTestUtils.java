@@ -49,7 +49,7 @@ public class EntityTestUtils {
 			}
 			try {
 				return createInstance(type);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return null;
 			}
 		}
@@ -71,7 +71,7 @@ public class EntityTestUtils {
 			}
 			return object;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
+			| NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -93,7 +93,7 @@ public class EntityTestUtils {
 			}
 			return result;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
+			| NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -163,7 +163,7 @@ public class EntityTestUtils {
 	}
 
 	public static void testGettersAndSetters(@SuppressWarnings("rawtypes") Class type,
-			List<String> fieldsToIgnoreGetter, List<String> fieldsToIgnoreSetter) {
+											 List<String> fieldsToIgnoreGetter, List<String> fieldsToIgnoreSetter) {
 		List<Method> getters = new ArrayList<>();
 		List<Method> setters = new ArrayList<>();
 
@@ -172,10 +172,10 @@ public class EntityTestUtils {
 			if (!e.isSynthetic()) {
 				List<Method> listToAdd = null;
 				if (e.getName().startsWith("get") && (e.getParameterCount() == 0)
-						&& (!fieldsToIgnoreGetter.contains(e.getName()))) {
+					&& (!fieldsToIgnoreGetter.contains(e.getName()))) {
 					listToAdd = getters;
 				} else if (e.getName().startsWith("set") && (e.getParameterCount() == 1)
-						&& (!fieldsToIgnoreSetter.contains(e.getName()))) {
+					&& (!fieldsToIgnoreSetter.contains(e.getName()))) {
 					listToAdd = setters;
 				} else {
 					return;
@@ -217,7 +217,7 @@ public class EntityTestUtils {
 				assertEquals(field.get(object), value);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException
-				| SecurityException e1) {
+			| SecurityException e1) {
 			throw new RuntimeException(e1);
 		}
 
@@ -253,7 +253,7 @@ public class EntityTestUtils {
 	}
 
 	public static void testEntity(@SuppressWarnings("rawtypes") Class type, List<String> fieldsToIgnoreEquals,
-			List<String> fieldsToIgnoreGetter, List<String> fieldsToIgnoreSetter, List<String> fieldsToIgnoreToString) {
+								  List<String> fieldsToIgnoreGetter, List<String> fieldsToIgnoreSetter, List<String> fieldsToIgnoreToString) {
 
 		testGettersAndSetters(type, fieldsToIgnoreGetter, fieldsToIgnoreSetter);
 		testEquals(type, fieldsToIgnoreEquals);
@@ -263,6 +263,6 @@ public class EntityTestUtils {
 
 	public static void testEntity(@SuppressWarnings("rawtypes") Class type) {
 		testEntity(type, Arrays.asList(new String[0]), Arrays.asList(new String[0]),
-				Arrays.asList(new String[0]), Arrays.asList(new String[0]));
+			Arrays.asList(new String[0]), Arrays.asList(new String[0]));
 	}
 }

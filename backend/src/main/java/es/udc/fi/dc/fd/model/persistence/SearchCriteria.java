@@ -119,7 +119,7 @@ public class SearchCriteria {
 	@Override
 	public String toString() {
 		return "SearchCriteria [sex=" + sex + ", minAge=" + minAge + ", maxAge=" + maxAge + ", city=" + city
-				+ ", minRate=" + minRate + "]";
+			+ ", minRate=" + minRate + "]";
 	}
 
 

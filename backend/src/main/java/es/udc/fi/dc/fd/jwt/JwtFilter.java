@@ -16,7 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtFilter /*extends BasicAuthenticationFilter */ extends OncePerRequestFilter {
-	
+
 	private JwtGenerator jwtGenerator;
 /*
 	public JwtFilter(AuthenticationManager authenticationManager) {
@@ -42,33 +42,33 @@ public class JwtFilter /*extends BasicAuthenticationFilter */ extends OncePerReq
 			filterChain.doFilter(request, response);
 			return;
 		}
-		
+
 		try {
-			
+
 			String serviceToken = authHeaderValue.replace("Bearer ", "");
 			JwtInfo jwtInfo = jwtGenerator.getInfo(serviceToken);
-			
+
 			request.setAttribute("serviceToken", serviceToken);
 			request.setAttribute("userId", jwtInfo.getUserId());
-			
+
 			configureSecurityContext(jwtInfo.getUserName());
-			
+
 		} catch (Exception e) {
-			 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			 return;
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
 		}
-		
+
 		filterChain.doFilter(request, response);
-		
+
 	}
-	
+
 	private void configureSecurityContext(String userName) {
-		
+
 		Set<GrantedAuthority> authorities = new HashSet<>();
-				
+
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken(userName, null, authorities));
-		
+
 	}
 	
 /*
