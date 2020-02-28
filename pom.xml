@@ -360,6 +360,31 @@
 	<reporting>
 		<plugins>
 			<plugin>
+				<!-- FindBugs -->
+				<!-- Checks for patterns which are prone to errors -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<configuration>
+					<!-- Exclusion patterns -->
+					<excludeFilterFile>${project.basedir}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Checkstyle -->
+				<!-- Checks that the source files comply with style standards -->
+				<!-- It is using a customized rules file -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<!-- The customized rules file -->
+					<configLocation>${project.basedir}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
+					<!-- Excludes generated code -->
+					<excludes>**/generated/**/*</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Javadoc -->
+				<!-- Generates the javadocs -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
@@ -373,6 +398,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
 					<rulesets>
+						<!-- The customized rules file -->
 						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
 					</rulesets>
 					<excludes>

@@ -104,7 +104,7 @@
 	<!-- /////////////////// -->
 
 	<!-- Build Settings -->
-	
+
 	<packaging>war</packaging>
 	<build>
 		<defaultGoal>clean package</defaultGoal>
