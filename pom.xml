@@ -238,8 +238,6 @@
 									<goal>start</goal>
 								</goals>
 								<configuration>
-									<scanIntervalSeconds>0</scanIntervalSeconds>
-									<daemon>true</daemon>
 									<useTestScope>true</useTestScope>
 									<webApp>
 										<overrideDescriptor>${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml</overrideDescriptor>
@@ -302,53 +300,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
-	<!-- /////////////////// -->
 
-	<!-- Reporting -->
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<configuration>
-					<excludeFilterFile>${project.basedir}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<configLocation>${project.basedir}/src/config/checkstyle/checkstyle-rules.xml</configLocation>
-					<excludes>**/generated/**/*</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<sourceFileExcludes>
-						<exclude>**/generated/**/*</exclude>
-					</sourceFileExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<configuration>
-					<rulesets>
-						<ruleset>${project.parent.relativePath}/src/config/pmd/pmd-rules.xml</ruleset>
-						<ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
-					</rulesets>
-					<excludes>
-						<exclude>**/generated/**/*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
-	
 	<!-- /////////////////// -->
 
 </project>
