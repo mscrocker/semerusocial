@@ -29,8 +29,9 @@ The application is coded in Java, using Maven to manage the project.
 
 ### Prerequisites
 
-The project has been tested on the following Java versions:
+The project has been tested on the following versions:
 * JDK 11
+* Docker version 18
 * Apache Maven 3.6.2
 
 All other dependencies are handled through Maven, and noted in the included POM file.
@@ -43,7 +44,6 @@ Maven profiles are included for setting up the database and an embedded server.
 |----------|-----------------------|
 | h2       | H2 in-memory database |
 | mysql    | MySQL database        |
-| postgres | PostgreSQL database   |
 
 ### Installing
 
