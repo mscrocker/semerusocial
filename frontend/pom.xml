@@ -246,7 +246,6 @@
 	<!-- Build Environment » Environment Information -->
 
 	<properties>
-		<checkstyle.config.location>${project.parent.basedir}/src/main/config/checkstyle/checkstyle-rules.xml</checkstyle.config.location>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<jackson.version>2.9.5</jackson.version>
 		<plugin.jshint.version>1.6.0</plugin.jshint.version>

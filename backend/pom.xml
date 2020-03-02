@@ -339,7 +339,6 @@
 	<!-- Build Environment » Environment Information -->
 
 	<properties>
-		<checkstyle.config.location>${project.parent.basedir}/src/main/config/checkstyle/checkstyle-rules.xml</checkstyle.config.location>
 		<h2.version>1.4.197</h2.version>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<hibernate.version>5.2.17.Final</hibernate.version>
