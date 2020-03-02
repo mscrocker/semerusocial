@@ -241,7 +241,8 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
+
+        <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-changes-plugin</artifactId>
@@ -297,13 +298,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<useDefaultDelimiters>true</useDefaultDelimiters>
-				</configuration>
-			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -318,16 +313,31 @@
 							</includes>
 						</resource>
 					</webResources>
+					<!-- Variables to to override will be delimited with a @. -->
+					<!-- This avoids collisions with Spring variables. -->
+					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
+					<useDefaultDelimiters>true</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Resources -->
+				<!-- Handles the project resources. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<!-- Variables to to override will be delimited with a @. -->
+					<!-- This avoids collisions with Spring variables. -->
+					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
 					<useDefaultDelimiters>true</useDefaultDelimiters>
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>semerusocial-backend</finalName>
 	</build>
 
 	<!-- /////////////////// -->
 
 	<!-- Project information -->
+
 	<name>backend</name>
 	<description>SemeruSocial Backend module</description>
 
