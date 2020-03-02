@@ -100,7 +100,7 @@ jobs:
       - name: Maven verify with h2
         run: mvn verify -P h2
       - name: Maven verify with mysql
-          run: mvn verify -P mysql
+        run: mvn verify -P mysql
       - name: Upload backend artifact
         uses: actions/upload-artifact@v1
         with:
