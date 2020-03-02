@@ -17,6 +17,12 @@ The project by default comes with a useful series of features:
 - A bunch of useful files, such as readme, gitignore and gitattributes.
 
 
+```
+mvn verify site -P h2
+```
+
+The verify phase is required, otherwise some of the reports won't be generated.
+
 ## Usage
 
 The application is coded in Java, using Maven to manage the project.
@@ -39,10 +45,6 @@ Maven profiles are included for setting up the database and an embedded server.
 | h2       | H2 in-memory database |
 | mysql    | MySQL database        |
 
-| Profile  | Server                   |
-|----------|--------------------------|
-| tomcat7  | Tomcat 7 embedded server |
-
 ### Installing
 
 The project can be installed by creating the war file and deploying it into a server.
@@ -52,7 +54,7 @@ The project can be installed by creating the war file and deploying it into a se
 To run the project locally in an embedded server just use the following Maven command for deploying to Tomcat9 with an H2 in-memory database:
 
 ```
-mvn package -P h2,tomcat7
+mvn package -P h2
 mvn org.codehaus.cargo:cargo-maven2-plugin:run --projects frontend
 ```
 
@@ -65,7 +67,7 @@ The project requires a database and a server for being able to run the integrati
 Just like running the project, an embedded server with an in-memory database can be used:
 
 ```
-mvn verify -P h2,jetty
+mvn verify -P h2
 ```
 
 ### Packaging the WAR
