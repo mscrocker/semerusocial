@@ -1,10 +1,11 @@
-name: Pull-Request-Test-v2
+
+name: Pull-Request-Test
 
 on: [pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest	
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Caching dependencies
@@ -18,14 +19,6 @@ jobs:
           java-version: 11
       - name: Maven clean
         run: mvn clean
-      - name: Maven validate
-        run: mvn validate
-      - name: Maven compile
-        run: mvn compile
-      - name: Maven test
-        run: mvn test
-      - name: Maven package
-        run: mvn package
       - name: Verify with h2
         run: mvn verify -P h2
       - name: Verify with mysql
