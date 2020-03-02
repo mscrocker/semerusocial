@@ -28,63 +28,63 @@ jobs:
           name: validate-home
           path: ~
 
-    compile:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Set Up JDK11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-        - name: Download validate home
-          uses: actions/download-artifact@v1
-          with:
-            name: validate-home
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Download validate home
+        uses: actions/download-artifact@v1
+        with:
+          name: validate-home
 
-        - name: Maven compile
-          run: mvn compile
-        - name: Upload compile home
-          uses: actions/upload-artifact@v1
-          with:
-            name: compile-home
-            path: ~
+      - name: Maven compile
+        run: mvn compile
+      - name: Upload compile home
+        uses: actions/upload-artifact@v1
+        with:
+          name: compile-home
+          path: ~
 
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Set Up JDK11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-        - name: Download compile home
-          uses: actions/download-artifact@v1
-          with:
-            name: compile-home
-        - name: Maven test
-          run: mvn test
-        - name: Upload test home
-          uses: actions/upload-artifact@v1
-          with:
-            name: test-home
-            path: ~
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Download compile home
+        uses: actions/download-artifact@v1
+        with:
+          name: compile-home
+      - name: Maven test
+        run: mvn test
+      - name: Upload test home
+        uses: actions/upload-artifact@v1
+        with:
+          name: test-home
+          path: ~
 
-    package:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Set Up JDK11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-        - name: Download test home
-          uses: actions/download-artifact@v1
-          with:
-            name: test-home
-        - name: Maven package
-          run: mvn package
-        - name: Upload package home
-          uses: actions/upload-artifact@v1
-          with:
-            name: package-home
-            path: ~
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Download test home
+        uses: actions/download-artifact@v1
+        with:
+          name: test-home
+      - name: Maven package
+        run: mvn package
+      - name: Upload package home
+        uses: actions/upload-artifact@v1
+        with:
+          name: package-home
+          path: ~
 
   verify:
     runs-on: ubuntu-latest
