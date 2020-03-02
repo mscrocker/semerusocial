@@ -2,9 +2,8 @@ name: Pull-Request-Test
 
 on:
   push:
-    branches:
-      - '*'
-      - '!master'
+    branches-ignore:
+      - 'master'
 
 
 jobs:
