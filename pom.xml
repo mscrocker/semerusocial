@@ -126,18 +126,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>${asm.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-commons</artifactId>
-                <version>${asm.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring.version}</version>
@@ -217,156 +205,32 @@
 
     <!-- Profiles -->
 
-    <profiles>
-        <profile>
-            <id>eclipse-maven</id>
-            <activation>
-                <property>
-                    <name>m2e.version</name>
-                </property>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.eclipse.m2e</groupId>
-                            <artifactId>lifecycle-mapping</artifactId>
-                            <version>${plugin.lifecycle.version}</version>
-                            <configuration>
-                                <downloadSources>true</downloadSources>
-                                <downloadJavadocs>true</downloadJavadocs>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>jetty</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${plugin.jetty.version}</version>
-                        <configuration>
-                            <stopKey>STOP</stopKey>
-                            <stopPort>9999</stopPort>
-                            <stopWait>5</stopWait>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-jetty-it</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                                <configuration>
-                                    <useTestScope>true</useTestScope>
-                                    <webApp>
-                                        <overrideDescriptor>
-                                            ${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml
-                                        </overrideDescriptor>
-                                    </webApp>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty-it</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>${asm.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm-commons</artifactId>
-                                <version>${asm.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>tomcat7</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.tomcat.maven</groupId>
-                        <artifactId>tomcat7-maven-plugin</artifactId>
-                        <version>${plugin.tomcat7.version}</version>
-                        <executions>
-                            <execution>
-                                <id>start-tomcat-it</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <fork>true</fork>
-                                    <useTestClasspath>true</useTestClasspath>
-                                    <warSourceDirectory>${project.build.directory}/${project.build.finalName}/
-                                    </warSourceDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-tomcat-it</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>shutdown</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+	<profiles>
+		<profile>
+			<id>eclipse-maven</id>
+			<activation>
+				<property>
+					<name>m2e.version</name>
+				</property>
+			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>${plugin.lifecycle.version}</version>
+							<configuration>
+								<downloadSources>true</downloadSources>
+								<downloadJavadocs>true</downloadJavadocs>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 
-    <!-- /////////////////// -->
-
-    <!-- Reporting -->
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <configuration>
-                    <excludeFilterFile>${project.basedir}/src/config/findbugs/findbugs-exclude.xml</excludeFilterFile>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <sourceFileExcludes>
-                        <exclude>**/generated/**/*</exclude>
-                    </sourceFileExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <configuration>
-                    <rulesets>
-                        <ruleset>${project.basedir}/src/config/pmd/pmd-rules.xml</ruleset>
-                    </rulesets>
-                    <excludes>
-                        <exclude>**/generated/**/*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-
-    <!-- /////////////////// -->
+	<!-- /////////////////// -->
 
 </project>
