@@ -187,8 +187,7 @@
 
 	<properties>
 		<asm.version>7.2</asm.version>
-		<checkstyle.config.location>${project.basedir}/src/main/config/checkstyle/checkstyle-rules.xml
-		</checkstyle.config.location>
+		<checkstyle.config.location>google_checks.xml</checkstyle.config.location>
 		<classmate.version>1.3.4</classmate.version>
 		<commons.logging.version>1.2</commons.logging.version>
 		<glassfish.el>2.2</glassfish.el>
