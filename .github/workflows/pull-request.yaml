@@ -43,10 +43,10 @@ jobs:
         - name: Maven compile
           run: mvn compile
         - name: Upload compile home
-            uses: actions/upload-artifact@v1
-            with:
-              name: compile-home
-              path: ~
+          uses: actions/upload-artifact@v1
+          with:
+            name: compile-home
+            path: ~
 
     test:
       runs-on: ubuntu-latest
@@ -62,10 +62,10 @@ jobs:
         - name: Maven test
           run: mvn test
         - name: Upload test home
-            uses: actions/upload-artifact@v1
-            with:
-              name: test-home
-              path: ~
+          uses: actions/upload-artifact@v1
+          with:
+            name: test-home
+            path: ~
 
     package:
       runs-on: ubuntu-latest
@@ -81,10 +81,10 @@ jobs:
         - name: Maven package
           run: mvn package
         - name: Upload package home
-            uses: actions/upload-artifact@v1
-            with:
-              name: package-home
-              path: ~
+          uses: actions/upload-artifact@v1
+          with:
+            name: package-home
+            path: ~
 
   verify:
     runs-on: ubuntu-latest
@@ -102,12 +102,12 @@ jobs:
       - name: Maven verify with mysql
           run: mvn verify -P mysql
       - name: Upload backend artifact
-          uses: actions/upload-artifact@v1
-          with:
-            name: backend
-            path: backend/target/semerusocial-backend.war
+        uses: actions/upload-artifact@v1
+        with:
+          name: backend
+          path: backend/target/semerusocial-backend.war
       - name: Upload frontend artifact
-          uses: actions/upload-artifact@v1
-          with:
-            name: frontend
-            path: frontend/target/semerusocial.war
+        uses: actions/upload-artifact@v1
+        with:
+          name: frontend
+          path: frontend/target/semerusocial.war
