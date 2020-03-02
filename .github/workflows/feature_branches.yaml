@@ -1,4 +1,4 @@
-name: Pull-Request-Test
+name: Pull-Request-Test-v2
 
 on: [pull_request]
 
