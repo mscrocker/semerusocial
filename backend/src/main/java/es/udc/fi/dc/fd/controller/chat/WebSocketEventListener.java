@@ -13,29 +13,33 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @Component
 public class WebSocketEventListener {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketEventListener.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketEventListener.class);
 
-	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+  @Autowired
+  private SimpMessageSendingOperations messagingTemplate;
 
-	@EventListener
-	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-		LOGGER.info("Received a new web socket connection");
+  @EventListener
+  public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+    LOGGER.info("Received a new web socket connection");
 
-	}
+  }
 
-	@EventListener
-	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+  /**
+   * Handler for the disconnect event of the chat websockets.
+   * @param event The disconnect event
+   */
+  @EventListener
+  public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-		String username = (String) headerAccessor.getSessionAttributes().get("username");
-		if (username != null) {
-			LOGGER.info("User Disconnected : " + username);
+    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    if (username != null) {
+      LOGGER.info("User Disconnected : " + username);
 
-			ChatMessage chatMessage = new ChatMessage();
-			chatMessage.setSender(username);
+      ChatMessage chatMessage = new ChatMessage();
+      chatMessage.setSender(username);
 
-			messagingTemplate.convertAndSend("/topic/public", chatMessage);
-		}
-	}
+      messagingTemplate.convertAndSend("/topic/public", chatMessage);
+    }
+  }
 }

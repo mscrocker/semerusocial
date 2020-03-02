@@ -14,23 +14,25 @@ import es.udc.fi.dc.fd.model.persistence.UserImpl;
 
 public interface UserService {
 
-	public Long signUp(UserImpl user) throws DuplicateInstanceException, InvalidDateException;
+  public Long signUp(UserImpl user) throws DuplicateInstanceException, InvalidDateException;
 
-	public UserImpl login(LoginParamsDto params) throws IncorrectLoginException;
+  public UserImpl login(LoginParamsDto params) throws IncorrectLoginException;
 
-	public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException;
+  public UserImpl loginFromUserId(Long userId) throws InstanceNotFoundException;
 
-	public void setSearchCriteria(Long userId, SearchCriteria criteria)
-		throws InstanceNotFoundException, InvalidAgeException, InvalidRateException, NotRatedException;
+  public void setSearchCriteria(Long userId, SearchCriteria criteria)
+      throws InstanceNotFoundException, InvalidAgeException, InvalidRateException,
+      NotRatedException;
 
-	public SearchCriteria getSearchCriteria(Long userId) throws InstanceNotFoundException;
+  public SearchCriteria getSearchCriteria(Long userId) throws InstanceNotFoundException;
 
-	public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException, InvalidDateException;
+  public void updateProfile(Long userId, UserImpl user) throws InstanceNotFoundException,
+      InvalidDateException;
 
-	public double rateUser(int rate, Long userSubject, Long userObject)
-		throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
+  public double rateUser(int rate, Long userSubject, Long userObject)
+      throws InstanceNotFoundException, InvalidRateException, ItsNotYourFriendException;
 
-	public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException;
+  public void updatePremium(Long userId, boolean premium) throws InstanceNotFoundException;
 
-	public Block<UserImpl> getTopUsers(String city, int page, int size);
+  public Block<UserImpl> getTopUsers(String city, int page, int size);
 }

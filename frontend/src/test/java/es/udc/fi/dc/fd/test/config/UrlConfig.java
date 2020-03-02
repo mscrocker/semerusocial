@@ -30,22 +30,22 @@ package es.udc.fi.dc.fd.test.config;
  * @author Bernardo Mart&iacute;nez Garrido
  */
 public final class UrlConfig {
-	/********
-	 * FRONT CONTROLLERS URLS
-	 **************/
-	public static final String FRONT_CARROUSEL_CHATSCREEN = "/chat/{userId}";
-	public static final String FRONT_CARROUSEL_CHATSCREEN_1 = "/chat";
+  /********
+   * FRONT CONTROLLERS URLS
+   **************/
+  public static final String FRONT_CARROUSEL_CHATSCREEN = "/chat/{userId}";
+  public static final String FRONT_CARROUSEL_CHATSCREEN_1 = "/chat";
 
-	public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
-	public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
-	public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
-	public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel";
+  public static final String FRONT_CARROUSEL_FRIENDFINDER = "/findFriend";
+  public static final String FRONT_CARROUSEL_DISPLAYUSERDATA = "/users/profile";
+  public static final String FRONT_CARROUSEL_DISPLAYADDIMAGE = "/addImage";
+  public static final String FRONT_CARROUSEL_DISPLAYLOGIN = "/carrusel";
 
-	/**
-	 * Default constructor to avoid initialization.
-	 */
-	private UrlConfig() {
-		super();
-	}
+  /**
+   * Default constructor to avoid initialization.
+   */
+  private UrlConfig() {
+    super();
+  }
 
 }
