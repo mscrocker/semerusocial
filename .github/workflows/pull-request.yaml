@@ -16,17 +16,17 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Store validate result
+        uses: actions/cache@v1
+        with:
+          path: {.m2, ${{ env.JAVA_HOME }}, ${{ env.GITHUB_WORKSPACE }} }
+          key: ${{ env.GITHUB_RUN_ID }}-validate
       - name: Set Up JDK11
         uses: actions/setup-java@v1
         with:
           java-version: 11
       - name: Maven validate
         run: mvn validate
-      - name: Store validate result
-        uses: actions/cache@v1
-        with:
-          path: {.m2, ${{ env.JAVA_HOME }}, ${{ env.GITHUB_WORKSPACE }} }
-          key: ${{ env.GITHUB_RUN_ID }}-validate
 
   compile:
     runs-on: ubuntu-latest
