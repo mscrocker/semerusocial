@@ -15,7 +15,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: '{.m2, /$JAVA_HOME, /$GITHUB_WORKSPACE}'
-          key: ${{ env.GITHUB_RUN_ID }}-validate
+          key: ${{ github.run_id }}-validate
       - name: Caching dependencies
         uses: actions/cache@v1
         with:
@@ -36,14 +36,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: '{.m2, /$JAVA_HOME, /$GITHUB_WORKSPACE}'
-          key: ${{ env.GITHUB_RUN_ID }}-validate
+          key: ${{ github.run_id }}-validate
       - name: Maven compile
         run: mvn compile
       - name: Store compile result
         uses: actions/cache@v1
         with:
           path: '{.m2, /$JAVA_HOME, /$GITHUB_WORKSPACE}'
-          key: ${{ env.GITHUB_RUN_ID }}-compile
+          key: ${{ github.run_id }}-compile
 
 
   test:
@@ -54,14 +54,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: '{.m2, /$JAVA_HOME, /$GITHUB_WORKSPACE}'
-          key: ${{ env.GITHUB_RUN_ID }}-compile
+          key: ${{ github.run_id }}-compile
       - name: Maven test
         run: mvn test
       - name: Store test result
         uses: actions/cache@v1
         with:
           path: '{.m2, /$JAVA_HOME, /$GITHUB_WORKSPACE}'
-          key: ${{ env.GITHUB_RUN_ID }}-compile
+          key: ${{ github.run_id }}-compile
 
   package:
     runs-on: ubuntu-latest
