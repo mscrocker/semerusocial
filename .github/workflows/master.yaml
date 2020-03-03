@@ -1,11 +1,11 @@
 name: Master-integration
 
-on: 
+on:
   push:
     branches: master
 jobs:
   build:
-    runs-on: ubuntu-latest	
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Caching dependencies

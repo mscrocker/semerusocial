@@ -2,62 +2,62 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Chat</title>
-<div th:replace="fragments/header :: header"></div>
-<link rel="stylesheet" type="text/css"
-	th:href="@{/resources/css/chat.css}" media="all" />
+    <title>Chat</title>
+    <div th:replace="fragments/header :: header"></div>
+    <link rel="stylesheet" type="text/css"
+          th:href="@{/resources/css/chat.css}" media="all"/>
 
 </head>
 <body>
-	<header class="header" th:include="fragments/menu :: menu"></header>
-	<div id="wrapper1">
+<header class="header" th:include="fragments/menu :: menu"></header>
+<div id="wrapper1">
 
 
-		<div class="wrapper">
-			<!-- Sidebar  -->
-			<div id="sidebar">
-				<div class="sidebar-header">
-					<h3>Friends</h3>
-				</div>
-				<div id="scrollabe">
-					<ul id="friendHolder" class="list-unstyled components">
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h3>Friends</h3>
+            </div>
+            <div id="scrollabe">
+                <ul id="friendHolder" class="list-unstyled components">
 
-					</ul>
-				</div>
-			</div>
+                </ul>
+            </div>
+        </div>
 
-			<!-- Page Content  -->
-			<div id="holder">
-				<div id="content">
-					<button type="button" id="sidebarCollapse" class="btn btn-info">
-						<em id="backArrow" class="fa fa-chevron-circle-left"></em> <span>Toggle
+        <!-- Page Content  -->
+        <div id="holder">
+            <div id="content">
+                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <em id="backArrow" class="fa fa-chevron-circle-left"></em> <span>Toggle
 							Sidebar</span>
-					</button>
-					<div class="conversation">
-						<div class="conversation-container"></div>
+                </button>
+                <div class="conversation">
+                    <div class="conversation-container"></div>
 
-					</div>
+                </div>
 
-				</div>
-				<div id="compose" style="padding: 1vh">
-					<form class="conversation-compose">
-						<input class="input-msg" name="input" placeholder="Type a message"
-							autocomplete="off" autofocus></input>
+            </div>
+            <div id="compose" style="padding: 1vh">
+                <form class="conversation-compose">
+                    <input class="input-msg" name="input" placeholder="Type a message"
+                           autocomplete="off" autofocus></input>
 
-						<button id="sender" class="send">
-							<div class="circle">
-								<em class="fa fa-paper-plane"></em>
-							</div>
-						</button>
-					</form>
+                    <button id="sender" class="send">
+                        <div class="circle">
+                            <em class="fa fa-paper-plane"></em>
+                        </div>
+                    </button>
+                </form>
 
-				</div>
-			</div>
-		</div>
+            </div>
+        </div>
+    </div>
 
-	</div>
-	<div th:include="fragments/scripts :: general"></div>
-	<div th:include="fragments/scripts :: chat"></div>
+</div>
+<div th:include="fragments/scripts :: general"></div>
+<div th:include="fragments/scripts :: chat"></div>
 
 </body>
 <script>
@@ -65,15 +65,22 @@
 	
 	    chat.init("[[@{'/'}]]");
 			});
+
+
+
+
+
+
+
 </script>
 <script
-	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 
 <script
-	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
 </html>

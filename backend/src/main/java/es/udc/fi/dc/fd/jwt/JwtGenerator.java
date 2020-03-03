@@ -2,8 +2,8 @@ package es.udc.fi.dc.fd.jwt;
 
 public interface JwtGenerator {
 
-	String generate(JwtInfo info);
+  String generate(JwtInfo info);
 
-	JwtInfo getInfo(String token);
+  JwtInfo getInfo(String token);
 
 }
