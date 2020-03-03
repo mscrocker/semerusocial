@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: validate-home
-          path: $HOME
+          path: /home/runner
 
   compile:
     runs-on: ubuntu-latest
