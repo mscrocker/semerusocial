@@ -73,16 +73,28 @@ jobs:
           java-version: 11
       - name: Maven package
         run: mvn package
+      - name: Setup backend artifact name
+        run: >
+          OUTPUT=
+          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects backend)-
+          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects backend).war
+          && echo "::set-env name=BACKEND_ARTIFACT::$OUTPUT"
+      - name: Setup frontend artifact name
+        run: >
+          OUTPUT=
+          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects frontend)-
+          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects frontend).war
+          && echo "::set-env name=FRONTEND_ARTIFACT::$OUTPUT"
       - name: Upload backend artifact
         uses: actions/upload-artifact@v1
         with:
           name: backend
-          path: backend/target/*.war
+          path: ${{ env.BACKEND_ARTIFACT }}
       - name: Upload frontend artifact
         uses: actions/upload-artifact@v1
         with:
           name: frontend
-          path: frontend/target/*.war
+          path: ${{ env.FRONTEND_ARTIFACT }}
   verify-h2:
     runs-on: ubuntu-latest
     needs: package
