@@ -10,7 +10,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     env:
-      path: '~/{.m2, ../../${{ github.workspace }} }'
+      path: '~/{.m2,../..${{ github.workspace }}}'
     steps:
       - name: Print path
         run: echo ${{ env.path }}
@@ -39,14 +39,14 @@ jobs:
       - name: Get validate result
         uses: actions/cache@v1
         with:
-          path: '~/{.m2, ../../${{ github.workspace }} }'
+          path: '~/{.m2,../..${{ github.workspace }}}'
           key: ${{ github.run_id }}-validate
       - name: Maven compile
         run: mvn compile
       - name: Store compile result
         uses: actions/cache@v1
         with:
-          path: '~/{.m2, ../../${{ github.workspace }} }'
+          path: '~/{.m2,../..${{ github.workspace }}}'
           key: ${{ github.run_id }}-compile
 
 
@@ -57,14 +57,14 @@ jobs:
       - name: Get compile result
         uses: actions/cache@v1
         with:
-          path: '~/{.m2, ../../${{ github.workspace }} }'
+          path: '~/{.m2,../..${{ github.workspace }}}'
           key: ${{ github.run_id }}-compile
       - name: Maven test
         run: mvn test
       - name: Store test result
         uses: actions/cache@v1
         with:
-          path: '~/{.m2, ../../${{ github.workspace }} }'
+          path: '~/{.m2,../..${{ github.workspace }}}'
           key: ${{ github.run_id }}-test
 
   package:
