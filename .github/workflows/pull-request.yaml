@@ -10,7 +10,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     env:
-      path: '~/{.m2,../..${{ github.workspace }}}'
+      path: '~/{.m2,work/semerusocial/semerusocial}'
     steps:
       - name: Print path
         run: echo ${{ env.path }}
