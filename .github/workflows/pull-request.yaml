@@ -74,17 +74,17 @@ jobs:
       - name: Maven package
         run: mvn package
       - name: Setup backend artifact name
-        run: >
-          OUTPUT=
-          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects backend)-
-          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects backend).war
-          && echo "::set-env name=BACKEND_ARTIFACT::$OUTPUT"
+        run: "\
+          OUTPUT=\
+          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects backend)-\
+          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects backend).war \
+          && echo \"::set-env name=BACKEND_ARTIFACT::$OUTPUT\""
       - name: Setup frontend artifact name
-        run: >
-          OUTPUT=
-          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects frontend)-
-          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects frontend).war
-          && echo "::set-env name=FRONTEND_ARTIFACT::$OUTPUT"
+        run: "\
+          OUTPUT=\
+          $(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout --projects frontend)-\
+          $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --projects frontend).war \
+          && echo \"::set-env name=FRONTEND_ARTIFACT::$OUTPUT\""
       - name: Upload backend artifact
         uses: actions/upload-artifact@v1
         with:
