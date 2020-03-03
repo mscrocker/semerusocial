@@ -14,7 +14,7 @@ jobs:
       - name: Store validate result
         uses: actions/cache@v1
         with:
-          path: {.m2, ${{ env.JAVA_HOME }}, ${{ env.GITHUB_WORKSPACE }} }
+          path: '{.m2, ${{ env.JAVA_HOME }}, ${{ env.GITHUB_WORKSPACE }}}'
           key: ${{ env.GITHUB_RUN_ID }}-validate
       - name: Caching dependencies
         uses: actions/cache@v1
