@@ -2,54 +2,54 @@
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:include="fragments/header :: header" >
-        <title>Add Images</title>
+<head th:include="fragments/header :: header">
+    <title>Add Images</title>
 </head>
 <body>
-	<header class="header" th:include="fragments/menu :: menu"></header>
+<header class="header" th:include="fragments/menu :: menu"></header>
 
-	<section id="main-section" class="container-fluid">
-		<div th:include="fragments/errorAlert"></div>
-		<div class="card">
-			<div class="row">
-				<div class="col-6">
-					<div class="card bg-info text-white">
-						<img class="card-img" id="filePreviewArea"
-							th:src="@{/static/images/drag_and_drop.png}"
-							style="max-height: 450px !important;" alt="Drag and Drop area" />
-					</div>
+<section id="main-section" class="container-fluid">
+    <div th:include="fragments/errorAlert"></div>
+    <div class="card">
+        <div class="row">
+            <div class="col-6">
+                <div class="card bg-info text-white">
+                    <img class="card-img" id="filePreviewArea"
+                         th:src="@{/static/images/drag_and_drop.png}"
+                         style="max-height: 450px !important;" alt="Drag and Drop area"/>
+                </div>
 
-				</div>
-				<div class="col-6">
-					<div class="h-100 card-body">
-						<div class="row">
-							<h1 id="descriptionField">UPLOAD IMAGE</h1>
-						</div>
-						<div class="h-25 row">
-							<input class="btn" type="file" id="pic"
-								accept="image/x-png,image/png,image/jpg,image/gif,image/jpeg" />
-						</div>
-						<div class="row mt-4">
-							<button class="w-75 btn btn-success" id="uploadButton">UPLOAD</button>
-						</div>
-
-
-					</div>
+            </div>
+            <div class="col-6">
+                <div class="h-100 card-body">
+                    <div class="row">
+                        <h1 id="descriptionField">UPLOAD IMAGE</h1>
+                    </div>
+                    <div class="h-25 row">
+                        <input class="btn" type="file" id="pic"
+                               accept="image/x-png,image/png,image/jpg,image/gif,image/jpeg"/>
+                    </div>
+                    <div class="row mt-4">
+                        <button class="w-75 btn btn-success" id="uploadButton">UPLOAD</button>
+                    </div>
 
 
-				</div>
-
-			</div>
-		</div>
+                </div>
 
 
-	</section>
+            </div>
 
-	<footer>
-		<div th:include="fragments/scripts :: general"></div>
-		<div th:include="fragments/scripts :: addImage"></div>
-	</footer>
-	<script>
+        </div>
+    </div>
+
+
+</section>
+
+<footer>
+    <div th:include="fragments/scripts :: general"></div>
+    <div th:include="fragments/scripts :: addImage"></div>
+</footer>
+<script>
    	  window.addEventListener('load', () => {
    		
    		addImage.initAddImage(
@@ -58,7 +58,14 @@
    				"[[@{'/'}]]"
    		);
    	  });
-   </script>
+
+
+
+
+
+
+
+</script>
 </body>
 
 </html>

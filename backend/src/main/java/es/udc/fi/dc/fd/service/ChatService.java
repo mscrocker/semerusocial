@@ -9,13 +9,13 @@ import es.udc.fi.dc.fd.model.FriendChatTitle;
 
 public interface ChatService {
 
-	public void sendMessage(Long userId, Long friendId, String content)
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException;
+  public void sendMessage(Long userId, Long friendId, String content)
+      throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException;
 
-	public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
-			throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException;
+  public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
+      throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException;
 
-	public Block<FriendChatTitle> getUserConversations(Long userId, int page)
-			throws RequestParamException, InstanceNotFoundException;
+  public Block<FriendChatTitle> getUserConversations(Long userId, int page)
+      throws RequestParamException, InstanceNotFoundException;
 
 }

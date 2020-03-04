@@ -4,24 +4,24 @@ import javax.validation.constraints.NotNull;
 
 public class PremiumFormDto {
 
-	@NotNull
-	private boolean premium;
+  @NotNull
+  private boolean premium;
 
-	public PremiumFormDto() {
-		super();
-	}
+  public PremiumFormDto() {
+    super();
+  }
 
-	public PremiumFormDto(boolean premium) {
-		super();
-		this.premium = premium;
-	}
+  public PremiumFormDto(boolean premium) {
+    super();
+    this.premium = premium;
+  }
 
-	public boolean isPremium() {
-		return premium;
-	}
+  public boolean isPremium() {
+    return premium;
+  }
 
-	public void setPremium(boolean premium) {
-		this.premium = premium;
-	}
+  public void setPremium(boolean premium) {
+    this.premium = premium;
+  }
 
 }

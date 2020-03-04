@@ -17,12 +17,6 @@ The project by default comes with a useful series of features:
 - A bunch of useful files, such as readme, gitignore and gitattributes.
 
 
-```
-mvn verify site -P h2
-```
-
-The verify phase is required, otherwise some of the reports won't be generated.
-
 ## Usage
 
 The application is coded in Java, using Maven to manage the project.

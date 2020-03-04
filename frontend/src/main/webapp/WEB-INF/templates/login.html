@@ -3,43 +3,44 @@
 
 
 <head>
-<title>FriendMatch</title>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+    <title>FriendMatch</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
 </head>
 
 <body>
-	<div th:include="fragments/errorAlert"></div>
-	<form th:action="@{/signup}" method="get">
-		<button class="btn btn-md btn-warning btn-block" type="Submit">Go
-			To Registration Page</button>
-	</form>
+<div th:include="fragments/errorAlert"></div>
+<form th:action="@{/signup}" method="get">
+    <button class="btn btn-md btn-warning btn-block" type="Submit">Go
+        To Registration Page
+    </button>
+</form>
 
-	<div class="container">
-		<form id="formLogin" th:action="@{/login}" method="POST"
-			class="form-signin">
-			<h3 class="form-signin-heading" style="text-align: center"
-				th:text="Welcome"></h3>
-			<br /> <input type="text" id="username" name="username"
-				th:placeholder="Username" class="form-control" required maxlength="30" /> <br /> <input
-				type="password" th:placeholder="Password" id="password" maxlength="20"
-				name="password" class="form-control" required/> <br />
+<div class="container">
+    <form id="formLogin" th:action="@{/login}" method="POST"
+          class="form-signin">
+        <h3 class="form-signin-heading" style="text-align: center"
+            th:text="Welcome"></h3>
+        <br/> <input type="text" id="username" name="username"
+                     th:placeholder="Username" class="form-control" required maxlength="30"/> <br/> <input
+            type="password" th:placeholder="Password" id="password" maxlength="20"
+            name="password" class="form-control" required/> <br/>
 
-			
-			<button class="btn btn-lg btn-primary btn-block" name="Submit"
-				value="Login" type="Submit" th:text="Login"></button>
-		</form>
-	</div>
-	<footer>
-		<div th:include="fragments/scripts :: general"></div>
-		<div th:include="fragments/scripts :: login" ></div>
 
-	</footer>
-	<script type="text/javascript">
+        <button class="btn btn-lg btn-primary btn-block" name="Submit"
+                value="Login" type="Submit" th:text="Login"></button>
+    </form>
+</div>
+<footer>
+    <div th:include="fragments/scripts :: general"></div>
+    <div th:include="fragments/scripts :: login"></div>
+
+</footer>
+<script type="text/javascript">
    	window.addEventListener('load', () => {
    		const params = () => { return {
    			username: document.getElementById("username").value,
@@ -47,6 +48,13 @@
    		}};
    		document.getElementById("formLogin").addEventListener('submit', (e) => handleLogin(e, params(), "[[@{'/'}]]"));
    	});
-   </script>
+
+
+
+
+
+
+
+</script>
 </body>
 </html>
