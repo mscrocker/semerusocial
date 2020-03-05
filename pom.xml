@@ -152,7 +152,7 @@
                 <executions>
                     <execution>
                         <id>checkstyle-check-errors</id>
-                        <phase>verify</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
