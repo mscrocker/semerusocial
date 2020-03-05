@@ -94,6 +94,11 @@
                 <version>${webjars.jquery.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>webjars-locator</artifactId>
                 <version>${webjars.locator.version}</version>
@@ -246,17 +251,17 @@
 
     <properties>
         <hamcrest.version>2.0.0.0</hamcrest.version>
-        <jackson.version>2.9.5</jackson.version>
         <plugin.jshint.version>1.6.0</plugin.jshint.version>
         <plugin.minify.version>1.7.6</plugin.minify.version>
-        <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-        <webjars.bootstrap.version>4.3.1</webjars.bootstrap.version>
+        <slf4j-api.version>1.7.29</slf4j-api.version>
+        <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
+        <webjars.bootstrap.version>4.4.1-1</webjars.bootstrap.version>
         <webjars.bootswatch.version>3.3.7</webjars.bootswatch.version>
-        <webjars.fontAwesome.version>4.7.0</webjars.fontAwesome.version>
-        <webjars.datatables.version>1.10.16</webjars.datatables.version>
+        <webjars.fontAwesome.version>5.12.0</webjars.fontAwesome.version>
+        <webjars.datatables.version>1.10.20</webjars.datatables.version>
         <webjars.html5shiv.version>3.7.3-1</webjars.html5shiv.version>
-        <webjars.jquery.version>3.3.1-1</webjars.jquery.version>
-        <webjars.locator.version>0.34</webjars.locator.version>
+        <webjars.jquery.version>3.4.1</webjars.jquery.version>
+        <webjars.locator.version>0.38</webjars.locator.version>
     </properties>
 
     <!-- /////////////////// -->

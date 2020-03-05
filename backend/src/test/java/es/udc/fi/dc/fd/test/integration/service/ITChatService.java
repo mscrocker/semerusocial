@@ -24,7 +24,6 @@ import es.udc.fi.dc.fd.service.ChatService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -277,7 +276,11 @@ public class ITChatService {
   public void testSendMessageValidationExceptionContentTooLarge()
       throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
 
-    final String content = StringUtils.repeat("a", 1000);
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 1000; i++) {
+      sb.append('a');
+    }
+    final String content = sb.toString();
 
     // Creamos los usuarios
     final Optional<UserImpl> user = createUser("user1");

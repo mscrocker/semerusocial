@@ -47,11 +47,7 @@ public class EntityTestUtils {
         Array.set(array, 0, generateRandomValue(type.getComponentType(), seed));
         return array;
       }
-      try {
-        return createInstance(type);
-      } catch (Exception e) {
-        return null;
-      }
+      return null;
     }
     return value;
   }
@@ -216,7 +212,9 @@ public class EntityTestUtils {
         setter.invoke(object, value);
         assertEquals(field.get(object), value);
       }
-    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException
+    } catch(InvocationTargetException e1){
+
+    } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException
         | SecurityException e1) {
       throw new RuntimeException(e1);
     }
