@@ -1,368 +1,362 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog
-	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-	<changeSet author="Bernardo" id="initial_tables">
-		<createTable tableName="UserTable">
-			<column autoIncrement="true" name="id" type="BIGINT">
-				<constraints primaryKey="true" />
-			</column>
-			<column name="userName" type="VARCHAR(30)">
-				<constraints nullable="false" unique="true" />
-			</column>
-			<column name="password" type="VARCHAR(60)">
-				<constraints nullable="false" unique="true" />
-			</column>
-			<column name="date" type="DATETIME">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="sex" type="VARCHAR(30)">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="city" type="VARCHAR(30)">
-				<constraints nullable="false" unique="false" />
-			</column>
-		</createTable>
+    <changeSet author="Bernardo" id="initial_tables">
+        <createTable tableName="UserTable">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="userName" type="VARCHAR(30)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="date" type="DATETIME">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="sex" type="VARCHAR(30)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="city" type="VARCHAR(30)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
 
-		<createTable tableName="ImageTable">
-			<column autoIncrement="true" name="imageId" type="BIGINT">
-				<constraints primaryKey="true" />
-			</column>
-			<column name="user" type="BIGINT">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="data" type="MEDIUMBLOB">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="VARCHAR(30)">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="type" type="VARCHAR(20)">
-				<constraints nullable="false" unique="false" />
-			</column>
-		</createTable>
-	</changeSet>
+        <createTable tableName="ImageTable">
+            <column autoIncrement="true" name="imageId" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user" type="BIGINT">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="data" type="MEDIUMBLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(30)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
-	<changeSet author="liquibase-docs"
-		id="addForeignKeyConstraint">
-		<addForeignKeyConstraint
-			baseColumnNames="user" baseTableName="ImageTable"
-			constraintName="fk_userId" referencedColumnNames="id"
-			referencedTableName="UserTable" />
-	</changeSet>
-	<changeSet author="Marco" id="FixUniquePassword">
-		
-	
-		
-		
-		<addColumn tableName="UserTable">
-			<column name="password_fix" type="VARCHAR(60)" />
-		</addColumn>
-		<sql>
-			UPDATE UserTable SET password_fix = password;
-		</sql>
-		<dropColumn tableName="UserTable" columnName="password" />
-		<renameColumn 
-			tableName="UserTable"
-			oldColumnName="password_fix"
-			newColumnName="password"
-			columnDataType="VARCHAR(60)" />
-		</changeSet>
-		
-		
+    <changeSet author="liquibase-docs"
+               id="addForeignKeyConstraint">
+        <addForeignKeyConstraint
+                baseColumnNames="user" baseTableName="ImageTable"
+                constraintName="fk_userId" referencedColumnNames="id"
+                referencedTableName="UserTable"/>
+    </changeSet>
+    <changeSet author="Marco" id="FixUniquePassword">
 
-	<changeSet author="liquibase-docs" id="addSuggestionColumn">
-		<addColumn tableName="UserTable">
-			<column name="suggestion" type="BIGINT">
-				<constraints nullable="true" unique="false" />
-			</column>
-		</addColumn>
-		<addForeignKeyConstraint
-			baseColumnNames="suggestion" baseTableName="UserTable"
-			constraintName="fk_suggestionId" onDelete="SET NULL"
-			referencedColumnNames="id" referencedTableName="UserTable" />
 
-	</changeSet>
+        <addColumn tableName="UserTable">
+            <column name="password_fix" type="VARCHAR(60)"/>
+        </addColumn>
+        <sql>
+            UPDATE UserTable SET password_fix = password;
+        </sql>
+        <dropColumn tableName="UserTable" columnName="password"/>
+        <renameColumn
+                tableName="UserTable"
+                oldColumnName="password_fix"
+                newColumnName="password"
+                columnDataType="VARCHAR(60)"/>
+    </changeSet>
 
-	<changeSet id="table CitiesCriteria" author="">
-		<sqlFile encoding="utf8"
-			path="scripts/createCitiesCriteria.sql"
-			relativeToChangelogFile="true" stripComments="true" />
-	</changeSet>
 
-	<changeSet id="criteria_UserTable" author="liquibase-docs">
-		<addColumn tableName="UserTable">
-			<column name="criteriaSex"
-				type="ENUM('FEMALE','MALE','OTHER','ANY')">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="criteriaMinAge" type="INT">
-				<constraints nullable="false" unique="false" />
-			</column>
-			<column name="criteriaMaxAge" type="INT">
-				<constraints nullable="false" unique="false" />
-			</column>
-		</addColumn>
+    <changeSet author="liquibase-docs" id="addSuggestionColumn">
+        <addColumn tableName="UserTable">
+            <column name="suggestion" type="BIGINT">
+                <constraints nullable="true" unique="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint
+                baseColumnNames="suggestion" baseTableName="UserTable"
+                constraintName="fk_suggestionId" onDelete="SET NULL"
+                referencedColumnNames="id" referencedTableName="UserTable"/>
 
-		<addDefaultValue columnName="criteriaSex"
-			tableName="UserTable" defaultValue="Any" />
+    </changeSet>
 
-		<addDefaultValue tableName="UserTable"
-			columnName="criteriaMinAge" defaultValueNumeric="0" />
+    <changeSet id="table CitiesCriteria" author="">
+        <sqlFile encoding="utf8"
+                 path="scripts/createCitiesCriteria.sql"
+                 relativeToChangelogFile="true" stripComments="true"/>
+    </changeSet>
 
-		<addDefaultValue tableName="UserTable"
-			columnName="criteriaMaxAge" defaultValueNumeric="99" />
+    <changeSet id="criteria_UserTable" author="liquibase-docs">
+        <addColumn tableName="UserTable">
+            <column name="criteriaSex"
+                    type="ENUM('FEMALE','MALE','OTHER','ANY')">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="criteriaMinAge" type="INT">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="criteriaMaxAge" type="INT">
+                <constraints nullable="false" unique="false"/>
+            </column>
+        </addColumn>
 
-	</changeSet>
-	
-	
-    
+        <addDefaultValue columnName="criteriaSex"
+                         tableName="UserTable" defaultValue="Any"/>
+
+        <addDefaultValue tableName="UserTable"
+                         columnName="criteriaMinAge" defaultValueNumeric="0"/>
+
+        <addDefaultValue tableName="UserTable"
+                         columnName="criteriaMaxAge" defaultValueNumeric="99"/>
+
+    </changeSet>
+
+
     <changeSet id="Add_DescriptionToUserTable" author="AlexMartinez">
         <addColumn tableName="UserTable">
             <column name="description" type="VARCHAR(60)">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </addColumn>
     </changeSet>
-    
+
     <changeSet id="Drop_DescriptionFromImageTable" author="AlexMartinez">
         <dropColumn tableName="ImageTable"
-            columnName="description"/>
+                    columnName="description"/>
     </changeSet>
-    
+
     <changeSet author="AlexMartinez" id="AddRequestMatchRejectTables">
         <createTable tableName="RequestTable">
             <column name="subject" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="object" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="date" type="DATETIME">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </createTable>
 
         <createTable tableName="MatchTable">
             <column name="user1" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="user2" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="date" type="DATETIME">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </createTable>
-        
+
         <createTable tableName="RejectedTable">
             <column name="subject" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="object" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="date" type="DATETIME">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint 
-        	constraintName="request_subject_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="subject" 
-        	baseTableName="RequestTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-        	constraintName="request_object_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="object" 
-        	baseTableName="RequestTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-        	constraintName="rejected_subject_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="subject" 
-        	baseTableName="RejectedTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-        	constraintName="rejected_object_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="object" 
-        	baseTableName="RejectedTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-        	constraintName="match_user1_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="user1" 
-        	baseTableName="MatchTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-        	constraintName="match_user2_fk" 
-        	referencedTableName="UserTable" 
-        	baseColumnNames="user2" 
-        	baseTableName="MatchTable" 
-        	referencedColumnNames="id"
-        	onDelete="CASCADE"
-        	onUpdate="CASCADE"/>
-        
-        
-        
+        <addForeignKeyConstraint
+                constraintName="request_subject_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="subject"
+                baseTableName="RequestTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="request_object_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="object"
+                baseTableName="RequestTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="rejected_subject_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="subject"
+                baseTableName="RejectedTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="rejected_object_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="object"
+                baseTableName="RejectedTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="match_user1_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="user1"
+                baseTableName="MatchTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="match_user2_fk"
+                referencedTableName="UserTable"
+                baseColumnNames="user2"
+                baseTableName="MatchTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+
     </changeSet>
 
     <changeSet author="mirian.martinez.alvarez" id="UpgradeUserTable">
         <addColumn tableName="UserTable">
-            <column name="rating" type="DOUBLE" >
-                <constraints 
-                    nullable="true" 
-                    unique="false" 
-                    checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
-            </column> 
-            <column name="ratingVotes" type="BIGINT" >
-                <constraints 
-                    nullable="false" 
-                    unique="false"
-                    checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
-            </column> 
-            <column name="premium" type="BOOLEAN" >
+            <column name="rating" type="DOUBLE">
                 <constraints
-                    nullable="false"
-                    unique="false" />
+                        nullable="true"
+                        unique="false"
+                        checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
+            </column>
+            <column name="ratingVotes" type="BIGINT">
+                <constraints
+                        nullable="false"
+                        unique="false"
+                        checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
+            </column>
+            <column name="premium" type="BOOLEAN">
+                <constraints
+                        nullable="false"
+                        unique="false"/>
             </column>
             <column name="minRateCriteria" type="INT">
                 <constraints
-                    nullable="true"
-                    unique="false"
-                    checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
+                        nullable="true"
+                        unique="false"
+                        checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
             </column>
         </addColumn>
         <addDefaultValue columnName="ratingVotes"
-                tableName="UserTable" defaultValue="0" /> 
+                         tableName="UserTable" defaultValue="0"/>
         <addDefaultValue columnName="premium"
-                tableName="UserTable" defaultValueBoolean="false" /> 
+                         tableName="UserTable" defaultValueBoolean="false"/>
     </changeSet>
-     
+
     <changeSet author="mirian.martinez.alvarez" id="CreateMessageTable">
         <createTable tableName="MessageTable">
             <column autoIncrement="true" name="messageId" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="user1" type="BIGINT">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
             <column name="user2" type="BIGINT">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
             <column name="transmitter" type="BIGINT">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
-             <column name="messageContent" type="VARCHAR(1000)">
-                <constraints nullable="false" unique="false" />
+            <column name="messageContent" type="VARCHAR(1000)">
+                <constraints nullable="false" unique="false"/>
             </column>
             <column name="date" type="DATETIME">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </createTable>
-        
+
         <addForeignKeyConstraint
-            baseColumnNames="user1" 
-            baseTableName="MessageTable"
-            constraintName="fk_messageUser1" 
-            referencedColumnNames="id"
-            referencedTableName="UserTable"
-            onDelete="CASCADE"
-            onUpdate="CASCADE" />
+                baseColumnNames="user1"
+                baseTableName="MessageTable"
+                constraintName="fk_messageUser1"
+                referencedColumnNames="id"
+                referencedTableName="UserTable"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
         <addForeignKeyConstraint
-            baseColumnNames="user2" 
-            baseTableName="MessageTable"
-            constraintName="fk_messageUser2" 
-            referencedColumnNames="id"
-            referencedTableName="UserTable" 
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
+                baseColumnNames="user2"
+                baseTableName="MessageTable"
+                constraintName="fk_messageUser2"
+                referencedColumnNames="id"
+                referencedTableName="UserTable"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
         <addForeignKeyConstraint
-            baseColumnNames="transmitter" 
-            baseTableName="MessageTable"
-            constraintName="fk_messageTransmitter" 
-            referencedColumnNames="id"
-            referencedTableName="UserTable" 
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
+                baseColumnNames="transmitter"
+                baseTableName="MessageTable"
+                constraintName="fk_messageTransmitter"
+                referencedColumnNames="id"
+                referencedTableName="UserTable"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
     </changeSet>
-    
-    <changeSet author="mirian.martinez.alvarez" id="CreateRateTable">        
+
+    <changeSet author="mirian.martinez.alvarez" id="CreateRateTable">
         <createTable tableName="RateTable">
             <column name="subject" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="object" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="points" type="INT">
-                <constraints 
-                    nullable="false" 
-                    unique="false"
-                    checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)" /> 
+                <constraints
+                        nullable="false"
+                        unique="false"
+                        checkConstraint="CHECK (rating &gt;= 1 AND rating&lt;=5)"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint 
-            constraintName="fk_RateSubject" 
-            referencedTableName="UserTable" 
-            baseColumnNames="subject" 
-            baseTableName="RateTable" 
-            referencedColumnNames="id"
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-            constraintName="fk_RateObject" 
-            referencedTableName="UserTable" 
-            baseColumnNames="object" 
-            baseTableName="RateTable" 
-            referencedColumnNames="id"
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_RateSubject"
+                referencedTableName="UserTable"
+                baseColumnNames="subject"
+                baseTableName="RateTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_RateObject"
+                referencedTableName="UserTable"
+                baseColumnNames="object"
+                baseTableName="RateTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
     </changeSet>
-    
-        <changeSet author="mirian.martinez.alvarez" id="CreateBlockTable">        
+
+    <changeSet author="mirian.martinez.alvarez" id="CreateBlockTable">
         <createTable tableName="BlockTable">
             <column name="subject" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="object" type="BIGINT">
-                <constraints primaryKey="true" />
+                <constraints primaryKey="true"/>
             </column>
             <column name="date" type="DATETIME">
-                <constraints nullable="false" unique="false" />
+                <constraints nullable="false" unique="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint 
-            constraintName="fk_BlockSubject" 
-            referencedTableName="UserTable" 
-            baseColumnNames="subject" 
-            baseTableName="RateTable" 
-            referencedColumnNames="id"
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
-        <addForeignKeyConstraint 
-            constraintName="fk_BlockObject" 
-            referencedTableName="UserTable" 
-            baseColumnNames="object" 
-            baseTableName="RateTable" 
-            referencedColumnNames="id"
-            onDelete="CASCADE"
-            onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_BlockSubject"
+                referencedTableName="UserTable"
+                baseColumnNames="subject"
+                baseTableName="RateTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_BlockObject"
+                referencedTableName="UserTable"
+                baseColumnNames="object"
+                baseTableName="RateTable"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
     </changeSet>
 
 

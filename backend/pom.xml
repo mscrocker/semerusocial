@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!-- POM Relationships -->
 
@@ -297,8 +297,19 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
+				<!-- Resources -->
+				<!-- Handles the project resources. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<!-- Variables to to override will be delimited with a @. -->
+					<!-- This avoids collisions with Spring variables. -->
+					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
+					<useDefaultDelimiters>true</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
@@ -312,18 +323,6 @@
 							</includes>
 						</resource>
 					</webResources>
-					<!-- Variables to to override will be delimited with a @. -->
-					<!-- This avoids collisions with Spring variables. -->
-					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
-					<useDefaultDelimiters>true</useDefaultDelimiters>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- Resources -->
-				<!-- Handles the project resources. -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
 					<!-- Variables to to override will be delimited with a @. -->
 					<!-- This avoids collisions with Spring variables. -->
 					<!-- So instead of replacing ${project.name} Maven will replace @project.name@. -->
@@ -404,7 +403,8 @@
 				<database.password>friendmatch</database.password>
 				<database.port>3307</database.port>
 				<database.tag>mysql</database.tag>
-				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC</database.testUrl>
+				<database.testUrl>jdbc:mysql://localhost:${database.port}/${database.name}?serverTimezone=UTC
+				</database.testUrl>
 				<database.url>jdbc:mysql://localhost:3306/${database.name}?serverTimezone=UTC</database.url>
 				<database.username>friendmatch</database.username>
 				<database.version>8.0.19</database.version>

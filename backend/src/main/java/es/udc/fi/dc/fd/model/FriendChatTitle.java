@@ -1,153 +1,162 @@
 package es.udc.fi.dc.fd.model;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 
 @Entity
 public class FriendChatTitle {
 
-	private Long friendId;
-	private String friendName;
-	private String content;
-	private Boolean sentByYou;
-	private LocalDateTime date;
-	
+  private Long friendId;
 
-	public Long getFriendId() {
-		return friendId;
-	}
+  private String friendName;
 
+  private String content;
 
-	public void setFriendId(Long friendId) {
-		this.friendId = friendId;
-	}
+  private Boolean sentByYou;
+
+  private LocalDateTime date;
 
 
-	public String getFriendName() {
-		return friendName;
-	}
+  public Long getFriendId() {
+    return friendId;
+  }
 
 
-	public void setFriendName(String friendName) {
-		this.friendName = friendName;
-	}
+  public void setFriendId(Long friendId) {
+    this.friendId = friendId;
+  }
 
 
-	public String getContent() {
-		return content;
-	}
+  public String getFriendName() {
+    return friendName;
+  }
 
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+  public void setFriendName(String friendName) {
+    this.friendName = friendName;
+  }
 
 
-	public Boolean getSentByYou() {
-		return sentByYou;
-	}
+  public String getContent() {
+    return content;
+  }
 
 
-	public void setSentByYou(Boolean sentByYou) {
-		this.sentByYou = sentByYou;
-	}
+  public void setContent(String content) {
+    this.content = content;
+  }
 
 
-	public LocalDateTime getDate() {
-		return date;
-	}
+  public Boolean getSentByYou() {
+    return sentByYou;
+  }
 
 
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-	
-	
+  public void setSentByYou(Boolean sentByYou) {
+    this.sentByYou = sentByYou;
+  }
 
 
-	public FriendChatTitle(Long friendId, String friendName, String content, Boolean sentByYou, LocalDateTime date) {
-		super();
-		this.friendId = friendId;
-		this.friendName = friendName;
-		this.content = content;
-		this.sentByYou = sentByYou;
-		this.date = date;
-	}
+  public LocalDateTime getDate() {
+    return date;
+  }
 
 
-	@Override
-	public String toString() {
-		return "FriendChatTitle [friendId=" + friendId + ", friendName=" + friendName + ", content=" + content
-				+ ", sentByYou=" + sentByYou + ", date=" + date + "]";
-	}
+  public void setDate(LocalDateTime date) {
+    this.date = date;
+  }
+
+  /**
+   * Default constructor of the entity that represents a friend chat header data.
+   * @param friendId The id of the friend
+   * @param friendName The name of the friend
+   * @param content The content of the latest message sent in that chat
+   * @param sentByYou Whether the latest message of the chat was yours
+   * @param date The date of the latest message of the chat
+   */
+  public FriendChatTitle(Long friendId, String friendName, String content, Boolean sentByYou,
+                         LocalDateTime date) {
+    super();
+    this.friendId = friendId;
+    this.friendName = friendName;
+    this.content = content;
+    this.sentByYou = sentByYou;
+    this.date = date;
+  }
 
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((content == null) ? 0 : content.hashCode());
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((friendId == null) ? 0 : friendId.hashCode());
-		result = prime * result + ((friendName == null) ? 0 : friendName.hashCode());
-		result = prime * result + ((sentByYou == null) ? 0 : sentByYou.hashCode());
-		return result;
-	}
+  @Override
+  public String toString() {
+    return "FriendChatTitle [friendId=" + friendId + ", friendName=" + friendName + ", content="
+        + content + ", sentByYou=" + sentByYou + ", date=" + date + "]";
+  }
 
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final FriendChatTitle other = (FriendChatTitle) obj;
-		if (content == null) {
-			if (other.content != null) {
-				return false;
-			}
-		} else if (!content.equals(other.content)) {
-			return false;
-		}
-		if (date == null) {
-			if (other.date != null) {
-				return false;
-			}
-		} else if (!date.equals(other.date)) {
-			return false;
-		}
-		if (friendId == null) {
-			if (other.friendId != null) {
-				return false;
-			}
-		} else if (!friendId.equals(other.friendId)) {
-			return false;
-		}
-		if (friendName == null) {
-			if (other.friendName != null) {
-				return false;
-			}
-		} else if (!friendName.equals(other.friendName)) {
-			return false;
-		}
-		if (sentByYou == null) {
-			if (other.sentByYou != null) {
-				return false;
-			}
-		} else if (!sentByYou.equals(other.sentByYou)) {
-			return false;
-		}
-		return true;
-	}
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((content == null) ? 0 : content.hashCode());
+    result = prime * result + ((date == null) ? 0 : date.hashCode());
+    result = prime * result + ((friendId == null) ? 0 : friendId.hashCode());
+    result = prime * result + ((friendName == null) ? 0 : friendName.hashCode());
+    result = prime * result + ((sentByYou == null) ? 0 : sentByYou.hashCode());
+    return result;
+  }
 
 
-	public FriendChatTitle() {
-		super();
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final FriendChatTitle other = (FriendChatTitle) obj;
+    if (content == null) {
+      if (other.content != null) {
+        return false;
+      }
+    } else if (!content.equals(other.content)) {
+      return false;
+    }
+    if (date == null) {
+      if (other.date != null) {
+        return false;
+      }
+    } else if (!date.equals(other.date)) {
+      return false;
+    }
+    if (friendId == null) {
+      if (other.friendId != null) {
+        return false;
+      }
+    } else if (!friendId.equals(other.friendId)) {
+      return false;
+    }
+    if (friendName == null) {
+      if (other.friendName != null) {
+        return false;
+      }
+    } else if (!friendName.equals(other.friendName)) {
+      return false;
+    }
+    if (sentByYou == null) {
+      if (other.sentByYou != null) {
+        return false;
+      }
+    } else if (!sentByYou.equals(other.sentByYou)) {
+      return false;
+    }
+    return true;
+  }
+
+
+  public FriendChatTitle() {
+    super();
+  }
 }
