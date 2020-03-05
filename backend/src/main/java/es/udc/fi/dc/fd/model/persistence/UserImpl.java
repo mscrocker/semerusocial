@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -53,6 +52,7 @@ public class UserImpl implements User {
 
   @Column(name = "city")
   private String city;
+
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "suggestion")
@@ -155,29 +155,14 @@ public class UserImpl implements User {
   }
 
   @Override
-  public String getUserName() {
-    return userName;
-  }
-
-  @Override
-  public String getPassword() {
-    return password;
-  }
-
-  @Override
-  public String getSex() {
-    return sex;
-  }
-
-  @Override
-  public String getCity() {
-    return city;
-  }
-
-  @Override
   public void setId(Long userId) {
     this.id = checkNotNull(userId,
         "Received a null pointer as id in UserImpl");
+  }
+
+  @Override
+  public String getUserName() {
+    return userName;
   }
 
   @Override
@@ -187,15 +172,30 @@ public class UserImpl implements User {
   }
 
   @Override
+  public String getPassword() {
+    return password;
+  }
+
+  @Override
   public void setPassword(String password) {
     this.password = checkNotNull(password,
         "Received a null pointer as password in UserImpl");
   }
 
   @Override
+  public String getSex() {
+    return sex;
+  }
+
+  @Override
   public void setSex(String sex) {
     this.sex = checkNotNull(sex,
         "Received a null pointer as sex in UserImpl");
+  }
+
+  @Override
+  public String getCity() {
+    return city;
   }
 
   @Override
@@ -221,7 +221,7 @@ public class UserImpl implements User {
 
   @Override
   public void setSuggestion(User suggestion) {
-    this.suggestion = (UserImpl)suggestion;
+    this.suggestion = (UserImpl) suggestion;
   }
 
   @Override
@@ -411,13 +411,10 @@ public class UserImpl implements User {
       return false;
     }
     if (userName == null) {
-      if (other.userName != null) {
-        return false;
-      }
-    } else if (!userName.equals(other.userName)) {
-      return false;
+      return other.userName == null;
+    } else {
+      return userName.equals(other.userName);
     }
-    return true;
   }
 
   @Override
