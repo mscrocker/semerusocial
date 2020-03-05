@@ -27,8 +27,9 @@ public class RequestImpl implements Request {
 
   /**
    * Default constructor for the request entity.
+   *
    * @param requestId The IDs of the users involved in the request
-   * @param date The date of the request
+   * @param date      The date of the request
    */
   public RequestImpl(RequestId requestId, LocalDateTime date) {
     super();

@@ -21,10 +21,11 @@ public class MessageDetailsDto implements Serializable {
 
   /**
    * Default constructor for the message DTO.
+   *
    * @param messageContent The content of the message
-   * @param date The date of the message
-   * @param owner The user who sent the message
-   * @param receiver The user who received the message
+   * @param date           The date of the message
+   * @param owner          The user who sent the message
+   * @param receiver       The user who received the message
    */
   public MessageDetailsDto(String messageContent, LocalDateTime date, Long owner, Long receiver) {
     super();

@@ -15,7 +15,8 @@ public class ImageDto implements Serializable {
 
   /**
    * Default constructor for the image DTO, with its ID.
-   * @param imageId The id of the image
+   *
+   * @param imageId   The id of the image
    * @param imageData The format and the data of the image
    */
   public ImageDto(Long imageId, ImageDataDto imageData) {

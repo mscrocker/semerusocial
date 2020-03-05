@@ -84,11 +84,12 @@ public class UserImpl implements User {
 
   /**
    * Constructor for the user entity without rating.
-   * @param userName The userName of the user
-   * @param password The password of the user
-   * @param date The date of the user
-   * @param sex The sex of the user
-   * @param city The city of the user
+   *
+   * @param userName    The userName of the user
+   * @param password    The password of the user
+   * @param date        The date of the user
+   * @param sex         The sex of the user
+   * @param city        The city of the user
    * @param description The description of the user
    */
   public UserImpl(String userName, String password, LocalDateTime date, String sex, String city,
@@ -104,13 +105,14 @@ public class UserImpl implements User {
 
   /**
    * Constructor for the user entity with rating.
-   * @param userName The userName of the user
-   * @param password The password of the user
-   * @param date The date of the user
-   * @param sex The sex of the user
-   * @param city The city of the user
+   *
+   * @param userName    The userName of the user
+   * @param password    The password of the user
+   * @param date        The date of the user
+   * @param sex         The sex of the user
+   * @param city        The city of the user
    * @param description The description of the user
-   * @param rating The rating of the user
+   * @param rating      The rating of the user
    * @param ratingVotes The number of votes made to the user
    */
   public UserImpl(String userName, String password, LocalDateTime date, String sex, String city,
@@ -128,9 +130,10 @@ public class UserImpl implements User {
 
   /**
    * Constructor for the user entity with only the date, sex, city and description.
-   * @param date The date of the user
-   * @param sex The sex of the user
-   * @param city The city of the user
+   *
+   * @param date        The date of the user
+   * @param sex         The sex of the user
+   * @param city        The city of the user
    * @param description The description of the user
    */
   public UserImpl(LocalDateTime date, String sex, String city, String description) {

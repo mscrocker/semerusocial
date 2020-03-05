@@ -27,8 +27,9 @@ public class RejectedImpl implements Rejected {
 
   /**
    * Default constructor for the rejected entity.
+   *
    * @param rejectedId The IDs of the users involved in the rejection
-   * @param date The date of the rejection
+   * @param date       The date of the rejection
    */
   public RejectedImpl(RejectedId rejectedId, LocalDateTime date) {
     super();

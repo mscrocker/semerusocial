@@ -82,6 +82,7 @@ public class FriendController {
 
   /**
    * REST controller for the friend service.
+   *
    * @param friendService The instance of the friend service
    * @param messageSource The message source to use for localization purposes
    */
@@ -97,8 +98,9 @@ public class FriendController {
 
   /**
    * Handler for the RequestParamException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(RequestParamException.class)
@@ -113,8 +115,9 @@ public class FriendController {
 
   /**
    * Handler for the InvalidRecommendationException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(InvalidRecommendationException.class)
@@ -135,8 +138,9 @@ public class FriendController {
 
   /**
    * Handler for the InstanceNotFoundException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(InstanceNotFoundException.class)
@@ -157,8 +161,9 @@ public class FriendController {
 
   /**
    * Handler for the ItsNotYourFriendException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(ItsNotYourFriendException.class)
@@ -175,8 +180,9 @@ public class FriendController {
 
   /**
    * Handler for the AlreadyRejectedException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(AlreadyRejectedException.class)
@@ -197,8 +203,9 @@ public class FriendController {
 
   /**
    * Handler for the AlreadyAcceptedException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(AlreadyAceptedException.class)
@@ -219,8 +226,9 @@ public class FriendController {
 
   /**
    * Handler for the NoMoreSuggestionFound exception.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(NoMoreSuggestionFound.class)
@@ -240,8 +248,9 @@ public class FriendController {
 
   /**
    * Handler for the AlreadyBlockedException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(AlreadyBlockedException.class)
@@ -256,8 +265,9 @@ public class FriendController {
 
   /**
    * Handler for the CantFindMoreFriendsException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(CantFindMoreFriendsException.class)
@@ -274,12 +284,13 @@ public class FriendController {
 
   /**
    * Controller for the acceptRecommendation method of the friend service.
+   *
    * @param userId The id of the user accepting the recommendation
    * @param params The id of the recommendation being accepted
-   * @throws InstanceNotFoundException If the user did not exist
+   * @throws InstanceNotFoundException      If the user did not exist
    * @throws InvalidRecommendationException If that recommendation was never made
-   * @throws AlreadyRejectedException If the user already rejected that recommendation before
-   * @throws AlreadyAceptedException If the user already accepted that recommendation before
+   * @throws AlreadyRejectedException       If the user already rejected that recommendation before
+   * @throws AlreadyAceptedException        If the user already accepted that recommendation before
    */
   @ResponseStatus(value = HttpStatus.OK)
   @PostMapping("/accept")
@@ -293,12 +304,13 @@ public class FriendController {
 
   /**
    * Controller for the rejectRecommendation method of the friend service.
+   *
    * @param userId The id of the user rejecting the recommendation
    * @param params The id of the recommendation being rejected
-   * @throws InstanceNotFoundException If the user did not exist
+   * @throws InstanceNotFoundException      If the user did not exist
    * @throws InvalidRecommendationException If that recommendation was never made
-   * @throws AlreadyRejectedException If the user already rejected that recommendation before
-   * @throws AlreadyAceptedException If the user already accepted that recommendation before
+   * @throws AlreadyRejectedException       If the user already rejected that recommendation before
+   * @throws AlreadyAceptedException        If the user already accepted that recommendation before
    */
   @ResponseStatus(value = HttpStatus.OK)
   @PostMapping("/reject")
@@ -312,10 +324,11 @@ public class FriendController {
 
   /**
    * Controller for the suggestFriend method of the friend service.
+   *
    * @param userId The id of the user asking for the suggestion
    * @return The suggestion
    * @throws InstanceNotFoundException If the user did not exist
-   * @throws NoMoreSuggestionFound If no more recommendations were found
+   * @throws NoMoreSuggestionFound     If no more recommendations were found
    */
   @ResponseStatus(value = HttpStatus.OK)
   @GetMapping("/suggestion")
@@ -333,12 +346,13 @@ public class FriendController {
 
   /**
    * Controller for the getFriendList method of the friend service.
+   *
    * @param userId The id of the user asking for his friend list
-   * @param page The page of the friend list to query
-   * @param size The size of the friend list pages
+   * @param page   The page of the friend list to query
+   * @param size   The size of the friend list pages
    * @return The list with the friends
    * @throws InstanceNotFoundException If the user did not exist
-   * @throws RequestParamException If any parameter was invalid
+   * @throws RequestParamException     If any parameter was invalid
    */
   @GetMapping("/friendList")
   public BlockDto<RatedFriendDto> getFriendList(@RequestAttribute Long userId,
@@ -366,20 +380,21 @@ public class FriendController {
 
   /**
    * Controller for the searchUsersByMetadataAndKeywords method of the friend service.
+   *
    * @param params The params of the user to search
-   * @param page The page to query
-   * @param size The size of the pages to query
+   * @param page   The page to query
+   * @param size   The size of the pages to query
    * @return The list with the users matching that criteria
    */
   @GetMapping("/searchUsers")
   public BlockDto<FullUserProfileDto> searchUsersByMetadataAndKeywords(@RequestBody @Validated
-                                                                             SearchUsersDto params,
+                                                                           SearchUsersDto params,
                                                                        @RequestParam(
                                                                            defaultValue = "0")
                                                                        @Min(0) int page,
                                                                        @RequestParam(
                                                                            defaultValue = "10")
-                                                                         @Min(1) int size) {
+                                                                       @Min(1) int size) {
     final Block<UserImpl> users = friendService.searchUsersByMetadataAndKeywords(params, page,
         size);
 

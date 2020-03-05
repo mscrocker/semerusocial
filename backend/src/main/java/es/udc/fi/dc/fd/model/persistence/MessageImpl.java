@@ -49,12 +49,13 @@ public class MessageImpl implements Serializable {
 
   /**
    * Default constructor for the message entity.
-   * @param messageId The id of the message
-   * @param user1 The first user involved in the message
-   * @param user2 The second user involved in the message
-   * @param transmitter ID of the user who sent the message (either user1 or user2)
+   *
+   * @param messageId      The id of the message
+   * @param user1          The first user involved in the message
+   * @param user2          The second user involved in the message
+   * @param transmitter    ID of the user who sent the message (either user1 or user2)
    * @param messageContent The content of the message
-   * @param date The date of the message
+   * @param date           The date of the message
    */
   public MessageImpl(Long messageId, UserImpl user1, UserImpl user2, UserImpl transmitter,
                      String messageContent, LocalDateTime date) {

@@ -16,6 +16,7 @@ public enum SexCriteriaEnum {
 
   /**
    * Gets a SexCriteriaEnum constant from it's String representation.
+   *
    * @param code The String representation
    * @return The SexCriteriaEnum constant
    */

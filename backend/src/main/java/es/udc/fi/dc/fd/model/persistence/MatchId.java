@@ -20,6 +20,7 @@ public class MatchId implements Serializable {
 
   /**
    * Default constructor for the entity containing the matching IDs of an users match.
+   *
    * @param user1 The id of the first user
    * @param user2 The id of the second user
    */

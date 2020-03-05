@@ -13,6 +13,7 @@ public final class MessageConversor {
 
   /**
    * Transforms a friend chat title entity to a friend header DTO.
+   *
    * @param title The friend chat title entity
    * @return The friend header DTO
    */
@@ -24,6 +25,7 @@ public final class MessageConversor {
 
   /**
    * Transforms a block with friend chat title entities to a block dto with friend header DTOs.
+   *
    * @param messages The block with the friend chat entities
    * @return The block dto with friend header DTOs
    */
@@ -36,6 +38,7 @@ public final class MessageConversor {
 
   /**
    * Transform a message entity to a message dto.
+   *
    * @param msg The message entity
    * @return The message DTO
    */

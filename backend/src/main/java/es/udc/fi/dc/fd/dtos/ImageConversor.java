@@ -15,6 +15,7 @@ public final class ImageConversor {
 
   /**
    * Converts an image entity to an image dto with its ID.
+   *
    * @param image The image entity
    * @return The image dto
    */
@@ -27,6 +28,7 @@ public final class ImageConversor {
   /**
    * Converts a block with image entities to a block DTO with DTOs for each image with their
    * IDs.
+   *
    * @param images The block with the image entities
    * @return The block DTO with the DTOs for each image
    */
@@ -41,6 +43,7 @@ public final class ImageConversor {
 
   /**
    * Converts an image dto back to an image entity.
+   *
    * @param image The image DTO
    * @return The image entity
    * @throws InvalidImageFormatException If the image format was not recognized
@@ -70,6 +73,7 @@ public final class ImageConversor {
   /**
    * Converts a block with image entities to a block DTO with DTOs for each image without their
    * IDs.
+   *
    * @param images The block with the image entities
    * @return The block DTO with the DTOs for each image
    */
@@ -84,6 +88,7 @@ public final class ImageConversor {
 
   /**
    * Converts an image entity to an image dto without its ID.
+   *
    * @param image The image entity
    * @return The image dto
    */

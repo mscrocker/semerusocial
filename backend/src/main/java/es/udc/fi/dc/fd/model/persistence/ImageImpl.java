@@ -46,6 +46,7 @@ public class ImageImpl implements Image {
 
   /**
    * Constructor for the image entity for images with owner.
+   *
    * @param user The owner
    * @param data The data of the image
    * @param type The format of the image
@@ -60,6 +61,7 @@ public class ImageImpl implements Image {
 
   /**
    * Constructor for the image entity for images without owner.
+   *
    * @param data The data of the image
    * @param type The format of the image
    */
@@ -81,7 +83,7 @@ public class ImageImpl implements Image {
 
   @Override
   public byte[] getData() {
-    return data;
+    return Arrays.copyOf(data, data.length);
   }
 
   @Override

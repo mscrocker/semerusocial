@@ -30,10 +30,11 @@ public class SearchCriteriaDto {
 
   /**
    * Default constructor for the SearchCriteriaDTO.
-   * @param sex The sex that will be matched
-   * @param minAge The minimum age that will be matched
-   * @param maxAge The maximum age that will be matched
-   * @param city The list of cities that will be matched
+   *
+   * @param sex     The sex that will be matched
+   * @param minAge  The minimum age that will be matched
+   * @param maxAge  The maximum age that will be matched
+   * @param city    The list of cities that will be matched
    * @param minRate The minimum rate that will be matched
    */
   public SearchCriteriaDto(String sex, int minAge, int maxAge, List<String> city, int minRate) {

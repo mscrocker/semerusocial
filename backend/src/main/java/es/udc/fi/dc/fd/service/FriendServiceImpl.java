@@ -238,7 +238,7 @@ public class FriendServiceImpl implements FriendService {
   public Optional<UserImpl> suggestFriend(Long userId) throws InstanceNotFoundException {
 
     if (userId == null) {
-      throw new InstanceNotFoundException("userId can not be null", userId);
+      throw new InstanceNotFoundException("userId can not be null", null);
     }
     if (!userRepository.existsById(userId)) {
       throw new InstanceNotFoundException("User does not exists", userId);
@@ -285,7 +285,7 @@ public class FriendServiceImpl implements FriendService {
       throws InstanceNotFoundException, CantFindMoreFriendsException {
 
     if (userId == null) {
-      throw new InstanceNotFoundException("userId can not be null", userId);
+      throw new InstanceNotFoundException("userId can not be null", null);
     }
     if (!userRepository.existsById(userId)) {
       throw new InstanceNotFoundException("User does not exists", userId);

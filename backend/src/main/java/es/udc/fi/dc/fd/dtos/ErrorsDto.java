@@ -18,6 +18,7 @@ public class ErrorsDto {
 
   /**
    * Constructor of the errors Dto when we have many validation field errors.
+   *
    * @param fieldErrors The list of the validation field errors
    */
   public ErrorsDto(List<FieldErrorDto> fieldErrors) {

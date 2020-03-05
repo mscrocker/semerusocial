@@ -12,8 +12,9 @@ public class FieldErrorDto {
 
   /**
    * Default constructor for the field error dto.
+   *
    * @param fieldName The name of the field that caused the error
-   * @param message The message of the error caused
+   * @param message   The message of the error caused
    */
   public FieldErrorDto(String fieldName, String message) {
 

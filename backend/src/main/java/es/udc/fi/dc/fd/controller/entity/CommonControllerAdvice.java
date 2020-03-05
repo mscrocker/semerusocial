@@ -16,6 +16,7 @@ public class CommonControllerAdvice {
 
   /**
    * Handler for the MethodArgumentNotValidException.
+   *
    * @param exception The instance of the exception to handle
    * @return Dto with the error message
    */

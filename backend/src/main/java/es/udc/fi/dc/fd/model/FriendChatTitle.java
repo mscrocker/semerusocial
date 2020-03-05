@@ -68,11 +68,12 @@ public class FriendChatTitle {
 
   /**
    * Default constructor of the entity that represents a friend chat header data.
-   * @param friendId The id of the friend
+   *
+   * @param friendId   The id of the friend
    * @param friendName The name of the friend
-   * @param content The content of the latest message sent in that chat
-   * @param sentByYou Whether the latest message of the chat was yours
-   * @param date The date of the latest message of the chat
+   * @param content    The content of the latest message sent in that chat
+   * @param sentByYou  Whether the latest message of the chat was yours
+   * @param date       The date of the latest message of the chat
    */
   public FriendChatTitle(Long friendId, String friendName, String content, Boolean sentByYou,
                          LocalDateTime date) {

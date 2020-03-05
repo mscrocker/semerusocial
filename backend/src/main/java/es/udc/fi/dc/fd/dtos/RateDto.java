@@ -23,7 +23,8 @@ public final class RateDto implements Serializable {
 
   /**
    * Default constructor for the DTO with the rating of an user.
-   * @param rate The rating of the user
+   *
+   * @param rate       The rating of the user
    * @param userObject The user being rated
    */
   public RateDto(int rate, Long userObject) {

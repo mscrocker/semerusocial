@@ -15,8 +15,9 @@ public class RatedFriendDto {
 
   /**
    * Default constructor for the RatedFriendDto.
+   *
    * @param friendData The fields of the friend that don't depend on the rating
-   * @param myRating The rating
+   * @param myRating   The rating
    */
   public RatedFriendDto(UnratedFriendDto friendData, int myRating) {
     super();

@@ -16,8 +16,9 @@ public class BlockedId implements Serializable {
 
   /**
    * Default constructor for the BlockedId entity.
+   *
    * @param subject The subject who blocks
-   * @param object The object who gets blocked
+   * @param object  The object who gets blocked
    */
   public BlockedId(Long subject, Long object) {
     super();

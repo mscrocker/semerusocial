@@ -17,6 +17,7 @@ public class RegisterParamsDto {
 
   /**
    * Default constructor for the RegisterParamsDto.
+   *
    * @param loginParams The login parameters
    * @param profileData The user profile data
    */

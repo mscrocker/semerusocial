@@ -94,7 +94,8 @@ public class UserController {
 
   /**
    * Default constructor for the REST controller of the user service.
-   * @param userService The user service reference
+   *
+   * @param userService   The user service reference
    * @param messageSource The message source that will be used for localization purposes
    */
   @Autowired
@@ -110,6 +111,7 @@ public class UserController {
 
   /**
    * Generates a new token for a given user.
+   *
    * @param user The user
    * @return The token
    */
@@ -121,8 +123,9 @@ public class UserController {
 
   /**
    * Handler for the DuplicateInstanceException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(DuplicateInstanceException.class)
@@ -141,8 +144,9 @@ public class UserController {
 
   /**
    * Handler for the IncorrectLoginException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(IncorrectLoginException.class)
@@ -157,8 +161,9 @@ public class UserController {
 
   /**
    * Handler for the InstanceNotFoundException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(InstanceNotFoundException.class)
@@ -179,6 +184,7 @@ public class UserController {
 
   /**
    * Handler for the MethodArgumentNotValidException.
+   *
    * @param exception The instance of the exception to handle
    * @return The ErrorsDto with the error messages
    */
@@ -198,8 +204,9 @@ public class UserController {
 
   /**
    * Handler for the InvalidRateException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(InvalidRateException.class)
@@ -214,8 +221,9 @@ public class UserController {
 
   /**
    * Handler for the ItsNotYourFriendException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(ItsNotYourFriendException.class)
@@ -231,8 +239,9 @@ public class UserController {
 
   /**
    * Handler for the InvalidDateException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(InvalidDateException.class)
@@ -247,8 +256,9 @@ public class UserController {
 
   /**
    * Handler for the InvalidAgeException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The local to use for the error messages
+   * @param locale    The local to use for the error messages
    * @return The ErrorsDto with the error messages
    */
   @ExceptionHandler(InvalidAgeException.class)
@@ -263,15 +273,16 @@ public class UserController {
 
   /**
    * REST controller for the signUp method of the user service.
+   *
    * @param params The register parameters
    * @return The user authenticated data
    * @throws DuplicateInstanceException If the user was already registered
-   * @throws InvalidDateException If an invalid date was introduced while at the registration
-   *      process
+   * @throws InvalidDateException       If an invalid date was introduced while at the registration
+   *                                    process
    */
   @PostMapping("/signUp")
   public ResponseEntity<UserAuthenticatedDto> signUp(@Validated @RequestBody
-                                                           RegisterParamsDto params)
+                                                         RegisterParamsDto params)
       throws DuplicateInstanceException, InvalidDateException {
 
     final UserImpl user = (UserImpl) UserConversor.fromRegisterDto(params);
@@ -288,12 +299,13 @@ public class UserController {
 
   /**
    * REST Controller for the setSearchCriteria method of the user service.
-   * @param userId The id of the user whose search criteria is going to be updated
+   *
+   * @param userId   The id of the user whose search criteria is going to be updated
    * @param criteria The new search criteria
    * @throws InstanceNotFoundException If the user was not found
-   * @throws InvalidAgeException If the age specified was not valid
-   * @throws InvalidRateException If the rate specified was not valid
-   * @throws NotRatedException If the user was not rated yet
+   * @throws InvalidAgeException       If the age specified was not valid
+   * @throws InvalidRateException      If the rate specified was not valid
+   * @throws NotRatedException         If the user was not rated yet
    */
   @PutMapping("/searchCriteria")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -307,6 +319,7 @@ public class UserController {
 
   /**
    * REST Controller for the getSearchCriteria method of the user service.
+   *
    * @param userId The user id whose criteria is being queried
    * @return The criteria of the user
    * @throws InstanceNotFoundException If the user did not exist
@@ -321,6 +334,7 @@ public class UserController {
 
   /**
    * REST controller for the login method of the user service.
+   *
    * @param params The login parameters
    * @return The authenticated user data
    * @throws IncorrectLoginException If the login params were invalid
@@ -336,6 +350,7 @@ public class UserController {
 
   /**
    * Gets the profile data of the user.
+   *
    * @param userId The user whose profile data is being queried
    * @return The profile data
    * @throws InstanceNotFoundException If the user did not exist
@@ -370,11 +385,12 @@ public class UserController {
 
   /**
    * REST Controller for the rateUser method of the user service.
-   * @param userId The user rating
+   *
+   * @param userId  The user rating
    * @param rateDto The rating to be done
    * @return The new rating
    * @throws InstanceNotFoundException If the user rating did not exist
-   * @throws InvalidRateException If the rate was invalid
+   * @throws InvalidRateException      If the rate was invalid
    * @throws ItsNotYourFriendException If the user being rated was not a friend of the user rating
    */
   @PostMapping("/rate")
@@ -387,7 +403,8 @@ public class UserController {
 
   /**
    * REST Controller for the updatePremium method of the user service.
-   * @param userId The id of the user that is updating its premium status
+   *
+   * @param userId     The id of the user that is updating its premium status
    * @param premiumDto The premium status data
    * @throws InstanceNotFoundException If the user did not exist
    */
@@ -407,7 +424,7 @@ public class UserController {
                                                   @RequestParam(defaultValue = "0")
                                                   @Min(0) int page,
                                                   @RequestParam(defaultValue = "10")
-                                                    @Min(1) int size) {
+                                                  @Min(1) int size) {
     final Block<UserImpl> users = userService.getTopUsers(city, page, size);
     return UserConversor.toReturnedUserBlockDto(users);
   }

@@ -27,8 +27,9 @@ public class MatchImpl implements Match {
 
   /**
    * Default constructor for the entity of a match of users.
+   *
    * @param matchId The id of the users being matched
-   * @param date The date of the match
+   * @param date    The date of the match
    */
   public MatchImpl(MatchId matchId, LocalDateTime date) {
     super();

@@ -56,7 +56,8 @@ public class ImageController {
 
   /**
    * REST Controller for the image service.
-   * @param imageService The instance of the service
+   *
+   * @param imageService  The instance of the service
    * @param messageSource The message source used for localization purposes
    */
   @Autowired
@@ -72,8 +73,9 @@ public class ImageController {
 
   /**
    * Handler for the InstanceNotFoundException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(InstanceNotFoundException.class)
@@ -93,8 +95,9 @@ public class ImageController {
 
   /**
    * Handler for the ItsNotYourFriendException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(ItsNotYourImageException.class)
@@ -110,8 +113,9 @@ public class ImageController {
 
   /**
    * Handler for the InvalidImageFormatException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to use for the error message
+   * @param locale    The locale to use for the error message
    * @return The ErrorsDto containing the errors message
    */
   @ExceptionHandler(InvalidImageFormatException.class)
@@ -127,10 +131,11 @@ public class ImageController {
 
   /**
    * Controller for the add image method of the image service.
-   * @param image The image to add
+   *
+   * @param image  The image to add
    * @param userId The id of the user uploading the image
    * @return The id of the newly created image
-   * @throws InstanceNotFoundException If the user did not exist
+   * @throws InstanceNotFoundException   If the user did not exist
    * @throws InvalidImageFormatException If the image was invalid
    */
   @PostMapping("/add")
@@ -149,10 +154,11 @@ public class ImageController {
 
   /**
    * Controller for the remove image method of the image service.
+   *
    * @param imageId The id of the image to remove
-   * @param userId The id of the user removing that image
+   * @param userId  The id of the user removing that image
    * @throws InstanceNotFoundException If either the user or the image were not found
-   * @throws ItsNotYourImageException If you were not the owner of the image
+   * @throws ItsNotYourImageException  If you were not the owner of the image
    */
   @DeleteMapping("/remove/{imageId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -163,8 +169,9 @@ public class ImageController {
 
   /**
    * Controller for the getImagesByUserId method of the image service.
+   *
    * @param userId The id of the user asking for the images
-   * @param page The page being queried
+   * @param page   The page being queried
    * @return The block with the images queried, and their IDs
    * @throws InstanceNotFoundException If the user was not found
    */
@@ -178,8 +185,9 @@ public class ImageController {
 
   /**
    * Controller for the getImagesByUserId method of the image service.
+   *
    * @param userId The id of the user asking for the images
-   * @param page The page being queried
+   * @param page   The page being queried
    * @return The block with the images queried, without their IDs
    * @throws InstanceNotFoundException If the user was not found
    */
@@ -194,6 +202,7 @@ public class ImageController {
 
   /**
    * Controller for the getAnonymousCarrusel method of the imageService.
+   *
    * @param city The city whose public carrusel is being queried
    * @param page The page being queried
    * @return The block with the images of the anonymous carrusel

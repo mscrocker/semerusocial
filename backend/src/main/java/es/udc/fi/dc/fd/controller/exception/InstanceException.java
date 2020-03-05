@@ -9,8 +9,9 @@ public abstract class InstanceException extends Exception {
 
   /**
    * Default constructor of the instance exception.
+   *
    * @param name The name of the class
-   * @param key The key of the instance
+   * @param key  The key of the instance
    */
   public InstanceException(String name, Object key) {
 

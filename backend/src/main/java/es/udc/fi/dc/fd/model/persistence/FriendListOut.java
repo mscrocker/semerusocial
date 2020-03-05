@@ -12,7 +12,8 @@ public class FriendListOut {
 
   /**
    * Default constructor of an user's friend entity.
-   * @param user The user entity of the friend
+   *
+   * @param user     The user entity of the friend
    * @param myRating The rating that the user gave to the friend
    */
   public FriendListOut(UserImpl user, int myRating) {

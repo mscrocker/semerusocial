@@ -1,10 +1,11 @@
 package es.udc.fi.dc.fd.dtos;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import java.io.Serializable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class AgeUserProfileDto {
+public class AgeUserProfileDto implements Serializable {
 
   @NotNull
   @Min(value = 18)
@@ -19,7 +20,8 @@ public class AgeUserProfileDto {
 
   /**
    * Default constructor of an age-based user profile dto.
-   * @param age The age of the user
+   *
+   * @param age           The age of the user
    * @param agelessFields The fields of the user that did not depend on the age
    */
   public AgeUserProfileDto(int age, AgelessUserProfileDto agelessFields) {
@@ -72,10 +74,7 @@ public class AgeUserProfileDto {
     } else if (!getAgelessFields().equals(other.getAgelessFields())) {
       return false;
     }
-    if (age != other.age) {
-      return false;
-    }
-    return true;
+    return age == other.age;
   }
 
   @Override

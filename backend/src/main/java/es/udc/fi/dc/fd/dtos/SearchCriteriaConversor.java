@@ -6,6 +6,7 @@ public final class SearchCriteriaConversor {
 
   /**
    * Transforms a SearchCriteria entity to a SearchCriteriaDto.
+   *
    * @param criteria The SearchCriteria entity
    * @return The DTO
    */

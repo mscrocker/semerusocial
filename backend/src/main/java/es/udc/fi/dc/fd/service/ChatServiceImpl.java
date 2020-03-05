@@ -98,7 +98,7 @@ public class ChatServiceImpl implements ChatService {
   public Block<MessageDetailsDto> getConversation(Long userId, Long friendId, int page, int size)
       throws InstanceNotFoundException, ItsNotYourFriendException, ValidationException {
     if (userId == null) {
-      throw new InstanceNotFoundException(UserImpl.class.getName(), userId);
+      throw new InstanceNotFoundException(UserImpl.class.getName(), null);
     }
 
     if (userId.equals(friendId)) {

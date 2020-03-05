@@ -9,6 +9,7 @@ public class IncorrectLoginException extends Exception {
 
   /**
    * Exception thrown when an login attempt was not succesfull.
+   *
    * @param userName The userName of the login attempt
    * @param password The password of the login attempt
    */

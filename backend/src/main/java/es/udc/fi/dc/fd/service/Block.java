@@ -69,7 +69,8 @@ public class Block<T> {
 
   /**
    * Default constructor of a paged block of elements.
-   * @param elements The list with the elements of the block
+   *
+   * @param elements          The list with the elements of the block
    * @param existMoreElements Whether there are more elements in the next pages
    */
   public Block(List<T> elements, boolean existMoreElements) {

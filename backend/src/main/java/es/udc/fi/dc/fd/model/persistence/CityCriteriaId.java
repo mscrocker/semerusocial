@@ -16,8 +16,9 @@ public class CityCriteriaId implements Serializable {
 
   /**
    * Default constructor of the CityCriteriaId entity.
+   *
    * @param userId The userId whose criteria is being set
-   * @param city The city to add to the criteria of the user
+   * @param city   The city to add to the criteria of the user
    */
   public CityCriteriaId(Long userId, String city) {
     super();

@@ -8,6 +8,7 @@ public class SearchUsersDto {
 
   /**
    * Default constructor for the SearchUsersDTO.
+   *
    * @param keywords The keywords for the search
    * @param metadata The search criteria
    */

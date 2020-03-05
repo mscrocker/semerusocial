@@ -1,9 +1,10 @@
 package es.udc.fi.dc.fd.dtos;
 
+import java.io.Serializable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class AgelessUserProfileDto {
+public class AgelessUserProfileDto implements Serializable {
   @NotEmpty
   private String sex;
 
@@ -17,8 +18,9 @@ public class AgelessUserProfileDto {
 
   /**
    * Default constructor of an user profile dto without the age-based fields.
-   * @param sex The sex of the user
-   * @param city The city where the user lives
+   *
+   * @param sex         The sex of the user
+   * @param city        The city where the user lives
    * @param description The description of the user
    */
   public AgelessUserProfileDto(String sex, String city, String description) {
@@ -93,13 +95,10 @@ public class AgelessUserProfileDto {
       return false;
     }
     if (sex == null) {
-      if (other.sex != null) {
-        return false;
-      }
-    } else if (!sex.equals(other.sex)) {
-      return false;
+      return other.sex == null;
+    } else {
+      return sex.equals(other.sex);
     }
-    return true;
   }
 
   @Override

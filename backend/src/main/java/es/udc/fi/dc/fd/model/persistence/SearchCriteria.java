@@ -21,10 +21,11 @@ public class SearchCriteria {
 
   /**
    * Default constructor for the SearchCriteria entity.
-   * @param sex The sex that will be matched
-   * @param minAge The minimum age that will be matched
-   * @param maxAge The maximum age that will be matched
-   * @param city The list of cities that will be matched
+   *
+   * @param sex     The sex that will be matched
+   * @param minAge  The minimum age that will be matched
+   * @param maxAge  The maximum age that will be matched
+   * @param city    The list of cities that will be matched
    * @param minRate The minimum rate that will be matched
    */
   public SearchCriteria(SexCriteriaEnum sex, int minAge, int maxAge, List<String> city,

@@ -21,8 +21,9 @@ public final class UserAuthenticatedDto implements Serializable {
 
   /**
    * Default constructor for the UserAuthenticatedDto.
+   *
    * @param userName The userName of the user
-   * @param jwt The token of the user
+   * @param jwt      The token of the user
    */
   public UserAuthenticatedDto(String userName, String jwt) {
     super();

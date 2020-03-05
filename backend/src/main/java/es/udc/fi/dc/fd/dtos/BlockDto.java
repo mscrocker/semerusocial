@@ -29,7 +29,8 @@ public class BlockDto<T> {
 
   /**
    * Default constructor of the DTO used for the block.
-   * @param elements The list of the elements
+   *
+   * @param elements          The list of the elements
    * @param existMoreElements Whether there would be more elements if the next page were queried
    */
   public BlockDto(List<T> elements, boolean existMoreElements) {

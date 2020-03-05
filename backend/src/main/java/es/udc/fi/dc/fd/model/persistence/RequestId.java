@@ -20,8 +20,9 @@ public class RequestId implements Serializable {
 
   /**
    * Default constructor for the RequestID entity.
+   *
    * @param subject The user who makes the request
-   * @param object The user who is requested
+   * @param object  The user who is requested
    */
   public RequestId(Long subject, Long object) {
     super();

@@ -16,9 +16,10 @@ public class SuggestedSearchCriteria {
 
   /**
    * Default constructor for the SuggestedSearchCriteria DTO.
-   * @param newMinAge The new minimum age suggested
-   * @param newMaxAge The new maximum age suggested
-   * @param newMinRate The new minimum rate suggested
+   *
+   * @param newMinAge         The new minimum age suggested
+   * @param newMaxAge         The new maximum age suggested
+   * @param newMinRate        The new minimum rate suggested
    * @param usersYouWouldFind The users you would find if you applied this changes to your rating
    */
   public SuggestedSearchCriteria(int newMinAge, int newMaxAge, int newMinRate,

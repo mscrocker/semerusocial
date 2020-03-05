@@ -24,6 +24,7 @@ public final class LoginParamsDto implements Serializable {
 
   /**
    * Default constructor for the dto containing the parameters required for logging in.
+   *
    * @param userName The userName of the user
    * @param password The password of the user
    */

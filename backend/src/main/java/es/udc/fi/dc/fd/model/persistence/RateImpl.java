@@ -26,6 +26,7 @@ public class RateImpl implements Serializable {
 
   /**
    * Default constructor for the rate entity.
+   *
    * @param rateId The IDs of the users involved in the rating
    * @param points The rating
    */

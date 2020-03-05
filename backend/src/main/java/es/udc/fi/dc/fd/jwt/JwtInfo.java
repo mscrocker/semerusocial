@@ -10,7 +10,8 @@ public class JwtInfo implements Principal {
 
   /**
    * Default constructor for the entity containing an user credentials.
-   * @param userId The id of the user
+   *
+   * @param userId   The id of the user
    * @param userName The userName of the user
    */
   public JwtInfo(Long userId, String userName) {

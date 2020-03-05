@@ -31,9 +31,10 @@ public class DateUserProfileDto {
 
   /**
    * Default constructor of the date-based user profile Dto.
-   * @param day The day of birth of the user
-   * @param month The month of birth of the user
-   * @param year The year of birth of the user
+   *
+   * @param day           The day of birth of the user
+   * @param month         The month of birth of the user
+   * @param year          The year of birth of the user
    * @param agelessFields The age-less fields of the user profile
    */
   public DateUserProfileDto(int day, int month, int year, AgelessUserProfileDto agelessFields) {

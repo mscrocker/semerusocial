@@ -13,8 +13,9 @@ public class FullUserProfileDto {
 
   /**
    * Default constructor of the full user profile dto.
-   * @param rating The rating of the user
-   * @param premium Whether the user is premium or not
+   *
+   * @param rating          The rating of the user
+   * @param premium         Whether the user is premium or not
    * @param baseProfileData The base profile information
    */
   public FullUserProfileDto(double rating, boolean premium, DateUserProfileDto baseProfileData) {

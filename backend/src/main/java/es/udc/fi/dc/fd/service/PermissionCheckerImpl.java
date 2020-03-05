@@ -18,6 +18,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
   /**
    * Default constructor for the permission checker service.
+   *
    * @param userRepository The user DAO instance
    */
   @Autowired

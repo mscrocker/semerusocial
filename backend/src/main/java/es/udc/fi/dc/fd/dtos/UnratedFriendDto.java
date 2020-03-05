@@ -44,7 +44,8 @@ public final class UnratedFriendDto implements Serializable {
 
   /**
    * Default constructor for the UnratedFriendDTO.
-   * @param id The ID of the friend
+   *
+   * @param id       The ID of the friend
    * @param userName The userName of the friend
    * @param userData The profile data of the friend
    */

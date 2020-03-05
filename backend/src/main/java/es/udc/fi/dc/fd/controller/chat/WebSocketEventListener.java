@@ -1,5 +1,6 @@
 package es.udc.fi.dc.fd.controller.chat;
 
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +27,34 @@ public class WebSocketEventListener {
 
   /**
    * Handler for the disconnect event of the chat websockets.
+   *
    * @param event The disconnect event
    */
   @EventListener
   public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+
+    if (event == null) {
+      return;
+    }
+
+
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
-    String username = (String) headerAccessor.getSessionAttributes().get("username");
-    if (username != null) {
-      LOGGER.info("User Disconnected : " + username);
+    if (headerAccessor != null) {
+      Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+      if (sessionAttributes == null) {
+        return;
+      }
+      String username = (String) sessionAttributes.get("username");
+      if (username != null) {
+        LOGGER.info("User Disconnected : " + username);
 
-      ChatMessage chatMessage = new ChatMessage();
-      chatMessage.setSender(username);
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setSender(username);
 
-      messagingTemplate.convertAndSend("/topic/public", chatMessage);
+        messagingTemplate.convertAndSend("/topic/public", chatMessage);
+      }
     }
+
   }
 }

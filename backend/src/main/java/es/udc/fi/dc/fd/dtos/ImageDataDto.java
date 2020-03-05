@@ -19,6 +19,7 @@ public final class ImageDataDto implements Serializable {
 
   /**
    * Default constructor for the image data DTO, without its ID.
+   *
    * @param data The data of the image
    * @param type The format of the image
    */

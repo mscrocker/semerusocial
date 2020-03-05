@@ -24,10 +24,11 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
   /**
    * Creates a query to search recommendations for an user with a given criteria.
+   *
    * @param criteria The criteria that the recommendation must match
-   * @param userId The user who is asking for the recommendation
-   * @param count Set it to true if you plan to count the results (otherwise, there will be a limit
-   *              to one maximum result
+   * @param userId   The user who is asking for the recommendation
+   * @param count    Set it to true if you plan to count the results (otherwise, there will be a
+   *                 limit to one maximum result
    * @return The query to get the recommendation (if any is available)
    */
   public Query findByCriteriaQuery(SearchCriteria criteria, Long userId, Boolean count) {

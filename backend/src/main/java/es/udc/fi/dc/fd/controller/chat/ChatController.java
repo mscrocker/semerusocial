@@ -63,8 +63,9 @@ public class ChatController {
 
   /**
    * Default constructor of the ChatController.
-   * @param userService The user service
-   * @param chatService The chat service
+   *
+   * @param userService   The user service
+   * @param chatService   The chat service
    * @param messageSource The message source for localization purposes
    */
   public ChatController(final UserService userService, final ChatService chatService,
@@ -81,8 +82,9 @@ public class ChatController {
 
   /**
    * Handler for the InstanceNotFoundException.
+   *
    * @param exception The instance of the exception
-   * @param locale The locale to be used for the error message
+   * @param locale    The locale to be used for the error message
    * @return Dto with the error message
    */
   @ExceptionHandler(InstanceNotFoundException.class)
@@ -103,8 +105,9 @@ public class ChatController {
 
   /**
    * Handler for the ItsNotYourFriendException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to be used for the error message
+   * @param locale    The locale to be used for the error message
    * @return Dto with the error message
    */
   @ExceptionHandler(ItsNotYourFriendException.class)
@@ -120,8 +123,9 @@ public class ChatController {
 
   /**
    * Handler for the ValidationException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to be used for the error message
+   * @param locale    The locale to be used for the error message
    * @return Dto with the error message
    */
   @ExceptionHandler(ValidationException.class)
@@ -137,8 +141,9 @@ public class ChatController {
 
   /**
    * Handler for the RequestParamException.
+   *
    * @param exception The instance of the exception to handle
-   * @param locale The locale to be used for the error message
+   * @param locale    The locale to be used for the error message
    * @return Dto with the error message
    */
   @ExceptionHandler(RequestParamException.class)
@@ -153,8 +158,9 @@ public class ChatController {
 
   /**
    * WebSocket controller to handle the sendMessage event.
+   *
    * @param chatMessage The message to send
-   * @param user The target user to send
+   * @param user        The target user to send
    */
   @MessageMapping("/chat.sendMessage")
   public void sendMessage(@Payload ChatMessage chatMessage, Principal user) {
@@ -182,11 +188,12 @@ public class ChatController {
 
   /**
    * REST controller for the getUserConversations method of the ChatService.
+   *
    * @param userId The user which conversations will be queried
-   * @param page The page to query of the conversations
+   * @param page   The page to query of the conversations
    * @return Dto with the list of conversation headers
    * @throws InstanceNotFoundException If the user was not found
-   * @throws RequestParamException If a parameter was invalid
+   * @throws RequestParamException     If a parameter was invalid
    */
   @GetMapping("/chat/friendHeaders")
   @ResponseBody
@@ -198,14 +205,15 @@ public class ChatController {
 
   /**
    * REST controller for the getConversation method of the ChatService.
-   * @param userId The user which conversations will be queried
+   *
+   * @param userId   The user which conversations will be queried
    * @param friendId The friend with which the conversation was being stablished
-   * @param page The page of the conversation to query
-   * @param size The size of the pages
+   * @param page     The page of the conversation to query
+   * @param size     The size of the pages
    * @return Dto with the list of messages of the conversation
    * @throws InstanceNotFoundException If the user was not found
    * @throws ItsNotYourFriendException If the friend asked was not a friend of the user
-   * @throws ValidationException If any parameter was invalid
+   * @throws ValidationException       If any parameter was invalid
    */
   @GetMapping("/chat/conversation")
   @ResponseStatus(value = HttpStatus.OK)

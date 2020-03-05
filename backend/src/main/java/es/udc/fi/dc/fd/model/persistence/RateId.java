@@ -20,8 +20,9 @@ public class RateId implements Serializable {
 
   /**
    * Default constructor for the rate ID entity.
+   *
    * @param subject The user who rates
-   * @param object The user who gets rated
+   * @param object  The user who gets rated
    */
   public RateId(Long subject, Long object) {
     super();

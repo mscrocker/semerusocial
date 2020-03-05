@@ -12,6 +12,7 @@ public final class FriendConversor {
 
   /**
    * Converts a block of friend entities to a block DTO with a list of friend entities.
+   *
    * @param friends The block with the friend entities
    * @return The block dto with the friend entities
    */
@@ -27,6 +28,7 @@ public final class FriendConversor {
 
   /**
    * Converts a friend entity to a ratedfriend dto.
+   *
    * @param out The friend entity
    * @return The ratedfriend dto
    */
@@ -43,6 +45,7 @@ public final class FriendConversor {
 
   /**
    * Transforms a user entity to an unrated friend dto.
+   *
    * @param userImpl The user entity
    * @return The unrated friend dto
    */
@@ -61,6 +64,7 @@ public final class FriendConversor {
 
   /**
    * Converts a block with a list of user entites to a block dto with a list of user profiles dto.
+   *
    * @param users The block with the list of user entities
    * @return The block with the list of user profiles dto
    */
@@ -75,6 +79,7 @@ public final class FriendConversor {
 
   /**
    * Converts a user entity to an user profile dto.
+   *
    * @param out The user entity
    * @return The user profile dto
    */

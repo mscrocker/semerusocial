@@ -11,6 +11,7 @@ public final class UserConversor {
 
   /**
    * Trannsforms a RegisterParamsDto into an user entity.
+   *
    * @param params The DTO
    * @return The user entity
    */
@@ -27,6 +28,7 @@ public final class UserConversor {
 
   /**
    * Transforms a DateUserProfileDto into an user entity.
+   *
    * @param updateProfileInDto The DTO
    * @return The user entity
    */
@@ -41,6 +43,7 @@ public final class UserConversor {
 
   /**
    * Transforms a block of user entities into a block dto of FullUserProfileDto.
+   *
    * @param users The block with the user entities
    * @return The block dto with the FullUserProfileDto
    */

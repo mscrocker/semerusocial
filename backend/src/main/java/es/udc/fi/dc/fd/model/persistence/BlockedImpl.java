@@ -27,8 +27,9 @@ public class BlockedImpl implements Serializable {
 
   /**
    * Default constructor of the Blocked entity.
+   *
    * @param blockedId Entity containing the IDs of both de blocker and blocked users
-   * @param date The date and time when the block happened
+   * @param date      The date and time when the block happened
    */
   public BlockedImpl(BlockedId blockedId, LocalDateTime date) {
     super();

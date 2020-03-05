@@ -20,8 +20,9 @@ public class RejectedId implements Serializable {
 
   /**
    * Default constructor for the RejectedID entity.
+   *
    * @param subject The user who rejects
-   * @param object The user who gets rejected
+   * @param object  The user who gets rejected
    */
   public RejectedId(Long subject, Long object) {
     super();
