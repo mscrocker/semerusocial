@@ -9,9 +9,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -50,8 +54,9 @@ public class UserImpl implements User {
   @Column(name = "city")
   private String city;
 
-  @Column(name = "suggestion")
-  private User suggestion;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "suggestion")
+  private UserImpl suggestion;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "criteriaSex")
@@ -216,7 +221,7 @@ public class UserImpl implements User {
 
   @Override
   public void setSuggestion(User suggestion) {
-    this.suggestion = suggestion;
+    this.suggestion = (UserImpl)suggestion;
   }
 
   @Override
