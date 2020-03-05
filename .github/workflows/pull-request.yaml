@@ -1,0 +1,129 @@
+name: Pull-Request-Test
+
+on:
+  push:
+    branches-ignore:
+      - 'master'
+
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven validate
+        run: mvn validate
+
+  compile:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven compile
+        run: mvn compile
+
+  test:
+    runs-on: ubuntu-latest
+    needs: compile
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven test
+        run: mvn test
+
+  package:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven package
+        run: mvn package
+      - name: Setup backend artifact name
+        run: "\
+          OUTPUT=\
+          $(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout --projects backend).war\
+          && echo \"::set-env name=BACKEND_ARTIFACT::$OUTPUT\""
+      - name: Setup frontend artifact name
+        run: "\
+          OUTPUT=\
+          $(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout --projects frontend).war\
+          && echo \"::set-env name=FRONTEND_ARTIFACT::$OUTPUT\""
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: backend
+          path: backend/target/${{ env.BACKEND_ARTIFACT }}
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: frontend
+          path: frontend/target/${{ env.FRONTEND_ARTIFACT }}
+  verify-h2:
+    runs-on: ubuntu-latest
+    needs: package
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven verify with h2
+        run: mvn verify -P h2
+
+  verify-mysql:
+    runs-on: ubuntu-latest
+    needs: package
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-PR-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up JDK11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Maven verify with mysql
+        run: mvn verify -P mysql
+
