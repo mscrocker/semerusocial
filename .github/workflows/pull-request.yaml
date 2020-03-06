@@ -141,13 +141,5 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Download backend artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: backend
-      - name: Download frontend artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: frontend
-      - name: Maven verify with mysql
-        run: mvn verify -P benchmark --projects benchmark
+      - name: Maven benchmark
+        run: mvn verify -P benchmark
