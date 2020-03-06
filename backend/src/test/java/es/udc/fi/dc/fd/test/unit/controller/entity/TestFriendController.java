@@ -146,7 +146,7 @@ public class TestFriendController {
   private static final String SUGGESTIONCITY = "Coruña";
 
   private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-      MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf-8"));
+      MediaType.APPLICATION_JSON.getSubtype());
 
   /****
    * GET FRIEND LIST TESTS
