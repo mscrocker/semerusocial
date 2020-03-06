@@ -67,7 +67,7 @@ mvn verify -P h2
 If you would like to also run the benchmarks, add the benchmark profile like so:
 
 ```
-mvn verify -P h2, benchmark
+mvn verify -P h2,benchmark
 ```
 
 ### Packaging the WAR
