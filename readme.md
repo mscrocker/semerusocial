@@ -64,6 +64,12 @@ Just like running the project, an embedded server with an in-memory database can
 mvn verify -P h2
 ```
 
+If you would like to also run the benchmarks, add the benchmark profile like so:
+
+```
+mvn verify -P h2, benchmark
+```
+
 ### Packaging the WAR
 
 When creating the WAR file the database connection credentials should be set manually:
