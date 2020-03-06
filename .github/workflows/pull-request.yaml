@@ -129,7 +129,7 @@ jobs:
 
   benchmark:
     runs-on: ubuntu-latest
-    needs: verify-mysql verify-h2
+    needs: package
     steps:
       - uses: actions/checkout@v2
       - name: Caching dependencies
