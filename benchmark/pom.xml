@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- POM Relationships -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>benchmark</artifactId>
+
+    <parent>
+        <groupId>es.udc.fi.dc.fd</groupId>
+        <artifactId>semerusocial</artifactId>
+        <version>1.4-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.lazerycode.jmeter</groupId>
+            <artifactId>jmeter-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <type>maven-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>es.udc.fi.dc.fd</groupId>
+            <artifactId>backend</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>es.udc.fi.dc.fd</groupId>
+            <artifactId>frontend</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- /////////////////// -->
+
+    <!-- Build Settings -->
+
+    <packaging>war</packaging>
+    <build>
+        <plugins>
+        </plugins>
+    </build>
+
+    <!-- /////////////////// -->
+
+    <!-- Project information -->
+
+    <name>benchmark</name>
+    <description>SemeruSocial Benchmark module</description>
+
+
+    <!-- /////////////////// -->
+
+    <!-- Build Environment » Environment Information -->
+
+    <properties>
+        <jmeter.version>2.9.0</jmeter.version>
+    </properties>
+
+    <!-- /////////////////// -->
+
+    <!-- Profiles -->
+
+    <profiles>
+        <profile>
+            <id>benchmark</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.lazerycode.jmeter</groupId>
+                        <artifactId>jmeter-maven-plugin</artifactId>
+                        <version>${jmeter.version}</version>
+                        <executions>
+                            <execution>
+                                <id>configuration</id>
+                                <goals>
+                                    <goal>configure</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>run-performance-test</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>jmeter</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>check-performance-test-results</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>results</goal>
+                                </goals>
+                                <configuration>
+                                    <errorRateThresholdInPercent>2</errorRateThresholdInPercent>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.7.6</version>
+                        <configuration>
+                            <container>
+                                <containerId>tomcat9x</containerId>
+                                <type>embedded</type>
+                            </container>
+                            <deployables>
+                                <deployable>
+                                    <groupId>es.udc.fi.dc.fd</groupId>
+                                    <artifactId>backend</artifactId>
+                                    <type>war</type>
+                                    <properties>
+                                        <context>/semerusocial-backend</context>
+                                    </properties>
+                                </deployable>
+                                <deployable>
+                                    <groupId>es.udc.fi.dc.fd</groupId>
+                                    <artifactId>frontend</artifactId>
+                                    <type>war</type>
+                                    <properties>
+                                        <context>/semerusocial</context>
+                                    </properties>
+                                </deployable>
+                            </deployables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>launch-app</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop-app</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!-- /////////////////// -->
+
+</project>
