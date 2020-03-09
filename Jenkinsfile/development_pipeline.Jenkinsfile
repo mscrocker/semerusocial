@@ -55,18 +55,27 @@ pipeline {
                 
             }
         }
+        stage('Parallel verify and benchmark'){
+            parallel {
+                stage('Verify-h2'){
+                    steps {
+                        sh 'mvn verify -P h2'
+                    }
+                }
 
-        stage('Verify'){
-            steps {
-                sh 'mvn verify -P h2'
-                sh 'mvn verify -P mysql'
+                stage('Verify-mysql'){
+                    steps {
+                        sh 'mvn verify -P mysql'
+                    }
+                }
+
+                stage('Benchmark'){
+                    steps {
+                        sh 'mvn verify -P h2,benchmark'
+                    }
+                }
             }
         }
-
-        stage('Benchmark'){
-            steps {
-                sh 'mvn verify -P h2,benchmark'
-            }
-        }
+        
     }
 }
