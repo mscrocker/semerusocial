@@ -2,10 +2,15 @@ pipeline {
 
 	agent {docker "maven:3.6.3-jdk-11-openj9"}
 
+	environment {
+		AGENT_GIT = 'alpine/git'
+	}
 
 
 	stages {
 		stage('Checkout SCM'){
+			agent {docker "$AGENT_GIT"}
+
 			steps {
 				sh 'git fetch origin'
 				sh 'git checkout FETCH_HEAD'
