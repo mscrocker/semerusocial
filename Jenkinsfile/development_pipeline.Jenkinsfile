@@ -13,11 +13,22 @@ pipeline {
 
 
     stages {
+        stage('Restore maven dependencies'){
+            steps{
+                script{
+                    try{
+                        unstash 'dependency-cache'
+                    }catch(Exception e){
 
+                    }
+                }
+            }
+        }
 
         stage('Validate'){
             steps {
                 sh 'mvn validate'
+                stash includes: '$HOME/.m2', name: 'dependency-cache'
             }
         }
 
