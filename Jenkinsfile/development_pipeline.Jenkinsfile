@@ -7,7 +7,8 @@ pipeline {
 	stages {
 		stage('Checkout SCM'){
 			steps {
-				git branch: 'FETCH_HEAD', credentialsId: 'Marco-Github-Jenkins', url: 'https://github.com/mscrocker/semerusocial'
+				sh 'git fetch origin'
+				sh 'git checkout FETCH_HEAD'
 			}
 			
 		}
