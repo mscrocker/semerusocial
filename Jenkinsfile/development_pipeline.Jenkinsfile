@@ -8,15 +8,6 @@ pipeline {
 
 
 	stages {
-		stage('Checkout SCM'){
-			agent {docker "$AGENT_GIT"}
-
-			steps {
-				sh 'git fetch origin'
-				sh 'git checkout FETCH_HEAD'
-			}
-			
-		}
 
 
 		stage('Validate'){
