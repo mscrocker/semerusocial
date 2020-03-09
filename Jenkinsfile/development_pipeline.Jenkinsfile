@@ -30,13 +30,13 @@ pipeline {
 					sh 'mvn package'
 
 					def frontendArtifactName = 
-						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=
-						project.build.finalName -q -DforceStdout --projects frontend).war\
-          				&& echo "$OUTPUT"', returnStdout: true)
+						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' + 
+						'project.build.finalName -q -DforceStdout --projects frontend).war' +
+          				'&& echo "$OUTPUT"', returnStdout: true)
 					def backendArtifactName = 
-						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=
-						project.build.finalName -q -DforceStdout --projects backend).war\
-          				&& echo "$OUTPUT"', returnStdout: true)
+						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' +
+						'project.build.finalName -q -DforceStdout --projects backend).war' +
+          				'&& echo "$OUTPUT"', returnStdout: true)
 
 					archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
 				}
