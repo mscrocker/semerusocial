@@ -1,6 +1,6 @@
 pipeline {
 
-	agent {docker "3.6.3-jdk-11-openj9"}
+	agent {docker "maven:3.6.3-jdk-11-openj9"}
 
 
 
