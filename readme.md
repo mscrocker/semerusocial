@@ -32,7 +32,7 @@ All other dependencies are handled through Maven, and noted in the included POM 
 
 ### Profiles
 
-Maven profiles are included for setting up the database and an embedded server.
+Maven profiles are included for setting up the database.
 
 | Profile  | Database              |
 |----------|-----------------------|
@@ -49,14 +49,14 @@ To run the project locally in an embedded server just use the following Maven co
 
 ```
 mvn package -P h2
-mvn org.codehaus.cargo:cargo-maven2-plugin:run --projects frontend
+mvn cargo:run --projects frontend
 ```
 
 With this the project will be accessible at [http://localhost:8080/semerusocial].
 
 ### Running the tests
 
-The project requires a database and a server for being able to run the integration tests.
+The project requires a database for being able to run the integration tests.
 
 Just like running the project, an embedded server with an in-memory database can be used:
 
@@ -93,7 +93,7 @@ Issues are managed at the GitHub [project issues tracker][issues], where any Git
 
 ### Getting the code
 
-If you wish to fork or modify the code, visit the [GitHub project page][scm], where the latest versions are always kept. Check the 'master' branch for the latest release, and the 'develop' for the current, and stable, development version.
+If you wish to fork or modify the code, visit the [GitHub project page][scm], where the latest versions are always kept. Check the 'master' branch for the latest release.
 
 ## License
 
