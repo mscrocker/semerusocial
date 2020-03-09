@@ -5,6 +5,10 @@ pipeline {
 
 
 	stages {
+		stage('Checkout SCM'){
+			git branch: 'FETCH_HEAD', credentialsId: 'Marco-Github-Jenkins', url: 'https://github.com/mscrocker/semerusocial'
+		}
+
 
 		stage('Validate'){
 			steps {
@@ -49,7 +53,14 @@ pipeline {
 
 		stage('Verify'){
 			steps {
-				sh 'mvn verify'
+				sh 'mvn verify -P h2'
+				sh 'mvn verify -P mysql'
+			}
+		}
+
+		stage('Benchmark'){
+			steps {
+				sh 'mvn verify -P h2,benchmark'
 			}
 		}
 	}
