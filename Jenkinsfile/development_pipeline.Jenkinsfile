@@ -1,67 +1,72 @@
 pipeline {
 
-	agent {docker "maven:3.6.3-jdk-11-openj9"}
+    agent {
+        docker {
+            image "maven:3.6.3-jdk-11-openj9"
+            args "--net=host"
+        }
+    }
 
-	environment {
-		AGENT_GIT = 'alpine/git'
-	}
+    environment {
+        AGENT_GIT = 'alpine/git'
+    }
 
 
-	stages {
+    stages {
 
 
-		stage('Validate'){
-			steps {
-				sh 'mvn validate'
-			}
-		}
+        stage('Validate'){
+            steps {
+                sh 'mvn validate'
+            }
+        }
 
-		stage('Compile'){
-			steps {
-				sh 'mvn compile'
-			}
-		}
+        stage('Compile'){
+            steps {
+                sh 'mvn compile'
+            }
+        }
 
-		stage('Test'){
-			steps {
-				sh 'mvn test'
-			}
-		}
+        stage('Test'){
+            steps {
+                sh 'mvn test'
+            }
+        }
 
-		stage('Package'){
-			steps {
-				script {
-					sh 'mvn package'
+        stage('Package'){
+            steps {
+                script {
+                    sh 'mvn package'
 
-					def frontendArtifactName = 
-						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' + 
-						'project.build.finalName -q -DforceStdout --projects frontend).war' +
-          				'&& echo "$OUTPUT"', returnStdout: true)
-					def backendArtifactName = 
-						sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' +
-						'project.build.finalName -q -DforceStdout --projects backend).war' +
-          				'&& echo "$OUTPUT"', returnStdout: true)
+                    def frontendArtifactName = 
+                        sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' + 
+                        'project.build.finalName -q -DforceStdout --projects frontend).war' +
+                          '&& echo "$OUTPUT"', returnStdout: true)
+                    def backendArtifactName = 
+                        sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' +
+                        'project.build.finalName -q -DforceStdout --projects backend).war' +
+                          '&& echo "$OUTPUT"', returnStdout: true)
 
-					archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
-				}
-				
+                    archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
+                }
+                
 
-				
-				
-			}
-		}
+                
+                
+            }
+        }
 
-		stage('Verify'){
-			steps {
-				sh 'mvn verify -P h2'
-				sh 'mvn verify -P mysql'
-			}
-		}
+        stage('Verify'){
+            steps {
+                sh 'mvn verify -P h2'
+                sh 'mvn verify -P mysql'
+            }
+        }
 
-		stage('Benchmark'){
-			steps {
-				sh 'mvn verify -P h2,benchmark'
-			}
-		}
-	}
+        stage('Benchmark'){
+            steps {
+                sh 'mvn verify -P h2,benchmark'
+            }
+        }
+    }
 }
