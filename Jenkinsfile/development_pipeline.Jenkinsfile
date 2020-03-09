@@ -1,18 +1,10 @@
 pipeline {
-	environment {
-		AGENT_MAVEN = '3.6.3-jdk-11-openj9'
-	}
 
-	agent {docker "$AGENT_MAVEN"}
+	agent {docker "3.6.3-jdk-11-openj9"}
 
 
 
 	stages {
-		stage('Get latest code revision'){
-			steps {
-				sh 'git checkout FETCH_HEAD'
-			}
-		}
 
 		stage('Validate'){
 			steps {
