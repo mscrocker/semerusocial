@@ -8,6 +8,12 @@ pipeline {
 
 
 	stages {
+		stage('Get latest code revision'){
+			steps {
+				sh 'git checkout FETCH_HEAD'
+			}
+		}
+
 		stage('Validate'){
 			steps {
 				sh 'mvn validate'
