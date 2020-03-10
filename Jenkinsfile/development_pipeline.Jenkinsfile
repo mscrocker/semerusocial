@@ -2,37 +2,63 @@ pipeline {
 
     agent {
         docker {
-            image "maven:3.6.3-jdk-11-openj9"
-            args "--net=host"
+            image "$MAVEN_IMAGE"
+            args "$MAVEN_IMAGE_ARGS"
         }
     }
 
     environment {
         AGENT_GIT = 'alpine/git'
+        MAVEN_IMAGE = 'maven:3.6.3-jdk-11-openj9'
+        MAVEN_IMAGE_ARGS = '--net=host'
     }
 
 
     stages {
 
         stage('Validate'){
+            agent {
+                docker {
+                    image "$MAVEN_IMAGE"
+                    args "$MAVEN_IMAGE_ARGS"
+                }
+            }
             steps {
                 sh 'mvn validate'
             }
         }
 
         stage('Compile'){
+            agent {
+                docker {
+                    image "$MAVEN_IMAGE"
+                    args "$MAVEN_IMAGE_ARGS"
+                }
+            }
             steps {
                 sh 'mvn compile'
             }
         }
 
         stage('Test'){
+            agent {
+                docker {
+                    image "$MAVEN_IMAGE"
+                    args "$MAVEN_IMAGE_ARGS"
+                }
+            }
             steps {
                 sh 'mvn test'
             }
         }
 
         stage('Package'){
+            agent {
+                docker {
+                    image "$MAVEN_IMAGE"
+                    args "$MAVEN_IMAGE_ARGS"
+                }
+            }
             steps {
                 script {
                     sh 'mvn package'
@@ -55,6 +81,12 @@ pipeline {
             }
         }
         stage('Parallelize verify with h2 and mysql'){
+            agent {
+                docker {
+                    image "$MAVEN_IMAGE"
+                    args "$MAVEN_IMAGE_ARGS"
+                }
+            }
             steps {
                 parallel(
                     'Verify-h2': {
@@ -107,6 +139,11 @@ pipeline {
     
         always {
             node ('master') {
+                script {
+                    image.inside('-u root') {
+                        sh 'find .. -user root -name \'*\' | xargs chmod ugo+rw'
+                    }
+                }
                 script {
                     def path = sh(
                         script: '$(pwd)',
