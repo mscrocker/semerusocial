@@ -85,16 +85,6 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        script {
-                            def path = sh(
-                                script: '$(pwd)_h2',
-                                returnStdout: true
-                            )
-                            if (fileExists(path)){
-                                sh 'rm -r $(pwd)_h2'
-                            }
-                        }
-                        
                         sh 'mkdir $(pwd)_h2'
                         sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_h2'
                         sh 'cd $(pwd)_h2'
@@ -103,18 +93,8 @@ pipeline {
                     },
 
                     'Verify-mysql': {
-                        script {
-                            def path = sh(
-                                script: '$(pwd)_mysql',
-                                returnStdout: true
-                            )
-                            if (fileExists(path)){
-                                sh 'rm -r $(pwd)_mysql'
-                            }
-                        }
                         sh 'mkdir $(pwd)_mysql'
                         sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_mysql'
-                        sh 'cp --reflink=always -r $(pwd) $(pwd)_mysql'
                         sh 'cd $(pwd)_mysql'
                         sh 'mvn verify -P mysql'
                     }
@@ -135,21 +115,7 @@ pipeline {
         always {
             node ('master') {
                 script {
-                    def path = sh(
-                        script: 'sudo $(pwd)',
-                        returnStdout: true
-                    )
-                    //intended to fail, just to see the paths are correct
-                    //sh 'sudo rm ' + path + '_h2'
-                    //sh 'sudo rm ' + path + '_mysql'
-                    cleanWs(
-                        deleteDirs: true,
-                        // patterns: [
-                        //     //[pattern: path, type: 'INCLUDE'],
-                        //     [pattern: path + '_mysql', type: 'INCLUDE'], 
-                        //     [pattern: path + '_h2', type: 'INCLUDE']
-                        // ]
-                    )
+                    cleanWs()
                 }
             }
         }
