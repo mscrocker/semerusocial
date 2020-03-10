@@ -58,13 +58,16 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        sh 'cp --reflink=always -r $(pwd) $(pwd)_h2'
+                        sh 'mkdir $(pwd)_h2'
+                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_h2'
                         sh 'cd $(pwd)_h2'
                         sh 'mvn verify -P h2'
                         
                     },
 
                     'Verify-mysql': {
+                        sh 'mkdir $(pwd)_mysql'
+                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_mysql'
                         sh 'cp --reflink=always -r $(pwd) $(pwd)_mysql'
                         sh 'cd $(pwd)_mysql'
                         sh 'mvn verify -P mysql'
@@ -75,8 +78,7 @@ pipeline {
 
         stage('Benchmark'){
             steps {
-                sh 'cp -r $(pwd) $(pwd)_benchmark'
-                sh 'cd $(pwd)_benchmark'
+                
                 sh 'mvn verify -P h2,benchmark'
             }
         }
