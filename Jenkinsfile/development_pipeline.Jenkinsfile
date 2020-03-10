@@ -144,11 +144,11 @@ pipeline {
                     //sh 'sudo rm ' + path + '_mysql'
                     cleanWs(
                         deleteDirs: true,
-                        patterns: [
-                            //[pattern: path, type: 'INCLUDE'],
-                            [pattern: path + '_mysql', type: 'INCLUDE'], 
-                            [pattern: path + '_h2', type: 'INCLUDE']
-                        ]
+                        // patterns: [
+                        //     //[pattern: path, type: 'INCLUDE'],
+                        //     [pattern: path + '_mysql', type: 'INCLUDE'], 
+                        //     [pattern: path + '_h2', type: 'INCLUDE']
+                        // ]
                     )
                 }
             }
