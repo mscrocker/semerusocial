@@ -58,7 +58,7 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        path = sh(
+                        def path = sh(
                             script: '$(pwd)_h2',
                             returnStdout: true
                         )
@@ -73,7 +73,7 @@ pipeline {
                     },
 
                     'Verify-mysql': {
-                        path = sh(
+                        def path = sh(
                             script: '$(pwd)_mysql',
                             returnStdout: true
                         )
