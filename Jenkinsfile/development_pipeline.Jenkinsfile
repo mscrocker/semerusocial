@@ -62,7 +62,7 @@ pipeline {
                             script: '$(pwd)_h2',
                             returnStdout: true
                         )
-                        if (fileExists(path){
+                        if (fileExists(path)){
                             sh 'rm -r $(pwd)_h2'
                         }
                         sh 'mkdir $(pwd)_h2'
@@ -77,7 +77,7 @@ pipeline {
                             script: '$(pwd)_mysql',
                             returnStdout: true
                         )
-                        if (fileExists(path){
+                        if (fileExists(path)){
                             sh 'rm -r $(pwd)_mysql'
                         }
                         sh 'mkdir $(pwd)_mysql'
