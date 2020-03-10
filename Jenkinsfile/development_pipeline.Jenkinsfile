@@ -145,7 +145,7 @@ pipeline {
                     cleanWs(
                         deleteDirs: true,
                         patterns: [
-                            [pattern: path, type: 'INCLUDE'],
+                            //[pattern: path, type: 'INCLUDE'],
                             [pattern: path + '_mysql', type: 'INCLUDE'], 
                             [pattern: path + '_h2', type: 'INCLUDE']
                         ]
