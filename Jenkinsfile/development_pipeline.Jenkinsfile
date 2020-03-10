@@ -67,7 +67,6 @@ pipeline {
                         'project.build.finalName -q -DforceStdout --projects backend).war' +
                           '&& echo "$OUTPUT"', returnStdout: true)
 
-                    // TODO: re-enable artifacts archiving
                     archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
                 }
                 
@@ -76,7 +75,7 @@ pipeline {
                 
             }
         }
-        stage('Parallelize verify with h2 and mysql'){
+        stage('Verify'){
             agent {
                 docker {
                     image "$MAVEN_IMAGE"
