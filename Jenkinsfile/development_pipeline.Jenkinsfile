@@ -91,8 +91,7 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend h2_build'
                         sh 'cp -r $(pwd)/benchmark h2_build'
                         sh 'cp -r $(pwd)/pom.xml h2_build'
-                        sh 'cd h2_build'
-                        sh 'mvn verify -P h2'
+                        sh 'cd h2_build && mvn verify -P h2'
                         
                     },
 
@@ -102,8 +101,7 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend mysql_build'
                         sh 'cp -r $(pwd)/benchmark mysql_build'
                         sh 'cp -r $(pwd)/pom.xml mysql_build'
-                        sh 'cd mysql_build'
-                        sh 'mvn verify -P mysql'
+                        sh 'cd mysql_build && mvn verify -P mysql'
                     }
                 )
             }
