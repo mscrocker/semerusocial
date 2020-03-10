@@ -140,15 +140,13 @@ pipeline {
         always {
             node ('master') {
                 script {
-                    image.inside('-u root') {
-                        sh 'find .. -user root -name \'*\' | xargs chmod ugo+rw'
-                    }
-                }
-                script {
                     def path = sh(
                         script: '$(pwd)',
                         returnStdout: true
                     )
+                    //intended to fail, just to see the paths are correct
+                    sh 'sudo rm ' + path + '_h2'
+                    sh 'sudo rm ' + path + '_mysql'
                     cleanWs(
                         deleteDirs: true,
                         patterns: [
