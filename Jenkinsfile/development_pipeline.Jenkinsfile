@@ -61,14 +61,14 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        sh 'cp -r $(pwd) $(pwd)_h2'
+                        sh 'cp --reflink=always -r $(pwd) $(pwd)_h2'
                         sh 'cd $(pwd)_h2'
                         sh 'mvn verify -P h2'
                         
                     },
 
                     'Verify-mysql': {
-                        sh 'cp -r $(pwd) $(pwd)_mysql'
+                        sh 'cp --reflink=always -r $(pwd) $(pwd)_mysql'
                         sh 'cd $(pwd)_mysql'
                         sh 'mvn verify -P mysql'
                     }
