@@ -135,10 +135,10 @@ pipeline {
         always {
             node ('master') {
                 script {
-                    def path = sh(
-                        script: '$(pwd)',
-                        returnStdout: true
-                    )
+                    // def path = sh(
+                    //     script: '$(pwd)',
+                    //     returnStdout: true
+                    // )
                     //intended to fail, just to see the paths are correct
                     //sh 'sudo rm ' + path + '_h2'
                     //sh 'sudo rm ' + path + '_mysql'
