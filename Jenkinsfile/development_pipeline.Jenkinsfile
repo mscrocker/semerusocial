@@ -67,7 +67,8 @@ pipeline {
                         'project.build.finalName -q -DforceStdout --projects backend).war' +
                           '&& echo "$OUTPUT"', returnStdout: true)
 
-                    archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
+                    // TODO: re-enable artifacts archiving
+                    //archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
                 }
                 
 
@@ -85,17 +86,17 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        sh 'mkdir $(pwd)_h2'
-                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_h2'
-                        sh 'cd $(pwd)_h2'
+                        sh 'mkdir h2_build'
+                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} h2_build'
+                        sh 'cd h2_build'
                         sh 'mvn verify -P h2'
                         
                     },
 
                     'Verify-mysql': {
                         sh 'mkdir $(pwd)_mysql'
-                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} $(pwd)_mysql'
-                        sh 'cd $(pwd)_mysql'
+                        sh 'cp --reflink=always -r $(pwd)/{backend,frontend,benchmark,pom.xml} mysql_build'
+                        sh 'cd mysql_build'
                         sh 'mvn verify -P mysql'
                     }
                 )
