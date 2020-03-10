@@ -1,4 +1,9 @@
 pipeline {
+    environment {
+        HOME_PATH = '/var/jenkins_home'
+        JAVA_TOOL_OPTIONS = "-Duser.home=${HOME_PATH}"
+        MAVEN_DEPENDENCY_PATH = "${HOME_PATH}/.m2"
+    }
 
     agent {
         docker {
@@ -28,7 +33,7 @@ pipeline {
         stage('Validate'){
             steps {
                 sh 'mvn validate'
-                stash includes: '$HOME/.m2', name: 'dependency-cache'
+                stash includes: "$MAVEN_DEPENDENCY_PATH/.m2", name: 'dependency-cache'
             }
         }
 
