@@ -16,24 +16,10 @@ pipeline {
 
 
     stages {
-        stage('Restore maven dependencies'){
-            steps{
-                script{
-                    try{
-                        unstash 'dependency-cache'
-                    }catch(Exception e){
-
-                    }
-                }
-            }
-        }
 
         stage('Validate'){
             steps {
                 sh 'mvn validate'
-                sh "echo MAVEN_DEPENDENCY_PATH=$MAVEN_DEPENDENCY_PATH"
-                sh "echo \$(${HOME_PATH})"
-                stash includes: "$MAVEN_DEPENDENCY_PATH", name: 'dependency-cache'
             }
         }
 
