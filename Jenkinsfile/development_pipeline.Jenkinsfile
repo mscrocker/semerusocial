@@ -61,27 +61,22 @@ pipeline {
             steps {
                 parallel(
                     'Verify-h2': {
-                        steps {
-                            sh 'cp $(pwd) $(pwd)_h2'
-                            sh 'cd $(pwd)_h2'
-                            sh 'mvn verify -P h2'
-                        }
+                        sh 'cp $(pwd) $(pwd)_h2'
+                        sh 'cd $(pwd)_h2'
+                        sh 'mvn verify -P h2'
+                        
                     },
 
                     'Verify-mysql': {
-                        steps {
-                            sh 'cp $(pwd) $(pwd)_mysql'
-                            sh 'cd $(pwd)_mysql'
-                            sh 'mvn verify -P mysql'
-                        }
+                        sh 'cp $(pwd) $(pwd)_mysql'
+                        sh 'cd $(pwd)_mysql'
+                        sh 'mvn verify -P mysql'
                     },
 
                     'Benchmark': {
-                        steps {
-                            sh 'cp $(pwd) $(pwd)_benchmark'
-                            sh 'cd $(pwd)_benchmark'
-                            sh 'mvn verify -P h2,benchmark'
-                        }
+                        sh 'cp $(pwd) $(pwd)_benchmark'
+                        sh 'cd $(pwd)_benchmark'
+                        sh 'mvn verify -P h2,benchmark'
                     }
                 )
             }
