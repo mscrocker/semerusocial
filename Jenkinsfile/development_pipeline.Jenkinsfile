@@ -1,11 +1,6 @@
 pipeline {
 
-    agent {
-        docker {
-            image "$MAVEN_IMAGE"
-            args "$MAVEN_IMAGE_ARGS"
-        }
-    }
+    agent none
 
     environment {
         AGENT_GIT = 'alpine/git'
@@ -145,8 +140,8 @@ pipeline {
                         returnStdout: true
                     )
                     //intended to fail, just to see the paths are correct
-                    sh 'sudo rm ' + path + '_h2'
-                    sh 'sudo rm ' + path + '_mysql'
+                    //sh 'sudo rm ' + path + '_h2'
+                    //sh 'sudo rm ' + path + '_mysql'
                     cleanWs(
                         deleteDirs: true,
                         patterns: [
