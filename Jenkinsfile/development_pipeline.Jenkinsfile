@@ -59,8 +59,8 @@ pipeline {
         }
         stage('Parallelize verify and benchmark'){
             steps {
-                parallelize{
-                    stage('Verify-h2'){
+                parallel(
+                    'Verify-h2': {
                         steps {
                             sh 'cp $(pwd) $(pwd)_h2'
                             sh 'cd $(pwd)_h2'
@@ -68,7 +68,7 @@ pipeline {
                         }
                     }
 
-                    stage('Verify-mysql'){
+                    'Verify-mysql': {
                         steps {
                             sh 'cp $(pwd) $(pwd)_mysql'
                             sh 'cd $(pwd)_mysql'
@@ -76,14 +76,14 @@ pipeline {
                         }
                     }
 
-                    stage('Benchmark'){
+                    'Benchmark': {
                         steps {
                             sh 'cp $(pwd) $(pwd)_benchmark'
                             sh 'cd $(pwd)_benchmark'
                             sh 'mvn verify -P h2,benchmark'
                         }
                     }
-                }
+                )
             }
         }
         
