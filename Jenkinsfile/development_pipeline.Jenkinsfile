@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         AGENT_GIT = 'alpine/git'
-        HOME_PATH = '/var/jenkins_home'
+        HOME_PATH = '$HOME'
         JAVA_TOOL_OPTIONS = "-Duser.home=${HOME_PATH}"
         MAVEN_DEPENDENCY_PATH = "${HOME_PATH}/.m2"
     }
