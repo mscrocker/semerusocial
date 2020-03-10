@@ -103,4 +103,14 @@ pipeline {
         }
         
     }
+    post {
+    
+        always {
+            node ('master') {
+                cleanWs()
+            }
+        }
+    
+    }
+
 }
