@@ -31,7 +31,8 @@ pipeline {
         stage('Validate'){
             steps {
                 sh 'mvn validate'
-                stash includes: "$MAVEN_DEPENDENCY_PATH/.m2", name: 'dependency-cache'
+                sh "echo MAVEN_DEPENDENCY_PATH=$MAVEN_DEPENDENCY_PATH"
+                stash includes: "$MAVEN_DEPENDENCY_PATH", name: 'dependency-cache'
             }
         }
 
