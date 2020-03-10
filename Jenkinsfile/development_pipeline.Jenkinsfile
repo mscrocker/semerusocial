@@ -66,7 +66,7 @@ pipeline {
                             sh 'cd $(pwd)_h2'
                             sh 'mvn verify -P h2'
                         }
-                    }
+                    },
 
                     'Verify-mysql': {
                         steps {
@@ -74,7 +74,7 @@ pipeline {
                             sh 'cd $(pwd)_mysql'
                             sh 'mvn verify -P mysql'
                         }
-                    }
+                    },
 
                     'Benchmark': {
                         steps {
