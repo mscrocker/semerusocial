@@ -107,7 +107,20 @@ pipeline {
     
         always {
             node ('master') {
-                cleanWs()
+                script {
+                    def path = sh(
+                        script: '$(pwd)',
+                        returnStdout: true
+                    )
+                    cleanWs(
+                        deleteDirs: true,
+                        patterns: [
+                            [pattern: path, type: 'INCLUDE'],
+                            [pattern: path + '_mysql', type: 'INCLUDE'], 
+                            [pattern: path + '_h2', type: 'INCLUDE']
+                        ]
+                    )
+                }
             }
         }
     
