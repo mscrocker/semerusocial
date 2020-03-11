@@ -46,7 +46,7 @@ pipeline {
             }
             steps {
                 sh 'mvn test > test-out.txt'
-                archiveArtifacts 'text-out.txt'
+                archiveArtifacts 'test-out.txt'
             }
         }
 
