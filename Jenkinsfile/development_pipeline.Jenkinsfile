@@ -132,7 +132,7 @@ pipeline {
                     cleanWs()
                     def result = manager.build.result
                     def build_number = manager.build.number
-                    emailext body: 'The build' + build_number + ' has completed with status: ' + result, subject: 'Build completed', to: '$EMAIL_RECEIVER'
+                    emailext body: 'The build' + build_number + ' has completed with status: ' + result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
                 }
             }
         }
