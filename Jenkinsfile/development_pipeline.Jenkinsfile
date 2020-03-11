@@ -71,8 +71,7 @@ pipeline {
                         'project.build.finalName -q -DforceStdout --projects backend).war' +
                           '&& echo "$OUTPUT"', returnStdout: true)
 
-                    archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
-                        + ", package-out.txt"
+                    archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName + ", package-out.txt"
                 }
                 
                 
