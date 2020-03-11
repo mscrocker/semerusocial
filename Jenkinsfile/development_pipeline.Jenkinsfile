@@ -19,7 +19,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn validate'
+                sh 'mvn validate > validate-out.txt'
+                archiveArtifacts 'validate-out.txt'
             }
         }
 
@@ -31,7 +32,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn compile'
+                sh 'mvn compile > compile-out.txt'
+                archiveArtifacts 'compile-out.txt'
             }
         }
 
@@ -43,7 +45,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn test'
+                sh 'mvn test > test-out.txt'
+                archiveArtifacts 'text-out.txt'
             }
         }
 
@@ -56,7 +59,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'mvn package'
+                    sh 'mvn package > package-out.txt'
 
                     def frontendArtifactName = 
                         sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' + 
@@ -68,6 +71,7 @@ pipeline {
                           '&& echo "$OUTPUT"', returnStdout: true)
 
                     archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
+                        + ", package-out.txt"
                 }
                 
 
@@ -90,8 +94,8 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend h2_build'
                         sh 'cp -r $(pwd)/benchmark h2_build'
                         sh 'cp -r $(pwd)/pom.xml h2_build'
-                        sh 'cd h2_build && mvn verify -P h2'
-                        
+                        sh 'cd h2_build && mvn verify -P h2 > verify_h2_out.txt'
+                        archiveArtifacts 'verify_h2_out.txt'
                     },
 
                     'Verify-mysql': {
@@ -100,7 +104,8 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend mysql_build'
                         sh 'cp -r $(pwd)/benchmark mysql_build'
                         sh 'cp -r $(pwd)/pom.xml mysql_build'
-                        sh 'cd mysql_build && mvn verify -P mysql'
+                        sh 'cd mysql_build && mvn verify -P mysql > verify_mysql_out.txt'
+                        archiveArtifacts 'verify_mysql_out.txt'
                     }
                 )
             }
@@ -114,7 +119,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn verify -P h2,benchmark'
+                sh 'mvn verify -P h2,benchmark > benchmark_out.txt'
+                archiveArtifacts 'benchmark_out.txt'
             }
         }
         
