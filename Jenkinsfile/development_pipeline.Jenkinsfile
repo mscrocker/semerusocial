@@ -94,7 +94,7 @@ pipeline {
                         sh 'cp -r $(pwd)/benchmark h2_build'
                         sh 'cp -r $(pwd)/pom.xml h2_build'
                         sh 'cd h2_build && mvn verify -P h2 > verify_h2_out.txt'
-                        archiveArtifacts 'verify_h2_out.txt'
+                        archiveArtifacts 'h2_build/verify_h2_out.txt'
                     },
 
                     'Verify-mysql': {
@@ -104,7 +104,7 @@ pipeline {
                         sh 'cp -r $(pwd)/benchmark mysql_build'
                         sh 'cp -r $(pwd)/pom.xml mysql_build'
                         sh 'cd mysql_build && mvn verify -P mysql > verify_mysql_out.txt'
-                        archiveArtifacts 'verify_mysql_out.txt'
+                        archiveArtifacts 'mysql_build/verify_mysql_out.txt'
                     }
                 )
             }
