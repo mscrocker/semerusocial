@@ -21,7 +21,6 @@ pipeline {
             }
             steps {
                 sh 'mvn validate > validate_out.txt'
-                archiveArtifacts 'validate_out.txt'
             }
         }
 
@@ -34,7 +33,6 @@ pipeline {
             }
             steps {
                 sh 'mvn compile > compile_out.txt'
-                archiveArtifacts 'compile_out.txt'
             }
         }
 
@@ -47,7 +45,6 @@ pipeline {
             }
             steps {
                 sh 'mvn test > test_out.txt'
-                archiveArtifacts 'test_out.txt'
             }
         }
 
@@ -71,7 +68,6 @@ pipeline {
                         'project.build.finalName -q -DforceStdout --projects backend).war' +
                           '&& echo "$OUTPUT"', returnStdout: true)
 
-                    archiveArtifacts 'package_out.txt'
                     archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
                 }
                 
@@ -94,7 +90,6 @@ pipeline {
                         sh 'cp -r $(pwd)/benchmark h2_build'
                         sh 'cp -r $(pwd)/pom.xml h2_build'
                         sh 'cd h2_build && mvn verify -P h2 > ../verify_h2_out.txt'
-                        archiveArtifacts 'verify_h2_out.txt'
                     },
 
                     'Verify-mysql': {
@@ -104,7 +99,6 @@ pipeline {
                         sh 'cp -r $(pwd)/benchmark mysql_build'
                         sh 'cp -r $(pwd)/pom.xml mysql_build'
                         sh 'cd mysql_build && mvn verify -P mysql > ../verify_mysql_out.txt'
-                        archiveArtifacts 'verify_mysql_out.txt'
                     }
                 )
             }
@@ -127,7 +121,6 @@ pipeline {
                         sh 'echo "Benchmark aborted by timeout!" >> benchmark_out.txt'
                     }
                     
-                    archiveArtifacts 'benchmark_out.txt'
                 }
             }    
         }
@@ -138,6 +131,7 @@ pipeline {
         always {
             node ('master') {
                 script {
+                    archiveArtifacts '*_out.txt'
                     sh 'tar -cvzf reports.tar.gz *_out.txt'
                     emailext (
                         attachmentsPattern: 'reports.tar.gz',
