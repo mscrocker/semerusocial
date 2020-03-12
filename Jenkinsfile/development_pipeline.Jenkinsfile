@@ -129,21 +129,16 @@ pipeline {
     post {
     
         always {
-            node ('master') {
-                script {
-                    archiveArtifacts '*_out.txt'
-                    sh 'tar -cvzf reports.tar.gz *_out.txt'
-                    emailext (
-                        attachmentsPattern: 'reports.tar.gz',
-                        body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, 
-                        subject: 'Build completed', 
-                        from: 'notificaciones.torusnewies@gmail.com',
-                        replyTo: '',
-                        to: "$EMAIL_RECEIVER")
-                    cleanWs()
-                }
-
-            }
+            archiveArtifacts '*_out.txt'
+            sh 'tar -cvzf reports.tar.gz *_out.txt'
+            emailext (
+                attachmentsPattern: 'reports.tar.gz',
+                body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, 
+                subject: 'Build completed', 
+                from: 'notificaciones.torusnewies@gmail.com',
+                replyTo: '',
+                to: "$EMAIL_RECEIVER")
+            cleanWs()
         }
     
     }
