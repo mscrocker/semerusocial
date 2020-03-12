@@ -134,7 +134,7 @@ pipeline {
                         body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, 
                         subject: 'Build completed', 
                         from: 'notificaciones.torusnewies@gmail.com',
-                        replyto: '',
+                        replyTo: '',
                         to: "$EMAIL_RECEIVER")
                 }
 
