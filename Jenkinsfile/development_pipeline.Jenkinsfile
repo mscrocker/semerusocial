@@ -118,9 +118,18 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn verify -P h2,benchmark > benchmark_out.txt'
-                archiveArtifacts 'benchmark_out.txt'
-            }
+                script {
+                    try {
+                        timeout(time: 1, unit: 'MINUTES') {
+                            sh 'mvn verify -P h2,benchmark > benchmark_out.txt'
+                        }
+                    } catch(error){
+                        sh 'echo "Benchmark aborted by timeout!" >> benchmark_out.txt'
+                    }
+                    
+                    archiveArtifacts 'benchmark_out.txt'
+                }
+            }    
         }
         
     }
