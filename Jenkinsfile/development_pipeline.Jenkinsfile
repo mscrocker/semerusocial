@@ -130,7 +130,12 @@ pipeline {
             node ('master') {
                 script {
                     cleanWs()
-                    emailext body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
+                    emailext (
+                        body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, 
+                        subject: 'Build completed', 
+                        from: 'notificaciones.torusnewies@gmail.com',
+                        replyto: '',
+                        to: "$EMAIL_RECEIVER")
                 }
 
             }
