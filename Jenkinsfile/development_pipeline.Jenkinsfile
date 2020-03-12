@@ -20,8 +20,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn validate > validate-out.txt'
-                archiveArtifacts 'validate-out.txt'
+                sh 'mvn validate > validate_out.txt'
+                archiveArtifacts 'validate_out.txt'
             }
         }
 
@@ -33,8 +33,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn compile > compile-out.txt'
-                archiveArtifacts 'compile-out.txt'
+                sh 'mvn compile > compile_out.txt'
+                archiveArtifacts 'compile_out.txt'
             }
         }
 
@@ -46,8 +46,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn test > test-out.txt'
-                archiveArtifacts 'test-out.txt'
+                sh 'mvn test > test_out.txt'
+                archiveArtifacts 'test_out.txt'
             }
         }
 
@@ -60,7 +60,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'mvn package > package-out.txt'
+                    sh 'mvn package > package_out.txt'
 
                     def frontendArtifactName = 
                         sh (script: 'OUTPUT=$(mvn help:evaluate -Dexpression=' + 
@@ -71,7 +71,7 @@ pipeline {
                         'project.build.finalName -q -DforceStdout --projects backend).war' +
                           '&& echo "$OUTPUT"', returnStdout: true)
 
-                    archiveArtifacts 'package-out.txt'
+                    archiveArtifacts 'package_out.txt'
                     archiveArtifacts 'frontend/target/' + frontendArtifactName + ', backend/target/' + backendArtifactName
                 }
                 
@@ -93,8 +93,8 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend h2_build'
                         sh 'cp -r $(pwd)/benchmark h2_build'
                         sh 'cp -r $(pwd)/pom.xml h2_build'
-                        sh 'cd h2_build && mvn verify -P h2 > verify_h2_out.txt'
-                        archiveArtifacts 'h2_build/verify_h2_out.txt'
+                        sh 'cd h2_build && mvn verify -P h2 > ../verify_h2_out.txt'
+                        archiveArtifacts 'verify_h2_out.txt'
                     },
 
                     'Verify-mysql': {
@@ -103,8 +103,8 @@ pipeline {
                         sh 'cp -r $(pwd)/frontend mysql_build'
                         sh 'cp -r $(pwd)/benchmark mysql_build'
                         sh 'cp -r $(pwd)/pom.xml mysql_build'
-                        sh 'cd mysql_build && mvn verify -P mysql > verify_mysql_out.txt'
-                        archiveArtifacts 'mysql_build/verify_mysql_out.txt'
+                        sh 'cd mysql_build && mvn verify -P mysql > ../verify_mysql_out.txt'
+                        archiveArtifacts 'verify_mysql_out.txt'
                     }
                 )
             }
@@ -138,13 +138,15 @@ pipeline {
         always {
             node ('master') {
                 script {
-                    cleanWs()
+                    sh 'tar -cvzf reports.tar.gz *_out.txt'
                     emailext (
+                        attachmentsPattern: 'reports.tar.gz',
                         body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, 
                         subject: 'Build completed', 
                         from: 'notificaciones.torusnewies@gmail.com',
                         replyTo: '',
                         to: "$EMAIL_RECEIVER")
+                    cleanWs()
                 }
 
             }
