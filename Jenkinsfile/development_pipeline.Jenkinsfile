@@ -130,11 +130,23 @@ pipeline {
             node ('master') {
                 script {
                     cleanWs()
-                    
-                    def build = Thread.currentThread().executable
-                    def build_number = build.number
-                    def result = build.getEnvVars()["BUILD_RESULT"]
-                    emailext body: 'The build' + build_number + ' has completed with status: ' + result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
+                }
+
+            }
+        }
+
+        success {
+            node ('master') {
+                script {
+                    emailext body: 'The build has completed succesfully!', subject: 'Build completed', to: "$EMAIL_RECEIVER"
+                }
+            }
+        }
+
+        failure {
+            node ('master') {
+                script {
+                    emailext body: 'The build has failed!', subject: 'Build failed', to: "$EMAIL_RECEIVER"
                 }
             }
         }
