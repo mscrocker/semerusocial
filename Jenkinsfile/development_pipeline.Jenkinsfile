@@ -6,7 +6,7 @@ pipeline {
         AGENT_GIT = 'alpine/git'
         MAVEN_IMAGE = 'maven:3.6.3-jdk-11-openj9'
         MAVEN_IMAGE_ARGS = '--net=host'
-        EMAIL_RECEIVER = 'marco.martinez.sanchez@outlook.es'
+        EMAIL_RECEIVER = 'marco.martinez.sanchez98@gmail.com'
     }
 
 
@@ -130,7 +130,7 @@ pipeline {
             node ('master') {
                 script {
                     cleanWs()
-                    emailext body: 'The build has completed with status: ' + currentBuild.result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
+                    emailext body: 'The build ' + env.JOB_NAME + ' has completed with status: ' + currentBuild.result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
                 }
 
             }
