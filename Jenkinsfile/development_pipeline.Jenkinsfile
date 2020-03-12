@@ -129,8 +129,6 @@ pipeline {
         always {
             node ('master') {
                 script {
-                    import hudson.model.*
-
                     cleanWs()
                     
                     def build = Thread.currentThread().executable
