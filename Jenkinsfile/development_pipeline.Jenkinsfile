@@ -129,9 +129,13 @@ pipeline {
         always {
             node ('master') {
                 script {
+                    import hudson.model.*
+
                     cleanWs()
-                    def result = manager.build.result
-                    def build_number = manager.build.number
+                    
+                    def build = Thread.currentThread().executable
+                    def build_number = build.number
+                    def result = build.getEnvVars()["BUILD_RESULT"]
                     emailext body: 'The build' + build_number + ' has completed with status: ' + result, subject: 'Build completed', to: "$EMAIL_RECEIVER"
                 }
             }
