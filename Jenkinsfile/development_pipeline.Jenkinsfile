@@ -120,7 +120,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        timeout(time: 1, unit: 'MINUTES') {
+                        timeout(time: 10, unit: 'MINUTES') {
                             sh 'mvn verify -P h2,benchmark > benchmark_out.txt'
                         }
                     } catch(error){
