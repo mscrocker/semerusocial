@@ -354,7 +354,7 @@
         <javassist.version>3.26.0-GA</javassist.version>
         <jsonpath.version>2.4.0</jsonpath.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
-        <liquibase.version>3.8.7</liquibase.version>
+        <liquibase.version>4.8.0</liquibase.version>
         <log4j.version>2.13.1</log4j.version>
         <mockito.version>3.3.0</mockito.version>
         <mysql.version>8.0.12</mysql.version>
