@@ -357,7 +357,7 @@
         <liquibase.version>3.8.7</liquibase.version>
         <log4j.version>2.13.1</log4j.version>
         <mockito.version>3.3.0</mockito.version>
-        <mysql.version>8.0.12</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <plugin.docker.version>0.33.0</plugin.docker.version>
         <plugin.jacoco.version>0.8.4</plugin.jacoco.version>
         <plugin.surefire.version>3.0.0-M3</plugin.surefire.version>
